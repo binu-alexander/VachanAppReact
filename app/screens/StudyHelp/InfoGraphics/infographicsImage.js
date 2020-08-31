@@ -73,7 +73,6 @@ export class InfographicsImage extends React.Component {
   _onRotateHandlerStateChange = event => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
       this._lastRotate += event.nativeEvent.rotation;
-      console.log("_lastRotate ",this._lastRotate)
       this._rotate.setOffset(this._lastRotate);
       this._rotate.setValue(0);
     }
@@ -81,7 +80,6 @@ export class InfographicsImage extends React.Component {
   _onPinchHandlerStateChange = event => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
       this._lastScale *= event.nativeEvent.scale;
-      console.log("_lastScale ",this._lastScale)
 
       this._baseScale.setValue(this._lastScale);
       this._pinchScale.setValue(1);
@@ -107,7 +105,6 @@ export class InfographicsImage extends React.Component {
   }
 
   render() {
-    console.log("image url ",this.state.image)
     return (
 	<View style={this.styles.wrapper}>
 	{this.state.isLoading && 

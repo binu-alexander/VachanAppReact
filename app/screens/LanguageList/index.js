@@ -54,10 +54,12 @@ class LanguageList extends Component {
       }
     }
   }
+  //refetch data if internet connection lost 
   updateData = () => {
     this.props.fetchAllContent()
     this.errorMessage()
   }
+  
   async fetchLanguages() {
     var lanVer = []
     const languageList = await DbQueries.getLangaugeList()
@@ -106,7 +108,6 @@ class LanguageList extends Component {
     catch (error) {
     }
   }
-
   downloadBible = async (langName, verCode, books, sourceId) => {
     try {
       this.setState({ startDownload: true })
@@ -131,10 +132,10 @@ class LanguageList extends Component {
       this.setState({ startDownload: false})
     } catch (error) {
       this.setState({ startDownload: false })
-      console.log(" error ",error)
       alert("Something went wrong. Try Again")
     }
   }
+  // this function is calling in downloadbible function
   getChapters = (content, bookId) => {
     let chapterModels = []
     let chapterHeading = null 
@@ -163,9 +164,10 @@ class LanguageList extends Component {
       }
     }
   }
-
+// this is useful for reusing code as this page is calling at other places
   navigateTo(langName, langCode, booklist, verCode, sourceId, metadata, downloaded) {
     if(this.props.navigation.state.params.updateLangVer){
+      //call back fucntion to update perticular values on back
       this.props.navigation.state.params.updateLangVer({
         sourceId: sourceId, languageName: langName, languageCode: langCode,
         versionCode: verCode, downloaded: downloaded,

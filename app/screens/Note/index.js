@@ -35,7 +35,7 @@ class Note extends Component {
     }
     this.styles = noteStyle(props.colorFile, props.sizeFile);
 
-    this.queryDb = this.queryDb.bind(this)
+    this.fetchNotes = this.fetchNotes.bind(this)
     this.onDelete = this.onDelete.bind(this)
   }
 
@@ -63,7 +63,8 @@ class Note extends Component {
     })
     this.setState({ notesData: data })
   }
-  queryDb() {
+
+  fetchNotes() {
     if (this.props.email) {
       this.setState({ isLoading: true }, () => {
         var firebaseRef = firebase.database().ref("users/" + this.props.uid + "/notes/" + this.props.sourceId)
@@ -77,11 +78,8 @@ class Note extends Component {
             for (var bookKey in notes) {
               for (var chapterKey in notes[bookKey]) {
                 if (notes[bookKey][chapterKey] != null) {
-                  console.log("CHAPTER chapterKey ", chapterKey, bookKey)
                   if (this.state.chapterNumber && this.state.bookId) {
                     if (chapterKey == this.state.chapterNumber && bookKey == this.state.bookId) {
-                      console.log("CHAPTER chapterKey ", chapterKey, bookKey)
-                      console.log("CHAPTER bookid state ", this.state.chapterKey, this.state.bookId)
                       arr.push({
                         bookId: bookKey,
                         chapterNumber: chapterKey,
@@ -121,7 +119,7 @@ class Note extends Component {
 
   }
   componentDidMount() {
-    this.queryDb()
+    this.fetchNotes()
   }
 
 
@@ -167,7 +165,7 @@ class Note extends Component {
             },
             notesList: item.notes,
             contentBody: this.bodyText(val.body),
-            onbackNote: this.queryDb,
+            onbackNote: this.fetchNotes,
             noteIndex: j,
           })
         }}>

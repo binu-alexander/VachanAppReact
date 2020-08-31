@@ -45,7 +45,6 @@ class PlayVideo extends Component {
       }else{
         this.setState({isLoading:false})
       }
-      console.log("on event ",event)
     }
     render() {
         return (

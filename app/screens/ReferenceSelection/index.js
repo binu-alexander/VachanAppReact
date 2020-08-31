@@ -37,13 +37,14 @@ class ReferenceSelection extends Component {
       totalChapters: item.numOfChapters,
     })
   }
+  // select book or chapter or both and navigate back 
   updateSelectedChapter = (chapter, index) => {
     var chapterNum = chapter == null ? this.state.selectedChapterNumber : chapter
-    console.log(" chapter ",chapterNum,chapter,index)
     this.setState({
       selectedChapterNumber: chapterNum,
       selectedChapterIndex: index != null && index,
     }, () => {
+      //call back fucntion to update perticular values on back 
       this.props.navigation.state.params.getReference({
         bookId: this.state.selectedBookId,
         bookName: this.state.selectedBookName,
@@ -53,6 +54,7 @@ class ReferenceSelection extends Component {
       this.props.navigation.goBack()
     })
   }
+  // all books to render
   getBooks(){
     if(this.props.navigation.state.params){
       let params = this.props.navigation.state.params
@@ -63,18 +65,18 @@ class ReferenceSelection extends Component {
   componentDidMount() {
    this.getBooks()
   }
+  
   errorMessage() {
     if (!this.alertPresent) {
       this.alertPresent = true;
       if (this.props.error !== null) {
-        console.log(" ERROR ",this.props.error)
         Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
       } else {
         this.alertPresent = false;
       }
     }
   }
-
+// if error message or fetch data not available re-render
   reloadBooks = () => {
     this.errorMessage()
     this.getBooks()

@@ -5,10 +5,7 @@ import { styles } from './styles.js';
 import { connect } from 'react-redux'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
 import { AsyncStorageConstants } from '../../utils/AsyncStorageConstants'
-
 import { fetchVersionBooks } from '../../store/action/'
-
-
 
 class DrawerScreen extends Component {
   constructor(props) {

@@ -84,9 +84,7 @@ class History extends Component {
       }
     })
 
-
   }
-
 
   onClearHistory = () => {
     DbQueries.clearHistory()

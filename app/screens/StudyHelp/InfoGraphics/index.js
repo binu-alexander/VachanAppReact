@@ -62,8 +62,6 @@ class Infographics extends React.Component {
     this.props.navigation.navigate("InfographicsImage", { url: this.state.url, fileName: item.fileName })
   }
   renderItem = ({ item }) => {
-    console.log("ITEM ", item)
-    console.log("ITEM book code", item.bookCode)
     var bookName = null
     if (this.props.books) {
       for (var i = 0; i <= this.props.books.length - 1; i++) {

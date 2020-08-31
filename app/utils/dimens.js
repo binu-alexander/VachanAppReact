@@ -1,6 +1,4 @@
 
-
-//fontSize extra small
 export const extraSmallFont = {
         titleText: 14,
         contentText: 12,
@@ -10,10 +8,7 @@ export const extraSmallFont = {
         settingsIcon: 18,
         chevronIconSize: 36,
         bottomBarText: 10,
-
         lineHeight: 22,
-
-
 };
 
 export const smallFont = {
@@ -25,10 +20,7 @@ export const smallFont = {
         settingsIcon: 22,
         chevronIconSize: 40,
         bottomBarText: 12,
-
         lineHeight: 26,
-
-
 };
 
 export const mediumFont = {
@@ -40,11 +32,7 @@ export const mediumFont = {
         settingsIcon: 26,
         chevronIconSize: 44,
         bottomBarText: 14,
-
         lineHeight: 30,
-
-
-
 }
 export const largeFont = {
         titleText: 24,
@@ -55,11 +43,7 @@ export const largeFont = {
         settingsIcon: 30,
         chevronIconSize: 48,
         bottomBarText: 16,
-
         lineHeight: 34,
-
-
-
 };
 
 export const extraLargeFont = {
@@ -71,10 +55,7 @@ export const extraLargeFont = {
         settingsIcon: 34,
         chevronIconSize: 42,
         bottomBarText: 16,
-
         lineHeight: 38,
-
-
 };
 
 export const constantFont = {

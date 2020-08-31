@@ -173,7 +173,6 @@ var APIFetch = {
         }
     },
     async fetchVideo(language_code){
-        console.log(" language  code fetch video ",language_code)
         try {
             return await fetch(API_BASE_URL+'videos?language='+language_code,{
                 method: 'GET',

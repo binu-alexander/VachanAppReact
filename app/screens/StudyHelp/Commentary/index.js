@@ -28,6 +28,7 @@ class Commentary extends Component {
     this.styles = styles(this.props.colorFile, this.props.sizeFile)
     this.alertPresent = false
   }
+  // fetch bookname in perticular language of commenatry
   async fetchBookName(){
     try {
           let bookName
@@ -43,7 +44,6 @@ class Commentary extends Component {
           }
           this.setState({ bookName: bookName })
   } catch (error) {
-      console.log("error ",console)
       
       this.setState({ error: error });
   }
@@ -74,7 +74,6 @@ class Commentary extends Component {
     this.errorMessage()
   }
   renderItem=({ item })=> {
-    console.log("ITEM ", item)
     return (
       <View style={{ padding: 10 }}>
         {item.verse &&
@@ -103,7 +102,6 @@ class Commentary extends Component {
 
   }
   render() {
-    console.log(" book name ",this.state.bookName)
     return (
       <View style={this.styles.container}>
         <Header style={{backgroundColor: Color.Blue_Color, height: 40, borderLeftWidth: 0.5, borderLeftColor: Color.White }} >

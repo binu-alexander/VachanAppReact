@@ -425,7 +425,6 @@ class DbHelper {
 			let result = realm.objectForPrimaryKey("LanguageModel", langName)
 			let resultsA = result.versionModels
 			let resultsB = resultsA.filtered('versionCode ==[c] "' + verCode + '" && sourceId ==[c] "' + sourceId + '"')
-			console.log("result  ",resultsB[0].metaData)
 			return resultsB[0].metaData
 		}
 		return null

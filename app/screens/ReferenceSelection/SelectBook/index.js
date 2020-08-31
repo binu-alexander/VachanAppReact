@@ -15,6 +15,8 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import Color from '../../../utils/colorConstants'
 const width = Dimensions.get('window').width;
 
+//OT- old-testment
+//NT- new-testment
 class SelectBook extends Component {
   constructor(props) {
     super(props)
@@ -94,6 +96,7 @@ class SelectBook extends Component {
     this.getOTSize()
     this.getNTSize()
   }
+
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.books !== this.props.books) {
       this.getOTSize()
