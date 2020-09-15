@@ -922,6 +922,7 @@ class Bible extends Component {
                   versionCode={this.props.versionCode}
                   bookId={this.props.bookId}
                   totalChapters={this.props.totalChapters}
+                  showBottomBar={this.state.showBottomBar}
                   navigation={this.props.navigation}
                   queryBookFromAPI={this.queryBookFromAPI}
                 />

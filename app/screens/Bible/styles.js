@@ -90,17 +90,7 @@ export const styles = (colorFile, sizeFile) => {
             bottom: 36,
             left: 4
         },
-        bottomBarPrevView: {
-            position: 'absolute',
-            backgroundColor: colorFile.semiTransparentBackground,
-            justifyContent: 'center',
-            height: 56,
-            width: 56,
-            borderRadius: 32,
-            margin: 8,
-            bottom: 20,
-            left: 0
-        },
+       
         bottomBarNextParallelView: {
             position: 'absolute',
             backgroundColor: colorFile.semiTransparentBackground,
@@ -111,16 +101,27 @@ export const styles = (colorFile, sizeFile) => {
             bottom: 36,
             right: 4
         },
-        bottomBarNextView: {
+        bottomBarPosition:{
+            position: 'absolute',
+            backgroundColor: colorFile.semiTransparentBackground,
+            justifyContent: 'center',
             height: 56,
             width: 56,
             borderRadius: 32,
             margin: 8,
-            bottom: 20,
-            right: 0,
-            position: 'absolute',
-            backgroundColor: colorFile.semiTransparentBackground,
-            justifyContent: 'center'
+        },
+        showBottomBar:{
+            bottom:60
+        },
+        hideBottomBar:{
+            bottom:20
+        },
+        bottomBarPrevView: {
+            left: 0
+        },
+        bottomBarNextView: {
+            right: 0
+           
         },
         audiocontainer: {
             flexDirection: 'row',
@@ -147,7 +148,6 @@ export const styles = (colorFile, sizeFile) => {
             borderRadius: 32,
             margin: 8,
             position: 'absolute',
-            bottom: 20,
             backgroundColor: colorFile.semiTransparentBackground,
             justifyContent: 'center'
         },
