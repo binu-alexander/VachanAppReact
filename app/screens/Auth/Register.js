@@ -42,9 +42,9 @@ class Register extends Component {
           .auth()
           .createUserWithEmailAndPassword(this.state.email, this.state.password)
           .then(async (res) => {
-
-            this.props.userInfo({ email: res.user._user.email, uid: res.user._user.uid, userName: res.user._user.displayName, phoneNumber: null, photo: null })
-
+            this.setState({ isLoading: false })
+            // this.props.userInfo({ email: res.user._user.email, uid: res.user._user.uid, userName: res.user._user.displayName, phoneNumber: null, photo: null })
+            this.props.navigation.navigate("Bible")
           })
           .catch(error => {
             if (error.code === 'auth/weak-password') {
@@ -72,7 +72,7 @@ class Register extends Component {
     if (this.state.isLoading) {
       return (
         <View style={this.styles.preloader}>
-          <ActivityIndicator size="large" color={Blue_Color} />
+          <ActivityIndicator size="large" color={Color.Blue_Color} />
         </View>
       )
     }

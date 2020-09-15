@@ -9,8 +9,7 @@ const ChapterNdAudio = ({
     currentVisibleChapter, navigation
     , queryBookFromAPI, bookId, status,showBottomBar,
     totalChapters, languageCode, versionCode,
-
-}) => (
+    })=>(
         <View style={{ justifyContent: (currentVisibleChapter != 1 && currentVisibleChapter == currentVisibleChapter != totalChapters) ? 'center' : 'space-around', alignItems: 'center' }}>
             {
                 currentVisibleChapter == 1
