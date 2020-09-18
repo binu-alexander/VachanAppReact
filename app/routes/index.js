@@ -10,6 +10,7 @@ import History from '../screens/History/'
 
 import Commentary from '../screens/StudyHelp/Commentary/'
 import Dictionary from '../screens/StudyHelp/Dictionary/'
+import DictionaryWords from '../screens/StudyHelp/Dictionary/DictionaryWords'
 import Infographics from '../screens/StudyHelp/InfoGraphics/';
 import InfographicsImage from '../screens/StudyHelp/InfoGraphics/infographicsImage';
 
@@ -58,6 +59,7 @@ const NavStack = createStackNavigator(
       })
     },
     Dictionary: { screen: Dictionary },
+    DictionaryWords:{screen:DictionaryWords},
     About: { screen: About },
     Settings: { screen: Settings },
     History: { screen: History },
@@ -68,7 +70,6 @@ const NavStack = createStackNavigator(
     Login: { screen: Login },
     Video: { screen: Video },
     PlayVideo: { screen: PlayVideo },
-
     Register: {
       screen: Register,
       navigationOptions: () => ({

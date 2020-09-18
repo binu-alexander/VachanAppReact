@@ -1,159 +1,77 @@
-import React, { Component } from 'react';
-import {
-  TouchableOpacity,
-  ScrollView,
-  Modal,
-  Text,
-  Alert,
-  View
-} from 'react-native';
-import Spinner from 'react-native-loading-spinner-overlay';
-import { connect } from 'react-redux'
-import { Accordion, Body, Header, Right, Title, Button } from 'native-base'
-import { fetchDictionaryContent } from '../../../store/action/index'
-import Icon from 'react-native-vector-icons/MaterialIcons';
+
+
+import React from 'react';
+import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { Card, CardItem } from 'native-base'
 import APIFetch from '../../../utils/APIFetch'
-import { styles } from './styles'
-import Color from '../../../utils/colorConstants'
-import ReloadButton from '../../../components/ReloadButton'
+import Icon from 'react-native-vector-icons/MaterialIcons'
+import { connect } from 'react-redux'
+import { styles } from './styles.js'
 
-class Dictionary extends Component {
-
+class Infographics extends React.Component {
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerTitle:'Dictionary',
+    }
+  }
   constructor(props) {
-    super(props)
-
+    super(props);
     this.state = {
-      modalVisibleDictionary: false,
-      wordDescription: [],
+      dictionaries: [],
+      isLoading: false
     }
-    this.styles = styles(this.props.colorFile, this.props.sizeFile)
-    this.alertPresent = false
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
 
   }
-  componentDidMount() {
-    this.props.fetchDictionaryContent({ parallelContentSourceId: this.props.parallelLanguage.sourceId })
-  }
-  fetchWord = async (word) => {
-    try {
-      var wordDescription = await APIFetch.fetchWord(this.props.parallelLanguage.sourceId, word.wordId)
-      this.setState({
-        wordDescription: wordDescription.meaning,
-        modalVisibleDictionary: true
-      })
-    }
-    catch (error) {
-      this.setState({
-        wordDescription: [],
-        modalVisibleDictionary: false
-      })
-    }
-
-  }
-  _renderHeader = (item, expanded) => {
-    return (
-      <View style={this.styles.headerStyle}>
-        <Text style={this.styles.headerText} >
-          {" "}{item.letter}
-        </Text>
-        <Icon style={this.styles.iconStyle} name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up"} size={24} />
-
-      </View>
-    )
-  }
-  _renderContent = (item) => {
-    return (
-      item.words.map(w =>
-        <TouchableOpacity
-          style={{
-            padding: 10,
-          }}
-          onPress={() => this.fetchWord(w)}
-        >
-          <Text style={this.styles.textDescription}>{w.word}</Text>
-        </TouchableOpacity>
-      )
-    )
-  }
-
-  errorMessage() {
-    if (!this.alertPresent) {
-      this.alertPresent = true;
-      if (this.props.dictionaryContent.length === 0) {
-        Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
-        this.props.fetchDictionaryContent({ parallelContentSourceId: this.props.parallelLanguage.sourceId })
-      } else {
-        this.alertPresent = false;
+  async componentDidMount() {
+    const apiData = await APIFetch.getDictionaries()
+    if (apiData){
+      // console.log(" api data dictionary ",apiData,apiData.language,this.props.languageName.toLowerCase())
+      for (var i = 0; i < apiData.length; i++) {
+      console.log(" api data dictionary ",apiData,apiData[i].language,this.props.languageName.toLowerCase())
+        if (apiData[i].language.toLowerCase() === this.props.languageName.toLowerCase()) {
+            this.setState({dictionaries:apiData[i].dictionaries})
+        }
       }
     }
   }
-  updateData = () => {
-    if(this.props.error){
-    this.errorMessage()
-    }
-    else{
-      return
-    }
+  gotoDicionary = (sourceId) => {
+    this.props.navigation.navigate("DictionaryWords",{dictionarySourceId:sourceId} )
   }
-
-
-  render() {
+  renderItem = ({ item }) => {
     return (
-      <View style={this.styles.container}>
-        <Header style={{ backgroundColor: Color.Blue_Color, height: 40, borderLeftWidth: 0.5, borderLeftColor: Color.White }} >
-          <Body>
-            <Title style={{ fontSize: 16 }}>{this.props.parallelLanguage.versionCode}</Title>
-          </Body>
-          <Right>
-            <Button transparent onPress={() => this.props.toggleParallelView(false)}>
-              <Icon name='cancel' color={Color.White} size={20} />
-            </Button>
-          </Right>
-        </Header>
-
-        {this.state.isLoading &&
-          <Spinner
-            visible={true}
-            textContent={'Loading...'}
-          />}
+      <View>
+        <Card>
+        <CardItem style={this.styles.cardItemStyle}>
+          <TouchableOpacity style={this.styles.infoView} onPress={() => this.gotoDicionary(item.sourceId)}>
+            <Text style={this.styles.dictionaryText}>{item.name}</Text>
+          </TouchableOpacity>
+        </CardItem>
+      </Card>
+      </View>
+    )
+  }
+  render() {
+    console.log("dictionaries ",this.state.dictionaries)
+    return (
+      <View style={[this.styles.container,{padding:8}]}>
         {
-          (this.props.error) ?
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <ReloadButton
-                styles={this.styles}
-                reloadFunction={this.updateData}
-              />
-            </View>
-            :
-            <View>
-              <Accordion
-                dataArray={this.props.dictionaryContent}
-                animation={true}
-                expanded={true}
-                renderHeader={this._renderHeader}
-                renderContent={this._renderContent}
-              />
-              <Modal
-                animated={true}
-                transparent={true}
-                visible={this.state.modalVisibleDictionary}>
-                <View style={this.styles.dictionaryModalView}>
-                  <View style={{ width: '70%', height: '70%', position: 'absolute', zIndex: 0, }}>
-                    <Icon
-                      name='cancel' onPress={() => this.setState({ modalVisibleDictionary: false })}
-                      size={28} color={Color.Blue_Color} style={{ position: 'absolute', right: 0, zIndex: 1 }}
-                    />
-                    <ScrollView style={this.styles.scrollViewModal}>
-                      <Text style={this.styles.textString}>Description: {this.state.wordDescription.definition}</Text>
-                      <Text style={this.styles.textString}>Keyword: {this.state.wordDescription.keyword}</Text>
-                      {this.state.wordDescription.seeAlso != '' && <Text style={this.styles.textString}>See Also: {this.state.wordDescription.seeAlso}</Text>}
-                      <View style={{ marginBottom: 8 }} />
-                    </ScrollView>
-                  </View>
+          this.state.isLoading ?
+            <ActivityIndicator animate={true} style={{ justifyContent: 'center', alignSelf: 'center' }} /> :
+            <FlatList
+              data={this.state.dictionaries}
+              contentContainerStyle={this.state.dictionaries.length === 0 && this.styles.centerEmptySet}
+              renderItem={this.renderItem}
+              ListEmptyComponent={
+                <View style={this.styles.emptyMessageContainer}>
+                  <Icon name="book" style={this.styles.emptyMessageIcon} />
+                  <Text style={this.styles.messageEmpty}>
+                    No Dictionary for {this.props.languageName}
+                  </Text>
                 </View>
-              </Modal>
-            </View>
+              }
+            />
         }
-
       </View>
     )
   }
@@ -162,24 +80,14 @@ class Dictionary extends Component {
 
 const mapStateToProps = state => {
   return {
-    language: state.updateVersion.language,
-    versionCode: state.updateVersion.versionCode,
-    chapterNumber: state.updateVersion.chapterNumber,
-    totalChapters: state.updateVersion.totalChapters,
-    bookName: state.updateVersion.bookName,
-    bookId: state.updateVersion.bookId,
+    languageCode: state.updateVersion.languageCode,
+    languageName: state.updateVersion.language,
+    books: state.versionFetch.data,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-    contentType: state.updateVersion.contentType,
-    dictionaryContent: state.dictionaryFetch.dictionaryContent,
-    error: state.dictionaryFetch.error,
   }
+}
 
-}
-const mapDispatchToProps = dispatch => {
-  return {
-    fetchDictionaryContent: (payload) => dispatch(fetchDictionaryContent(payload)),
-    fetchWordId: (payload) => dispatch(fetchWordId(payload)),
-  }
-}
-export default connect(mapStateToProps, mapDispatchToProps)(Dictionary)
+export default connect(mapStateToProps, null)(Infographics)
+
+

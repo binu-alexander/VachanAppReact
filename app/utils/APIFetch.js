@@ -123,6 +123,22 @@ var APIFetch = {
             return error;
         }
     },
+    async getDictionaries() {
+        try {
+            return await fetch(API_BASE_URL +"dictionaries", {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(ApiUtils.checkStatus)
+                .then((response) => response.json())
+                .catch(e =>  e)
+        } catch (error) {
+            return error;
+        }
+    },
 
     async fetchWord(sourceId, wordId) {
         try {

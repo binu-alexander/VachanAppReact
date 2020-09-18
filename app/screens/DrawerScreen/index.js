@@ -34,7 +34,7 @@ class DrawerScreen extends Component {
       { icon: 'border-color', pressIcon: 'Highlights', text: 'Highlights' },
       { icon: 'note', pressIcon: 'Notes', text: 'Notes' },
       { icon: 'video-library', pressIcon: 'Video', text: 'Video' },
-      { icon: 'image', pressIcon: 'Infographics', text: 'Infographics' },
+      { icon: 'book', pressIcon: 'Dictionary', text: 'Dictionary' },
       { icon: 'history', pressIcon: 'History', text: 'History' },
       { icon: 'search', pressIcon: 'Search', text: 'Search' },
       { icon: 'settings', pressIcon: 'Settings', text: 'Settings' },

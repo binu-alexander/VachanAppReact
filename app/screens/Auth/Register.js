@@ -43,7 +43,6 @@ class Register extends Component {
           .createUserWithEmailAndPassword(this.state.email, this.state.password)
           .then(async (res) => {
             this.setState({ isLoading: false })
-            // this.props.userInfo({ email: res.user._user.email, uid: res.user._user.uid, userName: res.user._user.displayName, phoneNumber: null, photo: null })
             this.props.navigation.navigate("Bible")
           })
           .catch(error => {

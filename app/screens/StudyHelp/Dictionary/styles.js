@@ -5,7 +5,8 @@ export const styles =(colorFile, sizeFile) =>{
     return StyleSheet.create({
         container:{
         flex:1,
-        backgroundColor:colorFile.backgroundColor
+        backgroundColor:colorFile.backgroundColor,
+        // padding:8
         },
         iconStyle:{
             fontSize:28,
@@ -74,6 +75,35 @@ export const styles =(colorFile, sizeFile) =>{
             margin:16,
             color:colorFile.iconColor,
             alignSelf:'center'
+        },
+        centerEmptySet: { 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            height: '100%' 
+        },
+        emptyMessageContainer:{
+            flex:1,
+            alignItems:'center',
+            flexDirection:'column',
+            justifyContent:'center'
+        },
+        emptyMessageIcon:{
+            fontSize:sizeFile.emptyIconSize,
+            margin:16,
+            color:colorFile.iconColor,
+        },
+        messageEmpty:{
+            fontSize:sizeFile.titleText,
+            color:colorFile.textColor,
+        },
+        cardItemStyle:{
+            paddingTop:16,
+            paddingBottom:16,
+            backgroundColor:colorFile.backgroundColor
+         },
+         dictionaryText:{
+            fontSize:sizeFile.titleText,
+            color:colorFile.iconColor
         },
     })
 }
