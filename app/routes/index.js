@@ -10,6 +10,9 @@ import History from '../screens/History/'
 
 import Commentary from '../screens/StudyHelp/Commentary/'
 import Dictionary from '../screens/StudyHelp/Dictionary/'
+import Infographics from '../screens/StudyHelp/InfoGraphics/';
+import InfographicsImage from '../screens/StudyHelp/InfoGraphics/infographicsImage';
+
 
 import Reset from '../screens/Auth/Reset'
 import Register from '../screens/Auth/Register'
@@ -23,7 +26,6 @@ import LanguageList from '../screens/LanguageList'
 
 import SelectionTab from '../screens/ReferenceSelection/'
 import BookMarks from '../screens/Bookmarks/';
-import Infographics from '../screens/StudyHelp/InfoGraphics/';
 import Color from '../utils/colorConstants'
 import Video from '../screens/Video'
 import PlayVideo from '../screens/Video/PlayVideo'
@@ -62,6 +64,7 @@ const NavStack = createStackNavigator(
     BookMarks: { screen: BookMarks },
     Highlights: { screen: Highlights },
     Infographics: { screen: Infographics },
+    InfographicsImage:{ screen: InfographicsImage },
     Login: { screen: Login },
     Video: { screen: Video },
     PlayVideo: { screen: PlayVideo },

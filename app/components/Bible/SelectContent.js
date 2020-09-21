@@ -56,26 +56,15 @@ class SelectContent extends Component {
         <TouchableOpacity
           style={this.styles.selectionInnerContent}
           onPress={() => {
-            this.props.navigation.setParams({ modalVisible: false, visibleParallelView: true });
+            this.props.navigation.setParams({ modalVisible: false, visibleParallelView: true,
+              parallelLanguage:{languageName:item.languageName,versionCode:v.versionCode,sourceId:v.sourceId},
+              parallelMetaData:v.metaData[0]
+            });
             this.props.updateContentType({
-              parallelContentType: contentType, parallelContentLanguage: item.languageName,
-              parallelContentLanguageCode: item.languageCode, parallelContentVersion: v.versionName,
-              parallelContentVersionCode: v.versionCode, parallelContentSourceId: v.sourceId
-            })
-            this.props.fetchVersionBooks({
-              language: item.languageName, versionCode: v.versionCode,
-              downloaded: false, sourceId: v.sourceId
-            })
-            this.props.parallelMetadta({
-              pCopyrightHolder: v.metaData[0].copyrightHolder,
-              pDescription: v.metaData[0].description,
-              pLicense: v.metaData[0].license,
-              pSource: v.metaData[0].source,
-              pTechnologyPartner: v.metaData[0].technologyPartner,
-              pRevision: v.metaData[0].revision,
-              pVersionNameGL: v.metaData[0].versionNameGL
+              parallelContentType: contentType
             })
           }}
+
         >
           <Text style={this.styles.selectionHeaderModal}>{v.versionName}</Text>
           <Text style={this.styles.selectionHeaderModal}>{v.versionCode}</Text>
@@ -146,11 +135,11 @@ class SelectContent extends Component {
           </View>
         </Modal>
 
-        <TouchableOpacity onPress={this.onPressModal} style={[this.props.navStyles.touchableStyleRight, { flexDirection: 'row' }]}>
+        <TouchableOpacity onPress={this.onPressModal} style={this.props.navStyles.touchableStyleRight}>
           <MaterialCommunityIcons
             name='book-open-variant'
             color={Color.White}
-            size={24}
+            size={26}
           />
         </TouchableOpacity>
       </View>

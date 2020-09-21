@@ -1,129 +1,130 @@
 
-import React, { Component } from 'react';
-import { StyleSheet, Image, TouchableOpacity, Text, View } from 'react-native';
-import { connect } from 'react-redux'
-import { updateAudio, updateContentType } from '../../../store/action/'
-import { NavigationEvents } from 'react-navigation';
-import Color from '../../../utils/colorConstants'
+
+
+
+import React from 'react';
+import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { Card, CardItem } from 'native-base'
+import APIFetch from '../../../utils/APIFetch'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import { connect } from 'react-redux'
+import { bookStyle } from './styles.js'
+import { Toast } from 'native-base'
 
-
-class Infographics extends Component {
-
+class Infographics extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const { params = {} } = navigation.state
     return {
-      headerTitle: (
-        <View style={{ flex: 1, marginRight: 10 }}>
-          <TouchableOpacity style={styles.touchableStyleLeft}
-          >
-            <Text style={styles.headerTextStyle}>{params.file} </Text>
-            <Icon name="arrow-drop-down" color={Color.White} size={24} />
-          </TouchableOpacity>
-        </View>
-      ),
-      headerTintColor: Color.White,
+      headerTitle: 'Infographics',
+
     }
   }
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
-      GridViewItems: [],
-      Height_Layout: '',
-      Width_Layout: ''
+      bookId: this.props.navigation.state.params ? this.props.navigation.state.params.bookId : null,
+      bookName: this.props.navigation.state.params ? this.props.navigation.state.params.bookName : null,
+      infographics: [],
+      url: null,
+      isLoading: false
+    }
+    this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
+
+  }
+  async componentDidMount() {
+    const apiData = await APIFetch.getInfographics(this.props.languageCode)
+    let infographicsBook = []
+    if (apiData) {
+      let found = false
+      for (var i = 0; i < apiData.books.length; i++) {
+        if (this.state.bookId) {
+          if (apiData.books[i].bookCode == this.state.bookId) {
+            found = true
+            infographicsBook.push(apiData.books[i])
+          }
+        }
+      }
+      if (found) {
+        this.setState({ infographics: infographicsBook, url: apiData.url })
+      } else {
+        if (this.state.bookId){
+          Toast.show({
+            text: 'Infographics for '+this.state.bookName +'is unavaialble. You can checkout other books',
+            buttonText: "Okay",
+            duration: 3000
+          })
+        }
+        this.setState({ infographics: apiData.books, url: apiData.url })
+      }
     }
   }
-  getImage = () => {
-    this.props.navigation.setParams({ file: this.props.file })
+  gotoImage = (item) => {
+    this.props.navigation.navigate("InfographicsImage", { url: this.state.url, fileName: item.fileName })
   }
-  componentDidMount() {
-    this.props.navigation.setParams({
-      bookName: this.props.bookName,
-      currentChapter: this.props.chapterNumber,
-      languageName: this.props.language,
-      versionCode: this.props.version,
-      updateContentType: this.props.updateContentType('Infographics'),
-      file: this.props.file
-    })
-  }
-
-  render() {
+  renderItem = ({ item }) => {
+    var bookName = null
+    if (this.props.books) {
+      for (var i = 0; i <= this.props.books.length - 1; i++) {
+        var bId = this.props.books[i].bookId
+        if (bId == item.bookCode) {
+          bookName = this.props.books[i].bookName
+        }
+      }
+    } else {
+      this.setState({ bookmarksList: [] })
+      return
+    }
+    var value = item.infographics.map(e =>
+      <Card>
+        <CardItem style={this.styles.cardItemStyle} >
+          <TouchableOpacity style={this.styles.infoView} onPress={() => this.gotoImage(e)}>
+            <Text style={this.styles.infoText}>{bookName}: {e.title}</Text>
+          </TouchableOpacity>
+        </CardItem>
+      </Card>
+    )
     return (
-      <View style={{ flex: 1 }}>
-        <NavigationEvents
-          onWillFocus={() => this.props.navigation.setParams({ file: this.props.file })}
-        />
-        <Image style={{ height: "98%", width: '98%' }} source={{ uri: this.props.filePath }} />
+      <View>
+        {bookName && value}
       </View>
     )
   }
-
+  render() {
+    return (
+      <View style={this.styles.container}>
+        {
+          this.state.isLoading ?
+            <ActivityIndicator animate={true} style={{ justifyContent: 'center', alignSelf: 'center' }} /> :
+            <FlatList
+              data={this.state.infographics}
+              contentContainerStyle={this.state.infographics.length === 0 && this.styles.centerEmptySet}
+              renderItem={this.renderItem}
+              ListEmptyComponent={
+                <View style={this.styles.emptyMessageContainer}>
+                  <Icon name="image" style={this.styles.emptyMessageIcon} />
+                  <Text style={this.styles.messageEmpty}>
+                    No Infographics for {this.props.languageName}
+                  </Text>
+                </View>
+              }
+            />
+        }
+      </View>
+    )
+  }
 }
 
-const styles = StyleSheet.create({
-  MainContainer: {
-    flex: 1,
-  },
-  GridViewBlockStyle: {
-    justifyContent: 'center',
-    flex: 1,
-    alignItems: 'center',
-    height: 220,
-    margin: 5,
-    backgroundColor: '#00BCD4'
 
-  },
-  GridViewInsideTextItemStyle: {
-    color: Color.White,
-    padding: 4,
-    fontSize: 18,
-    justifyContent: 'center',
-  },
-  headerLeftStyle: {
-    flexDirection: 'row',
-    flex: 1,
-  },
-  headerRightStyle: {
-    flexDirection: 'row',
-    flex: 1,
-  },
-  touchableStyleRight: {
-    flexDirection: "row",
-    marginRight: 10
-  },
-  touchableStyleLeft: {
-    flexDirection: "row",
-    marginLeft: 10,
-  },
-  headerTextStyle: {
-    fontSize: 16,
-    color: Color.White,
-    textAlign: 'center'
-  },
-});
 const mapStateToProps = state => {
   return {
-    language: state.updateVersion.language,
-    contentType: state.updateVersion.contentType,
-
-    chapterNumber: state.updateVersion.chapterNumber,
-    totalChapters: state.updateVersion.totalChapters,
-    bookName: state.updateVersion.bookName,
-    bookId: state.updateVersion.bookId,
-
+    languageCode: state.updateVersion.languageCode,
+    languageName: state.updateVersion.language,
+    books: state.versionFetch.data,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-
-    filePath: state.infographics.url,
-    file: state.infographics.fileName
-
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    updateAudio: (audio) => dispatch(updateAudio(audio)),
-    updateContentType: (content) => dispatch(updateContentType(content)),
-  }
-}
-export default connect(mapStateToProps, mapDispatchToProps)(Infographics)
+
+export default connect(mapStateToProps, null)(Infographics)
+

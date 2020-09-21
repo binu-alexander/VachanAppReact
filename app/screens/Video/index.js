@@ -11,6 +11,7 @@ import APIFetch from '../../utils/APIFetch'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { bookStyle } from './styles.js'
 import { Card, CardItem } from 'native-base'
+import {Toast } from 'native-base'
 
 
 class Video extends Component {
@@ -21,6 +22,8 @@ class Video extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      bookId: this.props.navigation.state.params ? this.props.navigation.state.params.bookId : null,
+      bookName: this.props.navigation.state.params ? this.props.navigation.state.params.bookName : null,
       videos: [],
       isLoading: false
     }
@@ -28,20 +31,36 @@ class Video extends Component {
   }
   async fetchVideo() {
     const videos = await APIFetch.fetchVideo(this.props.languageCode)
-    videoBook = []
-    this.setState({ videos: videos[0].books })
+    let videoBook = []
+    let videoAll = []
+    let found = false
     for (var key in videos[0].books) {
-      videoBook.push({ bookId: key, details: videos[0].books[key] })
-      console.log(" VIDEO KEY ", key, videos[0].books[key])
+      if (this.state.bookId != null){
+        if(key == this.state.bookId){
+          found = true
+          videoBook.push({ bookId: key, details: videos[0].books[key] })
+        }
+      } else {
+        videoAll.push({ bookId: key, details: videos[0].books[key] })
+      }
     }
-    this.setState({ videos: videoBook })
+    if (found) {
+      this.setState({ videos: videoBook })
+    } else {
+      if(this.state.bookId){
+      Toast.show({
+        text: 'Video for '+this.state.bookName+' is unavaialble. You can checkout other books',
+        buttonText: "Okay",
+        duration: 3000
+      })
+      }
+        this.setState({ videos: videoAll })
+    }
+
   }
   playVideo(val) {
     const videoId = val.url.replace("https://youtu.be/", "");
     this.props.navigation.navigate("PlayVideo", { url: videoId, title: val.title, description: val.description, theme: val.theme })
-  }
-  onChangeState = (val) => {
-    console.log("Value on change state ", val)
   }
   componentDidMount() {
     this.fetchVideo()
@@ -60,13 +79,13 @@ class Video extends Component {
       return
     }
     var value = item.details.map(e =>
-      <TouchableOpacity style={this.styles.videoView} onPress={() => this.playVideo(e)}>
-        <Card>
-          <CardItem>
+      <Card >
+        <CardItem style={this.styles.cardItemStyle} > 
+          <TouchableOpacity style={this.styles.videoView} onPress={() => this.playVideo(e)}>
             <Text style={this.styles.videoText}>{bookName} : {e.title}</Text>
-          </CardItem>
-        </Card>
-      </TouchableOpacity>
+          </TouchableOpacity>
+        </CardItem>
+      </Card>
     )
     return (
       <View>
@@ -90,7 +109,7 @@ class Video extends Component {
                   <Icon name="video-library" style={this.styles.emptyMessageIcon} />
                   <Text
                     style={this.styles.messageEmpty}>
-                    No Video for this language
+                    No Video for {this.props.languageName}
                   </Text>
                 </View>
               }
@@ -104,6 +123,7 @@ class Video extends Component {
 const mapStateToProps = state => {
   return {
     languageCode: state.updateVersion.languageCode,
+    languageName: state.updateVersion.language,
     books: state.versionFetch.data,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,

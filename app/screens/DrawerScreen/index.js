@@ -5,10 +5,7 @@ import { styles } from './styles.js';
 import { connect } from 'react-redux'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
 import { AsyncStorageConstants } from '../../utils/AsyncStorageConstants'
-
 import { fetchVersionBooks } from '../../store/action/'
-
-
 
 class DrawerScreen extends Component {
   constructor(props) {
@@ -37,6 +34,7 @@ class DrawerScreen extends Component {
       { icon: 'border-color', pressIcon: 'Highlights', text: 'Highlights' },
       { icon: 'note', pressIcon: 'Notes', text: 'Notes' },
       { icon: 'video-library', pressIcon: 'Video', text: 'Video' },
+      { icon: 'image', pressIcon: 'Infographics', text: 'Infographics' },
       { icon: 'history', pressIcon: 'History', text: 'History' },
       { icon: 'search', pressIcon: 'Search', text: 'Search' },
       { icon: 'settings', pressIcon: 'Settings', text: 'Settings' },
@@ -48,7 +46,7 @@ class DrawerScreen extends Component {
       <View style={this.styles.container}>
         <ScrollView style={this.styles.container}>
           <View style={this.styles.headerContainer}>
-            <ImageBackground source={require('../../assets/headerbook.jpeg')} style={{ flex: 1, width: 280, }} >
+            <ImageBackground source={require('../../assets/headerbook.jpg')} style={{ flex: 1, width: 280, }} >
               <View style={{ position: 'absolute', bottom: 0, margin: 8 }}>
                 <Image
                   style={this.styles.imageStyle}

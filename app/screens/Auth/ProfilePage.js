@@ -37,8 +37,8 @@ class ProfilePage extends Component {
         this.setState({ isLoading: true })
       }
     })
-
   }
+  
   render() {
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
     return (

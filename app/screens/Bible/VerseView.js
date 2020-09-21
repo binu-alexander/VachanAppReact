@@ -57,12 +57,10 @@ class VerseView extends Component {
     }
   }
   goToNote = (verse_num) => {
-    this.setState({ unableSelection: true, })
     this.props.navigation.navigate("Notes", {
       chapterNumber: this.props.chapterNumber,
       bookId: this.props.bookId, verseNumber: verse_num
     })
-
   }
 
   render() {
@@ -70,7 +68,6 @@ class VerseView extends Component {
     let isSelect = this.has(this.props.selectedReferences, obj)
     let isHighlight = this.isHighlight()
     let isNoted = this.isNoted()
-    console.log("unable select ", this.state.unableSelection)
     if (this.props.verseData.number == 1) {
       return (
         <Text style={this.props.styles.textStyle}>
@@ -87,12 +84,12 @@ class VerseView extends Component {
               {this.props.chapterNumber}{" "}
             </Text>
             <Text style={[isSelect && isHighlight
-              ? (this.state.unableSelection ? this.props.styles.unableSelectionHighlight : this.props.styles.verseTextSelectedHighlighted)
+              ?  this.props.styles.verseTextSelectedHighlighted
               : !isSelect && !isHighlight
                 ? this.props.styles.verseTextNotSelectedNotHighlighted
                 : !isSelect && isHighlight
                   ? this.props.styles.verseTextNotSelectedHighlighted
-                  : (this.state.unableSelection ? this.props.styles.verseTextNotSelected : this.props.styles.verseTextSelectedNotHighlighted)
+                  :  this.props.styles.verseTextSelectedNotHighlighted
             ]}
             >
               {getResultText(this.props.verseData.text)}
@@ -116,12 +113,12 @@ class VerseView extends Component {
             {this.props.verseData.number}{" "}
           </Text>
           <Text style={[isSelect && isHighlight
-            ? (this.state.unableSelection ? this.props.styles.unableSelectionHighlight : this.props.styles.verseTextSelectedHighlighted)
+            ? this.props.styles.verseTextSelectedHighlighted
             : !isSelect && !isHighlight
               ? this.props.styles.verseTextNotSelectedNotHighlighted
               : !isSelect && isHighlight
                 ? this.props.styles.verseTextNotSelectedHighlighted
-                : (this.state.unableSelection ? this.props.styles.verseTextNotSelected : this.props.styles.verseTextSelectedNotHighlighted)
+                :this.props.styles.verseTextSelectedNotHighlighted
           ]}
           >
             {getResultText(this.props.verseData.text)}

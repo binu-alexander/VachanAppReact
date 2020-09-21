@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-
-import VideoPlayer from '../../components/Video/VideoPlayer';
+import YoutubePlayer from 'react-native-youtube-iframe';
 import { bookStyle } from './styles.js'
 import {
     View,
-    Text
+    Text,
+    ActivityIndicator
 } from 'react-native';
 import { connect } from 'react-redux'
 
@@ -12,33 +12,61 @@ class PlayVideo extends Component {
     static navigationOptions = ({ navigation }) => {
         const { params = {} } = navigation.state
         return {
-            headerTitle: params.title
+            headerTitle: params.theme
         }
     }
 
     constructor(props) {
         super(props);
         this.state = {
-            url: this.props.navigation.state.params.url,
-            title: this.props.navigation.state.params.title,
-            description: this.props.navigation.state.params.description,
-            theme: this.props.navigation.state.params.theme
+            url: this.props.navigation.state.params ? this.props.navigation.state.params.url : null,
+            title: this.props.navigation.state.params ? this.props.navigation.state.params.title : null,
+            description:this.props.navigation.state.params ?  this.props.navigation.state.params.description: null,
+            theme:this.props.navigation.state.params ? this.props.navigation.state.params.theme : null,
+            playing:true,
+            isLoading:false
         }
         this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
 
     }
     componentDidMount() {
         this.props.navigation.setParams({
-            title: this.state.theme
+            theme: this.state.theme
         })
+        this.onChangeState()
+    }
+    onError = () => alert('Oh! ', error);
+    onReady(){
+      this.setState({playing:true})
+    }
+    onChangeState(event){
+      if(event == undefined){
+        this.setState({isLoading:true})
+      }else{
+        this.setState({isLoading:false})
+      }
     }
     render() {
         return (
-            <View style={{ flex: 1 }}>
+            <View style={this.styles.container}>
                 <Text style={this.styles.title}>
                     {this.state.title}
                 </Text>
-                <VideoPlayer url={this.state.url} description={this.state.description} styles={this.styles} />
+                {this.state.isLoading ? <View style={{justifyContent:'center',alignItems:'center'}}><ActivityIndicator animate={true} size={32} /></View>: null}
+                <YoutubePlayer
+                    ref={'playerRef'}
+                    height={'36%'}
+                    width={'100%'}
+                    videoId={this.state.url}
+                    play={this.state.playing}
+                    onChangeState={(event) =>this.onChangeState(event)}
+                    onReady={() => this.onReady}
+                    onError={this.onError}
+                    onPlaybackQualityChange={q => console.log("QUALITY CHANGE ",q)}
+                    volume={50}
+                    playbackRate={1}
+                    />
+                {/* <VideoPlayer url={this.state.url} description={this.state.description} styles={this.styles} /> */}
                 <Text style={this.styles.description}>
                     {this.state.description}
                 </Text>

@@ -112,6 +112,7 @@ class EditNote extends Component {
     this.props.navigation.setParams({ handleAdd: this.saveNote })
     this.props.navigation.setParams({ handleBack: this.onBack })
   }
+  
   openReference = (index, value) => {
     if (this.state.contentBody !== this.props.navigation.state.params.contentBody
       || this.state.bcvRef.verses.length !== this.props.navigation.state.params.bcvRef.verses.length

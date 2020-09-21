@@ -14,33 +14,57 @@ import { styles } from './styles'
 import Color from '../../../utils/colorConstants'
 import ReloadButton from '../../../components/ReloadButton';
 import HTML from 'react-native-render-html';
-
+import APIFetch from '../../../utils/APIFetch'
 
 class Commentary extends Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      commentary: []
+      commentary: [],
+      error:null,
+      bookName:this.props.bookName,
     }
     this.styles = styles(this.props.colorFile, this.props.sizeFile)
     this.alertPresent = false
   }
-  componentDidMount() {
-    this.props.fetchCommentaryContent({ parallelContentSourceId: this.props.parallelContentSourceId, bookId: this.props.bookId, chapter: this.props.currentVisibleChapter })
+  // fetch bookname in perticular language of commenatry
+  async fetchBookName(){
+    try {
+          let bookName
+          let response = await APIFetch.fetchBookInLanguage()
+          for (var i = 0; i <= response.length-1; i++) {
+              if (this.props.parallelLanguage.languageName.toLowerCase() == response[i].language.name) {
+                  for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
+                      if (response[i].bookNames[j].book_code == this.props.bookId) {
+                          bookName = response[i].bookNames[j].short
+                      }
+                  }
+              }
+          }
+          this.setState({ bookName: bookName })
+  } catch (error) {
+      
+      this.setState({ error: error });
   }
-  componentDidUpdate(prevProps) {
+  }
+  componentDidMount() {
+    this.props.fetchCommentaryContent({ parallelContentSourceId: this.props.parallelLanguage.sourceId, bookId: this.props.bookId, chapter: this.props.currentVisibleChapter })
+    this.fetchBookName()
+  }
+  componentDidUpdate(prevProps,prevState) {
     if (this.props.bookId != prevProps.bookId || prevProps.currentVisibleChapter != this.props.currentVisibleChapter) {
-      this.props.fetchCommentaryContent({ parallelContentSourceId: this.props.parallelContentSourceId, bookId: this.props.bookId, chapter: this.props.currentVisibleChapter })
+      this.props.fetchCommentaryContent({ parallelContentSourceId: this.props.parallelLanguage.sourceId, bookId:this.props.bookId, chapter: this.props.currentVisibleChapter })
+      this.fetchBookName()
     }
   }
 
   errorMessage() {
     if (!this.alertPresent) {
       this.alertPresent = true;
-      if (this.props.error) {
+      if (this.props.error || this.state.error) {
         Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
-        this.props.fetchCommentaryContent({ parallelContentSourceId: this.props.parallelContentSourceId, bookId: this.props.bookId, chapter: this.props.currentVisibleChapter })
+        this.props.fetchCommentaryContent({ parallelContentSourceId: this.props.parallelLanguage.sourceId, bookId: this.props.bookId, chapter: this.props.currentVisibleChapter })
       } else {
         this.alertPresent = false;
       }
@@ -49,15 +73,7 @@ class Commentary extends Component {
   updateData = () => {
     this.errorMessage()
   }
-  componentWillUnmount() {
-    this.props.fetchVersionBooks({
-      language: this.props.language,
-      versionCode: this.props.versionCode,
-      downloaded: this.props.downloaded, sourceId: this.props.sourceId
-    })
-  }
   renderItem=({ item })=> {
-    console.log("ITEM ", item)
     return (
       <View style={{ padding: 10 }}>
         {item.verse &&
@@ -86,17 +102,11 @@ class Commentary extends Component {
 
   }
   render() {
-    const bookId = this.props.bookId
-    const value = this.props.books.length != 0 && this.props.books.filter(function (entry) {
-      return entry.bookId == bookId
-    })
-    const bookName = value ? value[0].bookName : this.props.bookName
-
     return (
       <View style={this.styles.container}>
-        <Header style={{ height: 40, borderLeftWidth: 0.5, borderLeftColor: Color.White }} >
+        <Header style={{backgroundColor: Color.Blue_Color, height: 40, borderLeftWidth: 0.5, borderLeftColor: Color.White }} >
           <Body>
-            <Title style={{ fontSize: 16 }}>{this.props.parallelContentVersionCode}</Title>
+            <Title style={{ fontSize: 16 }}>{this.props.parallelLanguage.versionCode}</Title>
           </Body>
           <Right>
             <Button transparent onPress={() => this.props.toggleParallelView(false)}>
@@ -115,7 +125,7 @@ class Commentary extends Component {
             </View>
             :
             <View style={{ flex: 1 }}>
-              <Text style={[this.styles.commentaryHeading, { margin: 10 }]}>{bookName} {} {this.props.commentaryContent.chapter}</Text>
+              <Text style={[this.styles.commentaryHeading, { margin: 10 }]}>{this.state.bookName} {} {this.props.commentaryContent.chapter}</Text>
               <FlatList
                 data={this.props.commentaryContent.commentaries}
                 showsVerticalScrollIndicator={false}
@@ -139,23 +149,20 @@ const mapStateToProps = state => {
     versionCode: state.updateVersion.versionCode,
     sourceId: state.updateVersion.sourceId,
     downloaded: state.updateVersion.downloaded,
-
-    chapterNumber: state.updateVersion.chapterNumber,
-    totalChapters: state.updateVersion.totalChapters,
-    bookName: state.updateVersion.bookName,
     bookId: state.updateVersion.bookId,
+    bookName:state.updateVersion.bookName,
+
+
+
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
 
     contentType: state.updateVersion.contentType,
     books: state.versionFetch.data,
 
-    parallelContentSourceId: state.updateVersion.parallelContentSourceId,
-    parallelContentVersionCode: state.updateVersion.parallelContentVersionCode,
-    parallelContentLanguage: state.updateVersion.parallelContentLanguage,
+   
     commentaryContent: state.commentaryFetch.commentaryContent,
     error: state.commentaryFetch.error,
-    parallelContentLanguageCode: state.updateVersion.parallelContentLanguageCode
   }
 
 }

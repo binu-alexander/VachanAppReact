@@ -107,74 +107,26 @@ var APIFetch = {
         }
     },
 
+    async getInfographics(language_code) {
+        try {
+            return await fetch(API_BASE_URL +"infographics/"+ language_code, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(ApiUtils.checkStatus)
+                .then((response) => response.json())
+                .catch(e =>  e)
+        } catch (error) {
+            return error;
+        }
+    },
 
-    async getAvailableInfographics() {
-        try {
-            return await fetch(OWN_BASE_URL + "HIN" + "/mapping.json", {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(ApiUtils.checkStatus)
-                .then((response) => response.json())
-                .catch(e =>  e)
-        } catch (error) {
-            return error;
-        }
-    },
-    async getInfographicsFile(language_code, filname) {
-        try {
-            return await fetch(OWN_BASE_URL + "HIN" + "/" + encodeURIComponent(filename), {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(ApiUtils.checkStatus)
-                .then((response) => response.json())
-                .catch(e =>  e)
-        } catch (error) {
-            return error;
-        }
-    },
-    async getAvailableCommentary() {
-        try {
-            return await fetch('https://api.vachanonline.net/v1/commentaries', {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(ApiUtils.checkStatus)
-                .then((response) => response.json())
-                .catch(e =>  e)
-        } catch (error) {
-            return error;
-        }
-    },
-    async commentaryContent() {
-        try {
-            return await fetch('https://api.vachanonline.net/v1/commentaries/67/gen/1', {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(ApiUtils.checkStatus)
-                .then((response) => response.json())
-                .catch(e =>  e)
-        } catch (error) {
-            return error;
-        }
-    },
     async fetchWord(sourceId, wordId) {
         try {
-            return await fetch('https://api.vachanonline.net/v1/dictionaries/' + sourceId + "/" + wordId, {
+            return await fetch(API_BASE_URL+'dictionaries/' + sourceId + "/" + wordId, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -190,7 +142,7 @@ var APIFetch = {
     },
     async fetchBookInLanguage() {
         try {
-            return await fetch('https://api.vachanonline.net/v1/booknames', {
+            return await fetch(API_BASE_URL+'booknames', {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -206,7 +158,7 @@ var APIFetch = {
     },
     async searchText(sId, text) {
         try {
-            return await fetch('https://api.vachanonline.net/v1/search/' + JSON.parse(sId) + '?keyword=' + text, {
+            return await fetch(API_BASE_URL+'search/' + JSON.parse(sId) + '?keyword=' + text, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -221,9 +173,8 @@ var APIFetch = {
         }
     },
     async fetchVideo(language_code){
-        console.log(" language  code fetch video ",language_code)
         try {
-            return await fetch('https://api.vachanonline.net/v1/videos?language='+language_code,{
+            return await fetch(API_BASE_URL+'videos?language='+language_code,{
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',

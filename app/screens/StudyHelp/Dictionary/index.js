@@ -31,11 +31,11 @@ class Dictionary extends Component {
 
   }
   componentDidMount() {
-    this.props.fetchDictionaryContent({ parallelContentSourceId: this.props.parallelContentSourceId })
+    this.props.fetchDictionaryContent({ parallelContentSourceId: this.props.parallelLanguage.sourceId })
   }
   fetchWord = async (word) => {
     try {
-      var wordDescription = await APIFetch.fetchWord(this.props.parallelContentSourceId, word.wordId)
+      var wordDescription = await APIFetch.fetchWord(this.props.parallelLanguage.sourceId, word.wordId)
       this.setState({
         wordDescription: wordDescription.meaning,
         modalVisibleDictionary: true
@@ -80,7 +80,7 @@ class Dictionary extends Component {
       this.alertPresent = true;
       if (this.props.dictionaryContent.length === 0) {
         Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
-        this.props.fetchDictionaryContent({ parallelContentSourceId: this.props.parallelContentSourceId })
+        this.props.fetchDictionaryContent({ parallelContentSourceId: this.props.parallelLanguage.sourceId })
       } else {
         this.alertPresent = false;
       }
@@ -99,9 +99,9 @@ class Dictionary extends Component {
   render() {
     return (
       <View style={this.styles.container}>
-        <Header style={{ height: 40, borderLeftWidth: 0.5, borderLeftColor: Color.White }} >
+        <Header style={{ backgroundColor: Color.Blue_Color, height: 40, borderLeftWidth: 0.5, borderLeftColor: Color.White }} >
           <Body>
-            <Title style={{ fontSize: 16 }}>{this.props.parallelContentVersionCode}</Title>
+            <Title style={{ fontSize: 16 }}>{this.props.parallelLanguage.versionCode}</Title>
           </Body>
           <Right>
             <Button transparent onPress={() => this.props.toggleParallelView(false)}>
@@ -171,12 +171,8 @@ const mapStateToProps = state => {
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
     contentType: state.updateVersion.contentType,
-    parallelContentSourceId: state.updateVersion.parallelContentSourceId,
-    parallelContentVersionCode: state.updateVersion.parallelContentVersionCode,
-    parallelContentLanguage: state.updateVersion.parallelContentLanguage,
     dictionaryContent: state.dictionaryFetch.dictionaryContent,
     error: state.dictionaryFetch.error,
-    parallelContentLanguageCode: state.updateVersion.parallelContentLanguageCode
   }
 
 }

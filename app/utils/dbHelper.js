@@ -29,12 +29,12 @@ class DbHelper {
 	async getRealm() {
 		try {
 			return await Realm.open({
-				schemaVersion: 16,
+				schemaVersion: 1,
 				deleteRealmIfMigrationNeeded: true,
 				path:
 					Platform.OS === 'ios'
-						? RNFS.MainBundlePath + '/vachanApp.realm'
-						: RNFS.DocumentDirectoryPath + '/vachanApp.realm',
+						? RNFS.MainBundlePath + '/vachan_go.realm'
+						: RNFS.DocumentDirectoryPath + '/vachan_go.realm',
 				schema: [LanguageModel.schema, LanguageMetaData.schema, VersionModel.schema, BookModel.schema, ChapterModel.schema, VerseModel.schema, NoteModel.schema, NoteStylingModel.schema, VerseStylingModel.schema, ReferenceModel.schema, HistoryModel.schema, BookmarksListModel.schema, HighlightsModel.schema, VerseMetadataModel.schema, bookNameList.schema, BookmarksBookId.schema, HighlightsBookId.schema]
 			});
 		} catch (err) {
@@ -425,7 +425,6 @@ class DbHelper {
 			let result = realm.objectForPrimaryKey("LanguageModel", langName)
 			let resultsA = result.versionModels
 			let resultsB = resultsA.filtered('versionCode ==[c] "' + verCode + '" && sourceId ==[c] "' + sourceId + '"')
-			console.log("result  ",resultsB[0].metaData)
 			return resultsB[0].metaData
 		}
 		return null

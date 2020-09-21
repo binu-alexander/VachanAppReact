@@ -6,17 +6,34 @@ const height = Dimensions.get('window').height;
 
 export const bookStyle=(colorFile, sizeFile) =>{
     return StyleSheet.create({
+    imagecontainer: {
+        ...StyleSheet.absoluteFillObject,
+        // backgroundColor: 'black',
+        // overflow: 'hidden',
+        alignItems: 'center',
+        resizeMode:'contain',
+        justifyContent: 'center',
+        },
+        pinchableImage: {
+        width: 300,
+        height: 300,
+        resizeMode:'contain',
+        },
+        wrapper: {
+        flex: 1,
+        backgroundColor:colorFile.backgroundColor,
+        },
     container:{
         flex:1,
         backgroundColor:colorFile.backgroundColor,
         // margin:8
         padding:8
     },
-    videoView:{
+    infoView:{
         width:'100%',
         fontSize:sizeFile.fontSize,
     },
-    videoText:{
+    infoText:{
         fontSize:sizeFile.titleText,
         color:colorFile.iconColor
     },
@@ -41,7 +58,7 @@ export const bookStyle=(colorFile, sizeFile) =>{
         alignItems: 'center',
         height: '100%' 
     },
-    videoStyle:{
+    infoStyle:{
         height:'50%',
         width:'100%'
     },

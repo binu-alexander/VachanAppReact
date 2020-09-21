@@ -3,11 +3,9 @@
 var ApiUtils = {
   checkStatus: function (response) {
     if (response.ok && response.status == 200) {
-      console.log("response ok " + JSON.stringify(response))
       return response
     } else {
       let error = new Error(response.statusText);
-      console.log("response error " + error)
       error.response = response;
       throw error;
     }

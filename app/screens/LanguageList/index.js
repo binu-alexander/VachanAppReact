@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { Text, View, UIManager, Platform, TouchableOpacity, Alert } from 'react-native';
+import { Text, View, TouchableOpacity, Alert } from 'react-native';
 import { Accordion } from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries'
@@ -18,9 +18,6 @@ class LanguageList extends Component {
   });
   constructor(props) {
     super(props)
-    if (Platform.OS === 'android') {
-      UIManager.setLayoutAnimationEnabledExperimental(true);
-    }
     this.state = {
       isLoading: false,
       text: '',
@@ -57,10 +54,12 @@ class LanguageList extends Component {
       }
     }
   }
+  //refetch data if internet connection lost 
   updateData = () => {
     this.props.fetchAllContent()
     this.errorMessage()
   }
+  
   async fetchLanguages() {
     var lanVer = []
     const languageList = await DbQueries.getLangaugeList()
@@ -109,12 +108,12 @@ class LanguageList extends Component {
     catch (error) {
     }
   }
-
   downloadBible = async (langName, verCode, books, sourceId) => {
     try {
       this.setState({ startDownload: true })
-      var bookModels =[]
-      var content = await APIFetch.getAllBooks(parseInt(sourceId), "json")
+      let bookModels =[]
+      let content = await APIFetch.getAllBooks(parseInt(sourceId), "json")
+
       if(content.bibleContent && books){
         for(var i =0;i<books.length;i++){
             bookModels.push({
@@ -128,26 +127,35 @@ class LanguageList extends Component {
           })
         }
       }
-      await DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
-      await this.fetchLanguages()
-      this.setState({ startDownload: false })
+      DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
+      this.fetchLanguages()
+      this.setState({ startDownload: false})
     } catch (error) {
       this.setState({ startDownload: false })
       alert("Something went wrong. Try Again")
     }
   }
+  // this function is calling in downloadbible function
   getChapters = (content, bookId) => {
-    var chapterModels = []
+    let chapterModels = []
+    let chapterHeading = null 
     for (var id in content) {
       if (content != null && id == bookId) {
         for (var c = 0; c < content[id].chapters.length; c++) {
           var verseModels = []
+          chapterHeading = content[id].chapters[c].metadata && (content[id].chapters[c].metadata[0].section) ?  content[id].chapters[c].metadata[0].section.text : null
           for (var v = 0; v < content[id].chapters[c].verses.length; v++) {
-            verseModels.push(content[id].chapters[c].verses[v])
+            let verseData = content[id].chapters[c].verses[v] 
+            verseModels.push({
+              text:verseData.text,
+              number: verseData.number,
+              section: (verseData.metadata && verseData.metadata[0].section) ? verseData.metadata[0].section.text : null ,
+            })
           }
-          var chapterModel = {
+          let chapterModel = {
             chapterNumber: parseInt(content[id].chapters[c].header.title),
             numberOfVerses: parseInt(content[id].chapters[c].verses.length),
+            chapterHeading:chapterHeading,
             verses: verseModels,
           }
           chapterModels.push(chapterModel)
@@ -156,19 +164,25 @@ class LanguageList extends Component {
       }
     }
   }
-
+// this is useful for reusing code as this page is calling at other places
   navigateTo(langName, langCode, booklist, verCode, sourceId, metadata, downloaded) {
-    this.props.navigation.state.params.updateLangVer({
-      sourceId: sourceId, languageName: langName, languageCode: langCode,
-      versionCode: verCode, downloaded: downloaded,
-      books: booklist,
-      metadata: metadata
-    })
-    this.props.navigation.pop()
+    if(this.props.navigation.state.params.updateLangVer){
+      //call back fucntion to update perticular values on back
+      this.props.navigation.state.params.updateLangVer({
+        sourceId: sourceId, languageName: langName, languageCode: langCode,
+        versionCode: verCode, downloaded: downloaded,
+        books: booklist,
+        metadata: metadata
+      })
+      this.props.navigation.pop()
+    }else{
+      // for downloading bible from settings page no need to navigate
+      Alert.alert("To download bible click on download icon.")
+    }
   }
-  async deleteBible(languageName, languageCode, versionCode, sourceId, downloaded) {
-    await DbQueries.deleteBibleVersion(languageName, versionCode, sourceId, downloaded)
-    await this.fetchLanguages()
+  deleteBible(languageName,languageCode,  versionCode, sourceId, downloaded) {
+     DbQueries.deleteBibleVersion(languageName, versionCode, sourceId, downloaded)
+     this.fetchLanguages()
   }
 
   _renderHeader = (item, expanded) => {

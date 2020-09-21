@@ -136,7 +136,7 @@ class Setting extends Component {
                 </Right>
               </ListItem>
               <ListItem >
-                <TouchableOpacity style={[{ flexDirection: 'row' }]} onPress={() => this.props.navigation.navigate('LanguageList')}>
+                <TouchableOpacity style={[{ flexDirection: 'row' }]} onPress={() => this.props.navigation.navigate('LanguageList',{updateLangVer:null})}>
                   <Icon name='cloud-download' style={this.styles.cardItemIconCustom} />
                   <Text style={this.styles.textStyle}>Download More Bibles</Text>
                 </TouchableOpacity>

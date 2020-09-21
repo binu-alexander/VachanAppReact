@@ -24,7 +24,8 @@ class HighLights extends Component {
     super(props)
     this.state = {
       HightlightedVerseArray: [],
-      isLoading: false
+      isLoading: false,
+      message:''
     }
     this.styles = highlightstyle(this.props.colorFile, this.props.sizeFile);
 
@@ -82,11 +83,13 @@ class HighLights extends Component {
             }
             this.setState({ HightlightedVerseArray: array, isLoading: false })
           } else {
-            this.setState({ HightlightedVerseArray: [], isLoading: false })
+            this.setState({ HightlightedVerseArray: [],message:'No highlights for '+this.props.languageName, isLoading: false })
           }
         })
         this.setState({ isLoading: false })
       })
+    }else{
+      this.setState({HightlightedVerseArray:[],message:'Please login'})
     }
   }
   async componentDidMount() {
@@ -105,6 +108,13 @@ class HighLights extends Component {
       totalChapters: getBookChaptersFromMapping(bId),
     })
     this.props.navigation.navigate("Bible")
+  }
+  emptyMessageNavigation=()=>{
+    if(this.props.email){
+      this.props.navigation.navigate("Bible")
+    }else{
+      this.props.navigation.navigate("Login")
+    }
   }
   renderItem = ({ item, index }) => {
     var bookName = null
@@ -145,10 +155,10 @@ class HighLights extends Component {
             renderItem={this.renderItem}
             ListEmptyComponent={
               <View style={this.styles.emptyMessageContainer}>
-                <Icon name="border-color" style={this.styles.emptyMessageIcon} onPress={() => { this.props.navigation.navigate("Bible") }} />
+                <Icon name="border-color" style={this.styles.emptyMessageIcon} onPress={this.emptyMessageNavigation} />
                 <Text
                   style={this.styles.messageEmpty}>
-                  Select verse to Highlight
+                  {this.state.message}
                 </Text>
               </View>
             }

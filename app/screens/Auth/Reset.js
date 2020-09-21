@@ -16,6 +16,8 @@ class Reset extends Component {
     }
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
+  
+  //on change text function for textInput
   updateInputVal = (val, prop) => {
     const state = this.state;
     state[prop] = val;

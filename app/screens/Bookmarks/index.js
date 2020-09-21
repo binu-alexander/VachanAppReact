@@ -20,14 +20,14 @@ class BookMarks extends Component {
 
   constructor(props) {
     super(props)
-
     this.state = {
       bookmarksList: [],
       isLoading: false,
       languageName: this.props.languageName,
       versionCode: this.props.versionCode,
       sourceId: this.props.sourceId,
-      bookId: this.props.bookId
+      bookId: this.props.bookId,
+      message: ''
     }
 
     this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
@@ -52,13 +52,16 @@ class BookMarks extends Component {
           else {
             this.setState({
               bookmarksList: [],
+              message: 'No bookmark Added for ' + this.props.languageName,
               isLoading: false
             })
           }
         })
         this.setState({ isLoading: false })
       })
-
+    }
+    else {
+      this.setState({ bookmarksList: [], message: 'Please login' })
     }
   }
   async componentDidMount() {
@@ -69,6 +72,7 @@ class BookMarks extends Component {
       this.fecthBookmarks()
     }
   }
+
   navigateToBible(bookId, bookName, chapter) {
     this.props.updateVersionBook({
       bookId: bookId,
@@ -130,26 +134,32 @@ class BookMarks extends Component {
         {bookName && value}
       </View>
     )
-
+  }
+  emptyMessageNavigation = () => {
+    if (this.props.email) {
+      this.props.navigation.navigate("Bible")
+    } else {
+      this.props.navigation.navigate("Login")
+    }
   }
   render() {
     return (
       <View style={this.styles.container}>
         {this.state.isLoading && <ActivityIndicator animate={true} style={{ justifyContent: 'center', alignSelf: 'center' }} />}
-            <FlatList
-              data={this.state.bookmarksList}
-              contentContainerStyle={this.state.bookmarksList.length === 0 && this.styles.centerEmptySet}
-              renderItem={this.renderItem}
-              ListEmptyComponent={
-                <View style={this.styles.emptyMessageContainer}>
-                  <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon} onPress={() => { this.props.navigation.navigate("Bible") }} />
-                  <Text
-                    style={this.styles.messageEmpty}>
-                    No Bookmark added
-                  </Text>
-                </View>
-              }
-            />
+        <FlatList
+          data={this.state.bookmarksList}
+          contentContainerStyle={this.state.bookmarksList.length === 0 && this.styles.centerEmptySet}
+          renderItem={this.renderItem}
+          ListEmptyComponent={
+            <View style={this.styles.emptyMessageContainer}>
+              <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon} onPress={this.emptyMessageNavigation} />
+              <Text
+                style={this.styles.messageEmpty}>
+                {this.state.message}
+              </Text>
+            </View>
+          }
+        />
       </View>
     )
   }
