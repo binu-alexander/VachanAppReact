@@ -30,6 +30,7 @@ import BookMarks from '../screens/Bookmarks/';
 import Color from '../utils/colorConstants'
 import Video from '../screens/Video'
 import PlayVideo from '../screens/Video/PlayVideo'
+import Help from '../screens/Help'
 
 const NavStack = createStackNavigator(
   {
@@ -59,17 +60,18 @@ const NavStack = createStackNavigator(
       })
     },
     Dictionary: { screen: Dictionary },
-    DictionaryWords:{screen:DictionaryWords},
+    DictionaryWords: { screen: DictionaryWords },
     About: { screen: About },
     Settings: { screen: Settings },
     History: { screen: History },
     BookMarks: { screen: BookMarks },
     Highlights: { screen: Highlights },
     Infographics: { screen: Infographics },
-    InfographicsImage:{ screen: InfographicsImage },
+    InfographicsImage: { screen: InfographicsImage },
     Login: { screen: Login },
     Video: { screen: Video },
     PlayVideo: { screen: PlayVideo },
+    Help: { screen: Help },
     Register: {
       screen: Register,
       navigationOptions: () => ({
@@ -92,7 +94,7 @@ const NavStack = createStackNavigator(
         header: null
       }),
     },
-   
+
 
 
   },
