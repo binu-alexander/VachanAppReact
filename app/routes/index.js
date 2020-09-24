@@ -31,6 +31,9 @@ import Color from '../utils/colorConstants'
 import Video from '../screens/Video'
 import PlayVideo from '../screens/Video/PlayVideo'
 import Help from '../screens/Help'
+import Feedback from '../screens/Help/Feedback'
+import Hints from '../screens/Help/Hints'
+
 
 const NavStack = createStackNavigator(
   {
@@ -72,6 +75,8 @@ const NavStack = createStackNavigator(
     Video: { screen: Video },
     PlayVideo: { screen: PlayVideo },
     Help: { screen: Help },
+    Feedback: { screen: Feedback },
+    Hints: { screen: Hints },
     Register: {
       screen: Register,
       navigationOptions: () => ({

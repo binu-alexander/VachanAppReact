@@ -6,13 +6,15 @@ export const HintStyle = (colorFile, sizeFile) =>{
     return StyleSheet.create({
         container:{
             flex:1,
-            flexDirection:'row',
+            // flexDirection:'row',
             backgroundColor:colorFile.backgroundColor
         },
         textView: {
+            // padding:20,
             width: width*4/5,
             backgroundColor: colorFile.backgroundColor,
-            flexDirection:'column',
+            // flexDirection:'column',
+            textAlign:'left'
         },
         textRow: {
             justifyContent:'center',
@@ -25,6 +27,35 @@ export const HintStyle = (colorFile, sizeFile) =>{
         },
         iconColor:{
             color:colorFile.iconColor
+
+        },
+        textStyle: {
+            color: colorFile.textColor,   
+            fontSize:16,
+            marginLeft:4,
+            alignSelf:'center'
+        },
+        cardItemIconCustom:{
+            marginHorizontal:4,
+            marginVertical:4,
+            color:colorFile.settingsIconColor,
+            fontSize:32   
+        },
+        // container:{
+        //     backgroundColor:"#000",
+        //         // width: width/5,
+        //         // flexDirection:'column',
+        // },
+        AnimatedViewCustom:{
+            backgroundColor: 'transparent',
+            alignItems: "center",
+            justifyContent: "center",
+            // padding:20
+            // margin:12
+        },
+        iconColor:{
+            color:colorFile.settingsIconColor,
+            padding:16,
         }
 })
 }
