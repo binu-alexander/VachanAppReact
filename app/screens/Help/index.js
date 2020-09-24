@@ -16,20 +16,22 @@ class Help extends Component {
 
   render() {
     return (
-      <View>
+      <View style={{ margin: 10 }}>
         <Card>
-          <CardItem>
-            <TouchableOpacity style={[{ flexDirection: 'row' }]} onPress={() => this.props.navigation.navigate('Hints')}>
+          <TouchableOpacity style={[{ flexDirection: 'row' }]} onPress={() => this.props.navigation.navigate('Hints')}>
+            <CardItem>
               <Icon name='lightbulb-outline' style={this.styles.cardItemIconCustom} />
               <Text style={this.styles.textStyle}>Hints</Text>
-            </TouchableOpacity>
-          </CardItem>
-          <CardItem>
-            <TouchableOpacity style={[{ flexDirection: 'row' }]} onPress={() => this.props.navigation.navigate('Feedback')}>
+            </CardItem>
+          </TouchableOpacity>
+        </Card>
+        <Card>
+          <TouchableOpacity style={[{ flexDirection: 'row' }]} onPress={() => this.props.navigation.navigate('Feedback')}>
+            <CardItem>
               <Icon name='feedback' style={this.styles.cardItemIconCustom} />
               <Text style={this.styles.textStyle}>Feedback</Text>
-            </TouchableOpacity>
-          </CardItem>
+            </CardItem>
+          </TouchableOpacity>
         </Card>
       </View>
     );
