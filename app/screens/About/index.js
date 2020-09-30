@@ -34,7 +34,7 @@ class About extends Component {
               The Soure Code available a GitHub: 
               <Text style={this.styles.linkText} onPress={() => {Linking.openURL('https://github.com/Bridgeconn/VachanOnline-v2') }}>{'\n'}https://github.com/Bridgeconn/VachanOnline-v2</Text>{'\n'}
               Previous versions used code forked from Digital Bible Society’s Browser Bible-3 (InScript) by John Dyer on GitHub.{'\n'}
-              <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Release Notes (30/09/2020) v1.0{'\n'}</Text>
+              <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Release Notes (30/09/2020) v1.0</Text>
               <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Platform Update:{'\n'}</Text>
               We are making a major technology change in this release. Code from Browser Bible-3 (InScript) is now replaced with a brand new web application in ReactJS powered by Postgres  and Python APIs  (VachanEngine) in the back-end. A companion mobile app written in ReactNative is also being released. The older legacy site will still be available for sometime on <Text style={this.styles.linkText} onPress={() => { Linking.openURL('www.vachanonline.net') }}>www.vachanonline.net</Text>.{'\n'}
               <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Content Additions (using Vachan API’s):{'\n'}</Text>
@@ -60,7 +60,7 @@ class About extends Component {
               <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Added DigitalOcean Spaces with CDN to serve Audio & Video {'\n'}
               <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Added Firebase for personalisation and synchronisation {'\n'}
               <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Contact Us</Text>
-              <Text style={this.styles.linkText} onPress={() => {Linking.openURL('thevachanproject@gmail.com') }}>{'\n'}thevachanproject@gmail.com</Text>
+              thevachanproject@gmail.com
             </Text>
           </View>
         </ScrollView>
