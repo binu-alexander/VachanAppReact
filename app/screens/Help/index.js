@@ -7,6 +7,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux'
 
 class Help extends Component {
+  static navigationOptions = {
+    headerTitle: 'Help',
+  };
   constructor(props) {
     super(props)
     this.state = {
@@ -16,7 +19,7 @@ class Help extends Component {
 
   render() {
     return (
-      <View style={[this.styles.container]}>
+      <View style={[this.styles.container,{padding:8}]}>
         <Card style={this.styles.Card}>
           <TouchableOpacity style={[{ flexDirection: 'row' }]} onPress={() => this.props.navigation.navigate('Hints')}>
             <CardItem style={this.styles.Card}>

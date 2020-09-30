@@ -30,6 +30,13 @@ export const styles =(colorFile, sizeFile) =>{
     color:Color.Black
 
     },
+    versionText:{
+        color: colorFile.textColor,   
+        fontSize:16,
+        alignSelf:'center',
+        position:'absolute',
+        bottom:10
+    },
     textStyle: {
         color: colorFile.textColor,   
         fontSize:16,
