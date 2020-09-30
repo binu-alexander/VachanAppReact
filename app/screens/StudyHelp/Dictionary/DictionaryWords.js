@@ -103,7 +103,6 @@ class DictionaryWords extends Component {
 
 
   render() {
-    console.log(" props dictionary ",this.props.dictionaryContent,this.props.dictionarySourceId)
     return (
       <View style={this.styles.container}>
         {/* <Header style={{ backgroundColor: Color.Blue_Color, height: 40, borderLeftWidth: 0.5, borderLeftColor: Color.White }} >

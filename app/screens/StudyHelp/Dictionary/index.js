@@ -26,9 +26,7 @@ class Infographics extends React.Component {
   async componentDidMount() {
     const apiData = await APIFetch.getDictionaries()
     if (apiData){
-      // console.log(" api data dictionary ",apiData,apiData.language,this.props.languageName.toLowerCase())
       for (var i = 0; i < apiData.length; i++) {
-      console.log(" api data dictionary ",apiData,apiData[i].language,this.props.languageName.toLowerCase())
         if (apiData[i].language.toLowerCase() === this.props.languageName.toLowerCase()) {
             this.setState({dictionaries:apiData[i].dictionaries})
         }
@@ -52,7 +50,7 @@ class Infographics extends React.Component {
     )
   }
   render() {
-    console.log("dictionaries ",this.state.dictionaries)
+    ("dictionaries ",this.state.dictionaries)
     return (
       <View style={[this.styles.container,{padding:8}]}>
         {

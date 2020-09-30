@@ -210,7 +210,6 @@ class Bible extends Component {
       navigateToVideo: this.navigateToVideo,
       navigateToImage: this.navigateToImage,
       navigateToSettings: this.navigateToSettings,
-      // navigateToDictionary: this.navigateToDictionary
     })
     this.subs = this.props.navigation.addListener("didFocus", () => {
 
@@ -879,17 +878,6 @@ class Bible extends Component {
                 <Title style={{ fontSize: 18 }}>{this.props.language} {this.props.versionCode}</Title>
                 <Icon name="arrow-drop-down" color={Color.White} size={20} />
               </Button>
-              {/* <Right>
-              <Button transparent onPress={() => {this.onBookmarkPress(this.state.isBookmark) }}>
-                  <Icon
-                    // onPress={() => {this.onBookmarkPress(this.state.isBookmark) }}
-                    name='bookmark'
-                    color={this.state.isBookmark ? Color.Red : Color.White}
-                    size={24}
-                    // style={{right:0}}
-                  />
-              </Button>
-              </Right> */}
             </Header>
         }
         {
@@ -1026,8 +1014,7 @@ const navStyles = StyleSheet.create({
     flex: 1,
   },
   touchableStyleRight: {
-    // flexDirection: "row",
-    // marginRight: 8
+
   },
   touchableStyleLeft: {
     flexDirection: "row",

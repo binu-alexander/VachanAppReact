@@ -39,7 +39,6 @@ export const aboutPage = (colorFile, sizeFile) => {
             paddingTop: 8,
             fontSize: sizeFile.titleText,
             color: colorFile.sectionHeading,
-            // letterSpacing: 1.2,
             lineHeight: sizeFile.lineHeight
         },
         bulletIcon: {

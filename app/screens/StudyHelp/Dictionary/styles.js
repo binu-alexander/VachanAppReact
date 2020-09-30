@@ -6,7 +6,6 @@ export const styles =(colorFile, sizeFile) =>{
         container:{
         flex:1,
         backgroundColor:colorFile.backgroundColor,
-        // padding:8
         },
         iconStyle:{
             fontSize:28,

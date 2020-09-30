@@ -41,17 +41,11 @@ export const HelpStyle = (colorFile, sizeFile) =>{
             color:colorFile.settingsIconColor,
             fontSize:32   
         },
-        // container:{
-        //     backgroundColor:"#000",
-        //         // width: width/5,
-        //         // flexDirection:'column',
-        // },
+       
         AnimatedViewCustom:{
             backgroundColor: 'transparent',
             alignItems: "center",
             justifyContent: "center",
-            // padding:20
-            // margin:12
         },
         Card:{
             backgroundColor: colorFile.backgroundColor,

@@ -59,7 +59,7 @@ class About extends Component {
               <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Operations Update:{'\n'}</Text>
               <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Added DigitalOcean Spaces with CDN to serve Audio & Video {'\n'}
               <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Added Firebase for personalisation and synchronisation {'\n'}
-              <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Contact Us</Text>
+              <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Contact Us</Text>{'\n'}
               thevachanproject@gmail.com
             </Text>
           </View>

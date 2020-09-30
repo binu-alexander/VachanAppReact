@@ -8,8 +8,6 @@ export const bookStyle=(colorFile, sizeFile) =>{
     return StyleSheet.create({
     imagecontainer: {
         ...StyleSheet.absoluteFillObject,
-        // backgroundColor: 'black',
-        // overflow: 'hidden',
         alignItems: 'center',
         resizeMode:'contain',
         justifyContent: 'center',
@@ -26,7 +24,6 @@ export const bookStyle=(colorFile, sizeFile) =>{
     container:{
         flex:1,
         backgroundColor:colorFile.backgroundColor,
-        // margin:8
         padding:8
     },
     infoView:{

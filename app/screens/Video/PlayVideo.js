@@ -62,11 +62,9 @@ class PlayVideo extends Component {
                     onChangeState={(event) =>this.onChangeState(event)}
                     onReady={() => this.onReady}
                     onError={this.onError}
-                    onPlaybackQualityChange={q => console.log("QUALITY CHANGE ",q)}
                     volume={50}
                     playbackRate={1}
                     />
-                {/* <VideoPlayer url={this.state.url} description={this.state.description} styles={this.styles} /> */}
                 <Text style={this.styles.description}>
                     {this.state.description}
                 </Text>
