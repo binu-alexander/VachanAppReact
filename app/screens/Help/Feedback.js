@@ -7,6 +7,9 @@ import Color from '../../utils/colorConstants'
 
 
 class Feedback extends Component {
+    static navigationOptions = {
+        headerTitle: 'Feedback',
+      };
     constructor(props) {
         super(props)
         this.state = {
