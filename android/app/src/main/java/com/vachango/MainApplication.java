@@ -29,6 +29,7 @@ import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.reactnativecommunity.toolbarandroid.ReactToolbarPackage;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
+import io.xogus.reactnative.versioncheck.RNVersionCheckPackage;
 // import com.imagepicker.ImagePickerPackage;
 
 import java.util.Arrays;
@@ -72,7 +73,8 @@ public class MainApplication extends Application implements ReactApplication {
             new WebViewBridgePackage(),
             new FBSDKPackage(),
             new ReactToolbarPackage(),
-            new RNCWebViewPackage()
+            new RNCWebViewPackage(),
+            new RNVersionCheckPackage()   
             // new ImagePickerPackage()
       );
     }

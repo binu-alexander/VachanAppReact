@@ -8,7 +8,7 @@ import {
   Dimensions,
   TouchableWithoutFeedback
 } from 'react-native';
-import { HintStyle } from './styles.js';
+import { HelpStyle } from './styles.js';
 import { connect } from 'react-redux'
 import { constantFont } from '../../utils/dimens'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -41,7 +41,7 @@ class Help extends Component {
       ],
     }
     this.showHints = this.showHints.bind(this)
-    this.styleFile = HintStyle(this.props.colorFile, this.props.sizeFile);
+    this.styleFile = HelpStyle(this.props.colorFile, this.props.sizeFile);
     this.animatedValue = new Animated.Value(0)
   }
   showHints(icon, index) {

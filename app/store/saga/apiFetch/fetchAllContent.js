@@ -10,6 +10,12 @@ const API_BASE_URL = 'https://api.vachanonline.net/v1/'
 function* fetchAllContent() {
   try {
     const commentaryKey = securityVaraibles.COMMENTARY_KEY ? '?key='+securityVaraibles.COMMENTARY_KEY : ''
+    const response = yield call(fetch, 'https://raw.githubusercontent.com/Bridgeconn/vachan-metadata/master/securityVariables.js?token=AF5M7KTVAUU344UVTP4YQQS7NWVWI')
+    console.log("commentaryKey .... ",response)
+    
+    if (response.ok && response.status == 200) {
+      console.log("commentaryKey  ",response.key)
+    }
     const bibleAPI = API_BASE_URL + 'bibles'
     const commentaryAPI = API_BASE_URL + 'commentaries'+commentaryKey
     // const dictionaryAPI = API_BASE_URL + 'dictionaries'

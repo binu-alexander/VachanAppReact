@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { View, TouchableOpacity, Text } from 'react-native'
 import { Card, CardItem } from 'native-base';
-import { HintStyle } from './styles.js';
+import { HelpStyle } from './styles.js';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux'
 
@@ -11,23 +11,23 @@ class Help extends Component {
     super(props)
     this.state = {
     }
-    this.styles = HintStyle(this.props.colorFile, this.props.sizeFile);
+    this.styles = HelpStyle(this.props.colorFile, this.props.sizeFile);
   }
 
   render() {
     return (
-      <View style={{ margin: 10 }}>
-        <Card>
+      <View style={[this.styles.container]}>
+        <Card style={this.styles.Card}>
           <TouchableOpacity style={[{ flexDirection: 'row' }]} onPress={() => this.props.navigation.navigate('Hints')}>
-            <CardItem>
+            <CardItem style={this.styles.Card}>
               <Icon name='lightbulb-outline' style={this.styles.cardItemIconCustom} />
               <Text style={this.styles.textStyle}>Hints</Text>
             </CardItem>
           </TouchableOpacity>
         </Card>
-        <Card>
+        <Card style={this.styles.Card}>
           <TouchableOpacity style={[{ flexDirection: 'row' }]} onPress={() => this.props.navigation.navigate('Feedback')}>
-            <CardItem>
+            <CardItem style={this.styles.Card}>
               <Icon name='feedback' style={this.styles.cardItemIconCustom} />
               <Text style={this.styles.textStyle}>Feedback</Text>
             </CardItem>

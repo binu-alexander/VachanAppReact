@@ -2,7 +2,7 @@ import {StyleSheet,Dimensions} from 'react-native'
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 
-export const HintStyle = (colorFile, sizeFile) =>{
+export const HelpStyle = (colorFile, sizeFile) =>{
     return StyleSheet.create({
         container:{
             flex:1,
@@ -52,6 +52,9 @@ export const HintStyle = (colorFile, sizeFile) =>{
             justifyContent: "center",
             // padding:20
             // margin:12
+        },
+        Card:{
+            backgroundColor: colorFile.backgroundColor,
         },
         iconColor:{
             color:colorFile.settingsIconColor,
