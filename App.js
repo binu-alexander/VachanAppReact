@@ -32,7 +32,14 @@ class App extends Component {
               BackHandler.exitApp();
               Linking.openURL(updateNeeded.storeUrl)
             }
-          }]
+          },
+          {
+            text:'Cancel',
+            onPress:()=>{
+              return
+            }
+          }
+        ]
           )}
     });
   }
