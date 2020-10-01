@@ -135,7 +135,6 @@ export const styles = (colorFile, sizeFile) => {
         },
         iconStyle: {
             color: colorFile.chevronIconColor,
-            //fontSize: sizeFile.chevronIconSize
         },
         playButton: {
             height: 56,
