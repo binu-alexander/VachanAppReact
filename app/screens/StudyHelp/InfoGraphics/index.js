@@ -13,10 +13,8 @@ import { Toast } from 'native-base'
 
 class Infographics extends React.Component {
   static navigationOptions = ({ navigation }) => {
-    const { params = {} } = navigation.state
     return {
       headerTitle: 'Infographics',
-
     }
   }
   constructor(props) {
@@ -124,7 +122,6 @@ const mapStateToProps = state => {
     colorFile: state.updateStyling.colorFile,
   }
 }
-
 
 export default connect(mapStateToProps, null)(Infographics)
 

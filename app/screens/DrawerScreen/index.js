@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
 import { AsyncStorageConstants } from '../../utils/AsyncStorageConstants'
 import { fetchVersionBooks } from '../../store/action/'
+import VersionCheck from 'react-native-version-check'
 
 class DrawerScreen extends Component {
   constructor(props) {
@@ -13,18 +14,20 @@ class DrawerScreen extends Component {
     this.unsubscriber = null
     this.state = {
       initializing: true,
-      user: ''
+      user: '',
+      currentVersion:"1.0.0"
     }
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
 
   async componentDidMount() {
+    let currentVersion = await VersionCheck.getCurrentVersion();
     this.props.fetchVersionBooks({
       language: this.props.language, versionCode: this.props.versionCode,
       downloaded: this.props.downloaded, sourceId: this.props.sourceId
     })
     var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
-    this.setState({ email })
+    this.setState({ email,currentVersion })
   }
 
   render() {
@@ -34,11 +37,12 @@ class DrawerScreen extends Component {
       { icon: 'border-color', pressIcon: 'Highlights', text: 'Highlights' },
       { icon: 'note', pressIcon: 'Notes', text: 'Notes' },
       { icon: 'video-library', pressIcon: 'Video', text: 'Video' },
-      { icon: 'image', pressIcon: 'Infographics', text: 'Infographics' },
+      { icon: 'book', pressIcon: 'Dictionary', text: 'Dictionary' },
       { icon: 'history', pressIcon: 'History', text: 'History' },
       { icon: 'search', pressIcon: 'Search', text: 'Search' },
       { icon: 'settings', pressIcon: 'Settings', text: 'Settings' },
-      { icon: 'info', pressIcon: 'About', text: 'About us' },
+      { icon: 'info', pressIcon: 'About', text: 'About Us' },
+      { icon: 'help', pressIcon: 'Help', text: 'Help' },
     ]
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
 
@@ -79,6 +83,7 @@ class DrawerScreen extends Component {
               </TouchableOpacity>
             )
           }
+        <Text style={this.styles.versionText}>APP VERSION {this.state.currentVersion}</Text>
         </ScrollView>
       </View>
     );

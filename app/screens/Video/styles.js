@@ -9,7 +9,6 @@ export const bookStyle=(colorFile, sizeFile) =>{
     container:{
         flex:1,
         backgroundColor:colorFile.backgroundColor,
-        // margin:8
         padding:8
     },
     videoView:{

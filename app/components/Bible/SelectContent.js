@@ -89,8 +89,7 @@ class SelectContent extends Component {
       this.alertPresent = true;
       if (this.props.error ||
         this.props.availableContents[0].content.length === 0 ||
-        this.props.availableContents[1].content.length === 0 ||
-        this.props.availableContents[2].content.length === 0
+        this.props.availableContents[1].content.length === 0 
       ) {
         this.props.navigation.setParams({ modalVisible: false })
         Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });

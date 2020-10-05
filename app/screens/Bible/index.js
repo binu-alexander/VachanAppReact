@@ -28,7 +28,7 @@ import Commentary from '../StudyHelp/Commentary/'
 import Dictionary from '../StudyHelp/Dictionary/'
 import Color from '../../utils/colorConstants'
 
-import { Header, Button, Title, Toast } from 'native-base'
+import { Header, Button, Title, Toast, Right } from 'native-base'
 import BibleChapter from '../../components/Bible/BibleChapter';
 import firebase from 'react-native-firebase'
 const height = Dimensions.get('window').height;
@@ -291,7 +291,7 @@ class Bible extends Component {
     }
   }
 
-// update book name and chapter number onback from referenceSelection page (callback function) also this function is usefull to update only few required values of redux 
+  // update book name and chapter number onback from referenceSelection page (callback function) also this function is usefull to update only few required values of redux 
   getReference = async (item) => {
     this.setState({ selectedReferenceSet: [], showBottomBar: false })
     if (item) {
@@ -376,7 +376,7 @@ class Bible extends Component {
     }
 
   }
-// if book downloaded or user want to read downloaded book fetch chapter from local db
+  // if book downloaded or user want to read downloaded book fetch chapter from local db
   async getDownloadedContent() {
     this.setState({ isLoading: true })
     var content = await DbQueries.queryVersions(this.props.language, this.props.versionCode, this.props.bookId, this.props.currentVisibleChapter)
@@ -396,7 +396,7 @@ class Bible extends Component {
     }
 
   }
-// fetch chapter on didmount call
+  // fetch chapter on didmount call
   async getChapter() {
     try {
       this.props.navigation.setParams({
@@ -477,7 +477,7 @@ class Bible extends Component {
     })
   }
 
-// fetch audio for current chapter
+  // fetch audio for current chapter
   fetchAudio = () => {
     this.props.fetchAudioUrl({
       languageCode: this.props.languageCode,
@@ -640,6 +640,12 @@ class Bible extends Component {
         }, () => {
           this.props.navigation.setParams({ isBookmark: this.isBookmark() })
         })
+        Toast.show({
+          text: isbookmark ? 'Bookmarked chapter removed' : 'Chapter bookmarked' ,
+          buttonText: "Okay",
+          type: isbookmark ? "default" : "success",
+          duration: 3000
+        })
       }
       else {
         this.setState({ bookmarksList: [] }, () => { this.props.navigation.setParams({ isBookmark: this.isBookmark() }) })
@@ -757,7 +763,6 @@ class Bible extends Component {
         this.props.navigation.navigate("Login")
       }
     } else {
-
       Alert.alert("Please check internet connection")
     }
 
@@ -824,8 +829,10 @@ class Bible extends Component {
   }
   navigateToSettings = () => {
     this.props.navigation.navigate("Settings")
-
   }
+  // navigateToDictionary = () => {
+  //   this.props.navigation.navigate("Dictionary")
+  // }
   toggleParallelView(value) {
     this.props.navigation.setParams({ visibleParallelView: value, })
   }
@@ -858,6 +865,7 @@ class Bible extends Component {
                   <Title style={{ fontSize: 16 }}>{this.props.bookName.length > 10 ? this.props.bookName.slice(0, 9) + "..." : this.props.bookName} {this.state.currentVisibleChapter}</Title>
                   <Icon name="arrow-drop-down" color={Color.White} size={20} />
                 </Button>
+
               </Header>
             </View>
             :
@@ -922,6 +930,7 @@ class Bible extends Component {
                   versionCode={this.props.versionCode}
                   bookId={this.props.bookId}
                   totalChapters={this.props.totalChapters}
+                  showBottomBar={this.state.showBottomBar}
                   navigation={this.props.navigation}
                   queryBookFromAPI={this.queryBookFromAPI}
                 />
@@ -964,14 +973,14 @@ class Bible extends Component {
                     currentVisibleChapter={this.state.currentVisibleChapter}
                   />
                 }
-                {
+                {/* {
                   this.props.contentType == 'dictionary' &&
                   <Dictionary
                     parallelLanguage={this.props.navigation.getParam("parallelLanguage")}
                     toggleParallelView={(value) => this.toggleParallelView(value)}
                     currentVisibleChapter={this.state.currentVisibleChapter}
                   />
-                }
+                } */}
 
               </View>
             )}
@@ -1005,8 +1014,7 @@ const navStyles = StyleSheet.create({
     flex: 1,
   },
   touchableStyleRight: {
-    // flexDirection: "row",
-    // marginRight: 8
+
   },
   touchableStyleLeft: {
     flexDirection: "row",

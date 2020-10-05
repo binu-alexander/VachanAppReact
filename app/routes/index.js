@@ -10,6 +10,7 @@ import History from '../screens/History/'
 
 import Commentary from '../screens/StudyHelp/Commentary/'
 import Dictionary from '../screens/StudyHelp/Dictionary/'
+import DictionaryWords from '../screens/StudyHelp/Dictionary/DictionaryWords'
 import Infographics from '../screens/StudyHelp/InfoGraphics/';
 import InfographicsImage from '../screens/StudyHelp/InfoGraphics/infographicsImage';
 
@@ -29,6 +30,10 @@ import BookMarks from '../screens/Bookmarks/';
 import Color from '../utils/colorConstants'
 import Video from '../screens/Video'
 import PlayVideo from '../screens/Video/PlayVideo'
+import Help from '../screens/Help'
+import Feedback from '../screens/Help/Feedback'
+import Hints from '../screens/Help/Hints'
+
 
 const NavStack = createStackNavigator(
   {
@@ -58,17 +63,20 @@ const NavStack = createStackNavigator(
       })
     },
     Dictionary: { screen: Dictionary },
+    DictionaryWords: { screen: DictionaryWords },
     About: { screen: About },
     Settings: { screen: Settings },
     History: { screen: History },
     BookMarks: { screen: BookMarks },
     Highlights: { screen: Highlights },
     Infographics: { screen: Infographics },
-    InfographicsImage:{ screen: InfographicsImage },
+    InfographicsImage: { screen: InfographicsImage },
     Login: { screen: Login },
     Video: { screen: Video },
     PlayVideo: { screen: PlayVideo },
-
+    Help: { screen: Help },
+    Feedback: { screen: Feedback },
+    Hints: { screen: Hints },
     Register: {
       screen: Register,
       navigationOptions: () => ({
@@ -91,7 +99,7 @@ const NavStack = createStackNavigator(
         header: null
       }),
     },
-   
+
 
 
   },
