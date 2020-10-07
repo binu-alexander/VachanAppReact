@@ -10,8 +10,6 @@ import { List, ListItem, Right, Left } from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { settingsPageStyle } from './styles.js'
 import { nightColors, dayColors } from '../../utils/colors.js'
-import AsyncStorageUtil from '../../utils/AsyncStorageUtil';
-import { AsyncStorageConstants } from '../../utils/AsyncStorageConstants'
 import { connect } from 'react-redux'
 import { updateColorMode, updateFontSize, updateVerseInLine } from '../../store/action/index'
 import Color from '../../utils/colorConstants'
@@ -34,24 +32,15 @@ class Setting extends Component {
   }
   async onChangeSlider(value) {
     await this.props.updateFontSize(value)
-    AsyncStorageUtil.setAllItems([
-      [AsyncStorageConstants.Keys.SizeMode, JSON.stringify(value)],
-    ]);
   }
 
   async onColorModeChange(value) {
     await this.props.updateColorMode(value)
-    AsyncStorageUtil.setAllItems([
-      [AsyncStorageConstants.Keys.ColorMode, JSON.stringify(value)],
-    ]);
   }
 
   onVerseInLineModeChange = () => {
     this.setState({ verseInLine: !this.state.verseInLine }, () => {
       this.props.updateVerseInLine(!this.state.verseInLine);
-      AsyncStorageUtil.setAllItems([
-        [AsyncStorageConstants.Keys.VerseViewMode, JSON.stringify(!this.state.verseInLine)],
-      ]);
     })
   }
 
@@ -66,8 +55,8 @@ class Setting extends Component {
   }
   render() {
     this.styles = settingsPageStyle(this.props.colorFile, this.props.sizeFile)
-    const dayModeIconColor = this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayColors.accentColor : Color.Gray
-    const nightModeIconColor = this.state.colorMode == AsyncStorageConstants.Values.NightMode ? nightColors.accentColor : Color.Gray
+    const dayModeIconColor = this.state.colorMode == 1 ? dayColors.accentColor : Color.Gray
+    const nightModeIconColor = this.state.colorMode == 0 ? nightColors.accentColor : Color.Gray
 
     return (
       <View style={this.styles.container}>
@@ -116,7 +105,6 @@ class Setting extends Component {
                   </View>
                 </Right>
               </ListItem>
-
               <ListItem bordered style={this.styles.cardItemStyle}>
                 <Right style={this.styles.cardItemAlignRight}>
                   <View style={this.styles.cardItemRow}>
@@ -128,8 +116,8 @@ class Setting extends Component {
                     step={1}
                     minimumValue={0}
                     maximumValue={4}
-                    thumbColor={this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor : nightModeIconColor}
-                    minimumTrackTintColor={this.state.colorMode == AsyncStorageConstants.Values.DayMode ? dayModeIconColor : nightModeIconColor}
+                    thumbColor={this.state.colorMode == 1? dayModeIconColor : nightModeIconColor}
+                    minimumTrackTintColor={this.state.colorMode == 1 ? dayModeIconColor : nightModeIconColor}
                     onValueChange={(value) => { this.onChangeSlider(value) }}
                     value={this.state.sizeMode}
                   />
@@ -161,7 +149,6 @@ const mapStateToProps = state => {
     sizeFile: state.updateStyling.sizeFile,
     colorMode: state.updateStyling.colorMode,
     colorFile: state.updateStyling.colorFile,
-    verseInLine: state.updateStyling.verseInLine
   }
 }
 

@@ -24,17 +24,17 @@ const SelectionTabStack = createMaterialTopTabNavigator(
         inactiveTintColor:Color.Black,
         swipeEnabled:false,
         tabBarOptions: {
-            labelStyle: { fontSize: 16,margin:0,padding:0,color:Color.Blue_Color },
+            labelStyle: { fontSize: 16,margin:0,padding:0,color:Color.White },
             
             upperCaseLabel: false,
             style: {
                 borderBottomWidth:1,
-                borderColor:Color.Blue_Color,
-                backgroundColor:Color.White,
+                borderColor:Color.White,
+                backgroundColor:Color.Blue_Color,
                 height:36
             },
             indicatorStyle: {
-                backgroundColor: Color.Blue_Color,
+                backgroundColor: Color.White,
             },
         },
       
@@ -42,9 +42,9 @@ const SelectionTabStack = createMaterialTopTabNavigator(
 	
 )
 
-
 const SwitchNavigator = createSwitchNavigator({
     SelectionTabStack: { screen: SelectionTabStack },
   });
   
 export const SelectionTab = createAppContainer(SwitchNavigator)
+

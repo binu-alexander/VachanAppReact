@@ -63,6 +63,12 @@ export const settingsPageStyle =(colorFile, sizeFile) =>{
         fontSize:32,
         textAlign:'center'  
     },
+    nightModeIconColor:{
+        color:colorFile.accentColor
+    },
+    dayModeIconColor:{
+        color:colorFile.accentColor
+    },
     switchIcon:{
         color:colorFile.iconColor,
     }

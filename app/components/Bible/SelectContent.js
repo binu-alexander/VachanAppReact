@@ -85,20 +85,25 @@ class SelectContent extends Component {
   }
 
   errorMessage() {
-    if (!this.alertPresent) {
-      this.alertPresent = true;
-      if (this.props.error ||
-        this.props.availableContents[0].content.length === 0 ||
-        this.props.availableContents[1].content.length === 0 
-      ) {
-        this.props.navigation.setParams({ modalVisible: false })
-        Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
-        this.props.fetchAllContent()
-      } else {
-        this.props.navigation.setParams({ modalVisible: !this.props.visible })
-        this.alertPresent = false;
+    if(this.props.netConnection){
+      if (!this.alertPresent) {
+        this.alertPresent = true;
+        if (this.props.error ||
+          this.props.availableContents[0].content.length === 0 ||
+          this.props.availableContents[1].content.length === 0 
+        ) {
+          this.props.navigation.setParams({ modalVisible: false })
+          Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
+          this.props.fetchAllContent()
+        } else {
+          this.props.navigation.setParams({ modalVisible: !this.props.visible })
+          this.alertPresent = false;
+        }
       }
+    }else{
+      Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
     }
+
   }
   onPressModal = () => {
     this.errorMessage()
@@ -155,7 +160,7 @@ const mapStateToProps = state => {
 
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-
+    netConnection:state.updateStyling.netConnection,
   }
 }
 const mapDispatchToProps = dispatch => {

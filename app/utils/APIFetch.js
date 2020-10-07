@@ -5,40 +5,6 @@ const OWN_BASE_URL = 'https://raw.githubusercontent.com/neetuy/BibleContent/mast
 
 var APIFetch = {
 
-    async getVersions() {
-        try {
-            return await fetch(API_BASE_URL + "bibles", {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(ApiUtils.checkStatus)
-                .then((response) => response.json())
-                .catch(e => e)
-        } catch (error) {
-            return error;
-        }
-    },
-
-    async availableBooks(sourceId) {
-        try {
-            return await fetch(API_BASE_URL + "bibles" + "/" + sourceId + "/" + "books", {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(ApiUtils.checkStatus)
-                .then((response) => response.json())
-                .catch(e => e)
-        } catch (error) {
-            return error;
-        }
-    },
-
     async getChapterContent(sourceId, bookId, chapterNum) {
         try {
             return await fetch(API_BASE_URL + "bibles" + "/" + sourceId + "/" + "books" + "/" + bookId + "/" + "chapter" + "/" + chapterNum, {
@@ -71,24 +37,7 @@ var APIFetch = {
             return error;
         }
     },
-    async getAudioBible(language_code, version, bookId, chapter) {
-        const version_code = version.toLowerCase()
-        // const book_code = bookId.toLowerCase()
-        try {
-            return await fetch(GIT_BASE_API + "audio_bibles" + "/" + language_code + "/" + version_code + "/" + bookId + "/" + chapter + ".mp3", {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(ApiUtils.checkStatus)
-                .then((response) => response)
-                .catch(e =>  e)
-        } catch (error) {
-            return error;
-        }
-    },
+
     async availableAudioBook(language_code, version) {
         const version_code = version.toLowerCase()
         try {
@@ -204,8 +153,5 @@ var APIFetch = {
             return error;
         }
     }
-
-
-
 }
 export default APIFetch;

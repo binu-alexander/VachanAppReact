@@ -1,19 +1,15 @@
 import {StyleSheet,Dimensions} from 'react-native'
-const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 
 export const HelpStyle = (colorFile, sizeFile) =>{
     return StyleSheet.create({
         container:{
             flex:1,
-            // flexDirection:'row',
             backgroundColor:colorFile.backgroundColor
         },
         textView: {
-            // padding:20,
             width: width*4/5,
             backgroundColor: colorFile.backgroundColor,
-            // flexDirection:'column',
             textAlign:'left'
         },
         textRow: {

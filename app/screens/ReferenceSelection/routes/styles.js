@@ -1,13 +1,7 @@
 import {StyleSheet} from 'react-native'
 
-export const styles =(colorFile, sizeFile) =>{
+export const routestyle=(colorFile, sizeFile) =>{
     return StyleSheet.create({
-        emptyMessageIcon:{
-            fontSize:sizeFile.emptyIconSize,
-            margin:16,
-            color:colorFile.iconColor,
-            alignSelf:'center'
-        },
         tabLabel:{
             fontSize: 16, 
             margin: 0, 
@@ -21,9 +15,8 @@ export const styles =(colorFile, sizeFile) =>{
             height: 36
         },
         indicatorStyle:{
-            backgroundColor: colorFile.blueText,
-        },
+            backgroundColor: Color.blueText,
+        }
 
     })
-    
 }

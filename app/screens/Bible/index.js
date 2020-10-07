@@ -6,7 +6,6 @@ import {
   Alert,
   Dimensions,
   StyleSheet,
-  Image,
   TouchableOpacity,
   Share,
   AppState,
@@ -16,7 +15,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries'
 import VerseView from './VerseView'
 import APIFetch from '../../utils/APIFetch'
-import { fetchAudioUrl, fetchVersionBooks, userInfo, updateVersionBook, updateVersion, updateMetadata } from '../../store/action/'
+import { fetchAudioUrl, fetchVersionBooks,updateNetConnection, userInfo, updateVersionBook, updateVersion, updateMetadata } from '../../store/action/'
 import SelectContent from '../../components/Bible/SelectContent'
 import SelectBottomTabBar from '../../components/Bible/SelectBottomTabBar'
 import ChapterNdAudio from '../../components/Bible/ChapterNdAudio';
@@ -25,13 +24,11 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { styles } from './styles.js';
 import { connect } from 'react-redux'
 import Commentary from '../StudyHelp/Commentary/'
-import Dictionary from '../StudyHelp/Dictionary/'
 import Color from '../../utils/colorConstants'
 
 import { Header, Button, Title, Toast, Right } from 'native-base'
 import BibleChapter from '../../components/Bible/BibleChapter';
 import firebase from 'react-native-firebase'
-const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 
 class Bible extends Component {
@@ -249,6 +246,7 @@ class Bible extends Component {
   // check internet connection to fetch api's accordingly
   _handleConnectivityChange = (isConnected) => {
     this.setState({ connection_Status: isConnected == true ? true : false }, () => {
+      this.props.updateNetConnection(isConnected)
       if (this.state.connection_Status) {
         Toast.show({
           text: "Online. Now content available.",
@@ -973,15 +971,6 @@ class Bible extends Component {
                     currentVisibleChapter={this.state.currentVisibleChapter}
                   />
                 }
-                {/* {
-                  this.props.contentType == 'dictionary' &&
-                  <Dictionary
-                    parallelLanguage={this.props.navigation.getParam("parallelLanguage")}
-                    toggleParallelView={(value) => this.toggleParallelView(value)}
-                    currentVisibleChapter={this.state.currentVisibleChapter}
-                  />
-                } */}
-
               </View>
             )}
         </View>
@@ -1048,7 +1037,7 @@ const mapStateToProps = state => {
 
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-    verseInLine: state.updateStyling.verseInLine,
+    netConnection:state.updateStyling.netConnection,
 
     email: state.userInfo.email,
     userId: state.userInfo.uid,
@@ -1068,6 +1057,7 @@ const mapDispatchToProps = dispatch => {
     userInfo: (payload) => dispatch(userInfo(payload)),
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
     updateMetadata: (payload) => dispatch(updateMetadata(payload)),
+    updateNetConnection: (payload) => dispatch(updateNetConnection(payload)),
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Bible)

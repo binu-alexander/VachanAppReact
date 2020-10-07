@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { AppNavigator } from './app/routes/';
-import SplashScreen from 'react-native-splash-screen'
+import SplashScreen from 'react-native-splash-screen';
 import { connect } from 'react-redux'
 import { Root } from "native-base";
 import VersionCheck from 'react-native-version-check'
@@ -23,35 +23,37 @@ class App extends Component {
       currentVersion: currentVersion,
       latestVersion: latestVersion,
     }).then(res => {
-      if (res.isNeeded){
+      if (res.isNeeded) {
         Alert.alert('Please update your app ',
           'You have to update your app to the latest version to continue using',
           [{
-            text:'Update',
-            onPress:()=>{
+            text: 'Update',
+            onPress: () => {
               BackHandler.exitApp();
               Linking.openURL(updateNeeded.storeUrl)
             }
           },
           {
-            text:'Cancel',
-            onPress:()=>{
+            text: 'Cancel',
+            onPress: () => {
               return
             }
           }
-        ]
-          )}
+          ]
+        )
+      }
     });
   }
+
+
   async componentDidMount() {
-    this.checkUpdateNeeded()
     setTimeout(() => {
       SplashScreen.hide()
     }, 400)
     this.props.fetchAllContent()
-    SplashScreen.hide()
+    this.checkUpdateNeeded()
   }
-
+ 
   render() {
     return (
       <Root>
@@ -76,7 +78,6 @@ const mapDispatchToProps = dispatch => {
   return {
     fetchAllContent: () => dispatch(fetchAllContent()),
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
-
   }
 }
 

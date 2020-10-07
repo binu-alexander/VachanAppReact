@@ -9,8 +9,7 @@ export const UPDATE_CONTENT_TYPE = 'update_content_type';
 
 export const UPDATE_COLOR_MODE = 'update_color_mode';
 export const UPDATE_FONT_SIZE = 'update_font_size';
-export const UPDATE_VERSE_IN_LINE = 'update_verse_in_line';
-export const UPDATE_FONT_FAMILY = 'update_font_family';
+export const UPDATE_NET_CONNECTION = 'update_net_connection';
 
 
 export const FETCH_VERSION_LANGUAGE = 'fetch_version_language';
@@ -29,7 +28,6 @@ export const DOWNLOADED_BOOK_SUCCESS = 'downloaded_book_success';
 export const DOWNLOADED_BOOK_FAILURE = 'downloaded_book_failure';
 
 
-export const FETCH_DOWNLOADED_VERSION_CONTENT = 'fetch_downloaded_version_content';
 export const VERSION_DOWNLOADED_CONTENT_FAILURE = 'version_downloaded_content_failure';
 export const VERSION_DOWNLOADED_CONTENT_SUCCESS = 'version_downloaded_content_success';
 
