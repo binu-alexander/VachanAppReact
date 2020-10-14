@@ -3,10 +3,11 @@ import { FETCH_PARALLEL_BIBLE } from '../../action/actionsType'
 import { parallelBibleSuccess, parallelBiblefailure, } from '../../action/'
 import { put, takeLatest, call, fork, all } from 'redux-saga/effects'
 import DbQueries from '../../../utils/dbQueries'
-const API_BASE_URL = 'https://api.vachanonline.net/v1/'
+import store from '../../../store'
 
 function* fetchParalleBible(params) {
   try {
+    const state = store.getState()
     let chapterContent = []
     let totalVerses = null
     const payload = params.payload
@@ -16,7 +17,7 @@ function* fetchParalleBible(params) {
       totalVerses = response[0].length
     }
     else {
-      const url = API_BASE_URL + "bibles" + "/" + payload.sourceId + "/" + "books" + "/" + payload.bookId + "/" + "chapter" + "/" + payload.chapter
+      const url = state.updateVersion.baseAPI + "bibles" + "/" + payload.sourceId + "/" + "books" + "/" + payload.bookId + "/" + "chapter" + "/" + payload.chapter
       const res = yield call(fetch, url)
       if (res.ok && res.status == 200) {
         const response = yield res.json()

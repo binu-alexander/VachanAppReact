@@ -11,13 +11,12 @@ import { getBookSectionFromMapping, getBookChaptersFromMapping } from '../../../
 import { put, takeLatest, call } from 'redux-saga/effects'
 import fetchApi from '../../api';
 import DbQueries from '../../../utils/dbQueries'
+import store from '../../../store'
 
-const API_BASE_URL = 'https://api.vachanonline.net/v1/'
-
-//fetch audio available book ,audio file 
 function* fetchVersionLanguage() {
   try {
-    const url = API_BASE_URL + "bibles"
+    const state = store.getState()
+    const url = state.updateVersion.baseAPI + "bibles"
     const response = yield call(fetchApi, url)
     yield put(versionLanguageSuccess(response))
     yield put(versionLanguageFailure(null))
@@ -25,12 +24,12 @@ function* fetchVersionLanguage() {
   } catch (e) {
     yield put(versionLanguageFailure(e))
     yield put(versionLanguageSuccess([]))
-
   }
 }
 
 function* fetchVersionBooks(params) {
   try {
+    const state = store.getState()
     const payload = params.payload
     let bookListData = []
     if (payload.downloaded) {
@@ -47,7 +46,7 @@ function* fetchVersionBooks(params) {
       }
     }
     else {
-      var result = yield call(fetch, 'https://api.vachanonline.net/v1/booknames')
+      var result = yield call(fetch, state.updateVersion.baseAPI + 'booknames')
       if (result.ok && result.status == 200) {
         const response = yield result.json()
         for (var i = 0; i < response.length; i++) {
@@ -92,8 +91,9 @@ function* queryDownloadedBook(params) {
 
 function* fetchVersionContent(params) {
   try {
+    const state = store.getState()
     const payload = params.payload
-    const url = API_BASE_URL + "bibles" + "/" + payload.sourceId + "/" + "books" + "/" + payload.bookId + "/" + "chapter" + "/" + payload.chapter
+    const url = state.updateVersion.baseAPI + "bibles" + "/" + payload.sourceId + "/" + "books" + "/" + payload.bookId + "/" + "chapter" + "/" + payload.chapter
     const res = yield call(fetch, url)
     if (res.ok && res.status == 200) {
       const response = yield res.json()
@@ -103,7 +103,7 @@ function* fetchVersionContent(params) {
       yield put(versionContentFailure(null))
     }
     else {
-      yield put(versionContentFailure(e))
+      yield put(versionContentFailure())
       yield put(versionContentSuccess([]))
     }
 

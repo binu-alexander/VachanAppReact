@@ -4,13 +4,14 @@ import { Text, View, TouchableOpacity, Alert } from 'react-native';
 import { Accordion } from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries'
-import APIFetch from '../../utils/APIFetch'
+// import APIFetch from '../../utils/APIFetch'
 import { styles } from './styles.js';
 import { getBookSectionFromMapping } from '../../utils/UtilFunctions'
 import { connect } from 'react-redux';
 import { updateVersion, fetchVersionBooks, fetchAllContent, updateMetadata } from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 import ReloadButton from '../../components/ReloadButton';
+import vApi from '../../utils/APIFetch';
 
 class LanguageList extends Component {
   static navigationOptions = ({ navigation }) => ({
@@ -65,7 +66,7 @@ class LanguageList extends Component {
     const languageList = await DbQueries.getLangaugeList()
     try {
       if (languageList == null) {
-        const books = await APIFetch.fetchBookInLanguage()
+        const books = await vApi.get("booknames")
         var languages = this.props.bibleLanguages[0].content
         if (languages && books) {
           for (var i = 0; i < languages.length; i++) {
@@ -113,7 +114,7 @@ class LanguageList extends Component {
       try {
         this.setState({ startDownload: true })
         let bookModels =[]
-        let content = await APIFetch.getAllBooks(parseInt(sourceId), "json")
+        let content = await vApi.get("bibles" + "/" + parseInt(sourceId) + "/" + "json")
   
         if(content.bibleContent && books){
           for(var i =0;i<books.length;i++){
@@ -291,6 +292,8 @@ const mapStateToProps = state => {
     netConnection:state.updateStyling.netConnection,
     bibleLanguages: state.contents.contentLanguages,
     books: state.versionFetch.data,
+    baseAPI: state.updateVersion.baseAPI
+
   }
 }
 

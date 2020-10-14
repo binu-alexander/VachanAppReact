@@ -12,6 +12,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import { bookStyle } from './styles.js'
 import { Card, CardItem } from 'native-base'
 import {Toast } from 'native-base'
+import vApi from '../../utils/APIFetch';
 
 
 class Video extends Component {
@@ -30,7 +31,7 @@ class Video extends Component {
     this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
   }
   async fetchVideo() {
-    const videos = await APIFetch.fetchVideo(this.props.languageCode)
+    const videos = await vApi.get('videos?language='+this.props.languageCode)
     let videoBook = []
     let videoAll = []
     let found = false

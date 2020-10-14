@@ -1,60 +1,64 @@
 import React, { Component } from 'react';
 import {
-  Dimensions,
   FlatList,
   Alert,
   Text,
   View
 } from 'react-native';
-import { connect } from 'react-redux'
-import { Body, Header, Right, Title, Button } from 'native-base'
-import { fetchCommentaryContent, fetchVersionBooks } from '../../../store/action/index'
+import { connect } from 'react-redux';
+import { Body, Header, Right, Title, Button } from 'native-base';
+import {vachanAPIFetch, fetchVersionBooks } from '../../../store/action/index';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { styles } from './styles'
-import Color from '../../../utils/colorConstants'
+import { styles } from './styles';
+import Color from '../../../utils/colorConstants';
 import ReloadButton from '../../../components/ReloadButton';
 import HTML from 'react-native-render-html';
-import APIFetch from '../../../utils/APIFetch'
+// import APIFetch from '../../../utils/APIFetch'
+import vApi from '../../../utils/APIFetch';
+import securityVaraibles from '../../../../securityVaraibles';
+
+const commentaryKey = securityVaraibles.COMMENTARY_KEY ? '?key=' + securityVaraibles.COMMENTARY_KEY : ''
 
 class Commentary extends Component {
-
   constructor(props) {
     super(props)
     this.state = {
       commentary: [],
-      error:null,
-      bookName:this.props.bookName,
+      error: null,
+      bookName: this.props.bookName,
     }
     this.styles = styles(this.props.colorFile, this.props.sizeFile)
     this.alertPresent = false
   }
   // fetch bookname in perticular language of commenatry
-  async fetchBookName(){
+  async fetchBookName() {
     try {
-          let bookName
-          let response = await APIFetch.fetchBookInLanguage()
-          for (var i = 0; i <= response.length-1; i++) {
-              if (this.props.parallelLanguage.languageName.toLowerCase() == response[i].language.name) {
-                  for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
-                      if (response[i].bookNames[j].book_code == this.props.bookId) {
-                          bookName = response[i].bookNames[j].short
-                      }
-                  }
-              }
+      let bookName
+      let response = await vApi.get('booknames')
+      for (var i = 0; i <= response.length - 1; i++) {
+        if (this.props.parallelLanguage.languageName.toLowerCase() == response[i].language.name) {
+          for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
+            if (response[i].bookNames[j].book_code == this.props.bookId) {
+              bookName = response[i].bookNames[j].short
+            }
           }
-          this.setState({ bookName: bookName })
-  } catch (error) {
-      
+        }
+      }
+      this.setState({ bookName: bookName })
+    } catch (error) {
+
       this.setState({ error: error });
-  }
+    }
   }
   componentDidMount() {
-    this.props.fetchCommentaryContent({ parallelContentSourceId: this.props.parallelLanguage.sourceId, bookId: this.props.bookId, chapter: this.props.currentVisibleChapter })
+    const url = "commentaries/"+this.props.parallelLanguage.sourceId + "/" + this.props.bookId + "/" + this.props.currentVisibleChapter + commentaryKey
+    this.props.vachanAPIFetch(url)
     this.fetchBookName()
   }
-  componentDidUpdate(prevProps,prevState) {
+  componentDidUpdate(prevProps, prevState) {
     if (this.props.bookId != prevProps.bookId || prevProps.currentVisibleChapter != this.props.currentVisibleChapter) {
-      this.props.fetchCommentaryContent({ parallelContentSourceId: this.props.parallelLanguage.sourceId, bookId:this.props.bookId, chapter: this.props.currentVisibleChapter })
+      const url = "commentaries/"+this.props.parallelLanguage.sourceId + "/" + this.props.bookId + "/" + this.props.currentVisibleChapter + commentaryKey
+      this.props.vachanAPIFetch(url)
       this.fetchBookName()
     }
   }
@@ -64,7 +68,8 @@ class Commentary extends Component {
       this.alertPresent = true;
       if (this.props.error || this.state.error) {
         Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
-        this.props.fetchCommentaryContent({ parallelContentSourceId: this.props.parallelLanguage.sourceId, bookId: this.props.bookId, chapter: this.props.currentVisibleChapter })
+        const url ="commentaries/"+this.props.parallelLanguage.sourceId + "/" + this.props.bookId + "/" + this.props.currentVisibleChapter + commentaryKey
+        this.props.vachanAPIFetch(url)
       } else {
         this.alertPresent = false;
       }
@@ -73,7 +78,7 @@ class Commentary extends Component {
   updateData = () => {
     this.errorMessage()
   }
-  renderItem=({ item })=> {
+  renderItem = ({ item }) => {
     return (
       <View style={{ padding: 10 }}>
         {item.verse &&
@@ -90,12 +95,12 @@ class Commentary extends Component {
   ListHeaderComponent = () => {
     return (
       <View>
-        {this.props.commentaryContent.bookIntro == '' ? null :
+        { this.props.commentaryContent && this.props.commentaryContent.bookIntro == '' ? null :
           <View style={this.styles.cardItemBackground}>
             <Text style={this.styles.commentaryHeading}>Book Intro</Text>
             <HTML
               baseFontStyle={this.styles.textString}
-              tagsStyles={{ p: this.styles.textString }} html={this.props.commentaryContent.bookIntro} />
+              tagsStyles={{ p: this.styles.textString }} html={ this.props.commentaryContent && this.props.commentaryContent.bookIntro} />
           </View>}
       </View>
     )
@@ -104,7 +109,7 @@ class Commentary extends Component {
   render() {
     return (
       <View style={this.styles.container}>
-        <Header style={{backgroundColor: Color.Blue_Color, height: 40, borderLeftWidth: 0.5, borderLeftColor: Color.White }} >
+        <Header style={{ backgroundColor: Color.Blue_Color, height: 40, borderLeftWidth: 0.5, borderLeftColor: Color.White }} >
           <Body>
             <Title style={{ fontSize: 16 }}>{this.props.parallelLanguage.versionCode}</Title>
           </Body>
@@ -125,9 +130,9 @@ class Commentary extends Component {
             </View>
             :
             <View style={{ flex: 1 }}>
-              <Text style={[this.styles.commentaryHeading, { margin: 10 }]}>{this.state.bookName} {} {this.props.commentaryContent.chapter}</Text>
+              <Text style={[this.styles.commentaryHeading, { margin: 10 }]}>{this.state.bookName} {} {this.props.commentaryContent && this.props.commentaryContent.chapter}</Text>
               <FlatList
-                data={this.props.commentaryContent.commentaries}
+                data={this.props.commentaryContent && this.props.commentaryContent.commentaries}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ flexGrow: 1, margin: 16 }}
                 renderItem={this.renderItem}
@@ -144,34 +149,26 @@ class Commentary extends Component {
 
 const mapStateToProps = state => {
   return {
-
     language: state.updateVersion.language,
     versionCode: state.updateVersion.versionCode,
     sourceId: state.updateVersion.sourceId,
     downloaded: state.updateVersion.downloaded,
     bookId: state.updateVersion.bookId,
-    bookName:state.updateVersion.bookName,
-
-
-
+    bookName: state.updateVersion.bookName,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-
     contentType: state.updateVersion.contentType,
     books: state.versionFetch.data,
-
-   
-    commentaryContent: state.commentaryFetch.commentaryContent,
-    error: state.commentaryFetch.error,
+    commentaryContent: state.vachanAPIFetch.apiData,
+    error: state.vachanAPIFetch.error,
+    baseAPI: state.updateVersion.baseAPI,
   }
 
 }
 const mapDispatchToProps = dispatch => {
   return {
-
-    fetchCommentaryContent: (payload) => dispatch(fetchCommentaryContent(payload)),
+    vachanAPIFetch: (payload) => dispatch(vachanAPIFetch(payload)),
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
-
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Commentary)

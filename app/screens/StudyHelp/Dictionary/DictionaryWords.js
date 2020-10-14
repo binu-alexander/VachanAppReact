@@ -11,13 +11,14 @@ import {
 } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { connect } from 'react-redux'
-import { Accordion, Body, Header, Right, Title, Button } from 'native-base'
-import { fetchDictionaryContent } from '../../../store/action/index'
+import { Accordion } from 'native-base'
+import {vachanAPIFetch } from '../../../store/action/index'
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import APIFetch from '../../../utils/APIFetch'
+// import APIFetch from '../../../utils/APIFetch'
 import { styles } from './styles'
 import Color from '../../../utils/colorConstants'
 import ReloadButton from '../../../components/ReloadButton'
+import vApi from '../../../utils/APIFetch';
 
 class DictionaryWords extends Component {
   static navigationOptions = () => {
@@ -38,11 +39,11 @@ class DictionaryWords extends Component {
 
   }
   componentDidMount() {
-    this.props.fetchDictionaryContent({ parallelContentSourceId: this.state.dictionarySourceId })
+    this.props.vachanAPIFetch("dictionaries/"+this.state.dictionarySourceId)
   }
   fetchWord = async (word) => {
     try {
-      var wordDescription = await APIFetch.fetchWord(this.state.dictionarySourceId, word.wordId)
+      var wordDescription = await vApi.get('dictionaries/' + this.state.dictionarySourceId + "/" + word.wordId)
       this.setState({
         wordDescription: wordDescription.meaning,
         modalVisibleDictionary: true
@@ -86,7 +87,8 @@ class DictionaryWords extends Component {
       this.alertPresent = true;
       if (this.props.dictionaryContent.length === 0) {
         Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
-        this.props.fetchDictionaryContent({ parallelContentSourceId: this.props.dictionarySourceId })
+        
+        this.props.vachanAPIFetch("dictionaries/"+this.props.dictionarySourceId)
       } else {
         this.alertPresent = false;
       }
@@ -103,18 +105,10 @@ class DictionaryWords extends Component {
 
 
   render() {
+    console.log(" vachan API dictionary data ",this.props.dictionaryContent)
+    console.log(" vachan API dictionary error ",this.props.error)
     return (
       <View style={this.styles.container}>
-        {/* <Header style={{ backgroundColor: Color.Blue_Color, height: 40, borderLeftWidth: 0.5, borderLeftColor: Color.White }} >
-          <Body>
-            <Title style={{ fontSize: 16 }}>{this.props.parallelLanguage.versionCode}</Title>
-          </Body>
-          <Right>
-            <Button transparent onPress={() => this.props.toggleParallelView(false)}>
-              <Icon name='cancel' color={Color.White} size={20} />
-            </Button>
-          </Right>
-        </Header> */}
         {this.state.isLoading &&
           <Spinner
             visible={true}
@@ -172,15 +166,14 @@ const mapStateToProps = state => {
     sourceId: state.updateVersion.sourceId,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-    dictionaryContent: state.dictionaryFetch.dictionaryContent,
-    error: state.dictionaryFetch.error,
+    dictionaryContent: state.vachanAPIFetch.apiData,
+    error: state.vachanAPIFetch.error,
   }
 
 }
 const mapDispatchToProps = dispatch => {
   return {
-    fetchDictionaryContent: (payload) => dispatch(fetchDictionaryContent(payload)),
-    fetchWordId: (payload) => dispatch(fetchWordId(payload)),
+    vachanAPIFetch: (url) => dispatch(vachanAPIFetch(url)),
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(DictionaryWords)

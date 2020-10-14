@@ -1,4 +1,4 @@
-import React, { Component, version } from 'react';
+import React, { Component } from 'react';
 import {
   Text,
   View,
@@ -11,24 +11,24 @@ import {
   AppState,
   NetInfo,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import DbQueries from '../../utils/dbQueries'
-import VerseView from './VerseView'
-import APIFetch from '../../utils/APIFetch'
-import { fetchAudioUrl, fetchVersionBooks,updateNetConnection, userInfo, updateVersionBook, updateVersion, updateMetadata } from '../../store/action/'
-import SelectContent from '../../components/Bible/SelectContent'
-import SelectBottomTabBar from '../../components/Bible/SelectBottomTabBar'
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import DbQueries from '../../utils/dbQueries';
+import VerseView from './VerseView';
+// import APIFetch from '../../utils/APIFetch'
+import {APIAudioURL, fetchVersionBooks,updateNetConnection, userInfo, updateVersionBook, updateVersion, updateMetadata } from '../../store/action/'
+import SelectContent from '../../components/Bible/SelectContent';
+import SelectBottomTabBar from '../../components/Bible/SelectBottomTabBar';
 import ChapterNdAudio from '../../components/Bible/ChapterNdAudio';
 import ReloadButton from '../../components/ReloadButton';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { styles } from './styles.js';
-import { connect } from 'react-redux'
-import Commentary from '../StudyHelp/Commentary/'
-import Color from '../../utils/colorConstants'
-
-import { Header, Button, Title, Toast, Right } from 'native-base'
+import { connect } from 'react-redux';
+import Commentary from '../StudyHelp/Commentary/';
+import Color from '../../utils/colorConstants';
+import { Header, Button, Title, Toast } from 'native-base';
 import BibleChapter from '../../components/Bible/BibleChapter';
-import firebase from 'react-native-firebase'
+import firebase from 'react-native-firebase';
+import vApi from '../../utils/APIFetch';
 const width = Dimensions.get('window').width;
 
 class Bible extends Component {
@@ -184,7 +184,9 @@ class Bible extends Component {
         })
       }
     })
-
+    // firebase.database().ref("/apiBaseUrl/" ).once('value', (snapshot) => {
+    //   console.log("SNAPSHOT result ",snapshot.val())
+    // })
     NetInfo.isConnected.addEventListener(
       'connectionChange',
       this._handleConnectivityChange
@@ -216,7 +218,7 @@ class Bible extends Component {
         this.getHighlights()
         this.getBookMarks()
         this.getNotes()
-        this.fetchAudio()
+        // this.fetchAudio()
         const shortName = this.props.language.toLowerCase() == ('malayalam' || 'tamil' || 'kannada') ?
           (this.props.bookName.length > 4 ? this.props.bookName.slice(0, 3) + "..." : this.props.bookName) :
           this.props.bookName.length > 8 ? this.props.bookName.slice(0, 7) + "..." : this.props.bookName
@@ -403,7 +405,7 @@ class Bible extends Component {
       if (this.props.downloaded) {
         this.getDownloadedContent()
       } else {
-        var content = await APIFetch.getChapterContent(this.props.sourceId, this.props.bookId, this.state.currentVisibleChapter)
+        var content = await vApi.get("bibles" + "/" + this.props.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentVisibleChapter)
         if (content) {
           var header = content.chapterContent.metadata &&
             (content.chapterContent.metadata[0].section && content.chapterContent.metadata[0].section.text)
@@ -446,7 +448,7 @@ class Bible extends Component {
           }
         } else {
           try {
-            var content = await APIFetch.getChapterContent(this.props.sourceId, this.props.bookId, this.state.currentVisibleChapter)
+            var content = await vApi.get("bibles" + "/" + this.props.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentVisibleChapter)
             if (content) {
               var header = content.chapterContent.metadata &&
                 (content.chapterContent.metadata[0].section && content.chapterContent.metadata[0].section.text)
@@ -467,7 +469,6 @@ class Bible extends Component {
         })
         this.getHighlights()
         this.getNotes()
-        this.fetchAudio()
       }
       catch (error) {
         this.setState({ isLoading: false, error: error, chapterContent: [] })
@@ -475,15 +476,6 @@ class Bible extends Component {
     })
   }
 
-  // fetch audio for current chapter
-  fetchAudio = () => {
-    this.props.fetchAudioUrl({
-      languageCode: this.props.languageCode,
-      versionCode: this.props.versionCode,
-      bookId: this.props.bookId,
-      chapter: this.state.currentVisibleChapter
-    })
-  }
   // hide or show the audio component 
   toggleAudio = () => {
     if (this.state.audio) {
@@ -498,14 +490,19 @@ class Bible extends Component {
     }
   }
   // check available book having audio or not
-  async audioComponentUpdate() {
+  async audioComponentUpdate(){
     var found = false
-    let res = await APIFetch.availableAudioBook(this.props.languageCode, this.props.versionCode)
+    let res = await vApi.get('audiobibles')
+    console.log("AUDIO component key 1",res)
+
     try {
-      if (res.length !== 0) {
-        for (var key in res.books) {
-          if (key == this.props.bookId) {
+      if (res.length !== 0){
+        console.log("AUDIO component key 2",res[0].audioBibles[0].books )
+        for (var key in res[0].audioBibles[0].books){
+          console.log("AUDIO component key 3",key,this.props.bookId )
+          if (key == this.props.bookId){
             found = true
+            this.props.APIAudioURL({audioURL:res[0].audioBibles[0].url,audioFormat:res[0].audioBibles[0].format})
             this.props.navigation.setParams({ audio: true })
             this.setState({ audio: true })
             break;
@@ -1026,6 +1023,8 @@ const mapStateToProps = state => {
     downloaded: state.updateVersion.downloaded,
     contentType: state.updateVersion.parallelContentType,
 
+    baseAPI: state.updateVersion.baseAPI,
+
     chapterNumber: state.updateVersion.chapterNumber,
     totalChapters: state.updateVersion.totalChapters,
     bookName: state.updateVersion.bookName,
@@ -1043,21 +1042,18 @@ const mapStateToProps = state => {
     userId: state.userInfo.uid,
 
     books: state.versionFetch.data,
-
-    availableCommentaries: state.commentaryFetch.availableCommentaries,
-    commentary: state.commentaryFetch.commentaryContent,
     parallelContentType: state.updateVersion.parallelContentType,
   }
 }
 const mapDispatchToProps = dispatch => {
   return {
     updateVersion: (payload) => dispatch(updateVersion(payload)),
-    fetchAudioUrl: (payload) => dispatch(fetchAudioUrl(payload)),
     updateVersionBook: (value) => dispatch(updateVersionBook(value)),
     userInfo: (payload) => dispatch(userInfo(payload)),
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
     updateMetadata: (payload) => dispatch(updateMetadata(payload)),
     updateNetConnection: (payload) => dispatch(updateNetConnection(payload)),
+    APIAudioURL: (payload) => dispatch(APIAudioURL(payload)),
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Bible)

@@ -13,8 +13,8 @@ import { connect } from 'react-redux'
 import { getResultText } from '../../utils/UtilFunctions'
 import { Header, Button, Right, Title } from 'native-base'
 import Color from '../../utils/colorConstants'
-import APIFetch from '../../utils/APIFetch'
 import ReloadButton from '../ReloadButton';
+import vApi from '../../utils/APIFetch';
 
 class BibleChapter extends Component {
     constructor(props) {
@@ -61,7 +61,7 @@ class BibleChapter extends Component {
         try {
                 let bookName=''
                 let bookId=''
-                let response = await APIFetch.fetchBookInLanguage()
+                let response = await vApi.get('booknames')
                 for (var i = 0; i <= response.length-1; i++) {
                     if (this.props.parallelLanguage.languageName.toLowerCase() == response[i].language.name) {
                         for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
@@ -228,7 +228,6 @@ const mapStateToProps = state => {
         sizeFile: state.updateStyling.sizeFile,
         colorFile: state.updateStyling.colorFile,
         books: state.versionFetch.data,
-
         language: state.updateVersion.language,
         versionCode: state.updateVersion.versionCode,
         sourceId: state.updateVersion.sourceId,
@@ -236,7 +235,6 @@ const mapStateToProps = state => {
         bookId:state.updateVersion.bookId,
         bookName:state.updateVersion.bookName,
         parallelBible: state.parallel.parallelBible,
-
         error: state.parallel.error,
         loading: state.parallel.loading
     }

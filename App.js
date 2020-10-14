@@ -3,9 +3,10 @@ import { AppNavigator } from './app/routes/';
 import SplashScreen from 'react-native-splash-screen';
 import { connect } from 'react-redux'
 import { Root } from "native-base";
-import VersionCheck from 'react-native-version-check'
-import { fetchAllContent, fetchVersionBooks } from './app/store/action/'
+import VersionCheck from 'react-native-version-check';
+import { fetchAllContent, fetchVersionBooks,APIBaseURL } from './app/store/action/';
 import { Alert, BackHandler, Linking } from 'react-native';
+import firebase from 'react-native-firebase'
 
 class App extends Component {
   constructor(props) {
@@ -50,6 +51,10 @@ class App extends Component {
     setTimeout(() => {
       SplashScreen.hide()
     }, 400)
+    firebase.database().ref("/apiBaseUrl/" ).once('value', (snapshot) => {
+      console.log("SNAPSHOT result ",snapshot.val())
+      this.props.APIBaseURL(snapshot.val())
+    })
     this.props.fetchAllContent()
     this.checkUpdateNeeded()
   }
@@ -78,6 +83,7 @@ const mapDispatchToProps = dispatch => {
   return {
     fetchAllContent: () => dispatch(fetchAllContent()),
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
+    APIBaseURL: (payload) => dispatch(APIBaseURL(payload)),
   }
 }
 

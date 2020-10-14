@@ -5,11 +5,12 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { Card, CardItem } from 'native-base'
-import APIFetch from '../../../utils/APIFetch'
+// import APIFetch from '../../../utils/APIFetch'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux'
 import { bookStyle } from './styles.js'
 import { Toast } from 'native-base'
+import vApi from '../../../utils/APIFetch';
 
 class Infographics extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -30,7 +31,7 @@ class Infographics extends React.Component {
 
   }
   async componentDidMount() {
-    const apiData = await APIFetch.getInfographics(this.props.languageCode)
+    const apiData = await vApi.get("infographics/"+ this.props.languageCode)
     let infographicsBook = []
     if (apiData) {
       let found = false

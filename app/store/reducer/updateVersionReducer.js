@@ -1,4 +1,4 @@
-import { UPDATE_VERSION, UPDATE_VERSION_BOOK, UPDATE_CONTENT_TYPE, UPDATE_MATA_DATA, PARALLEL_METADATA } from '../action/actionsType';
+import { UPDATE_VERSION, UPDATE_VERSION_BOOK, UPDATE_CONTENT_TYPE, UPDATE_MATA_DATA, API_BASE_URL, AUDIO_URL } from '../action/actionsType';
 
 const initialState = {
     language: 'Hindi',
@@ -22,6 +22,9 @@ const initialState = {
     versionNameGL: '\u0939\u093f\u0902\u0926\u0940 - \u0907\u0902\u0921\u093f\u092f\u0928 \u0930\u093f\u0935\u093e\u0907\u091c\u094d\u0921 \u0935\u0930\u094d\u091c\u0928\n',
 
     parallelContentType: 'bible',
+    baseAPI: null,
+    audioURL:null,
+    audioFormat:'mp3'
 }
 
 function updateVersionReducer(state = initialState, action) {
@@ -59,6 +62,17 @@ function updateVersionReducer(state = initialState, action) {
                 technologyPartner: action.payload.technologyPartner,
                 revision: action.payload.revision,
                 versionNameGL: action.payload.versionNameGL,
+            }
+        case API_BASE_URL:
+            return {
+                ...state,
+                baseAPI: action.baseAPI
+            }
+        case AUDIO_URL:
+            return {
+                ...state,
+                audioURL: action.payload.audioURL,
+                audioFormat:action.payload.audioFormat
             }
         default:
             return state
