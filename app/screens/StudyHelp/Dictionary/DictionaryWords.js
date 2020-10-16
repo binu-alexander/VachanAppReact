@@ -14,7 +14,6 @@ import { connect } from 'react-redux'
 import { Accordion } from 'native-base'
 import {vachanAPIFetch } from '../../../store/action/index'
 import Icon from 'react-native-vector-icons/MaterialIcons';
-// import APIFetch from '../../../utils/APIFetch'
 import { styles } from './styles'
 import Color from '../../../utils/colorConstants'
 import ReloadButton from '../../../components/ReloadButton'

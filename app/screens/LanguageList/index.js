@@ -4,7 +4,6 @@ import { Text, View, TouchableOpacity, Alert } from 'react-native';
 import { Accordion } from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries'
-// import APIFetch from '../../utils/APIFetch'
 import { styles } from './styles.js';
 import { getBookSectionFromMapping } from '../../utils/UtilFunctions'
 import { connect } from 'react-redux';
