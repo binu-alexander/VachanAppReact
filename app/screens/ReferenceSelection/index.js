@@ -9,9 +9,20 @@ import { fetchVersionBooks } from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 import ReloadButton from '../../components/ReloadButton';
 import { styles } from './styles';
+import Color from '../../utils/colorConstants'
 
 class ReferenceSelection extends Component {
-
+  static navigationOptions = ({ navigation }) => {
+    const { params = {} } = navigation.state
+    return {
+      headerStyle: {
+        backgroundColor: Color.Blue_Color,
+        height:36,
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+    }
+  }
   constructor(props) {
     super(props)
 

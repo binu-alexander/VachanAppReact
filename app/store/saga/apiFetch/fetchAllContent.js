@@ -2,21 +2,20 @@
 import { FETCH_ALL_CONTENT, FECTH_ALL_LANGUAGE } from '../../action/actionsType'
 import { allContentFailure, allContentSuccess, allLanguageFailure, allLanguageSuccess } from '../../action/'
 import { put, takeLatest, call, fork, all } from 'redux-saga/effects'
-import securityVaraibles  from './../../../../securityVaraibles.js'
+import securityVaraibles from './../../../../securityVaraibles.js'
 import fetchApi from '../../api';
-const API_BASE_URL = 'https://api.vachanonline.net/v1/'
+import store from '../../../store'
 
-//fetch audio available book ,audio file 
 function* fetchAllContent() {
   try {
-    const commentaryKey = securityVaraibles.COMMENTARY_KEY ? '?key='+securityVaraibles.COMMENTARY_KEY : ''
-    const bibleAPI = API_BASE_URL + 'bibles'
-    const commentaryAPI = API_BASE_URL + 'commentaries'+commentaryKey
-    const [bibleLanguage, commentaryLanguage, dictionariesLanguage] = yield all([
+    const state = store.getState()
+    const commentaryKey = securityVaraibles.COMMENTARY_KEY ? '?key=' + securityVaraibles.COMMENTARY_KEY : ''
+    const bibleAPI = state.updateVersion.baseAPI + 'bibles'
+    const commentaryAPI = state.updateVersion.baseAPI + 'commentaries' + commentaryKey
+    const [bibleLanguage, commentaryLanguage] = yield all([
       call(fetchApi, bibleAPI),
       call(fetchApi, commentaryAPI),
     ])
-
     const bible = []
     const commentary = []
 
@@ -80,7 +79,7 @@ function* fetchAllContent() {
       }
       commentary.push({ languageName: language, languageCode: languageCode, versionModels: versions })
     }
- 
+
     yield put(allContentSuccess([
       { contentType: "bible", content: bible },
       { contentType: "commentary", content: commentary },
@@ -95,7 +94,8 @@ function* fetchAllContent() {
 
 function* fetchAllLanguage() {
   try {
-    const response = yield call(fetchApi, 'https://api.vachanonline.net/v1/languages')
+    const state = store.getState()
+    const response = yield call(fetchApi, state.updateVersion.baseAPI + 'languages')
     yield put(allLanguageSuccess(response))
     yield put(allLanguageFailure(null))
 

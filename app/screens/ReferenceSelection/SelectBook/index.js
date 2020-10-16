@@ -9,7 +9,6 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Segment, Button } from 'native-base'
 import { SelectBookPageStyle } from './styles.js';
-import { AsyncStorageConstants } from '../../../utils/AsyncStorageConstants'
 import { connect } from 'react-redux'
 import Spinner from 'react-native-loading-spinner-overlay';
 import Color from '../../../utils/colorConstants'
@@ -141,8 +140,6 @@ class SelectBook extends Component {
   }
 
   render() {
-    let activeBgColor = this.state.colorMode == AsyncStorageConstants.Values.DayMode ? Color.Blue_Color : Color.White
-    let inactiveBgColor = this.state.colorMode == AsyncStorageConstants.Values.DayMode ? Color.White : Color.Blue_Color
     return (
       <View style={this.styles.container}>
         {this.props.isLoading ?
@@ -159,16 +156,17 @@ class SelectBook extends Component {
                   <Button
                     active={this.state.activeTab}
                     style={[{
-                      backgroundColor: this.state.activeTab ? activeBgColor : inactiveBgColor,
                       width: this.state.NTSize == 0 ? width : width * 1 / 2,
-                    }, this.styles.segmentButton]}
+                    }, 
+                    this.state.activeTab ? this.styles.activeBgColor :this.styles.inactiveBgColor,
+                    this.styles.segmentButton]}
                     onPress={this.toggleButton.bind(this, true)
                     }
                   >
                     <Text
-                      style={{
-                        color: this.state.activeTab ? inactiveBgColor : activeBgColor
-                      }}>
+                      style={
+                        this.state.activeTab ? this.styles.inactivetabText : this.styles.activetabText
+                      }>
                       Old Testament
                 </Text>
                   </Button>
@@ -180,16 +178,16 @@ class SelectBook extends Component {
                   <Button
                     active={!this.state.activeTab}
                     style={[{
-                      backgroundColor: !this.state.activeTab ? activeBgColor : inactiveBgColor,
                       width: this.state.OTSize == 0 ? width : width * 1 / 2,
-                    }, this.styles.segmentButton]}
+                    }, 
+                    !this.state.activeTab ? this.styles.activeBgColor :this.styles.inactiveBgColor,
+                    this.styles.segmentButton]}
                     onPress={this.toggleButton.bind(this, false)}>
                     <Text
                       active={!this.state.activeTab}
                       style={[
-                        {
-                          color: !this.state.activeTab ? inactiveBgColor : activeBgColor
-                        }, this.styles.buttonText]
+                        !this.state.activeTab ? this.styles.inactivetabText :this.styles.activetabText,
+                        this.styles.buttonText]
                       }>
                       New Testament
                     </Text>

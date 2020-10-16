@@ -4,13 +4,13 @@ import { Text, View, TouchableOpacity, Alert } from 'react-native';
 import { Accordion } from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries'
-import APIFetch from '../../utils/APIFetch'
 import { styles } from './styles.js';
 import { getBookSectionFromMapping } from '../../utils/UtilFunctions'
 import { connect } from 'react-redux';
 import { updateVersion, fetchVersionBooks, fetchAllContent, updateMetadata } from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 import ReloadButton from '../../components/ReloadButton';
+import vApi from '../../utils/APIFetch';
 
 class LanguageList extends Component {
   static navigationOptions = ({ navigation }) => ({
@@ -65,7 +65,7 @@ class LanguageList extends Component {
     const languageList = await DbQueries.getLangaugeList()
     try {
       if (languageList == null) {
-        const books = await APIFetch.fetchBookInLanguage()
+        const books = await vApi.get("booknames")
         var languages = this.props.bibleLanguages[0].content
         if (languages && books) {
           for (var i = 0; i < languages.length; i++) {
@@ -109,31 +109,38 @@ class LanguageList extends Component {
     }
   }
   downloadBible = async (langName, verCode, books, sourceId) => {
-    try {
-      this.setState({ startDownload: true })
-      let bookModels =[]
-      let content = await APIFetch.getAllBooks(parseInt(sourceId), "json")
-
-      if(content.bibleContent && books){
-        for(var i =0;i<books.length;i++){
-            bookModels.push({
-            languageName: langName,
-            versionCode: verCode,
-            bookId:books[i].bookId,
-            bookName:books[i].bookName,
-            bookNumber:books[i].bookNumber,
-            chapters: this.getChapters(content.bibleContent,books[i].bookId),
-            section: getBookSectionFromMapping(books[i].bookId),
-          })
+    if(this.props.netConnection){
+      try {
+        this.setState({ startDownload: true })
+        let bookModels =[]
+        let content = await vApi.get("bibles" + "/" + parseInt(sourceId) + "/" + "json")
+  
+        if(content.bibleContent && books){
+          for(var i =0;i<books.length;i++){
+              bookModels.push({
+              languageName: langName,
+              versionCode: verCode,
+              bookId:books[i].bookId,
+              bookName:books[i].bookName,
+              bookNumber:books[i].bookNumber,
+              chapters: this.getChapters(content.bibleContent,books[i].bookId),
+              section: getBookSectionFromMapping(books[i].bookId),
+            })
+          }
         }
+        DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
+        this.fetchLanguages()
+        this.setState({ startDownload: false})
+      } catch (error) {
+        this.setState({ startDownload: false })
+      Alert.alert("","Something went wrong. Try Again", [{ text: 'OK', onPress: () => {return} }], { cancelable: false });
+
       }
-      DbQueries.addNewVersion(langName,verCode,bookModels,sourceId)
-      this.fetchLanguages()
-      this.setState({ startDownload: false})
-    } catch (error) {
-      this.setState({ startDownload: false })
-      alert("Something went wrong. Try Again")
     }
+    else{
+      Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => {return} }], { cancelable: false });
+    }
+
   }
   // this function is calling in downloadbible function
   getChapters = (content, bookId) => {
@@ -281,8 +288,11 @@ const mapStateToProps = state => {
     chapterNumber: state.updateVersion.chapterNumber,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
+    netConnection:state.updateStyling.netConnection,
     bibleLanguages: state.contents.contentLanguages,
     books: state.versionFetch.data,
+    baseAPI: state.updateVersion.baseAPI
+
   }
 }
 

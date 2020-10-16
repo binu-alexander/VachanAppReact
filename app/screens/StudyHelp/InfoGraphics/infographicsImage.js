@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated, StyleSheet, ActivityIndicator } from 'react-native';
+import { Animated, ActivityIndicator } from 'react-native';
 import {
   PanGestureHandler,
   PinchGestureHandler,

@@ -40,15 +40,12 @@ class HighLights extends Component {
   }
   removeHighlight = (id, chapterNum, verseNum) => {
     var data = this.state.HightlightedVerseArray
-    // index = -1
     data.forEach((a, i) => {
       if (a.bookId == id && a.chapterNumber == chapterNum) {
         a.verseNumber.forEach(async (b, j) => {
           if (b == verseNum) {
             if (a.verseNumber.length == 1) {
-              // if (this.props.emai) {
                 firebase.database().ref("users/" + this.props.uid + "/highlights/" + this.props.sourceId + "/" + id + "/" + chapterNum).remove()
-              // }
               data.splice(i, 1)
             }
             else {
@@ -63,9 +60,6 @@ class HighLights extends Component {
 
       }
     })
-    // var updates = {}
-    // if (index != -1) {
-    // }
     this.setState({ HightlightedVerseArray: data })
   }
   fetchHighlights() {

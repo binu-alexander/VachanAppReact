@@ -1,12 +1,9 @@
 
 
-export { updateVersion, updateContentType, updateVersionBook, updateMetadata, parallelMetadta } from './updateVersion'
-export { updateFontSize, updateColorMode, updateVerseInLine } from './updateStyling'
+export { updateVersion, updateContentType, updateVersionBook, updateMetadata, parallelMetadta,APIBaseURL,APIAudioURL } from './updateVersion'
+export { updateFontSize, updateColorMode,updateNetConnection } from './updateStyling'
 
-export { fetchAudioUrl, audioURLSuccess, audioURLFailure } from './apiFetch/audio/fetchUrl'
-
-export { fetchCommentaryContent, commentaryContentFailure, commentaryContentSuccess } from './apiFetch/commentary/content'
-export { fetchDictionaryContent, dictionaryContentFailure, dictionaryContentSuccess } from './apiFetch/dictionary/content'
+export { vachanAPIFetch,vachanAPISuccess, vachanAPIFailure } from './apiFetch/vachanAPIFetch'
 
 export { fetchVersionLanguage, versionLanguageSuccess, versionLanguageFailure } from './apiFetch/version/availableLanguage'
 export { fetchVersionBooks, versionBooksSuccess, versionBooksFailure } from './apiFetch/version/availableBook'

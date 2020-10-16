@@ -12,10 +12,3 @@ bookNameList.schema = {
         bookNumber:{type: 'int', optional: true}
     }
 };
-
-//update in next release 
-// bookId:'string',
-// bookName:'string',
-// section:'',
-// bookNumber:'int',
-// numOfChapters:'int?[]'

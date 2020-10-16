@@ -7,6 +7,7 @@ import APIFetch from '../../../utils/APIFetch'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux'
 import { styles } from './styles.js'
+import vApi from '../../../utils/APIFetch';
 
 class Infographics extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -24,7 +25,7 @@ class Infographics extends React.Component {
 
   }
   async componentDidMount() {
-    const apiData = await APIFetch.getDictionaries()
+    const apiData = await vApi.get("dictionaries")
     if (apiData){
       for (var i = 0; i < apiData.length; i++) {
         if (apiData[i].language.toLowerCase() === this.props.languageName.toLowerCase()) {

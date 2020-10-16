@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries.js'
-import APIFetch from '../../utils/APIFetch'
+// import APIFetch from '../../utils/APIFetch'
 import { getBookChaptersFromMapping, getBookNumberFromMapping, getResultText } from '../../utils/UtilFunctions'
 import SearchTab from '../../components/SearchTab/SearchTab'
 import { updateVersionBook, updateVersion, fetchVersionBooks, updateMetadata } from '../../store/action/'
@@ -18,6 +18,7 @@ import { updateVersionBook, updateVersion, fetchVersionBooks, updateMetadata } f
 import { searchStyle } from './styles'
 import { connect } from 'react-redux'
 import Color from '../../utils/colorConstants'
+import vApi from '../../utils/APIFetch';
 const width = Dimensions.get('window').width;
 
 
@@ -105,7 +106,8 @@ class Search extends Component {
         }
         this.setState({ isLoading: false })
       } else {
-        var res = await APIFetch.searchText(this.state.sourceId, this.state.text)
+        
+        var res = await vApi.get('search/' + JSON.parse(this.state.sourceId) + '?keyword=' + this.state.text,)
         var data = []
         if (res.result.length > 0 && this.state.books) {
           for (var i = 0; i <= res.result.length - 1; i++) {
@@ -206,7 +208,7 @@ class Search extends Component {
 
   componentDidMount() {
     this.subs = this.props.navigation.addListener("didFocus", async () => {
-      const response = await APIFetch.fetchBookInLanguage()
+      const response = await vApi.get("booknames")
       for (var i = 0; i < response.length; i++) {
         var books = []
         if (this.state.languageName.toLowerCase() == response[i].language.name) {
@@ -374,8 +376,6 @@ const mapStateToProps = state => {
     sourceId: state.updateVersion.sourceId,
     bookName: state.updateVersion.bookName,
     books: state.versionFetch.data,
-
-
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
   }

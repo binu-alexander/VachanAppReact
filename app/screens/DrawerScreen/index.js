@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import { ScrollView, Text, View, StyleSheet, ImageBackground, TouchableOpacity, Image } from 'react-native';
+import { ScrollView, Text, View, ImageBackground, TouchableOpacity, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { styles } from './styles.js';
 import { connect } from 'react-redux'
-import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
-import { AsyncStorageConstants } from '../../utils/AsyncStorageConstants'
 import { fetchVersionBooks } from '../../store/action/'
 import VersionCheck from 'react-native-version-check'
 
@@ -26,8 +24,7 @@ class DrawerScreen extends Component {
       language: this.props.language, versionCode: this.props.versionCode,
       downloaded: this.props.downloaded, sourceId: this.props.sourceId
     })
-    var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
-    this.setState({ email,currentVersion })
+    this.setState({currentVersion})
   }
 
   render() {
@@ -38,6 +35,7 @@ class DrawerScreen extends Component {
       { icon: 'note', pressIcon: 'Notes', text: 'Notes' },
       { icon: 'video-library', pressIcon: 'Video', text: 'Video' },
       { icon: 'book', pressIcon: 'Dictionary', text: 'Dictionary' },
+      { icon: 'image', pressIcon: 'Infographics', text: 'Infographics' },
       { icon: 'history', pressIcon: 'History', text: 'History' },
       { icon: 'search', pressIcon: 'Search', text: 'Search' },
       { icon: 'settings', pressIcon: 'Settings', text: 'Settings' },

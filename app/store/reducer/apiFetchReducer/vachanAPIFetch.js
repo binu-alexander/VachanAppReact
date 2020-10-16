@@ -1,24 +1,24 @@
-import { FETCH_AUDIO_URL, AUDIO_URL_FAILURE, AUDIO_URL_SUCCESS } from '../../action/actionsType'
+import { VACHAN_API_FETCH, VACHAN_API_FAILURE, VACHAN_API_SUCCESS } from '../../action/actionsType'
 
 const initialState = {
-    url: null,
+    commentaryContent: [],
     error: null,
     loading: false
 }
-function fetchAudioReducer(state = initialState, action) {
+function fetchCommentaryReducer(state = initialState, action) {
     switch (action.type) {
-        case FETCH_AUDIO_URL:
+        case VACHAN_API_FETCH:
             return {
                 ...state,
                 loading: true,
             }
-        case AUDIO_URL_SUCCESS:
+        case VACHAN_API_SUCCESS:
             return {
                 ...state,
                 loading: false,
-                url: action.url
+                apiData: action.payload
             }
-        case AUDIO_URL_FAILURE:
+        case VACHAN_API_FAILURE:
             return {
                 ...state,
                 loading: false,
@@ -29,4 +29,4 @@ function fetchAudioReducer(state = initialState, action) {
     }
 }
 
-export default fetchAudioReducer
+export default fetchCommentaryReducer

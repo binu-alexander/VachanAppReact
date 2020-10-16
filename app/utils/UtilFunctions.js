@@ -1,6 +1,20 @@
 import id_name_map from '../assets/mappings.json'
 const Constants = require('./constants')
 
+export function getBookNameFromMapping(id) {
+  var obj = id_name_map.id_name_map;
+  for (var key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const bookId = id.toUpperCase()
+          if (key == bookId) {
+              var val = obj[key];
+              return val.book_name;
+          }
+      }
+  }
+  return null;
+}
+
 export function getBookNumberFromMapping(id) {
   var obj = id_name_map.id_name_map;
   for (var key in obj) {

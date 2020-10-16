@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
 import {
   View,
-  ActivityIndicator
 } from 'react-native';
 import Controls from './Controls';
 import Video from 'react-native-video';
 import { connect } from 'react-redux'
-import { fetchAudioUrl } from '../../store/action'
-import Color from '../../utils/colorConstants'
 
 class Player extends Component {
   constructor(props) {
@@ -49,11 +46,13 @@ class Player extends Component {
   }
 
   render() {
+    const audiourl = this.props.audioURL + this.props.bookId+"/"+this.props.chapter+".mp3"
+    console.log(" URL",audiourl)
+    console.log("AUdio URL",this.props.audioURL)
     return (
       <View style={{ flex: 1 }}>
-        {this.props.loading ?
-          <ActivityIndicator style={{ alignItems: 'center', justifyContent: 'center', }} size="large" color={Color.Blue_Color} /> :
-          (this.props.audioURL &&
+        {
+          this.props.audioURL &&
             <View style={this.props.styles.audiocontainer}>
               <Controls
                 styles={this.props.styles}
@@ -65,7 +64,7 @@ class Player extends Component {
                 onBack={this.onBack.bind(this)}
                 onForward={this.onForward.bind(this)}
                 paused={this.state.paused} />
-              <Video source={{ uri: this.props.audioURL }} // Can be a URL or a local file.
+              <Video source={{ uri: audiourl}} // Can be a URL or a local file.
                 ref="audioElement"
                 paused={this.state.paused}               // Pauses playback entirely.
                 resizeMode="cover"           // Fill the whole screen at aspect ratio.
@@ -76,7 +75,7 @@ class Player extends Component {
                 onEnd={this.onEnd}           // Callback when playback finishes
                 onError={this.videoError}    // Callback when video cannot be loaded
               />
-            </View>)
+            </View>
         }
       </View>
     );
@@ -87,19 +86,11 @@ class Player extends Component {
 
 const mapStateToProps = state => {
   return {
-    audioURL: state.audioFetch.url,
-    error: state.audioFetch.error,
-    loading: state.audioFetch.loading,
-
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
+    audioURL:state.updateVersion.audioURL
   }
 }
-const mapDispatchToProps = dispatch => {
-  return {
-    fetchAudioUrl: (payload) => dispatch(fetchAudioUrl(payload)),
-  }
-}
-export default connect(mapStateToProps, mapDispatchToProps)(Player)
+export default connect(mapStateToProps, null)(Player)
 
 

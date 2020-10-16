@@ -1,4 +1,4 @@
-import {StyleSheet,Dimensions} from 'react-native'
+import {StyleSheet} from 'react-native'
 import Color from '../../utils/colorConstants'
 
 export const styles =(colorFile, sizeFile) =>{

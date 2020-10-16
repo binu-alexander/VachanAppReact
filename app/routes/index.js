@@ -39,7 +39,7 @@ const NavStack = createStackNavigator(
   {
     Bible: {
       screen: Bible,
-      navigationOptions: ({ navigation }) => ({
+      navigationOptions: () => ({
         headerTintColor: Color.White,
         headerTitleStyle: {
           fontWeight: 'bold',
@@ -103,16 +103,12 @@ const NavStack = createStackNavigator(
 
 
   },
-
-
   {
-    // headerMode: 'none',
     defaultNavigationOptions: {
       headerStyle: {
         backgroundColor: Color.Blue_Color,
         elevation: 0,
         shadowOpacity: 0,
-        // height:40
       },
       headerTintColor: Color.White,
       headerTitleStyle: {
@@ -132,19 +128,11 @@ const DrawerNavigate = createDrawerNavigator({
 
 },
   {
-    // initialRouteName: 'Bible',
     contentComponent: DrawerScreen,
     drawerWidth: 250,
     overlayColor: 'rgba(52, 52, 52, 0.8)'
   },
 );
-
-// const SignedOut = createStackNavigator({
-//       Login:{screen: Login},
-//       Register:{screen: Register},
-//       Reset:{screen: Reset},
-
-// }) 
 
 const SwitchNavigator = createSwitchNavigator({
   DrawerNavigate: DrawerNavigate
@@ -152,19 +140,4 @@ const SwitchNavigator = createSwitchNavigator({
 
 export const AppNavigator = createAppContainer(SwitchNavigator);
 
-  // export const AppNavigator = (signedIn = false) => createAppContainer(
-  //   createSwitchNavigator(
-  //     {
-  //       SignedIn: {
-  //         screen: DrawerNavigate
-  //       },
-  //       SignedOut: {
-  //         screen: SignedOut
-  //       }
-  //     },
-  //     {
-  //       initialRouteName: signedIn ? "SignedIn" : "SignedOut"
-  //     }
-  //   )
-  // )
 

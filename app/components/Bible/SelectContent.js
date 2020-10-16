@@ -85,20 +85,26 @@ class SelectContent extends Component {
   }
 
   errorMessage() {
-    if (!this.alertPresent) {
-      this.alertPresent = true;
-      if (this.props.error ||
-        this.props.availableContents[0].content.length === 0 ||
-        this.props.availableContents[1].content.length === 0 
-      ) {
-        this.props.navigation.setParams({ modalVisible: false })
-        Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
-        this.props.fetchAllContent()
-      } else {
-        this.props.navigation.setParams({ modalVisible: !this.props.visible })
-        this.alertPresent = false;
+    // if(this.props.netConnection){
+      if (!this.alertPresent) {
+        this.alertPresent = true;
+        if (this.props.error ||
+          this.props.availableContents[0].content.length === 0 ||
+          this.props.availableContents[1].content.length === 0 
+        ) {
+          console.log("select content api error ",this.props.erorr )
+          this.props.navigation.setParams({ modalVisible: false })
+          Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
+          this.props.fetchAllContent()
+        } else {
+          this.props.navigation.setParams({ modalVisible: !this.props.visible })
+          this.alertPresent = false;
+        }
       }
-    }
+    // }else{
+    //   Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
+    // }
+
   }
   onPressModal = () => {
     this.errorMessage()
@@ -152,16 +158,16 @@ const mapStateToProps = state => {
     availableContents: state.contents.contentLanguages,
     error: state.contents.error,
     contentType: state.updateVersion.parallelContentType,
-
+    baseAPI: state.updateVersion.baseAPI,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-
+    netConnection:state.updateStyling.netConnection,
   }
 }
 const mapDispatchToProps = dispatch => {
   return {
     updateContentType: (content) => dispatch(updateContentType(content)),
-    fetchAllContent: () => dispatch(fetchAllContent()),
+    fetchAllContent: (value) => dispatch(fetchAllContent(value)),
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
     parallelMetadta: (payload) => dispatch(parallelMetadta(payload)),
 

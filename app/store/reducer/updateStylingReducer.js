@@ -1,52 +1,51 @@
 
-import { UPDATE_COLOR_MODE, UPDATE_FONT_SIZE, UPDATE_VERSE_IN_LINE } from '../action/actionsType'
+import { UPDATE_COLOR_MODE, UPDATE_FONT_SIZE, UPDATE_NET_CONNECTION } from '../action/actionsType'
 
 import { nightColors, dayColors } from '../../utils/colors.js'
 import { extraSmallFont, smallFont, mediumFont, largeFont, extraLargeFont } from '../../utils/dimens.js'
-import { AsyncStorageConstants } from '../../utils/AsyncStorageConstants.js'
 
 const initialState = {
-    colorMode: AsyncStorageConstants.Values.DayMode,
-    sizeMode: AsyncStorageConstants.Values.SizeModeNormal,
+    colorMode: 1,
+    sizeMode: 2,
     colorFile: dayColors,
     sizeFile: mediumFont,
-    verseInLine: AsyncStorageConstants.Values.verseInLine,
-
+    netConnection: false
 }
+
 function updateStyling(state = initialState, action) {
     switch (action.type) {
         case UPDATE_FONT_SIZE:
             const sizes = {
                 sizeMode: () => {
                     switch (action.sizeMode) {
-                        case AsyncStorageConstants.Values.SizeModeXSmall:
+                        case 0:
                             return {
                                 ...state,
                                 sizeMode: action.sizeMode,
                                 sizeFile: extraSmallFont
                             }
-                        case AsyncStorageConstants.Values.SizeModeSmall:
+                        case 1:
                             return {
                                 ...state,
                                 sizeMode: action.sizeMode,
                                 sizeFile: smallFont
 
                             }
-                        case AsyncStorageConstants.Values.SizeModeNormal:
+                        case 2:
                             return {
                                 ...state,
                                 sizeMode: action.sizeMode,
                                 sizeFile: mediumFont
 
                             }
-                        case AsyncStorageConstants.Values.SizeModeLarge:
+                        case 3:
                             return {
                                 ...state,
                                 sizeMode: action.sizeMode,
                                 sizeFile: largeFont
 
                             }
-                        case AsyncStorageConstants.Values.SizeModeXLarge:
+                        case 4:
                             return {
                                 ...state,
                                 sizeMode: action.sizeMode,
@@ -67,14 +66,14 @@ function updateStyling(state = initialState, action) {
             const colors = {
                 switchColor: () => {
                     switch (action.colorMode) {
-                        case AsyncStorageConstants.Values.DayMode:
+                        case 1:
                             return {
                                 ...state,
                                 colorMode: action.colorMode,
                                 colorFile: dayColors,
 
                             }
-                        case AsyncStorageConstants.Values.NightMode:
+                        case 0:
                             return {
                                 ...state,
                                 colorMode: action.colorMode,
@@ -90,10 +89,11 @@ function updateStyling(state = initialState, action) {
                 }
             }
             return colors.switchColor()
-        case UPDATE_VERSE_IN_LINE:
+        
+        case UPDATE_NET_CONNECTION:
             return {
                 ...state,
-                verseInLine: action.verseInLine
+                netConnection: action.netConnection
             }
 
         default:
