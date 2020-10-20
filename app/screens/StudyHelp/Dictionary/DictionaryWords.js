@@ -104,8 +104,6 @@ class DictionaryWords extends Component {
 
 
   render() {
-    console.log(" vachan API dictionary data ",this.props.dictionaryContent)
-    console.log(" vachan API dictionary error ",this.props.error)
     return (
       <View style={this.styles.container}>
         {this.state.isLoading &&

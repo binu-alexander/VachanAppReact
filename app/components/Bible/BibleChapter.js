@@ -24,6 +24,7 @@ class BibleChapter extends Component {
             currentParallelViewChapter: JSON.parse(this.props.currentChapter),
             bookId: this.props.bookId,
             bookName: this.props.bookName,
+            bookNameList: [],
             totalChapters: this.props.totalChapters,
             error: null,
         }
@@ -59,22 +60,10 @@ class BibleChapter extends Component {
     async componentDidMount() {
         this.queryParallelBible(null)
         try {
-                let bookName=''
-                let bookId=''
-                let response = await vApi.get('booknames')
-                for (var i = 0; i <= response.length-1; i++) {
-                    if (this.props.parallelLanguage.languageName.toLowerCase() == response[i].language.name) {
-                        for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
-                            if (response[i].bookNames[j].book_code == this.state.bookId) {
-                                bookName = response[i].bookNames[j].short
-                                bookId = response[i].bookNames[j].book_code
-                            }
-                        }
-                    }
-                }
-                this.setState({ bookName: bookName,bookId:bookId })
+            let response = await vApi.get('booknames')
+            this.setState({ bookNameList: response })
         } catch (error) {
-            this.setState({ error: error });
+            this.setState({ error: error, bookNameList: [] });
         }
     }
     componentWillUnmount() {
@@ -116,15 +105,30 @@ class BibleChapter extends Component {
 
     }
     render() {
-        let shortbookName = this.props.language.toLowerCase() == ('malayalam' || 'tamil' || 'kannada') ?
-        (this.state.bookName.length > 4 ? this.state.bookName.slice(0, 3) + "..." : this.state.bookName) :
-        this.state.bookName.length > 8 ? this.state.bookName.slice(0, 7) + "..." : this.state.bookName
+        var bookName = null
+        if (this.state.bookNameList) {
+            for (var i = 0; i <= this.state.bookNameList.length - 1; i++) {
+                if (this.state.bookNameList[i].language.name === this.props.parallelLanguage.languageName.toLowerCase()) {
+                    for (var j = 0; j <= this.state.bookNameList[i].bookNames.length - 1; j++) {
+                        var bId = this.state.bookNameList[i].bookNames[j].book_code
+                        if (bId == this.state.bookId){
+                            bookName = this.state.bookNameList[i].bookNames[j].short
+                        }
+                    }
+
+                }
+            }
+        } else {
+            return
+        }
+        let shortbookName =bookName.length > 8 ? bookName.slice(0, 3) + "..." : bookName
+      
         this.styles = styles(this.props.colorFile, this.props.sizeFile);
         return (
             <View style={this.styles.container}>
                 <Header style={{ backgroundColor: Color.Blue_Color, height: 40, borderLeftWidth: 0.2, borderLeftColor: Color.White }}>
                     <Button transparent onPress={this.goToSelectionTab}>
-                        <Title style={{ fontSize: 16 }}>{shortbookName} {this.state.currentParallelViewChapter}</Title>
+                        <Title style={{ fontSize: 16 }}>{bookName != null && shortbookName} {this.state.currentParallelViewChapter}</Title>
                         <Icon name="arrow-drop-down" color={Color.White} size={20} />
                     </Button>
                     <Right>
@@ -232,11 +236,13 @@ const mapStateToProps = state => {
         versionCode: state.updateVersion.versionCode,
         sourceId: state.updateVersion.sourceId,
         downloaded: state.updateVersion.downloaded,
-        bookId:state.updateVersion.bookId,
-        bookName:state.updateVersion.bookName,
+        bookId: state.updateVersion.bookId,
+        bookName: state.updateVersion.bookName,
         parallelBible: state.parallel.parallelBible,
         error: state.parallel.error,
-        loading: state.parallel.loading
+        loading: state.parallel.loading,
+        parallelLanguage: state.selectContent.parallelLanguage,
+        parallelMetaData: state.selectContent.parallelMetaData
     }
 }
 

@@ -7,16 +7,16 @@ import Color from '../../utils/colorConstants'
 const ChapterNdAudio = ({
     styles, audio,
     currentVisibleChapter, navigation
-    , queryBookFromAPI, bookId, status,showBottomBar,
+    , queryBookFromAPI, bookId, status,visibleParallelView,showBottomBar,
     totalChapters, languageCode, versionCode,
     })=>(
         <View style={{ justifyContent: (currentVisibleChapter != 1 && currentVisibleChapter == currentVisibleChapter != totalChapters) ? 'center' : 'space-around', alignItems: 'center' }}>
             {
                 currentVisibleChapter == 1
                     ? null :
-                    <View style={[styles.bottomBarPrevView,showBottomBar ? styles.showBottomBar : styles.hideBottomBar, navigation.getParam("visibleParallelView") ? 
+                    <View style={[styles.bottomBarPrevView,showBottomBar ? styles.showBottomBar : styles.hideBottomBar, visibleParallelView ? 
                     styles.bottomBarParallelPrevView : styles.bottomBarPosition]}>
-                        <Icon name={'chevron-left'} color={Color.Blue_Color} size={navigation.getParam("visibleParallelView") ? 16 : 32}
+                        <Icon name={'chevron-left'} color={Color.Blue_Color} size={visibleParallelView ? 16 : 32}
                             style={styles.bottomBarChevrontIcon}
                             onPress={() => queryBookFromAPI(-1)}
                         />
@@ -37,10 +37,9 @@ const ChapterNdAudio = ({
             {
                 currentVisibleChapter == totalChapters
                     ? null :
-                    <View style={[styles.bottomBarNextView,showBottomBar ? styles.showBottomBar : styles.hideBottomBar, navigation.getParam("visibleParallelView") ? 
+                    <View style={[styles.bottomBarNextView,showBottomBar ? styles.showBottomBar : styles.hideBottomBar, visibleParallelView ? 
                     styles.bottomBarNextParallelView : styles.bottomBarPosition]}>
-                    {/* <View style={navigation.getParam("visibleParallelView") ? styles.bottomBarNextParallelView : styles.bottomBarPosition}> */}
-                        <Icon name={'chevron-right'} color={Color.Blue_Color} size={navigation.getParam("visibleParallelView") ? 16 : 32}
+                        <Icon name={'chevron-right'} color={Color.Blue_Color} size={visibleParallelView ? 16 : 32}
                             style={styles.bottomBarChevrontIcon}
                             onPress={() => queryBookFromAPI(1)}
                         />

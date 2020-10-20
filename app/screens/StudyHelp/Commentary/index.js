@@ -16,6 +16,7 @@ import HTML from 'react-native-render-html';
 // import APIFetch from '../../../utils/APIFetch'
 import vApi from '../../../utils/APIFetch';
 import securityVaraibles from '../../../../securityVaraibles';
+import bookNameList from '../../../models/bookNameList';
 
 const commentaryKey = securityVaraibles.COMMENTARY_KEY ? '?key=' + securityVaraibles.COMMENTARY_KEY : ''
 
@@ -26,6 +27,7 @@ class Commentary extends Component {
       commentary: [],
       error: null,
       bookName: this.props.bookName,
+      bookNameList:[]
     }
     this.styles = styles(this.props.colorFile, this.props.sizeFile)
     this.alertPresent = false
@@ -33,24 +35,13 @@ class Commentary extends Component {
   // fetch bookname in perticular language of commenatry
   async fetchBookName() {
     try {
-      let bookName
-      let response = await vApi.get('booknames')
-      for (var i = 0; i <= response.length - 1; i++) {
-        if (this.props.parallelLanguage.languageName.toLowerCase() == response[i].language.name) {
-          for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
-            if (response[i].bookNames[j].book_code == this.props.bookId) {
-              bookName = response[i].bookNames[j].short
-            }
-          }
-        }
-      }
-      this.setState({ bookName: bookName })
+        let response = await vApi.get('booknames')
+        this.setState({ bookNameList: response })
     } catch (error) {
-
-      this.setState({ error: error });
+        this.setState({ error: error, bookNameList: [] });
     }
   }
-  componentDidMount() {
+  componentDidMount(){
     const url = "commentaries/"+this.props.parallelLanguage.sourceId + "/" + this.props.bookId + "/" + this.props.currentVisibleChapter + commentaryKey
     this.props.vachanAPIFetch(url)
     this.fetchBookName()
@@ -107,6 +98,22 @@ class Commentary extends Component {
 
   }
   render() {
+    var bookName = null
+    if (this.state.bookNameList) {
+        for (var i = 0; i <= this.state.bookNameList.length - 1; i++) {
+            if (this.state.bookNameList[i].language.name === this.props.parallelLanguage.languageName.toLowerCase()) {
+              for (var j = 0; j <= this.state.bookNameList[i].bookNames.length - 1; j++) {
+                    var bId = this.state.bookNameList[i].bookNames[j].book_code
+                    if (bId == this.props.bookId){
+                        bookName = this.state.bookNameList[i].bookNames[j].short
+                    }
+                }
+            }
+        }
+    } else {
+        return
+    }
+
     return (
       <View style={this.styles.container}>
         <Header style={{ backgroundColor: Color.Blue_Color, height: 40, borderLeftWidth: 0.5, borderLeftColor: Color.White }} >
@@ -130,7 +137,7 @@ class Commentary extends Component {
             </View>
             :
             <View style={{ flex: 1 }}>
-              <Text style={[this.styles.commentaryHeading, { margin: 10 }]}>{this.state.bookName} {} {this.props.commentaryContent && this.props.commentaryContent.chapter}</Text>
+              <Text style={[this.styles.commentaryHeading, { margin: 10 }]}>{bookName != null && bookName} {} {this.props.commentaryContent && this.props.commentaryContent.chapter}</Text>
               <FlatList
                 data={this.props.commentaryContent && this.props.commentaryContent.commentaries}
                 showsVerticalScrollIndicator={false}
@@ -162,6 +169,7 @@ const mapStateToProps = state => {
     commentaryContent: state.vachanAPIFetch.apiData,
     error: state.vachanAPIFetch.error,
     baseAPI: state.updateVersion.baseAPI,
+    parallelLanguage: state.selectContent.parallelLanguage,
   }
 
 }

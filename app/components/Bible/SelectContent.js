@@ -6,10 +6,11 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 
 import { Card, Accordion } from 'native-base'
-import { updateContentType, fetchAllContent, fetchVersionBooks, parallelMetadta } from '../../store/action/'
+import { updateContentType, fetchAllContent, fetchVersionBooks, parallelMetadta,selectContent } from '../../store/action/'
 import { styles } from '../../screens/LanguageList/styles'
 import { connect } from 'react-redux'
 import Color from '../../utils/colorConstants'
+
 
 
 var contentType = ''
@@ -18,6 +19,7 @@ class SelectContent extends Component {
     super(props)
     this.state = {
       isExpanded: false,
+      modalVisible:false
     }
     this.alertPresent = false
     this.styles = styles(this.props.colorFile, this.props.sizeFile)
@@ -56,10 +58,10 @@ class SelectContent extends Component {
         <TouchableOpacity
           style={this.styles.selectionInnerContent}
           onPress={() => {
-            this.props.navigation.setParams({ modalVisible: false, visibleParallelView: true,
-              parallelLanguage:{languageName:item.languageName,versionCode:v.versionCode,sourceId:v.sourceId},
-              parallelMetaData:v.metaData[0]
-            });
+            this.setState({modalVisible:false})
+            this.props.selectContent({ visibleParallelView: true,
+              parallelLanguage:{languageName:item.languageName,versionCode:v.versionCode,
+              sourceId:v.sourceId},parallelMetaData:v.metaData[0]})
             this.props.updateContentType({
               parallelContentType: contentType
             })
@@ -92,12 +94,11 @@ class SelectContent extends Component {
           this.props.availableContents[0].content.length === 0 ||
           this.props.availableContents[1].content.length === 0 
         ) {
-          console.log("select content api error ",this.props.erorr )
-          this.props.navigation.setParams({ modalVisible: false })
+          this.setState({ modalVisible: false})
           Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
           this.props.fetchAllContent()
         } else {
-          this.props.navigation.setParams({ modalVisible: !this.props.visible })
+          this.setState({ modalVisible: !this.state.modalVisible})
           this.alertPresent = false;
         }
       }
@@ -112,17 +113,17 @@ class SelectContent extends Component {
   render() {
     this.styles = styles(this.props.colorFile, this.props.sizeFile)
     return (
-      <View>
+      <View >
         <Modal
           animationType="fade"
           transparent={true}
-          visible={this.props.visible}
-          onPress={() => { this.props.navigation.setParams({ modalVisible: this.props.visible }) }}
+          visible={this.state.modalVisible}
+          onPress={() => { this.setState({modalVisible:!this.state.modalVisible}) }}
         >
           <View>
             <TouchableWithoutFeedback
               style={this.styles.modalContainer}
-              onPressOut={() => { this.props.navigation.setParams({ modalVisible: false }) }}
+              onPressOut={() => {this.setState({ modalVisible: false }) }}
             >
               <View style={{ height: '80%', width: '70%', alignSelf: 'flex-end' }}>
                 <Card style={{ marginTop: 40 }}>
@@ -139,7 +140,6 @@ class SelectContent extends Component {
             </TouchableWithoutFeedback>
           </View>
         </Modal>
-
         <TouchableOpacity onPress={this.onPressModal} style={this.props.navStyles.touchableStyleRight}>
           <MaterialCommunityIcons
             name='book-open-variant'
@@ -162,6 +162,7 @@ const mapStateToProps = state => {
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
     netConnection:state.updateStyling.netConnection,
+    modalVisible:state.selectContent.modalVisible,
   }
 }
 const mapDispatchToProps = dispatch => {
@@ -170,7 +171,7 @@ const mapDispatchToProps = dispatch => {
     fetchAllContent: (value) => dispatch(fetchAllContent(value)),
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
     parallelMetadta: (payload) => dispatch(parallelMetadta(payload)),
-
+    selectContent:(payload)=>dispatch(selectContent(payload)),
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(SelectContent)

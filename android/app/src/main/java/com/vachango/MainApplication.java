@@ -1,4 +1,4 @@
-package com.vachango;
+package com.bridgeconn.vachango;
 import android.app.Application;
 import com.facebook.react.ReactApplication;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;

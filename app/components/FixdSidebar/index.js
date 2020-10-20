@@ -57,7 +57,6 @@ export default class FixedSidebar extends Component {
   }
 
   render() {
-    console.log("render of fixed side")
     const animatedStyle = {
       transform: [{ scale: this.animatedValue }]
     }
