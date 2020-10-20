@@ -111,7 +111,7 @@ class BibleChapter extends Component {
                 if (this.state.bookNameList[i].language.name === this.props.parallelLanguage.languageName.toLowerCase()) {
                     for (var j = 0; j <= this.state.bookNameList[i].bookNames.length - 1; j++) {
                         var bId = this.state.bookNameList[i].bookNames[j].book_code
-                        if (bId == this.state.bookId){
+                        if (bId == this.state.bookId) {
                             bookName = this.state.bookNameList[i].bookNames[j].short
                         }
                     }
@@ -121,8 +121,8 @@ class BibleChapter extends Component {
         } else {
             return
         }
-        let shortbookName =bookName.length > 8 ? bookName.slice(0, 3) + "..." : bookName
-      
+        let shortbookName = bookName != null && (bookName.length > 8 ? bookName.slice(0, 3) + "..." : bookName)
+
         this.styles = styles(this.props.colorFile, this.props.sizeFile);
         return (
             <View style={this.styles.container}>

@@ -46,7 +46,7 @@ class Player extends Component {
   }
 
   render() {
-    const audiourl = this.props.audioURL + this.props.bookId+"/"+this.props.chapter+this.props.audioFormat
+    const audiourl = this.props.audioURL + this.props.bookId+"/"+this.props.chapter+"."+this.props.audioFormat
     return (
       <View style={{ flex: 1 }}>
         {
