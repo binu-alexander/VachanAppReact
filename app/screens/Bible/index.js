@@ -731,10 +731,6 @@ class Bible extends Component {
     }
   }
   render() {
-    console.log("BASE API ", this.props.baseAPI)
-    console.log("BASE API ", this.state.bookmarksList)
-
-
     return (
       <View style={this.styles.container}>
         {

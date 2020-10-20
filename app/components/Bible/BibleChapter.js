@@ -61,10 +61,8 @@ class BibleChapter extends Component {
         this.queryParallelBible(null)
         try {
             let response = await vApi.get('booknames')
-            console.log(" BOOK NAME LIST ", response)
             this.setState({ bookNameList: response })
         } catch (error) {
-            console.log(" ERROR ", error)
             this.setState({ error: error, bookNameList: [] });
         }
     }
@@ -123,16 +121,14 @@ class BibleChapter extends Component {
         } else {
             return
         }
-        console.log("BOOK NAME ", bookName)
-        let shortbookName = bookName !=null && (bookName.length > 8 ? bookName.slice(0, 3) + "..." : bookName)
-        console.log("BOOK short ", shortbookName)
+        let shortbookName =bookName.length > 8 ? bookName.slice(0, 3) + "..." : bookName
       
         this.styles = styles(this.props.colorFile, this.props.sizeFile);
         return (
             <View style={this.styles.container}>
                 <Header style={{ backgroundColor: Color.Blue_Color, height: 40, borderLeftWidth: 0.2, borderLeftColor: Color.White }}>
                     <Button transparent onPress={this.goToSelectionTab}>
-                        <Title style={{ fontSize: 16 }}>{bookName != null && bookName} {this.state.currentParallelViewChapter}</Title>
+                        <Title style={{ fontSize: 16 }}>{bookName != null && shortbookName} {this.state.currentParallelViewChapter}</Title>
                         <Icon name="arrow-drop-down" color={Color.White} size={20} />
                     </Button>
                     <Right>

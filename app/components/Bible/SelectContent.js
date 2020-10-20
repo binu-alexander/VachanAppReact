@@ -94,7 +94,6 @@ class SelectContent extends Component {
           this.props.availableContents[0].content.length === 0 ||
           this.props.availableContents[1].content.length === 0 
         ) {
-          console.log("select content api error ",this.props.erorr )
           this.setState({ modalVisible: false})
           Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
           this.props.fetchAllContent()

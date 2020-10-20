@@ -36,10 +36,8 @@ class Commentary extends Component {
   async fetchBookName() {
     try {
         let response = await vApi.get('booknames')
-        console.log(" BOOK NAME LIST ", response)
         this.setState({ bookNameList: response })
     } catch (error) {
-        console.log(" ERROR ", error)
         this.setState({ error: error, bookNameList: [] });
     }
   }
@@ -104,13 +102,10 @@ class Commentary extends Component {
     if (this.state.bookNameList) {
         for (var i = 0; i <= this.state.bookNameList.length - 1; i++) {
             if (this.state.bookNameList[i].language.name === this.props.parallelLanguage.languageName.toLowerCase()) {
-              console.log(" this.state.bookNameList[i].language.name 0",this.state.bookNameList[i].language.name)  
               for (var j = 0; j <= this.state.bookNameList[i].bookNames.length - 1; j++) {
                     var bId = this.state.bookNameList[i].bookNames[j].book_code
-                    console.log(" book id  ",bId,this.props.bookId)
                     if (bId == this.props.bookId){
                         bookName = this.state.bookNameList[i].bookNames[j].short
-                      console.log(" short name ",bookName)
                     }
                 }
             }
@@ -118,8 +113,6 @@ class Commentary extends Component {
     } else {
         return
     }
-    console.log(" book name ",bookName)
-    console.log(" book name ",this.state.bookNameList)
 
     return (
       <View style={this.styles.container}>
