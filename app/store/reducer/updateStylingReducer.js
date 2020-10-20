@@ -9,7 +9,7 @@ const initialState = {
     sizeMode: 2,
     colorFile: dayColors,
     sizeFile: mediumFont,
-    netConnection: false
+    netConnection: false,
 }
 
 function updateStyling(state = initialState, action) {
@@ -89,13 +89,12 @@ function updateStyling(state = initialState, action) {
                 }
             }
             return colors.switchColor()
-        
+
         case UPDATE_NET_CONNECTION:
             return {
                 ...state,
                 netConnection: action.netConnection
             }
-
         default:
             return state
 

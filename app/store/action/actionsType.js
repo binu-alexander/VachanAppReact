@@ -11,7 +11,7 @@ export const UPDATE_CONTENT_TYPE = 'update_content_type';
 export const UPDATE_COLOR_MODE = 'update_color_mode';
 export const UPDATE_FONT_SIZE = 'update_font_size';
 export const UPDATE_NET_CONNECTION = 'update_net_connection';
-
+export const HEADER_MARGIN = 'header_margin'
 
 export const FETCH_VERSION_LANGUAGE = 'fetch_version_language';
 export const VERSION_LANGUAGE_SUCCESS = 'version_language_success';
@@ -52,3 +52,5 @@ export const PARALLEL_BIBLE_SUCCESS = 'parallel_bible_success';
 export const PARALLEL_BIBLE_FAILURE = 'parallel_bible_failure';
 
 export const USER_INFO = 'user_info'
+
+export const SELECT_CONTENT = 'select_content'

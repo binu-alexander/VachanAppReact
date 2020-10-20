@@ -1,4 +1,4 @@
-package com.vachango;
+package com.bridgeconn.vachango;
 import android.os.Bundle;
 import android.content.Intent;
 import android.content.res.Configuration; // <--- 

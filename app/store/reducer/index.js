@@ -8,6 +8,8 @@ import vachanAPIFetch from './apiFetchReducer/vachanAPIFetch'
 import fetchContentReducer from './apiFetchReducer/fetchContentReducer'
 import parallelBibleReducer from './apiFetchReducer/parallelBibleReducer'
 import userInfo from './UserInfoReducer'
+import selectContent from './selectContent'
+
 
 const rootReducer = combineReducers({
     updateVersion: updateVersionReducer,
@@ -16,7 +18,8 @@ const rootReducer = combineReducers({
     vachanAPIFetch:vachanAPIFetch,
     contents: fetchContentReducer,
     parallel: parallelBibleReducer,
-    userInfo: userInfo
+    userInfo: userInfo,
+    selectContent:selectContent
 })
 
 export default rootReducer

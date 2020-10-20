@@ -46,9 +46,7 @@ class Player extends Component {
   }
 
   render() {
-    const audiourl = this.props.audioURL + this.props.bookId+"/"+this.props.chapter+".mp3"
-    console.log(" URL",audiourl)
-    console.log("AUdio URL",this.props.audioURL)
+    const audiourl = this.props.audioURL + this.props.bookId+"/"+this.props.chapter+this.props.audioFormat
     return (
       <View style={{ flex: 1 }}>
         {
@@ -88,7 +86,8 @@ const mapStateToProps = state => {
   return {
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-    audioURL:state.updateVersion.audioURL
+    audioURL:state.updateVersion.audioURL,
+    audioFormat:state.updateVersion.audioFormat
   }
 }
 export default connect(mapStateToProps, null)(Player)

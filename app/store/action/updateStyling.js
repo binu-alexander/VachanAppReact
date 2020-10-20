@@ -1,4 +1,4 @@
-import { UPDATE_COLOR_MODE, UPDATE_FONT_SIZE, UPDATE_NET_CONNECTION, UPDATE_VERSE_IN_LINE } from './actionsType.js'
+import { UPDATE_COLOR_MODE, UPDATE_FONT_SIZE, UPDATE_NET_CONNECTION } from './actionsType.js'
 
 export const updateColorMode = (colorMode) => {
     return {
@@ -19,5 +19,7 @@ export const updateNetConnection = (netConnection) => {
         netConnection:netConnection
     }
 }
+
+
 
 
