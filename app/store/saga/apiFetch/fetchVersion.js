@@ -18,8 +18,13 @@ function* fetchVersionLanguage() {
     const state = store.getState()
     const url = state.updateVersion.baseAPI + "bibles"
     const response = yield call(fetchApi, url)
-    yield put(versionLanguageSuccess(response))
-    yield put(versionLanguageFailure(null))
+    for (var i = 0; i <= response.length - 1; i++) {
+      if(response[i].language == state.updateVersion.language.toLowerCase()){
+        yield put(versionLanguageSuccess(response[i].languageVersions))
+        yield put(versionLanguageFailure(null))
+      }
+    }
+    
 
   } catch (e) {
     yield put(versionLanguageFailure(e))

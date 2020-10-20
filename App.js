@@ -4,7 +4,7 @@ import SplashScreen from 'react-native-splash-screen';
 import { connect } from 'react-redux'
 import { Root } from "native-base";
 import VersionCheck from 'react-native-version-check';
-import { fetchAllContent, fetchVersionBooks, APIBaseURL } from './app/store/action/';
+import { fetchAllContent, fetchVersionBooks,fetchVersionLanguage, APIBaseURL } from './app/store/action/';
 import { Alert, BackHandler, Linking } from 'react-native';
 import firebase from 'react-native-firebase'
 
@@ -56,6 +56,8 @@ class App extends Component {
       console.log("SNAPSHOT result ", snapshot.val())
       console.log(" COMPONENT DID MOUNT ",)
       this.props.APIBaseURL(snapshot.val())
+      this.props.fetchVersionLanguage()
+
     })
     this.props.fetchAllContent()
     this.checkUpdateNeeded()
@@ -84,7 +86,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetchAllContent: () => dispatch(fetchAllContent()),
-    fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
+    fetchVersionLanguage: () => dispatch(fetchVersionLanguage()),
     APIBaseURL: (payload) => dispatch(APIBaseURL(payload)),
   }
 }

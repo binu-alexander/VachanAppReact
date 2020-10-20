@@ -4,8 +4,9 @@ const initialState = {
     modalVisible: false,
     visibleParallelView:false,
     parallelLanguage:{
-        languageName:'hindi',versionCode:'irv',
-        sourceId:45
+        languageName:'',
+        versionCode:'',
+        sourceId:null
     },
     parallelMetaData:{
     copyrightHolder: 'Unfolding Word',

@@ -6,7 +6,6 @@ import {
   Alert,
   Dimensions,
   StyleSheet,
-  TouchableOpacity,
   Platform,
   Share,
   AppState,
@@ -148,6 +147,7 @@ class Bible extends Component {
         this.getHighlights()
         this.getBookMarks()
         this.getNotes()
+        
         if (this.props.books.length == 0) {
           this.props.fetchVersionBooks({
             language: this.props.language,
@@ -344,6 +344,12 @@ class Bible extends Component {
           chapterNumber: JSON.parse(this.state.currentVisibleChapter),
           totalChapters: this.props.totalChapters,
         })
+        if(this.props.updatedVersionData.length > 0 ){
+          this.props.updateVersion({
+            language: this.props.updatedVersionData[0].language.name, languageCode: this.props.updatedVersionData[0].language.code,
+            version:this.props.updatedVersionData[0].version.name,versionCode: this.props.updatedVersionData[0].version.code, sourceId: this.props.updatedVersionData[0].sourceId
+          })
+        }
         this.getHighlights()
         this.getNotes()
         this.isBookmark()
@@ -951,7 +957,7 @@ const mapStateToProps = state => {
 
     books: state.versionFetch.data,
     parallelContentType: state.updateVersion.parallelContentType,
-
+    updatedVersionData:state.versionFetch.language,
     visibleParallelView: state.selectContent.visibleParallelView,
 
   }
