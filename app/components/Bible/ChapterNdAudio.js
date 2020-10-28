@@ -6,8 +6,7 @@ import Color from '../../utils/colorConstants'
 
 const ChapterNdAudio = ({
     styles, audio,
-    currentVisibleChapter, navigation
-    , queryBookFromAPI, bookId, status,visibleParallelView,showBottomBar,
+    currentVisibleChapter, queryBookFromAPI, bookId, status,visibleParallelView,showBottomBar,
     totalChapters, languageCode, versionCode,
     })=>(
         <View style={{ justifyContent: (currentVisibleChapter != 1 && currentVisibleChapter == currentVisibleChapter != totalChapters) ? 'center' : 'space-around', alignItems: 'center' }}>

@@ -6,7 +6,7 @@ import {
 
 const initialState = {
     data: [],
-    language:[],
+    bible:{},
     chapterContent: [],
     downloadedBook: [],
     error: null,
@@ -23,7 +23,7 @@ function fetchVersionReducer(state = initialState, action) {
             return {
                 ...state,
                 loading: false,
-                language: action.payload
+                bible: action.payload[0]  
             }
         case VERSION_LANGUAGE_FAILURE:
             return {

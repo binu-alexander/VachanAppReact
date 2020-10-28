@@ -8,7 +8,7 @@ import DbQueries from '../../utils/dbQueries'
 import { styles } from './styles.js';
 import { getBookSectionFromMapping } from '../../utils/UtilFunctions'
 import { connect } from 'react-redux';
-import { updateVersion, fetchVersionBooks, fetchAllContent, updateMetadata } from '../../store/action/'
+import { updateVersion, fetchVersionBooks, fetchAllContent, updateMetadata,fetchVersionLanguage } from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 import ReloadButton from '../../components/ReloadButton';
 import vApi from '../../utils/APIFetch';
@@ -42,6 +42,7 @@ class LanguageList extends Component {
 
   componentDidMount() {
     this.fetchLanguages()
+    // this.props.fetchVersionLanguage()
   }
 
   errorMessage = () => {
@@ -303,6 +304,8 @@ const mapDispatchToProps = dispatch => {
     fetchAllContent: () => dispatch(fetchAllContent()),
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
     updateMetadata: (payload) => dispatch(updateMetadata(payload)),
+    // fetchVersionLanguage: () => dispatch(fetchVersionLanguage()),
+
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(LanguageList)

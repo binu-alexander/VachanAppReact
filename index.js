@@ -14,6 +14,7 @@ const persistor = persistStore(store)
 typography()
 
 class RNRedux extends Component{
+ 
     render(){
     return <Provider store={store}>
             <PersistGate persistor={persistor}>

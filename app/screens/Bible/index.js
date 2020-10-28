@@ -122,6 +122,15 @@ class Bible extends Component {
         })
       }
     })
+    if(this.props.updatedVersionData){
+      this.props.updateVersion({
+        language: this.props.updatedVersionData.language.name,
+        languageCode: this.props.updatedVersionData.language.code,
+        version:this.props.updatedVersionData.version.name,
+        versionCode: this.props.updatedVersionData.version.code, 
+        sourceId: this.props.updatedVersionData.sourceId
+      })
+    }
     this.state.scrollAnim.addListener(({ value }) => {
       const diff = value - this._scrollValue;
       this._scrollValue = value;
@@ -142,12 +151,12 @@ class Bible extends Component {
 
     this.subs = this.props.navigation.addListener("didFocus", () => {
       this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false, bookId: this.props.bookId, currentVisibleChapter: this.props.chapterNumber }, () => {
+  
         this.getChapter()
         this.audioComponentUpdate()
         this.getHighlights()
         this.getBookMarks()
         this.getNotes()
-        
         if (this.props.books.length == 0) {
           this.props.fetchVersionBooks({
             language: this.props.language,
@@ -167,7 +176,7 @@ class Bible extends Component {
       if (this.state.connection_Status) {
         Toast.show({
           text: "Online. Now content available.",
-          buttonText: "Okay",
+          // buttonText: "Okay",
           type: "success",
           duration: 3000
         })
@@ -185,7 +194,7 @@ class Bible extends Component {
       } else {
         Toast.show({
           text: "Offline. Check your internet Connection.",
-          buttonText: "Okay",
+          // buttonText: "Okay",
           type: "warning",
           duration: 3000
         })
@@ -344,12 +353,7 @@ class Bible extends Component {
           chapterNumber: JSON.parse(this.state.currentVisibleChapter),
           totalChapters: this.props.totalChapters,
         })
-        if(this.props.updatedVersionData.length > 0 ){
-          this.props.updateVersion({
-            language: this.props.updatedVersionData[0].language.name, languageCode: this.props.updatedVersionData[0].language.code,
-            version:this.props.updatedVersionData[0].version.name,versionCode: this.props.updatedVersionData[0].version.code, sourceId: this.props.updatedVersionData[0].sourceId
-          })
-        }
+
         this.getHighlights()
         this.getNotes()
         this.isBookmark()
@@ -368,7 +372,7 @@ class Bible extends Component {
     else {
       Toast.show({
         text: 'No audio for ' + this.props.language + " " + this.props.bookName,
-        buttonText: "Okay",
+        // buttonText: "Okay",
         duration: 3000
       })
     }
@@ -503,7 +507,7 @@ class Bible extends Component {
         this.setState({ isBookmark: !isbookmark })
         Toast.show({
           text: isbookmark ? 'Bookmarked chapter removed' : 'Chapter bookmarked',
-          buttonText: "Okay",
+          // buttonText: "Okay",
           type: isbookmark ? "default" : "success",
           duration: 3000
         })
@@ -519,9 +523,9 @@ class Bible extends Component {
     }
   }
   //selected reference for highlighting verse
-  getSelectedReferences = (vIndex, chapterNum, vNum) => {
+  getSelectedReferences = (vIndex, chapterNum, vNum,text) => {
     if (vIndex != -1 && chapterNum != -1 && vNum != -1) {
-      let obj = chapterNum + '_' + vIndex + '_' + vNum
+      let obj = chapterNum+'_' +vIndex+'_'+vNum+'_'+text
       let selectedReferenceSet = [...this.state.selectedReferenceSet]
       var found = false;
       for (var i = 0; i < selectedReferenceSet.length; i++) {
@@ -641,6 +645,7 @@ class Bible extends Component {
       shareText = shareText.concat(this.props.bookName + " " + chapterNumber + ":" + verseNumber + " ");
       shareText = shareText.concat(tempVal[3])
       shareText = shareText.concat("\n");
+
     }
     Share.share({ message: shareText })
     this.setState({ selectedReferenceSet: [], showBottomBar: false })

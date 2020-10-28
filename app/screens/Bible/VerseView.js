@@ -18,6 +18,7 @@ class VerseView extends Component {
       this.props.index,
       this.props.chapterNumber,
       this.props.verseData.number,
+      this.props.verseData.text
     );
     this.setState({ unableSelection: false })
   }
@@ -64,7 +65,7 @@ class VerseView extends Component {
   }
 
   render() {
-    let obj = this.props.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.number;
+    let obj = this.props.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.number+ '_' +this.props.verseData.text;
     let isSelect = this.has(this.props.selectedReferences, obj)
     let isHighlight = this.isHighlight()
     let isNoted = this.isNoted()
