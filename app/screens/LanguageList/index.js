@@ -4,11 +4,10 @@ import { Text, View, TouchableOpacity, Alert } from 'react-native';
 import { Accordion } from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import DbQueries from '../../utils/dbQueries'
-// import APIFetch from '../../utils/APIFetch'
 import { styles } from './styles.js';
 import { getBookSectionFromMapping } from '../../utils/UtilFunctions'
 import { connect } from 'react-redux';
-import { updateVersion, fetchVersionBooks, fetchAllContent, updateMetadata,fetchVersionLanguage } from '../../store/action/'
+import { updateVersion, fetchVersionBooks, fetchAllContent, updateMetadata } from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 import ReloadButton from '../../components/ReloadButton';
 import vApi from '../../utils/APIFetch';
@@ -42,7 +41,6 @@ class LanguageList extends Component {
 
   componentDidMount() {
     this.fetchLanguages()
-    // this.props.fetchVersionLanguage()
   }
 
   errorMessage = () => {
@@ -111,7 +109,7 @@ class LanguageList extends Component {
     }
   }
   downloadBible = async (langName, verCode, books, sourceId) => {
-    if(this.props.netConnection){
+  
       try {
         this.setState({ startDownload: true })
         let bookModels =[]
@@ -138,11 +136,6 @@ class LanguageList extends Component {
       Alert.alert("","Something went wrong. Try Again", [{ text: 'OK', onPress: () => {return} }], { cancelable: false });
 
       }
-    }
-    else{
-      Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => {return} }], { cancelable: false });
-    }
-
   }
   // this function is calling in downloadbible function
   getChapters = (content, bookId) => {
@@ -290,7 +283,6 @@ const mapStateToProps = state => {
     chapterNumber: state.updateVersion.chapterNumber,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-    netConnection:state.updateStyling.netConnection,
     bibleLanguages: state.contents.contentLanguages,
     books: state.versionFetch.data,
     baseAPI: state.updateVersion.baseAPI
@@ -304,7 +296,6 @@ const mapDispatchToProps = dispatch => {
     fetchAllContent: () => dispatch(fetchAllContent()),
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
     updateMetadata: (payload) => dispatch(updateMetadata(payload)),
-    // fetchVersionLanguage: () => dispatch(fetchVersionLanguage()),
 
   }
 }

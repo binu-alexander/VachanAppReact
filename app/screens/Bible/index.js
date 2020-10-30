@@ -122,15 +122,7 @@ class Bible extends Component {
         })
       }
     })
-    if(this.props.updatedVersionData){
-      this.props.updateVersion({
-        language: this.props.updatedVersionData.language.name,
-        languageCode: this.props.updatedVersionData.language.code,
-        version:this.props.updatedVersionData.version.name,
-        versionCode: this.props.updatedVersionData.version.code, 
-        sourceId: this.props.updatedVersionData.sourceId
-      })
-    }
+
     this.state.scrollAnim.addListener(({ value }) => {
       const diff = value - this._scrollValue;
       this._scrollValue = value;
@@ -151,7 +143,6 @@ class Bible extends Component {
 
     this.subs = this.props.navigation.addListener("didFocus", () => {
       this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false, bookId: this.props.bookId, currentVisibleChapter: this.props.chapterNumber }, () => {
-  
         this.getChapter()
         this.audioComponentUpdate()
         this.getHighlights()
@@ -169,18 +160,24 @@ class Bible extends Component {
       })
     })
   }
+componentDidUpdate(prevProps){
+  console.log(" prev props \\\\", prevProps.sourceId)
+  console.log(" props \\\\", this.props.sourceId)
+if(prevProps.sourceId != this.props.sourceId){
+  console.log(" props DIFFEREnce\\\\")
+  this.queryBookFromAPI(null)
+}
+}
   // check internet connection to fetch api's accordingly
   _handleConnectivityChange = (isConnected) => {
-    this.setState({ connection_Status: isConnected == true ? true : false }, () => {
-      this.props.updateNetConnection(isConnected)
-      if (this.state.connection_Status) {
+    this.setState({ connection_Status: isConnected == true ? true : false })
+      if (isConnected === true) {
+        this.queryBookFromAPI(null)
         Toast.show({
           text: "Online. Now content available.",
-          // buttonText: "Okay",
           type: "success",
-          duration: 3000
+          duration: 2000
         })
-        this.queryBookFromAPI(null)
         if (this.props.books.length == 0) {
           this.props.fetchVersionBooks({
             language: this.props.language,
@@ -189,19 +186,19 @@ class Bible extends Component {
             sourceId: this.props.sourceId
           })
         }
-
-
       } else {
         Toast.show({
           text: "Offline. Check your internet Connection.",
-          // buttonText: "Okay",
           type: "warning",
-          duration: 3000
+          duration: 2000
         })
       }
-    })
-  };
-
+  }
+  componentDidUpdate(prevProps) {
+    if(this.props.baseAPI != prevProps.baseAPI){
+      this.queryBookFromAPI(null)
+    }
+  }
   // handle audio status on background, inactive and active state 
   _handleAppStateChange = (currentAppState) => {
     if (currentAppState == "background") {
@@ -279,7 +276,6 @@ class Bible extends Component {
     } else {
       return
     }
-
   }
   // if book downloaded or user want to read downloaded book fetch chapter from local db
   async getDownloadedContent() {
@@ -305,11 +301,17 @@ class Bible extends Component {
       if (this.props.downloaded) {
         this.getDownloadedContent()
       } else {
-        var content = await vApi.get("bibles" + "/" + this.props.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentVisibleChapter)
-        if (content) {
-          var header = content.chapterContent.metadata &&
-            (content.chapterContent.metadata[0].section && content.chapterContent.metadata[0].section.text)
-          this.setState({ chapterHeader: header, chapterContent: content.chapterContent.verses, error: null, isLoading: false, currentVisibleChapter: this.state.currentVisibleChapter })
+        if(this.props.baseAPI !=null){
+          var content = await vApi.get("bibles" + "/" + this.props.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentVisibleChapter)
+          console.log("content ",content)
+          console.log("SOURCE ID  ",this.props.sourceId)
+  
+          if (content) {
+            console.log("content ",content)
+            var header = content.chapterContent.metadata &&
+              (content.chapterContent.metadata[0].section && content.chapterContent.metadata[0].section.text)
+            this.setState({ chapterHeader: header, chapterContent: content.chapterContent.verses, error: null, isLoading: false, currentVisibleChapter: this.state.currentVisibleChapter })
+          }
         }
       }
     }
@@ -318,6 +320,7 @@ class Bible extends Component {
     }
     this.setState({ selectedReferenceSet: [], showBottomBar: false })
   }
+
   // fetching chapter content on next or prev icon press
   queryBookFromAPI = async (val) => {
     this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false, currentVisibleChapter: val != null ? JSON.parse(this.state.currentVisibleChapter) + val : this.state.currentVisibleChapter, error: null }, async () => {
@@ -359,6 +362,7 @@ class Bible extends Component {
         this.isBookmark()
       }
       catch (error) {
+        console.log("ERRROR chapter content ",error)
         this.setState({ isLoading: false, error: error, chapterContent: [] })
       }
     })
@@ -372,8 +376,7 @@ class Bible extends Component {
     else {
       Toast.show({
         text: 'No audio for ' + this.props.language + " " + this.props.bookName,
-        // buttonText: "Okay",
-        duration: 3000
+        duration: 2000
       })
     }
   }
@@ -507,9 +510,8 @@ class Bible extends Component {
         this.setState({ isBookmark: !isbookmark })
         Toast.show({
           text: isbookmark ? 'Bookmarked chapter removed' : 'Chapter bookmarked',
-          // buttonText: "Okay",
           type: isbookmark ? "default" : "success",
-          duration: 3000
+          duration: 2000
         })
       }
       else {
@@ -742,6 +744,7 @@ class Bible extends Component {
     }
   }
   render() {
+    console.log(" CHAPTER CONTENT ",this.state.chapterContent.length)
     return (
       <View style={this.styles.container}>
         {
@@ -943,7 +946,6 @@ const mapStateToProps = state => {
     contentType: state.updateVersion.parallelContentType,
 
     baseAPI: state.updateVersion.baseAPI,
-
     chapterNumber: state.updateVersion.chapterNumber,
     totalChapters: state.updateVersion.totalChapters,
     bookName: state.updateVersion.bookName,
@@ -955,14 +957,12 @@ const mapStateToProps = state => {
 
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-    netConnection: state.updateStyling.netConnection,
 
     email: state.userInfo.email,
     userId: state.userInfo.uid,
 
     books: state.versionFetch.data,
     parallelContentType: state.updateVersion.parallelContentType,
-    updatedVersionData:state.versionFetch.language,
     visibleParallelView: state.selectContent.visibleParallelView,
 
   }
