@@ -12,7 +12,6 @@ class vApi {
     };
     const state = store.getState()
     if(state.updateVersion.baseAPI != null){
-      console.log("state.updateVersion.baseAPI ",state.updateVersion.baseAPI)
       return fetch(state.updateVersion.baseAPI + url, requestParams)
         .then(ApiUtils.checkStatus)
         .then(response => {

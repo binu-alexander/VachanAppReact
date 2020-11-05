@@ -140,7 +140,6 @@ class Bible extends Component {
       this._handleConnectivityChange
     );
     AppState.addEventListener('change', this._handleAppStateChange);
-
     this.subs = this.props.navigation.addListener("didFocus", () => {
       this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false, bookId: this.props.bookId, currentVisibleChapter: this.props.chapterNumber }, () => {
         this.getChapter()
@@ -161,10 +160,7 @@ class Bible extends Component {
     })
   }
 componentDidUpdate(prevProps){
-  console.log(" prev props \\\\", prevProps.sourceId)
-  console.log(" props \\\\", this.props.sourceId)
 if(prevProps.sourceId != this.props.sourceId){
-  console.log(" props DIFFEREnce\\\\")
   this.queryBookFromAPI(null)
 }
 }
@@ -194,9 +190,10 @@ if(prevProps.sourceId != this.props.sourceId){
         })
       }
   }
-  componentDidUpdate(prevProps) {
-    if(this.props.baseAPI != prevProps.baseAPI){
+  componentDidUpdate(prevProps){
+    if(this.props.baseAPI != prevProps.baseAPI || this.props.sourceId !=prevProps.sourceId){
       this.queryBookFromAPI(null)
+      this.audioComponentUpdate()
     }
   }
   // handle audio status on background, inactive and active state 
@@ -234,7 +231,6 @@ if(prevProps.sourceId != this.props.sourceId){
   // update language and version  onback from language list page (callback function) also this function is usefull to update only few required values of redux 
   updateLangVer = async (item) => {
     this.setState({ selectedReferenceSet: [], showBottomBar: false })
-
     if (item) {
       var bookName = null
       for (var i = 0; i <= item.books.length - 1; i++) {
@@ -303,11 +299,7 @@ if(prevProps.sourceId != this.props.sourceId){
       } else {
         if(this.props.baseAPI !=null){
           var content = await vApi.get("bibles" + "/" + this.props.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentVisibleChapter)
-          console.log("content ",content)
-          console.log("SOURCE ID  ",this.props.sourceId)
-  
           if (content) {
-            console.log("content ",content)
             var header = content.chapterContent.metadata &&
               (content.chapterContent.metadata[0].section && content.chapterContent.metadata[0].section.text)
             this.setState({ chapterHeader: header, chapterContent: content.chapterContent.verses, error: null, isLoading: false, currentVisibleChapter: this.state.currentVisibleChapter })
@@ -362,7 +354,6 @@ if(prevProps.sourceId != this.props.sourceId){
         this.isBookmark()
       }
       catch (error) {
-        console.log("ERRROR chapter content ",error)
         this.setState({ isLoading: false, error: error, chapterContent: [] })
       }
     })
@@ -386,12 +377,16 @@ if(prevProps.sourceId != this.props.sourceId){
     let res = await vApi.get('audiobibles')
     try {
       if (res.length !== 0) {
-        for (var key in res[0].audioBibles[0].books) {
-          if (key == this.props.bookId) {
-            found = true
-            this.props.APIAudioURL({ audioURL: res[0].audioBibles[0].url, audioFormat: res[0].audioBibles[0].format })
-            this.setState({ audio: true })
-            break;
+        for(var i=0; i<res.length; i++){
+          for (var key in res[i].audioBibles[0].books){
+            if (key == this.props.bookId && res[i].language.name == this.props.language.toLowerCase()){
+              found = true
+              this.props.APIAudioURL({audioURL: res[i].audioBibles[0].url, audioFormat: res[i].audioBibles[0].format })
+              this.setState({ audio: true })
+              break;
+            }else{
+              this.props.APIAudioURL({audioURL: null, audioFormat: null })
+            }
           }
         }
         if (found == false) {
@@ -744,7 +739,6 @@ if(prevProps.sourceId != this.props.sourceId){
     }
   }
   render() {
-    console.log(" CHAPTER CONTENT ",this.state.chapterContent.length)
     return (
       <View style={this.styles.container}>
         {
@@ -787,10 +781,10 @@ if(prevProps.sourceId != this.props.sourceId){
         {/** Main View for the single or parrallel View */}
         <View style={this.styles.singleView}>
           {/** Single view with only bible text */}
-          <View style={{ flexDirection: 'column', width: this.props.visibleParallelView ? '50%' : width }}>
+          <View style={{ flex:1,flexDirection:'column', width: this.props.visibleParallelView ? '50%' : width }}>
             <AnimatedFlatlist
               data={this.state.chapterContent}
-              contentContainerStyle={this.state.chapterContent.length === 0 ? this.styles.centerEmptySet : { margin: 16, marginTop: this.props.visibleParallelView ? 46 : 90 }}
+              contentContainerStyle={this.state.chapterContent.length === 0 ? this.styles.centerEmptySet : { margin: 16, marginTop: this.props.visibleParallelView ? 46 : 90,paddingBottom:90 }}
               extraData={this.state}
               scrollEventThrottle={1}
               onMomentumScrollBegin={this._onMomentumScrollBegin}

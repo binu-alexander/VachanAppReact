@@ -195,10 +195,10 @@ export const styles = (colorFile, sizeFile) => {
         },
         addToSharefooterComponent: {
             margin: 16,
-            marginBottom: 68,
             justifyContent: 'center',
             alignItems: 'center',
         },
+      
         footerText: {
             fontWeight: 'bold'
         },
