@@ -40,7 +40,7 @@ class PlayVideo extends Component {
       this.setState({playing:true})
     }
     onChangeState(event){
-      if(event == undefined){
+      if(event === undefined){
         this.setState({isLoading:true})
       }else{
         this.setState({isLoading:false})

@@ -107,11 +107,11 @@ class Search extends Component {
         this.setState({ isLoading: false })
       } else {
         
-        var res = await vApi.get('search/' + JSON.parse(this.state.sourceId) + '?keyword=' + this.state.text,)
+        var res = await vApi.get('search/' + JSON.parse(this.state.sourceId) + '?keyword=' + this.state.text)
         var data = []
         if (res.result.length > 0 && this.state.books) {
-          for (var i = 0; i <= res.result.length - 1; i++) {
-            for (var j = 0; j <= this.state.books.length - 1; j++) {
+          for (var i = 0; i < res.result.length; i++) {
+            for (var j = 0; j < this.state.books.length ; j++) {
               var bId = this.state.books[j].bookId
               var bName = this.state.books[j].bookName
               if (bId == res.result[i].bookCode) {
@@ -150,20 +150,22 @@ class Search extends Component {
       case SearchResultTypes.OT: {
         let reflist = [];
         for (var i = 0; i < list.length; i++) {
-          if (getBookNumberFromMapping(list[i].bookId) < 40) {
+          if (getBookNumberFromMapping(list[i].bookId) <= 39) {
             reflist.push(list[i])
           }
         }
+        console.log("REF LIST OT FUNCTION ",reflist)
         this.setState({ tabsData: [...this.state.tabsData, ...reflist] })
         break;
       }
       case SearchResultTypes.NT: {
         let reflist = [];
         for (var i = 0; i < list.length; i++) {
-          if (getBookNumberFromMapping(list[i].bookId) > 40) {
+          if (getBookNumberFromMapping(list[i].bookId) >= 40) {
             reflist.push(list[i])
           }
         }
+        console.log("REF LIST NT FUNCTION ",reflist)
         this.setState({ tabsData: [...this.state.tabsData, ...reflist] })
         break;
       }
@@ -180,7 +182,7 @@ class Search extends Component {
         case SearchResultTypes.OT: {
           let data = [];
           for (var i = 0; i < this.state.searchedResult.length; i++) {
-            if (getBookNumberFromMapping(this.state.searchedResult[i].bookId) < 40) {
+            if (getBookNumberFromMapping(this.state.searchedResult[i].bookId) <= 39) {
               data.push(this.state.searchedResult[i])
             }
           }
@@ -190,7 +192,7 @@ class Search extends Component {
         case SearchResultTypes.NT: {
           let data = [];
           for (var i = 0; i < this.state.searchedResult.length; i++) {
-            if (getBookNumberFromMapping(this.state.searchedResult[i].bookId) > 40) {
+            if (getBookNumberFromMapping(this.state.searchedResult[i].bookId) >= 40) {
               data.push(this.state.searchedResult[i])
             }
           }
@@ -334,6 +336,7 @@ class Search extends Component {
     })
   }
   render() {
+    console.log("this.state.tabsData.length ",this.state.tabsData.length)
     let text = this.state.isLoading == true ? "Loading..." : this.state.tabsData.length + " search results found"
     return (
       <View style={this.styles.container}>
@@ -341,19 +344,20 @@ class Search extends Component {
           <Text style={this.styles.headerStyle}>Bible</Text>
           <TouchableOpacity style={{ backgroundColor: Color.Blue_Color, padding: 8, borderRadius: 8 }} onPress={() => this.props.navigation.navigate('LanguageList', { updateLangVer: this.updateLangVer })}>
             <Text style={this.styles.text}>
-              {this.state.languageName} {this.state.versionCode}
+              {this.props.languageName.charAt(0).toUpperCase() + this.props.languageName.slice(1)} {this.state.versionCode.toUpperCase()}
             </Text>
           </TouchableOpacity>
         </View>
         <Text style={this.styles.textLength}>{text}</Text>
         {
           this.state.searchedResult.length > 0 &&
-          <View>
+          <View style={{flex:1}}>
             <SearchTab
               toggleFunction={this.toggleButton}
               activeTab={this.state.activeTab}
             />
             <FlatList
+              contentContainerStyle={{paddingBottom:60}}
               ref={ref => this.elementIndex = ref}
               data={this.state.tabsData}
               renderItem={this.searchedData}

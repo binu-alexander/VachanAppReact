@@ -112,7 +112,6 @@ class SelectContent extends Component {
   }
   render() {
     this.styles = styles(this.props.colorFile, this.props.sizeFile)
-    console.log("availableContents ",this.props.availableContents)
     return (
       <View >
         <Modal

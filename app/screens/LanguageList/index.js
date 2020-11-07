@@ -109,7 +109,6 @@ class LanguageList extends Component {
     }
   }
   downloadBible = async (langName, verCode, books, sourceId) => {
-    if(this.props.netConnection){
       try {
         this.setState({ startDownload: true })
         let bookModels =[]
@@ -136,11 +135,6 @@ class LanguageList extends Component {
       Alert.alert("","Something went wrong. Try Again", [{ text: 'OK', onPress: () => {return} }], { cancelable: false });
 
       }
-    }
-    else{
-      Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => {return} }], { cancelable: false });
-    }
-
   }
   // this function is calling in downloadbible function
   getChapters = (content, bookId) => {
@@ -288,7 +282,6 @@ const mapStateToProps = state => {
     chapterNumber: state.updateVersion.chapterNumber,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-    netConnection:state.updateStyling.netConnection,
     bibleLanguages: state.contents.contentLanguages,
     books: state.versionFetch.data,
     baseAPI: state.updateVersion.baseAPI
@@ -302,6 +295,7 @@ const mapDispatchToProps = dispatch => {
     fetchAllContent: () => dispatch(fetchAllContent()),
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
     updateMetadata: (payload) => dispatch(updateMetadata(payload)),
+
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(LanguageList)

@@ -4,7 +4,7 @@ import SplashScreen from 'react-native-splash-screen';
 import { connect } from 'react-redux'
 import { Root } from "native-base";
 import VersionCheck from 'react-native-version-check';
-import { fetchAllContent, fetchVersionBooks,fetchVersionLanguage, APIBaseURL } from './app/store/action/';
+import { fetchAllContent, fetchVersionLanguage, APIBaseURL, updateVersion } from './app/store/action/';
 import { Alert, BackHandler, Linking } from 'react-native';
 import firebase from 'react-native-firebase'
 
@@ -48,19 +48,28 @@ class App extends Component {
 
 
   async componentDidMount() {
-    console.log("APP COMPONENT DID MOUNT ",)
     setTimeout(() => {
       SplashScreen.hide()
     }, 400)
     firebase.database().ref("/apiBaseUrl/").on('value', (snapshot) => {
-      console.log("SNAPSHOT result ", snapshot.val())
-      console.log(" COMPONENT DID MOUNT ",)
       this.props.APIBaseURL(snapshot.val())
       this.props.fetchVersionLanguage()
-
+      this.props.fetchAllContent()
     })
-    this.props.fetchAllContent()
     this.checkUpdateNeeded()
+
+  }
+  componentDidUpdate(prevProps) {
+    if (this.props.updatedVersionData != prevProps.updatedVersionData) {
+      this.props.updateVersion({
+        language: this.props.updatedVersionData.language.name,
+        languageCode: this.props.updatedVersionData.language.code,
+        version: this.props.updatedVersionData.version.name,
+        versionCode: this.props.updatedVersionData.version.code,
+        sourceId: this.props.updatedVersionData.sourceId
+      })
+
+    }
   }
 
   render() {
@@ -80,6 +89,7 @@ const mapStateToProps = state => {
     sourceId: state.updateVersion.sourceId,
     downloaded: state.updateVersion.downloaded,
     contentType: state.updateVersion.parallelContentType,
+    updatedVersionData: state.versionFetch.bible,
   }
 }
 
@@ -88,6 +98,8 @@ const mapDispatchToProps = dispatch => {
     fetchAllContent: () => dispatch(fetchAllContent()),
     fetchVersionLanguage: () => dispatch(fetchVersionLanguage()),
     APIBaseURL: (payload) => dispatch(APIBaseURL(payload)),
+    updateVersion: (payload) => dispatch(updateVersion(payload)),
+
   }
 }
 

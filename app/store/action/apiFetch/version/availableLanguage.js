@@ -1,7 +1,7 @@
 import { FETCH_VERSION_LANGUAGE, VERSION_LANGUAGE_SUCCESS, VERSION_LANGUAGE_FAILURE } from "../../actionsType";
 
 
-export const fetchVersionLanguage = payload=>({
+export const fetchVersionLanguage = payload =>({
   type: FETCH_VERSION_LANGUAGE,
   payload
 })

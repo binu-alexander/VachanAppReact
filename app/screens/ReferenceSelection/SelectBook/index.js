@@ -66,13 +66,11 @@ class SelectBook extends Component {
         }
       }
     }
-
     this.setState({ OTSize: count })
   }
 
   getNTSize = () => {
     var count = 0;
-
     if (this.props.books) {
       if (this.props.books.length == 0) {
         this.setState({ NTSize: 0 })
@@ -109,11 +107,9 @@ class SelectBook extends Component {
         <View
           style={this.styles.bookList}>
           <Text
-            style={
-              [this.styles.textStyle,
+            style={[this.styles.textStyle,
               { fontWeight: item.bookId == this.props.screenProps.selectedBookId ? "bold" : "normal" }
-              ]
-            }
+            ]}
           >
             {item.bookName}
           </Text>
@@ -157,8 +153,8 @@ class SelectBook extends Component {
                     active={this.state.activeTab}
                     style={[{
                       width: this.state.NTSize == 0 ? width : width * 1 / 2,
-                    }, 
-                    this.state.activeTab ? this.styles.activeBgColor :this.styles.inactiveBgColor,
+                    },
+                    this.state.activeTab ? this.styles.activeBgColor : this.styles.inactiveBgColor,
                     this.styles.segmentButton]}
                     onPress={this.toggleButton.bind(this, true)
                     }
@@ -179,14 +175,14 @@ class SelectBook extends Component {
                     active={!this.state.activeTab}
                     style={[{
                       width: this.state.OTSize == 0 ? width : width * 1 / 2,
-                    }, 
-                    !this.state.activeTab ? this.styles.activeBgColor :this.styles.inactiveBgColor,
+                    },
+                    !this.state.activeTab ? this.styles.activeBgColor : this.styles.inactiveBgColor,
                     this.styles.segmentButton]}
                     onPress={this.toggleButton.bind(this, false)}>
                     <Text
                       active={!this.state.activeTab}
                       style={[
-                        !this.state.activeTab ? this.styles.inactivetabText :this.styles.activetabText,
+                        !this.state.activeTab ? this.styles.inactivetabText : this.styles.activetabText,
                         this.styles.buttonText]
                       }>
                       New Testament

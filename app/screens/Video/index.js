@@ -51,8 +51,7 @@ class Video extends Component {
       if(this.state.bookId){
       Toast.show({
         text: 'Video for '+this.state.bookName+' is unavaialble. You can checkout other books',
-        buttonText: "Okay",
-        duration: 3000
+        duration: 2000
       })
       }
         this.setState({ videos: videoAll })
