@@ -154,6 +154,7 @@ class Search extends Component {
             reflist.push(list[i])
           }
         }
+        console.log("REF LIST OT FUNCTION ",reflist)
         this.setState({ tabsData: [...this.state.tabsData, ...reflist] })
         break;
       }
@@ -164,6 +165,7 @@ class Search extends Component {
             reflist.push(list[i])
           }
         }
+        console.log("REF LIST NT FUNCTION ",reflist)
         this.setState({ tabsData: [...this.state.tabsData, ...reflist] })
         break;
       }
@@ -334,6 +336,7 @@ class Search extends Component {
     })
   }
   render() {
+    console.log("this.state.tabsData.length ",this.state.tabsData.length)
     let text = this.state.isLoading == true ? "Loading..." : this.state.tabsData.length + " search results found"
     return (
       <View style={this.styles.container}>

@@ -5,7 +5,7 @@ const initialState = {
     languageCode: 'hin',
     version: 'Indian Revised Bible',
     versionCode: 'IRV',
-    sourceId: 45,
+    sourceId: 10,
     downloaded: false,
     bookId: 'jhn',
     bookName: 'यूहन्ना',

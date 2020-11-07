@@ -15,7 +15,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DbQueries from '../../utils/dbQueries';
 import VerseView from './VerseView';
-import { APIAudioURL, fetchVersionBooks, selectContent, updateNetConnection, userInfo, updateVersionBook, updateVersion, updateMetadata } from '../../store/action/'
+import { APIAudioURL, fetchVersionBooks, selectContent,APIBaseURL, updateNetConnection, userInfo, updateVersionBook, updateVersion, updateMetadata } from '../../store/action/'
 import CustomHeader from '../../components/Bible/CustomHeader'
 import SelectBottomTabBar from '../../components/Bible/SelectBottomTabBar';
 import ChapterNdAudio from '../../components/Bible/ChapterNdAudio';
@@ -160,8 +160,9 @@ class Bible extends Component {
     })
   }
 componentDidUpdate(prevProps){
-if(prevProps.sourceId != this.props.sourceId){
+if(prevProps.sourceId != this.props.sourceId || prevProps.baseAPI != this.props.baseAPI){
   this.queryBookFromAPI(null)
+  this.audioComponentUpdate()
 }
 }
   // check internet connection to fetch api's accordingly
@@ -190,12 +191,7 @@ if(prevProps.sourceId != this.props.sourceId){
         })
       }
   }
-  componentDidUpdate(prevProps){
-    if(this.props.baseAPI != prevProps.baseAPI || this.props.sourceId !=prevProps.sourceId){
-      this.queryBookFromAPI(null)
-      this.audioComponentUpdate()
-    }
-  }
+
   // handle audio status on background, inactive and active state 
   _handleAppStateChange = (currentAppState) => {
     if (currentAppState == "background") {
@@ -231,6 +227,7 @@ if(prevProps.sourceId != this.props.sourceId){
   // update language and version  onback from language list page (callback function) also this function is usefull to update only few required values of redux 
   updateLangVer = async (item) => {
     this.setState({ selectedReferenceSet: [], showBottomBar: false })
+
     if (item) {
       var bookName = null
       for (var i = 0; i <= item.books.length - 1; i++) {
@@ -739,6 +736,8 @@ if(prevProps.sourceId != this.props.sourceId){
     }
   }
   render() {
+    console.log("Source Id ",this.props.sourceId)
+    console.log("CHapter content Id ",this.state.chapterContent)
     return (
       <View style={this.styles.container}>
         {
@@ -971,6 +970,8 @@ const mapDispatchToProps = dispatch => {
     updateNetConnection: (payload) => dispatch(updateNetConnection(payload)),
     APIAudioURL: (payload) => dispatch(APIAudioURL(payload)),
     selectContent: (payload) => dispatch(selectContent(payload)),
+    APIBaseURL: (payload) => dispatch(APIBaseURL(payload)),
+
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Bible) 
