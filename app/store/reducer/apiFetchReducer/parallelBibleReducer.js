@@ -2,6 +2,7 @@ import { FETCH_PARALLEL_BIBLE, PARALLEL_BIBLE_SUCCESS, PARALLEL_BIBLE_FAILURE } 
 
 const initialState = {
     parallelBible: [],
+    parallelBibleHeading:'',
     error: null,
     loading: false,
 }
@@ -17,7 +18,7 @@ function parallelBibleReducer(state = initialState, action) {
                 ...state,
                 loading: false,
                 parallelBible: action.payload.parallelBible,
-
+                parallelBibleHeading:action.payload.parallelBibleHeading
             }
         case PARALLEL_BIBLE_FAILURE:
             return {

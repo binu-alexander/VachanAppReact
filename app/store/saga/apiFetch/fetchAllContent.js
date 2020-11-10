@@ -79,11 +79,15 @@ function* fetchAllContent() {
       }
       commentary.push({ languageName: language, languageCode: languageCode, versionModels: versions })
     }
-
-    yield put(allContentSuccess([
-      { contentType: "bible", content: bible },
-      { contentType: "commentary", content: commentary },
-    ]))
+    if(bible.length == 0 && commentary.length == 0 ){
+      yield put(allContentSuccess([]))
+    }else{
+      yield put(allContentSuccess([
+        { contentType: "bible", content: bible },
+        { contentType: "commentary", content: commentary },
+      ]))
+    }
+    
     yield put(allContentFailure(null))
 
   } catch (e) {

@@ -91,8 +91,8 @@ class SelectContent extends Component {
       if (!this.alertPresent) {
         this.alertPresent = true;
         if (this.props.error ||
-          this.props.availableContents[0].content.length === 0 ||
-          this.props.availableContents[1].content.length === 0 
+          this.props.availableContents.length == 0 ||
+          this.props.availableContents.length == 0 
         ) {
           this.setState({ modalVisible: false})
           Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
@@ -111,6 +111,7 @@ class SelectContent extends Component {
     this.errorMessage()
   }
   render() {
+    console.log("availableContents  ",this.props.availableContents)
     this.styles = styles(this.props.colorFile, this.props.sizeFile)
     return (
       <View >

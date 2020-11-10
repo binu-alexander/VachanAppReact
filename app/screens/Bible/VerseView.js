@@ -65,7 +65,7 @@ class VerseView extends Component {
   }
 
   render() {
-    let obj = this.props.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.number+ '_' +this.props.verseData.text;
+    let obj = this.props.chapterNumber + '_' + this.props.index + '_' + this.props.verseData.number + '_' + this.props.verseData.text;
     let isSelect = this.has(this.props.selectedReferences, obj)
     let isHighlight = this.isHighlight()
     let isNoted = this.isNoted()
@@ -85,12 +85,12 @@ class VerseView extends Component {
               {this.props.chapterNumber}{" "}
             </Text>
             <Text style={[isSelect && isHighlight
-              ?  this.props.styles.verseTextSelectedHighlighted
+              ? this.props.styles.verseTextSelectedHighlighted
               : !isSelect && !isHighlight
                 ? this.props.styles.verseTextNotSelectedNotHighlighted
                 : !isSelect && isHighlight
                   ? this.props.styles.verseTextNotSelectedHighlighted
-                  :  this.props.styles.verseTextSelectedNotHighlighted
+                  : this.props.styles.verseTextSelectedNotHighlighted
             ]}
             >
               {getResultText(this.props.verseData.text)}
@@ -119,12 +119,12 @@ class VerseView extends Component {
               ? this.props.styles.verseTextNotSelectedNotHighlighted
               : !isSelect && isHighlight
                 ? this.props.styles.verseTextNotSelectedHighlighted
-                :this.props.styles.verseTextSelectedNotHighlighted
+                : this.props.styles.verseTextSelectedNotHighlighted
           ]}
           >
             {getResultText(this.props.verseData.text)}
           </Text>
-        {isNoted ? <Icon onPress={() => this.goToNote(this.props.verseData.number)} name="note-outline" size={20} style={{ padding: 8 }} /> : null}
+          {isNoted ? <Icon onPress={() => this.goToNote(this.props.verseData.number)} name="note-outline" size={20} style={{ padding: 8 }} /> : null}
         </Text>
         {
           (this.props.verseData.metadata && this.props.verseData.metadata[0].section) ?
