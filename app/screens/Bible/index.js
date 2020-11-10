@@ -15,7 +15,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DbQueries from '../../utils/dbQueries';
 import VerseView from './VerseView';
-import { APIAudioURL, fetchVersionBooks, selectContent,APIBaseURL, updateNetConnection, userInfo, updateVersionBook, updateVersion, updateMetadata } from '../../store/action/'
+import { APIAudioURL, fetchVersionBooks, selectContent, APIBaseURL, updateNetConnection, userInfo, updateVersionBook, updateVersion, updateMetadata } from '../../store/action/'
 import CustomHeader from '../../components/Bible/CustomHeader'
 import SelectBottomTabBar from '../../components/Bible/SelectBottomTabBar';
 import ChapterNdAudio from '../../components/Bible/ChapterNdAudio';
@@ -159,37 +159,46 @@ class Bible extends Component {
       })
     })
   }
-componentDidUpdate(prevProps){
-if(prevProps.sourceId != this.props.sourceId || prevProps.baseAPI != this.props.baseAPI){
-  this.queryBookFromAPI(null)
-  this.audioComponentUpdate()
-}
-}
+  componentDidUpdate(prevProps) {
+    if (prevProps.sourceId != this.props.sourceId || prevProps.baseAPI != this.props.baseAPI) {
+      this.queryBookFromAPI(null)
+      this.audioComponentUpdate()
+      if (this.props.books.length == 0) {
+        this.props.fetchVersionBooks({
+          language: this.props.language,
+          versionCode: this.props.versionCode,
+          downloaded: this.props.downloaded,
+          sourceId: this.props.sourceId
+        })
+      }
+
+    }
+  }
   // check internet connection to fetch api's accordingly
   _handleConnectivityChange = (isConnected) => {
     this.setState({ connection_Status: isConnected == true ? true : false })
-      if (isConnected === true) {
-        this.queryBookFromAPI(null)
-        Toast.show({
-          text: "Online. Now content available.",
-          type: "success",
-          duration: 2000
-        })
-        if (this.props.books.length == 0) {
-          this.props.fetchVersionBooks({
-            language: this.props.language,
-            versionCode: this.props.versionCode,
-            downloaded: this.props.downloaded,
-            sourceId: this.props.sourceId
-          })
-        }
-      } else {
-        Toast.show({
-          text: "Offline. Check your internet Connection.",
-          type: "warning",
-          duration: 2000
+    if (isConnected === true) {
+      this.queryBookFromAPI(null)
+      Toast.show({
+        text: "Online. Now content available.",
+        type: "success",
+        duration: 2000
+      })
+      if (this.props.books.length == 0) {
+        this.props.fetchVersionBooks({
+          language: this.props.language,
+          versionCode: this.props.versionCode,
+          downloaded: this.props.downloaded,
+          sourceId: this.props.sourceId
         })
       }
+    } else {
+      Toast.show({
+        text: "Offline. Check your internet Connection.",
+        type: "warning",
+        duration: 2000
+      })
+    }
   }
 
   // handle audio status on background, inactive and active state 
@@ -294,7 +303,7 @@ if(prevProps.sourceId != this.props.sourceId || prevProps.baseAPI != this.props.
       if (this.props.downloaded) {
         this.getDownloadedContent()
       } else {
-        if(this.props.baseAPI !=null){
+        if (this.props.baseAPI != null) {
           var content = await vApi.get("bibles" + "/" + this.props.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentVisibleChapter)
           if (content) {
             var header = content.chapterContent.metadata &&
@@ -374,15 +383,15 @@ if(prevProps.sourceId != this.props.sourceId || prevProps.baseAPI != this.props.
     let res = await vApi.get('audiobibles')
     try {
       if (res.length !== 0) {
-        for(var i=0; i<res.length; i++){
-          for (var key in res[i].audioBibles[0].books){
-            if (key == this.props.bookId && res[i].language.name == this.props.language.toLowerCase()){
+        for (var i = 0; i < res.length; i++) {
+          for (var key in res[i].audioBibles[0].books) {
+            if (key == this.props.bookId && res[i].language.name == this.props.language.toLowerCase()) {
               found = true
-              this.props.APIAudioURL({audioURL: res[i].audioBibles[0].url, audioFormat: res[i].audioBibles[0].format })
+              this.props.APIAudioURL({ audioURL: res[i].audioBibles[0].url, audioFormat: res[i].audioBibles[0].format })
               this.setState({ audio: true })
               break;
-            }else{
-              this.props.APIAudioURL({audioURL: null, audioFormat: null })
+            } else {
+              this.props.APIAudioURL({ audioURL: null, audioFormat: null })
             }
           }
         }
@@ -517,9 +526,9 @@ if(prevProps.sourceId != this.props.sourceId || prevProps.baseAPI != this.props.
     }
   }
   //selected reference for highlighting verse
-  getSelectedReferences = (vIndex, chapterNum, vNum,text) => {
+  getSelectedReferences = (vIndex, chapterNum, vNum, text) => {
     if (vIndex != -1 && chapterNum != -1 && vNum != -1) {
-      let obj = chapterNum+'_' +vIndex+'_'+vNum+'_'+text
+      let obj = chapterNum + '_' + vIndex + '_' + vNum + '_' + text
       let selectedReferenceSet = [...this.state.selectedReferenceSet]
       var found = false;
       for (var i = 0; i < selectedReferenceSet.length; i++) {
@@ -736,8 +745,6 @@ if(prevProps.sourceId != this.props.sourceId || prevProps.baseAPI != this.props.
     }
   }
   render() {
-    console.log("Source Id ",this.props.sourceId)
-    console.log("CHapter content Id ",this.state.chapterContent)
     return (
       <View style={this.styles.container}>
         {
@@ -780,10 +787,10 @@ if(prevProps.sourceId != this.props.sourceId || prevProps.baseAPI != this.props.
         {/** Main View for the single or parrallel View */}
         <View style={this.styles.singleView}>
           {/** Single view with only bible text */}
-          <View style={{ flex:1,flexDirection:'column', width: this.props.visibleParallelView ? '50%' : width }}>
+          <View style={{ flex: 1, flexDirection: 'column', width: this.props.visibleParallelView ? '50%' : width }}>
             <AnimatedFlatlist
               data={this.state.chapterContent}
-              contentContainerStyle={this.state.chapterContent.length === 0 ? this.styles.centerEmptySet : { margin: 16, marginTop: this.props.visibleParallelView ? 46 : 90,paddingBottom:90 }}
+              contentContainerStyle={this.state.chapterContent.length === 0 ? this.styles.centerEmptySet : { margin: 16, marginTop: this.props.visibleParallelView ? 46 : 90, paddingBottom: 90 }}
               extraData={this.state}
               scrollEventThrottle={1}
               onMomentumScrollBegin={this._onMomentumScrollBegin}
