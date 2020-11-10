@@ -30,8 +30,8 @@ class Infographics extends React.Component {
     this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
 
   }
-  async componentDidMount() {
-    const apiData = await vApi.get("infographics/"+ this.props.languageCode)
+  async fetchInfographics() {
+    const apiData = await vApi.get("infographics/" + this.props.languageCode)
     let infographicsBook = []
     if (apiData) {
       let found = false
@@ -46,14 +46,22 @@ class Infographics extends React.Component {
       if (found) {
         this.setState({ infographics: infographicsBook, url: apiData.url })
       } else {
-        if (this.state.bookId){
+        if (this.state.bookId) {
           Toast.show({
-            text: 'Infographics for '+this.state.bookName +'is unavaialble. You can checkout other books',
+            text: 'Infographics for ' + this.state.bookName + ' is unavaialble. You can checkout other books',
             duration: 2000
           })
         }
         this.setState({ infographics: apiData.books, url: apiData.url })
       }
+    }
+  }
+  componentDidMount() {
+    this.fetchInfographics()
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.books.length != this.props.books.length) {
+      this.fetchInfographics()
     }
   }
   gotoImage = (item) => {
@@ -69,7 +77,7 @@ class Infographics extends React.Component {
         }
       }
     } else {
-      this.setState({ bookmarksList: [] })
+      this.setState({ infographics: [] })
       return
     }
     var value = item.infographics.map(e =>

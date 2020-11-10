@@ -7,11 +7,10 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { connect } from 'react-redux'
-import APIFetch from '../../utils/APIFetch'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { bookStyle } from './styles.js'
 import { Card, CardItem } from 'native-base'
-import {Toast } from 'native-base'
+import { Toast } from 'native-base'
 import vApi from '../../utils/APIFetch';
 
 
@@ -31,30 +30,31 @@ class Video extends Component {
     this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
   }
   async fetchVideo() {
-    const videos = await vApi.get('videos?language='+this.props.languageCode)
+    this.setState({ isLoading: true })
+    const videos = await vApi.get('videos?language=' + this.props.languageCode)
     let videoBook = []
     let videoAll = []
     let found = false
     for (var key in videos[0].books) {
-      if (this.state.bookId != null){
-        if(key == this.state.bookId){
-          found = true
+      if (this.state.bookId != null) {
+        if (key == this.state.bookId) {
           videoBook.push({ bookId: key, details: videos[0].books[key] })
+          found = true
         }
       } else {
         videoAll.push({ bookId: key, details: videos[0].books[key] })
       }
     }
     if (found) {
-      this.setState({ videos: videoBook })
+      this.setState({ videos: videoBook, isLoading: false })
     } else {
-      if(this.state.bookId){
-      Toast.show({
-        text: 'Video for '+this.state.bookName+' is unavaialble. You can checkout other books',
-        duration: 2000
-      })
+      if (this.state.bookId) {
+        Toast.show({
+          text: 'Video for ' + this.state.bookName + ' is unavaialble. You can checkout other books',
+          duration: 2000
+        })
       }
-        this.setState({ videos: videoAll })
+      this.setState({ videos: videoAll, isLoading: false })
     }
 
   }
@@ -64,6 +64,11 @@ class Video extends Component {
   }
   componentDidMount() {
     this.fetchVideo()
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.books.length != this.props.books.length) {
+      this.fetchVideo()
+    }
   }
   renderItem = ({ item }) => {
     var bookName = null
@@ -75,12 +80,12 @@ class Video extends Component {
         }
       }
     } else {
-      this.setState({ bookmarksList: [] })
+      this.setState({ videos: [] })
       return
     }
     var value = item.details.map(e =>
-      <Card >
-        <CardItem style={this.styles.cardItemStyle} > 
+      <Card>
+        <CardItem style={this.styles.cardItemStyle}>
           <TouchableOpacity style={this.styles.videoView} onPress={() => this.playVideo(e)}>
             <Text style={this.styles.videoText}>{bookName} : {e.title}</Text>
           </TouchableOpacity>
@@ -94,7 +99,6 @@ class Video extends Component {
     )
   }
   render() {
-
     return (
       <View style={this.styles.container}>
         {

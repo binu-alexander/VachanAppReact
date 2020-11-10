@@ -20,10 +20,14 @@ class DrawerScreen extends Component {
 
   async componentDidMount() {
     let currentVersion = await VersionCheck.getCurrentVersion();
-    this.props.fetchVersionBooks({
-      language: this.props.language, versionCode: this.props.versionCode,
-      downloaded: this.props.downloaded, sourceId: this.props.sourceId
-    })
+    if (this.props.books.length == 0) {
+      this.props.fetchVersionBooks({
+        language: this.props.language,
+        versionCode: this.props.versionCode,
+        downloaded: this.props.downloaded,
+        sourceId: this.props.sourceId
+      })
+    }
     this.setState({currentVersion})
   }
 
@@ -92,7 +96,7 @@ const mapStateToProps = state => {
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
     email: state.userInfo.email,
-
+    books: state.versionFetch.data,
     language: state.updateVersion.language,
     languageCode: state.updateVersion.languageCode,
     versionCode: state.updateVersion.versionCode,
