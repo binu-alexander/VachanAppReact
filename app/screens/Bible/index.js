@@ -694,16 +694,21 @@ class Bible extends Component {
     })
   }
   navigateToVideo = () => {
+    this.setState({ status: false })
     this.props.navigation.navigate("Video", { bookId: this.props.bookId, bookName: this.props.bookName })
   }
   navigateToImage = () => {
+    this.setState({ status: false })
     this.props.navigation.navigate("Infographics", { bookId: this.props.bookId, bookName: this.props.bookName })
   }
   navigateToSettings = () => {
+    this.setState({ status: false })
+
     this.props.navigation.navigate("Settings")
   }
 
   toggleParallelView(value) {
+    this.setState({ status: false })
     this.props.selectContent({ visibleParallelView: value })
     // this.setState({ visibleParallelView: value })
   }
