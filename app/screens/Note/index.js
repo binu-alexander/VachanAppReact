@@ -172,7 +172,7 @@ class Note extends Component {
         <Card>
           <CardItem style={this.styles.cardItemStyle}>
             <View style={this.styles.notesContentView}>
-              <Text style={this.styles.noteText} >{this.props.languageName} {this.props.versionCode} {bookName} {item.chapterNumber} {"-"} {val.verses.join()}</Text>
+              <Text style={this.styles.noteText} >{this.props.languageName} {this.props.versionCode} {bookName} {item.chapterNumber} {":"} {val.verses.join()}</Text>
               <View style={this.styles.noteCardItem}>
                 <Text style={this.styles.noteFontCustom}>{this.dateFormate(val.modifiedTime)}</Text>
                 <Icon name="delete-forever" style={this.styles.deleteIon} onPress={() => this.onDelete(val.createdTime, val.body, index, j)} />
