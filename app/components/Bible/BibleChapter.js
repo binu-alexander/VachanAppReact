@@ -43,7 +43,7 @@ class BibleChapter extends Component {
         })
     }
     getRef = (item) => {
-        let shortbookName = item.bookName != null && (item.bookName.length > 8 ? item.bookName.slice(0, 3) + "..." : item.bookName)
+        let shortbookName = item.bookName != null && (item.bookName.length > 10 ? item.bookName.slice(0, 9) + "..." : item.bookName)
         this.setState({
             currentParallelViewChapter: item.chapterNumber,
             id: item.bookId,
@@ -82,7 +82,7 @@ class BibleChapter extends Component {
                 return
             }
             console.log(" BOOK NAME ....", bookName)
-            let shortbookName = bookName != null && (bookName.length > 8 ? bookName.slice(0, 3) + "..." : bookName)
+            let shortbookName = bookName != null && (bookName.length > 10 ? bookName.slice(0, 9) + "..." : bookName)
             this.setState({ shortbookName })
         } catch (error) {
             this.setState({ error: error, bookNameList: [] });

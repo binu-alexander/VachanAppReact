@@ -146,7 +146,7 @@ export class InfographicsImage extends React.Component {
                         ],
                       },
                     ]}
-		onLoadStart={(e) => this.setState({isLoading: true})}
+		                onLoadStart={(e) => this.setState({isLoading: true})}
                     onLoadEnd={(e) => this.setState({isLoading: false})}
                     source={{uri:this.state.image}}
                     

@@ -15,16 +15,18 @@ const initialState = {
 function updateStyling(state = initialState, action) {
     switch (action.type) {
         case UPDATE_FONT_SIZE:
-            const sizes = {
+            let sizes = {
                 sizeMode: () => {
                     switch (action.sizeMode) {
                         case 0:
+                            console.log("size mode 0",)
                             return {
                                 ...state,
                                 sizeMode: action.sizeMode,
                                 sizeFile: extraSmallFont
                             }
                         case 1:
+                            console.log("size mode 1",)
                             return {
                                 ...state,
                                 sizeMode: action.sizeMode,
@@ -32,6 +34,7 @@ function updateStyling(state = initialState, action) {
 
                             }
                         case 2:
+                            console.log("action size mode 2")
                             return {
                                 ...state,
                                 sizeMode: action.sizeMode,
@@ -39,6 +42,7 @@ function updateStyling(state = initialState, action) {
 
                             }
                         case 3:
+                            console.log("action size mode 3 ")
                             return {
                                 ...state,
                                 sizeMode: action.sizeMode,
@@ -46,6 +50,7 @@ function updateStyling(state = initialState, action) {
 
                             }
                         case 4:
+                            console.log("action size mode 4 ")
                             return {
                                 ...state,
                                 sizeMode: action.sizeMode,
@@ -53,6 +58,7 @@ function updateStyling(state = initialState, action) {
 
                             }
                         default:
+                            console.log("DEFAULT ",)
                             return {
                                 ...state,
                             }
@@ -60,6 +66,7 @@ function updateStyling(state = initialState, action) {
                     }
                 }
             }
+            console.log(" SIZE.SIZEMODE ", sizes.sizeMode())
             return sizes.sizeMode()
 
         case UPDATE_COLOR_MODE:

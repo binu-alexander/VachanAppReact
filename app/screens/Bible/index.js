@@ -13,9 +13,12 @@ import {
   NetInfo,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { createResponder } from 'react-native-gesture-responder';
+
 import DbQueries from '../../utils/dbQueries';
 import VerseView from './VerseView';
-import { APIAudioURL, fetchVersionBooks, selectContent, APIBaseURL, updateNetConnection, userInfo, updateVersionBook, updateVersion, updateMetadata } from '../../store/action/'
+import { extraSmallFont, smallFont, mediumFont, largeFont, extraLargeFont } from '../../utils/dimens.js'
+import { APIAudioURL, fetchVersionBooks, selectContent, APIBaseURL, updateNetConnection, userInfo, updateVersionBook, updateFontSize, updateVersion, updateMetadata } from '../../store/action/'
 import CustomHeader from '../../components/Bible/CustomHeader'
 import SelectBottomTabBar from '../../components/Bible/SelectBottomTabBar';
 import ChapterNdAudio from '../../components/Bible/ChapterNdAudio';
@@ -29,6 +32,7 @@ import { Header, Button, Title, Toast } from 'native-base';
 import BibleChapter from '../../components/Bible/BibleChapter';
 import firebase from 'react-native-firebase';
 import vApi from '../../utils/APIFetch';
+
 
 
 const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
@@ -122,7 +126,7 @@ class Bible extends Component {
         })
       }
     })
-
+    this.ZoomTextSize()
     this.state.scrollAnim.addListener(({ value }) => {
       const diff = value - this._scrollValue;
       this._scrollValue = value;
@@ -677,6 +681,116 @@ class Bible extends Component {
   onSearch = () => {
     this.props.navigation.navigate('Search')
   }
+  changeSizeByOne = (value) => {
+    switch (this.props.sizeMode) {
+      case 0: {
+        if (value == -1) {
+          return
+        } else {
+          this.styles = styles(this.props.colorFile,smallFont)
+          this.props.updateFontSize(1)
+        }
+        break;
+      }
+      case 1: {
+        if (value == -1) {
+          this.styles = styles(this.props.colorFile,extraSmallFont)
+          this.props.updateFontSize(0)
+        } else {
+          this.styles = styles(this.props.colorFile,mediumFont)
+          this.props.updateFontSize(2)
+        }
+        break;
+      }
+      case 2: {
+        if (value == -1) {
+          this.styles = styles(this.props.colorFile,smallFont)
+          this.props.updateFontSize(1)
+        } else {
+          this.styles = styles(this.props.colorFile,largeFont)
+          this.props.updateFontSize(3)
+        }
+        break;
+      }
+      case 3: {
+        if (value == -1) {
+          this.styles = styles(this.props.colorFile,mediumFont)
+          this.props.updateFontSize(2)
+        } else {
+          this.styles = styles(this.props.colorFile,extraLargeFont)
+          this.props.updateFontSize(4)
+        }
+        break;
+      }
+      case 4: {
+        if (value == -1) {
+          this.styles = styles(this.props.colorFile,largeFont)
+          this.props.updateFontSize(3)
+        } else {
+          return
+        }
+        break;
+      }
+    }
+  }
+  ZoomTextSize = () => {
+    this.gestureResponder = createResponder({
+      onStartShouldSetResponder: (evt, gestureState) => true,
+      onStartShouldSetResponderCapture: (evt, gestureState) => true,
+      onMoveShouldSetResponder: (evt, gestureState) => true,
+      onMoveShouldSetResponderCapture: (evt, gestureState) => true,
+      onResponderGrant: (evt, gestureState) => {},
+      onResponderMove: (evt, gestureState) => {
+        let thumbSize = this.state.thumbSize;
+        if (gestureState.pinch && gestureState.previousPinch) {
+          thumbSize *= (gestureState.pinch / gestureState.previousPinch)
+          let currentDate = new Date().getTime()
+          let diff = currentDate - this.pinchTime
+          // console.log("time diff : " + diff + " prev diff : " + this.pinchDiff)
+          if (diff > this.pinchDiff) {
+              // console.log("gesture pinch diff = " + (gestureState.pinch - gestureState.previousPinch))
+             if (gestureState.pinch - gestureState.previousPinch > 5) {
+                // large
+                // console.log("large")
+                this.changeSizeByOne(1)              
+            } else if (gestureState.previousPinch - gestureState.pinch > 5) {
+                // console.log("small")
+                // small
+                this.changeSizeByOne(-1)              
+            }
+          }
+          this.pinchDiff = diff
+          this.pinchTime = currentDate
+        }
+        let {left, top} = this.state;
+        left += (gestureState.moveX - gestureState.previousMoveX);
+        top += (gestureState.moveY - gestureState.previousMoveY);
+        this.setState({
+          gestureState: {
+            ...gestureState
+          },
+          left, top, thumbSize
+        })  
+      },
+      onResponderTerminationRequest: (evt, gestureState) => true,
+      onResponderRelease: (evt, gestureState) => {
+        this.setState({
+          gestureState: {
+            ...gestureState
+          }
+        })
+      },
+      onResponderTerminate: (evt, gestureState) => {},
+      
+      onResponderSingleTapConfirmed: (evt, gestureState) => {
+        console.log('onResponderSingleTapConfirmed...' + JSON.stringify(gestureState));
+      },
+      
+      moveThreshold: 2,
+      debug: false
+    });
+
+  }
   navigateToLanguage = () => {
     this.setState({ status: false })
     this.props.navigation.navigate("LanguageList", { updateLangVer: this.updateLangVer })
@@ -710,7 +824,6 @@ class Bible extends Component {
   toggleParallelView(value) {
     this.setState({ status: false })
     this.props.selectContent({ visibleParallelView: value })
-    // this.setState({ visibleParallelView: value })
   }
 
   _onScrollEndDrag = () => {
@@ -751,7 +864,9 @@ class Bible extends Component {
     }
   }
   render() {
-    console.log(" NOTES LIST ", this.state.notesList)
+    // console.log(" size file  ", this.props.sizeFile)
+    console.log(" size MOde  ", this.props.sizeMode)
+
     return (
       <View style={this.styles.container}>
         {
@@ -792,10 +907,13 @@ class Bible extends Component {
           />
         }
         {/** Main View for the single or parrallel View */}
-        <View style={this.styles.singleView}>
+        <View 
+        style={this.styles.singleView}  
+        >
           {/** Single view with only bible text */}
           <View style={{ flex: 1, flexDirection: 'column', width: this.props.visibleParallelView ? '50%' : width }}>
             <AnimatedFlatlist
+            {...this.gestureResponder}
               data={this.state.chapterContent}
               contentContainerStyle={this.state.chapterContent.length === 0 ? this.styles.centerEmptySet : { margin: 16, marginTop: this.props.visibleParallelView ? 46 : 90, paddingBottom: 90 }}
               extraData={this.state}
@@ -964,6 +1082,7 @@ const mapStateToProps = state => {
 
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
+    sizeMode: state.updateStyling.sizeMode,
 
     email: state.userInfo.email,
     userId: state.userInfo.uid,
@@ -985,6 +1104,7 @@ const mapDispatchToProps = dispatch => {
     APIAudioURL: (payload) => dispatch(APIAudioURL(payload)),
     selectContent: (payload) => dispatch(selectContent(payload)),
     APIBaseURL: (payload) => dispatch(APIBaseURL(payload)),
+    updateFontSize: (payload) => dispatch(updateFontSize(payload)),
 
   }
 }
