@@ -32,7 +32,7 @@ import { Header, Button, Title, Toast } from 'native-base';
 import BibleChapter from '../../components/Bible/BibleChapter';
 import firebase from 'react-native-firebase';
 import vApi from '../../utils/APIFetch';
-
+import HighlightColorGrid from '../../components/Bible/HighlightColorGrid';
 
 
 const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
@@ -64,6 +64,7 @@ class Bible extends Component {
       showBottomBar: false,
       bookmarksList: [],
       isBookmark: false,
+      showColorGrid: false,
       currentVisibleChapter: JSON.parse(this.props.chapterNumber),
       bookNumber: this.props.bookNumber,
       selectedReferenceSet: [],
@@ -551,12 +552,23 @@ class Bible extends Component {
         for (let item of this.state.selectedReferenceSet) {
           let tempVal = item.split('_')
           for (var i = 0; i <= this.state.HightlightedVerseArray.length - 1; i++) {
-            if (this.state.HightlightedVerseArray[i] == JSON.parse(tempVal[2])) {
-              highlightCount++
+            let regexMatch = /(\d+)\:([a-zA-Z]+)/;
+            if (this.state.HightlightedVerseArray[i]) {
+              let match = this.state.HightlightedVerseArray[i].match(regexMatch)
+              if (match) {
+                if (parseInt(match[1]) == JSON.parse(tempVal[2])) {
+                  highlightCount++
+                }
+              }
             }
           }
         }
-        this.setState({ showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ? false : true })
+        console.log(" selected count ", selectedCount, "  highlighted count ", highlightCount)
+        this.setState({
+          showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false,
+          bottomHighlightText: selectedCount == highlightCount ? false : true,
+          showColorGrid: selectedCount == highlightCount ? false : true
+        })
       })
     }
   }
@@ -611,24 +623,68 @@ class Bible extends Component {
   }
   onbackNote = () => {
   }
-
-  doHighlight = async () => {
+  setHighlightColor = (color) => {
+    let value = Color.highlightColorA.const
+    switch (color) {
+      case Color.highlightColorA.code:
+        // code 
+        value = Color.highlightColorA.const
+        break;
+      case Color.highlightColorB.code:
+        // code 
+        value = Color.highlightColorB.const
+        break;
+      case Color.highlightColorC.code:
+        // code 
+        value = Color.highlightColorC.const
+        break;
+      case Color.highlightColorD.code:
+        // code 
+        value = Color.highlightColorD.const
+        break;
+      case Color.highlightColorE.code:
+        // code 
+        value = Color.highlightColorE.const
+        break;
+      default:
+        value = Color.highlightColorA.const
+      // code 
+    }
+    return value
+  }
+  doHighlight = async (color) => {
     if (this.state.connection_Status) {
       if (this.props.email) {
         var array = [...this.state.HightlightedVerseArray]
         for (let item of this.state.selectedReferenceSet) {
           let tempVal = item.split('_')
-          var index = array.indexOf(JSON.parse(tempVal[2]))
+          let selectedColor = this.setHighlightColor(color)
+          let val = tempVal[2].trim() + ":" + selectedColor
+
+          for (var i = 0; i < array.length; i++) {
+            let regexMatch = /(\d+)\:([a-zA-Z]+)/;
+            if (array[i]) {
+              let match = array[i].match(regexMatch)
+              if (match) {
+                if (parseInt(match[1]) == parseInt(tempVal[2])) {
+                  array.splice(i, 1)
+                  this.setState({ HightlightedVerseArray: array })
+                }
+              }
+            }
+          }
+          var index = array.indexOf(val)
+          //solve the issue of 2 color on single verse
           if (this.state.bottomHighlightText) {
             if (index == -1) {
-              array.push(JSON.parse(tempVal[2]))
+              array.push(val)
             }
             this.setState({ HightlightedVerseArray: array })
           }
-          else {
-            array.splice(index, 1)
-            this.setState({ HightlightedVerseArray: array })
-          }
+          // else {
+          //   array.splice(index, 1)
+          //   this.setState({ HightlightedVerseArray: array })
+          // }
         }
         firebase.database().ref("users/" + this.props.userId + "/highlights/" + this.props.sourceId + "/" + this.props.bookId + "/" + this.state.currentVisibleChapter).set(array)
       }
@@ -638,8 +694,7 @@ class Bible extends Component {
     } else {
       Alert.alert("Please check internet connection")
     }
-
-    this.setState({ selectedReferenceSet: [], showBottomBar: false })
+    this.setState({ selectedReferenceSet: [], showBottomBar: false, showColorGrid: false })
   }
 
   //share verse
@@ -687,44 +742,44 @@ class Bible extends Component {
         if (value == -1) {
           return
         } else {
-          this.styles = styles(this.props.colorFile,smallFont)
+          this.styles = styles(this.props.colorFile, smallFont)
           this.props.updateFontSize(1)
         }
         break;
       }
       case 1: {
         if (value == -1) {
-          this.styles = styles(this.props.colorFile,extraSmallFont)
+          this.styles = styles(this.props.colorFile, extraSmallFont)
           this.props.updateFontSize(0)
         } else {
-          this.styles = styles(this.props.colorFile,mediumFont)
+          this.styles = styles(this.props.colorFile, mediumFont)
           this.props.updateFontSize(2)
         }
         break;
       }
       case 2: {
         if (value == -1) {
-          this.styles = styles(this.props.colorFile,smallFont)
+          this.styles = styles(this.props.colorFile, smallFont)
           this.props.updateFontSize(1)
         } else {
-          this.styles = styles(this.props.colorFile,largeFont)
+          this.styles = styles(this.props.colorFile, largeFont)
           this.props.updateFontSize(3)
         }
         break;
       }
       case 3: {
         if (value == -1) {
-          this.styles = styles(this.props.colorFile,mediumFont)
+          this.styles = styles(this.props.colorFile, mediumFont)
           this.props.updateFontSize(2)
         } else {
-          this.styles = styles(this.props.colorFile,extraLargeFont)
+          this.styles = styles(this.props.colorFile, extraLargeFont)
           this.props.updateFontSize(4)
         }
         break;
       }
       case 4: {
         if (value == -1) {
-          this.styles = styles(this.props.colorFile,largeFont)
+          this.styles = styles(this.props.colorFile, largeFont)
           this.props.updateFontSize(3)
         } else {
           return
@@ -739,7 +794,7 @@ class Bible extends Component {
       onStartShouldSetResponderCapture: (evt, gestureState) => true,
       onMoveShouldSetResponder: (evt, gestureState) => true,
       onMoveShouldSetResponderCapture: (evt, gestureState) => true,
-      onResponderGrant: (evt, gestureState) => {},
+      onResponderGrant: (evt, gestureState) => { },
       onResponderMove: (evt, gestureState) => {
         let thumbSize = this.state.thumbSize;
         if (gestureState.pinch && gestureState.previousPinch) {
@@ -748,21 +803,21 @@ class Bible extends Component {
           let diff = currentDate - this.pinchTime
           // console.log("time diff : " + diff + " prev diff : " + this.pinchDiff)
           if (diff > this.pinchDiff) {
-              // console.log("gesture pinch diff = " + (gestureState.pinch - gestureState.previousPinch))
-             if (gestureState.pinch - gestureState.previousPinch > 5) {
-                // large
-                // console.log("large")
-                this.changeSizeByOne(1)              
+            // console.log("gesture pinch diff = " + (gestureState.pinch - gestureState.previousPinch))
+            if (gestureState.pinch - gestureState.previousPinch > 5) {
+              // large
+              // console.log("large")
+              this.changeSizeByOne(1)
             } else if (gestureState.previousPinch - gestureState.pinch > 5) {
-                // console.log("small")
-                // small
-                this.changeSizeByOne(-1)              
+              // console.log("small")
+              // small
+              this.changeSizeByOne(-1)
             }
           }
           this.pinchDiff = diff
           this.pinchTime = currentDate
         }
-        let {left, top} = this.state;
+        let { left, top } = this.state;
         left += (gestureState.moveX - gestureState.previousMoveX);
         top += (gestureState.moveY - gestureState.previousMoveY);
         this.setState({
@@ -770,7 +825,7 @@ class Bible extends Component {
             ...gestureState
           },
           left, top, thumbSize
-        })  
+        })
       },
       onResponderTerminationRequest: (evt, gestureState) => true,
       onResponderRelease: (evt, gestureState) => {
@@ -780,12 +835,12 @@ class Bible extends Component {
           }
         })
       },
-      onResponderTerminate: (evt, gestureState) => {},
-      
+      onResponderTerminate: (evt, gestureState) => { },
+
       onResponderSingleTapConfirmed: (evt, gestureState) => {
         console.log('onResponderSingleTapConfirmed...' + JSON.stringify(gestureState));
       },
-      
+
       moveThreshold: 2,
       debug: false
     });
@@ -865,7 +920,7 @@ class Bible extends Component {
   }
   render() {
     // console.log(" size file  ", this.props.sizeFile)
-    console.log(" size MOde  ", this.props.sizeMode)
+    console.log(" sshow color grid  ", this.state.showColorGrid)
 
     return (
       <View style={this.styles.container}>
@@ -907,13 +962,13 @@ class Bible extends Component {
           />
         }
         {/** Main View for the single or parrallel View */}
-        <View 
-        style={this.styles.singleView}  
+        <View
+          style={this.styles.singleView}
         >
           {/** Single view with only bible text */}
           <View style={{ flex: 1, flexDirection: 'column', width: this.props.visibleParallelView ? '50%' : width }}>
             <AnimatedFlatlist
-            {...this.gestureResponder}
+              {...this.gestureResponder}
               data={this.state.chapterContent}
               contentContainerStyle={this.state.chapterContent.length === 0 ? this.styles.centerEmptySet : { margin: 16, marginTop: this.props.visibleParallelView ? 46 : 90, paddingBottom: 90 }}
               extraData={this.state}
@@ -965,9 +1020,17 @@ class Bible extends Component {
                   navigation={this.props.navigation}
                   queryBookFromAPI={this.queryBookFromAPI}
                 />
+                {(this.state.showColorGrid && this.state.bottomHighlightText)&&
+                  <HighlightColorGrid
+                    styles={this.styles}
+                    bottomHighlightText={this.state.bottomHighlightText}
+                    doHighlight={this.doHighlight}
+                  />
+                }
                 {this.props.visibleParallelView == false &&
                   this.state.showBottomBar &&
                   <SelectBottomTabBar
+                    showColorGrid={() => this.setState({ showColorGrid: !this.state.showColorGrid })}
                     styles={this.styles}
                     bottomHighlightText={this.state.bottomHighlightText}
                     doHighlight={this.doHighlight}

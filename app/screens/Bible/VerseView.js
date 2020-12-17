@@ -5,7 +5,7 @@ import {
 import { connect } from 'react-redux'
 import { getResultText } from '../../utils/UtilFunctions'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-
+import Color from '../../utils/colorConstants'
 class VerseView extends Component {
   constructor(props) {
     super(props)
@@ -31,10 +31,45 @@ class VerseView extends Component {
     }
     return false;
   }
+  getColor = (colorConst) => {
+    let value = Color.highlightColorA.const
+    switch (colorConst) {
+      case Color.highlightColorA.const:
+        // code 
+        value = Color.highlightColorA.code
+        break;
+      case Color.highlightColorB.const:
+        // code 
+        value = Color.highlightColorB.code
+        break;
+      case Color.highlightColorC.const:
+        // code 
+        value = Color.highlightColorC.code
+        break;
+      case Color.highlightColorD.const:
+        // code 
+        value = Color.highlightColorD.code
+        break;
+      case Color.highlightColorE.const:
+        // code 
+        value = Color.highlightColorE.code
+        break;
+      default:
+        value = Color.highlightColorA.code
+      // code 
+    }
+    return value
+  }
   isHighlight() {
     for (var i = 0; i <= this.props.HightlightedVerse.length; i++) {
-      if (this.props.HightlightedVerse[i] == this.props.verseData.number) {
-        return true
+      if (this.props.HightlightedVerse[i]) {
+        let regexMatch = /(\d+)\:([a-zA-Z]+)/;
+        let match = this.props.HightlightedVerse[i].match(regexMatch)
+        if(match){
+          if (parseInt(match[1]) == this.props.verseData.number) {
+            return this.getColor(match[2])
+          }
+        }
       }
     }
     return false
@@ -84,14 +119,19 @@ class VerseView extends Component {
             <Text style={this.props.styles.verseChapterNumber}>
               {this.props.chapterNumber}{" "}
             </Text>
-            <Text style={[isSelect && isHighlight
-              ? this.props.styles.verseTextSelectedHighlighted
+            <Text
+            //  style={[isSelect && isHighlight ? this.props.styles.verseTextSelectedHighlighted
+            //   : !isSelect && !isHighlight? this.props.styles.verseTextNotSelectedNotHighlighted
+            //     : !isSelect && isHighlight? this.props.styles.verseTextNotSelectedHighlighted : this.props.styles.verseTextSelectedNotHighlighted]}
+            style={[this.props.styles.textHighlight,
+              isSelect && isHighlight ? 
+              {backgroundColor: isHighlight,
+              textDecorationLine: 'underline'} 
               : !isSelect && !isHighlight
-                ? this.props.styles.verseTextNotSelectedNotHighlighted
-                : !isSelect && isHighlight
-                  ? this.props.styles.verseTextNotSelectedHighlighted
-                  : this.props.styles.verseTextSelectedNotHighlighted
-            ]}
+                ? this.props.styles.textHighlight
+                :!isSelect && isHighlight ? {backgroundColor: isHighlight}
+                : {textDecorationLine: 'underline'}]}
+    
             >
               {getResultText(this.props.verseData.text)}
             </Text>
@@ -113,14 +153,23 @@ class VerseView extends Component {
           <Text style={this.props.styles.verseNumber}>
             {this.props.verseData.number}{" "}
           </Text>
-          <Text style={[isSelect && isHighlight
-            ? this.props.styles.verseTextSelectedHighlighted
+          <Text 
+          // style={[isSelect && isHighlight
+          //   ? this.props.styles.verseTextSelectedHighlighted
+          //   : !isSelect && !isHighlight
+          //     ? this.props.styles.verseTextNotSelectedNotHighlighted
+          //     : !isSelect && isHighlight
+          //       ? this.props.styles.verseTextNotSelectedHighlighted
+          //       : this.props.styles.verseTextSelectedNotHighlighted
+          // ]}
+          style={[this.props.styles.textHighlight,
+            isSelect && isHighlight ? 
+            {backgroundColor: isHighlight,
+            textDecorationLine: 'underline'} 
             : !isSelect && !isHighlight
-              ? this.props.styles.verseTextNotSelectedNotHighlighted
-              : !isSelect && isHighlight
-                ? this.props.styles.verseTextNotSelectedHighlighted
-                : this.props.styles.verseTextSelectedNotHighlighted
-          ]}
+              ? this.props.styles.textHighlight
+              :!isSelect && isHighlight ? {backgroundColor: isHighlight}
+              : {textDecorationLine: 'underline'}]}
           >
             {getResultText(this.props.verseData.text)}
           </Text>
