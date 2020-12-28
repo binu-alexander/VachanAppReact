@@ -22,7 +22,6 @@ function* fetchParalleBible(params) {
       if (res.ok && res.status == 200) {
         const response = yield res.json()
         const chapterContent = response.chapterContent.verses
-        console.log(" bible parallel heading...... ", response.chapterContent)
         const totalVerses = response.chapterContent.verses.length
         let parallelBibleHeading = response.chapterContent.metadata &&
         (response.chapterContent.metadata[0].section && response.chapterContent.metadata[0].section.text)

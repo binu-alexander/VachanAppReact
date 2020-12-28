@@ -100,8 +100,8 @@ export default class CustomHeader extends Component {
             <Text style={{ fontSize: 18,color:'#fff' }}>{this.props.bookName.length > 16 ? this.props.bookName.slice(0, 15) + "..." : this.props.bookName} {this.props.chapterNumber}</Text>
             <Icon name="arrow-drop-down" color={Color.White} size={20} />
           </TouchableOpacity>
-          <TouchableOpacity   style={navStyles.titleTouchable} onPress={this.props.navigateToLanguage}>
-            <Text style={{ fontSize: 18,color:'#fff' }}>{this.props.language && this.props.language.charAt(0).toUpperCase() + this.props.language.slice(1)} {this.props.versionCode && this.props.versionCode.toUpperCase()}</Text>
+          <TouchableOpacity   style={[navStyles.titleTouchable]} onPress={this.props.navigateToLanguage}>
+            <Text style={{ fontSize: 18,color:'#fff'}}>{this.props.language && this.props.language.charAt(0).toUpperCase() + this.props.language.slice(1)} {this.props.versionCode && this.props.versionCode.toUpperCase()}</Text>
             <Icon name="arrow-drop-down" color={Color.White} size={20} />
           </TouchableOpacity>
         </Animated.View>
@@ -159,6 +159,7 @@ const navStyles = StyleSheet.create({
     alignSelf: 'center'
   },
   titleTouchable:{
+    padding:8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

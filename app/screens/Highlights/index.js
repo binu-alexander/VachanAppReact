@@ -72,7 +72,22 @@ class HighLights extends Component {
             for (var key in highlights) {
               for (var val in highlights[key]) {
                 if (highlights[key][val] != null) {
-                  array.push({ bookId: key, chapterNumber: val, verseNumber: highlights[key][val] })
+                  let regexMatch = /(\d+)\:([a-zA-Z]+)/;
+                  let value = highlights[key][val]
+                  let verseNumber = []
+                  for(var i=0;i<value.length;i++){
+                    if(value[i]){
+                      if(isNaN(value[i])){
+                        let match = value[i].match(regexMatch)
+                        if(match){
+                          verseNumber.push(parseInt(match[1]))
+                        }
+                      }else{
+                        verseNumber.push(parseInt(value[i]))
+                      }
+                    }
+                  }
+                  array.push({ bookId: key, chapterNumber: val, verseNumber:verseNumber })
                 }
               }
             }

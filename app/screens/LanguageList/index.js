@@ -41,8 +41,14 @@ class LanguageList extends Component {
 
   componentDidMount() {
     this.fetchLanguages()
+    this._interval = setInterval(async () => {
+      await DbQueries.deleteLangaugeList()
+      this.fetchLanguages()
+    }, 604800*1000)
   }
-
+componentWillUnmount(){
+  clearInterval(this._interval);
+}
   errorMessage = () => {
     if (!this.alertPresent) {
       this.alertPresent = true;
@@ -107,6 +113,8 @@ class LanguageList extends Component {
     }
     catch (error) {
     }
+    
+
   }
   downloadBible = async (langName, verCode, books, sourceId) => {
   

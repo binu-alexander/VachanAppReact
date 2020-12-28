@@ -23,7 +23,7 @@ class DbHelper {
 	async getRealm() {
 		try {
 			return await Realm.open({
-				schemaVersion: 1,
+				schemaVersion: 2,
 				deleteRealmIfMigrationNeeded: true,
 				path:
 					Platform.OS === 'ios'
@@ -198,6 +198,13 @@ class DbHelper {
 				return null
 			}
 		}
+	}
+	async deleteLangaugeList(){
+		let realm = await this.getRealm();
+		realm.write(() => {
+			let languages = realm.objects('LanguageModel')
+			realm.delete(languages);
+		});
 	}
 
 	//get all available booklist

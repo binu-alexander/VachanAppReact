@@ -65,7 +65,7 @@ class BibleChapter extends Component {
         try {
             let response = await vApi.get('booknames')
             this.setState({ bookNameList: response })
-            var bookName = null
+            var bookName = this.state.bookName
             if (response) {
                 for (var i = 0; i <= response.length - 1; i++) {
                     if (response[i].language.name === this.props.parallelLanguage.languageName.toLowerCase()) {
@@ -74,6 +74,18 @@ class BibleChapter extends Component {
                             if (bId == this.state.bookId) {
                                 bookName = response[i].bookNames[j].short
                             }
+                            else {
+                                if (response[i].bookNames[j].book_id >= 39) {
+                                  if (bId == 'gen') {
+                                    bookName = response[i].bookNames[j].short
+                                    this.setState({bookId:bId})
+                                  }
+                                } else {
+                                  if (bId == 'mat') {
+                                    bookName = response[i].bookNames[j].short
+                                    this.setState({bookId:bId})
+                                  }
+                                }}
                         }
 
                     }
@@ -81,7 +93,6 @@ class BibleChapter extends Component {
             } else {
                 return
             }
-            console.log(" BOOK NAME ....", bookName)
             let shortbookName = bookName != null && (bookName.length > 10 ? bookName.slice(0, 9) + "..." : bookName)
             this.setState({ shortbookName })
         } catch (error) {
@@ -127,7 +138,6 @@ class BibleChapter extends Component {
 
     }
     render() {
-        console.log(" parallelBibleHeading ", this.props.parallelBibleHeading)
         this.styles = styles(this.props.colorFile, this.props.sizeFile);
         return (
             <View style={this.styles.container}>

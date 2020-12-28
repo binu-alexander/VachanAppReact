@@ -18,12 +18,12 @@ function* fetchAllContent() {
     ])
     const bible = []
     const commentary = []
-
     for (var i = 0; i < bibleLanguage.length; i++) {
       var versions = []
       const language = bibleLanguage[i].language.charAt(0).toUpperCase() + bibleLanguage[i].language.slice(1)
       let languageCode = ''
       for (var j = 0; j < bibleLanguage[i].languageVersions.length; j++) {
+      let LatestBible = false
         languageCode = bibleLanguage[i].languageVersions[j].language.code
         const { version } = bibleLanguage[i].languageVersions[j]
         const metaD = bibleLanguage[i].languageVersions[j].metadata
@@ -45,10 +45,16 @@ function* fetchAllContent() {
           technologyPartner: metaD && (metaD.hasOwnProperty("Technology Partner") ? metaD["Technology Partner"] : ''),
           versionName: metaD && (metaD.hasOwnProperty("Version Name (in Eng)") ? metaD["Version Name (in Eng)"] : ''),
           versionNameGL: metaD && (metaD.hasOwnProperty("Version Name (in GL)") ? metaD["Version Name (in GL)"] : ''),
+          Latest:metaD && (metaD.hasOwnProperty("Latest") ? (metaD["Latest"].toLowerCase() === 'true' ? true : false) : false),
         }]
-        versions.push({ sourceId: bibleLanguage[i].languageVersions[j].sourceId, versionName: version.name, versionCode: version.code, metaData: mData, downloaded: false })
+        LatestBible = mData[0].Latest
+        if(LatestBible){
+          versions.push({ sourceId: bibleLanguage[i].languageVersions[j].sourceId, versionName: version.name, versionCode: version.code, metaData: mData, downloaded: false })
+        }
       }
-      bible.push({ languageName: language, languageCode: languageCode, versionModels: versions })
+      if(versions.length >0){
+        bible.push({ languageName: language, languageCode: languageCode, versionModels: versions })
+      }
     }
     for (var i = 0; i < commentaryLanguage.length; i++) {
       var versions = []

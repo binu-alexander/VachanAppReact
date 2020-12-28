@@ -111,7 +111,6 @@ class SelectContent extends Component {
     this.errorMessage()
   }
   render() {
-    console.log("availableContents  ",this.props.availableContents)
     this.styles = styles(this.props.colorFile, this.props.sizeFile)
     return (
       <View >
