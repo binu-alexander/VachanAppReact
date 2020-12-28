@@ -1,129 +1,113 @@
-import React, {Component} from 'react';
-import {ScrollView, Text, View, StyleSheet,ImageBackground,TouchableOpacity,Image, ColorPropType} from 'react-native';
+import React, { Component } from 'react';
+import { ScrollView, Text, View, ImageBackground, TouchableOpacity, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { styles } from './styles.js';
-import {connect} from 'react-redux'
-import Color from '../../utils/colorConstants'
-import AsyncStorageUtil from '../../utils/AsyncStorageUtil'
-import {AsyncStorageConstants} from '../../utils/AsyncStorageConstants'
-
-import {fetchVersionBooks} from '../../store/action/'
-
-
+import { connect } from 'react-redux'
+import { fetchVersionBooks } from '../../store/action/'
+import VersionCheck from 'react-native-version-check'
 
 class DrawerScreen extends Component {
-  constructor(props){
+  constructor(props) {
     super(props)
     this.unsubscriber = null
     this.state = {
-      initializing:true,
-      user:''
+      initializing: true,
+      user: '',
+      currentVersion:"1.0.0"
     }
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
 
-  // onLogin=()=>{
-  //   if (this.state.initializing){this.setState({initializing:false})}
-  //   this.unsubscriber = firebase.auth().onAuthStateChanged((user)=>{
-  //     this.setState({user})
-  //     if (!user) {
-  //       this.props.navigation.navigate('Auth') 
-  //     }
-  //     else{
-  //       console.log("user  ",user._user.email)
-  //       this.setState({user})
-  //       this.props.navigation.navigate('Auth')
-  //     }
-  //   })
-  // }
-  async componentDidMount(){
-    this.props.fetchVersionBooks({language:this.props.language,versionCode:this.props.versionCode,
-      downloaded:this.props.downloaded,sourceId:this.props.sourceId})
-    var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail)
-    this.setState({email})
+  async componentDidMount() {
+    let currentVersion = await VersionCheck.getCurrentVersion();
+    if (this.props.books.length == 0) {
+      this.props.fetchVersionBooks({
+        language: this.props.language,
+        versionCode: this.props.versionCode,
+        downloaded: this.props.downloaded,
+        sourceId: this.props.sourceId
+      })
+    }
+    this.setState({currentVersion})
   }
-  // componentWillUnmount(){
-  //   if(this.unsubscriber) {
-  //     this.unsubscriber();
-  //   }
-  // }
-  render () {
-    // const valueProps  = this.props.navigation.state.routes[0].index == 1 ? (this.props.navigation.state.routes[0].routes[1].params ? this.props.navigation.state.routes[0].routes[1].params.photorUl : null) : null
- 
+
+  render() {
     const iconName = [
-      {icon:'account-circle',pressIcon:'Auth',text:this.props.email ? 'Profile' : 'LogIn/SignUp'},
-      {icon:'bookmark',pressIcon:'BookMarks',text:'BookMarks'},
-      {icon:'border-color',pressIcon:'Highlights',text:'Highlights'},
-      {icon:'note',pressIcon:'Notes',text:'Notes'},
-      {icon:'history',pressIcon:'History',text:'History'},
-      {icon:'search',pressIcon:'Search',text:'Search'},
-      {icon:'settings',pressIcon:'Settings',text:'Settings'},
-      {icon:'info',pressIcon:'About',text:'About us'},
+      { icon: 'account-circle', pressIcon: 'Auth', text: this.props.email ? 'Profile' : 'Log In/Sign Up' },
+      { icon: 'bookmark', pressIcon: 'BookMarks', text: 'Bookmarks' },
+      { icon: 'border-color', pressIcon: 'Highlights', text: 'Highlights' },
+      { icon: 'note', pressIcon: 'Notes', text: 'Notes' },
+      { icon: 'videocam', pressIcon: 'Video', text: 'Video' },
+      { icon: 'book', pressIcon: 'Dictionary', text: 'Dictionary' },
+      { icon: 'image', pressIcon: 'Infographics', text: 'Infographics' },
+      { icon: 'history', pressIcon: 'History', text: 'History' },
+      { icon: 'search', pressIcon: 'Search', text: 'Search' },
+      { icon: 'settings', pressIcon: 'Settings', text: 'Settings' },
+      { icon: 'info', pressIcon: 'About', text: 'About Us' },
+      { icon: 'help', pressIcon: 'Help', text: 'Help' },
     ]
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
-    
+
     return (
       <View style={this.styles.container}>
-      <ScrollView style={this.styles.container}> 
+        <ScrollView style={this.styles.container}>
           <View style={this.styles.headerContainer}>
-                <ImageBackground source={require('../../assets/headerbook.jpeg')} style={{flex:1,width: 280,}} >
-                    <View style={{position:'absolute',bottom:0,margin:8}}>
-                    <Image
-                      style={this.styles.imageStyle}
-                      source={require('../../assets/bcs_old_favicon.png')}
-                    />
-                    <View style={this.styles.goToLogin}>
-                    {/* <Text style={{size:20,color:Color.White}}>
-                      Vachan Go
-                    </Text> */}
-                    <Image source={require('../../assets/logo.png')} style={{padding:4,width:136,height:30}}/>
-                    </View>
-                    </View>
-                </ImageBackground>
-            </View>
-        {
-          iconName.map((iconName,index)=>
-                <TouchableOpacity 
-                onPress={()=>{this.props.navigation.navigate(iconName.pressIcon)}} 
+            <ImageBackground source={require('../../assets/headerbook.jpg')} style={{ flex: 1, width: 280, }} >
+              <View style={{ position: 'absolute', bottom: 0, margin: 8 }}>
+                <Image
+                  style={this.styles.imageStyle}
+                  source={require('../../assets/bcs_old_favicon.png')}
+                />
+                <View style={this.styles.goToLogin}>
+                  <Image source={require('../../assets/logo.png')} style={{ padding: 4, width: 136, height: 30 }} />
+                </View>
+              </View>
+            </ImageBackground>
+          </View>
+          {
+            iconName.map((iconName, index) =>
+              <TouchableOpacity
+                onPress={() => { this.props.navigation.navigate(iconName.pressIcon) }}
                 style={
                   this.styles.drawerItem
                 }>
-                    <View 
-                    style={{
-                      flexDirection:"row",
+                <View
+                  style={{
+                    flexDirection: "row",
                   }}>
-                      <Icon name={iconName.icon} size={20}  style={this.styles.iconStyleDrawer}/>
-                      <Text 
-                        style={this.styles.textStyle}>
-                        {iconName.text}
-                      </Text>
-                    </View>
-                    <Icon name='chevron-right' size={20} style={this.styles.iconStyleDrawer}/>
+                  <Icon name={iconName.icon} size={20} style={this.styles.iconStyleDrawer} />
+                  <Text
+                    style={this.styles.textStyle}>
+                    {iconName.text}
+                  </Text>
+                </View>
+                <Icon name='chevron-right' size={20} style={this.styles.iconStyleDrawer} />
               </TouchableOpacity>
-          )
-        }
-      </ScrollView>
+            )
+          }
+        <Text style={this.styles.versionText}>APP VERSION {this.state.currentVersion}</Text>
+        </ScrollView>
       </View>
     );
   }
 }
-const mapStateToProps = state =>{
-  return{
-    sizeFile:state.updateStyling.sizeFile,
-    colorFile:state.updateStyling.colorFile,
-    email:state.userInfo.email,
-
-    language: state.updateVersion.language,
-    languageCode:state.updateVersion.languageCode,
-    versionCode:state.updateVersion.versionCode,
-    sourceId:state.updateVersion.sourceId,
-    downloaded:state.updateVersion.downloaded,
-  }
-}
-
-const mapDispatchToProps = dispatch =>{
+const mapStateToProps = state => {
   return {
-    fetchVersionBooks:(value)=>dispatch(fetchVersionBooks(value)),
+    sizeFile: state.updateStyling.sizeFile,
+    colorFile: state.updateStyling.colorFile,
+    email: state.userInfo.email,
+    books: state.versionFetch.data,
+    language: state.updateVersion.language,
+    languageCode: state.updateVersion.languageCode,
+    versionCode: state.updateVersion.versionCode,
+    sourceId: state.updateVersion.sourceId,
+    downloaded: state.updateVersion.downloaded,
   }
 }
-export  default connect(mapStateToProps,mapDispatchToProps)(DrawerScreen)
+
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchVersionBooks: (value) => dispatch(fetchVersionBooks(value)),
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(DrawerScreen)

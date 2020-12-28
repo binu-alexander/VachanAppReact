@@ -3,7 +3,6 @@ import { FETCH_ALL_CONTENT, ALL_CONTENT_SUCCESS, ALL_CONTENT_FAILURE } from "../
 
 export const fetchAllContent =()=>({
   type: FETCH_ALL_CONTENT,
-  // payload
 })
 
 export const allContentSuccess= payload => ({

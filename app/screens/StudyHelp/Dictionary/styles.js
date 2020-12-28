@@ -1,15 +1,11 @@
-import {StyleSheet,Dimensions} from 'react-native'
-import { Icon } from 'native-base';
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
+import {StyleSheet} from 'react-native'
 import Color from '../../../utils/colorConstants'
 
 export const styles =(colorFile, sizeFile) =>{
-    // console.log("color file ",colorFile,sizeFile)
     return StyleSheet.create({
         container:{
         flex:1,
-        backgroundColor:colorFile.backgroundColor
+        backgroundColor:colorFile.backgroundColor,
         },
         iconStyle:{
             fontSize:28,
@@ -34,14 +30,12 @@ export const styles =(colorFile, sizeFile) =>{
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            // backgroundColor:colorFile.backgroundColor
         },
         dictionaryModalView:{
             flex: 1,
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            // backgroundColor:'#eee'
 
         },
         cardStyle:{
@@ -80,6 +74,35 @@ export const styles =(colorFile, sizeFile) =>{
             margin:16,
             color:colorFile.iconColor,
             alignSelf:'center'
+        },
+        centerEmptySet: { 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            height: '100%' 
+        },
+        emptyMessageContainer:{
+            flex:1,
+            alignItems:'center',
+            flexDirection:'column',
+            justifyContent:'center'
+        },
+        emptyMessageIcon:{
+            fontSize:sizeFile.emptyIconSize,
+            margin:16,
+            color:colorFile.iconColor,
+        },
+        messageEmpty:{
+            fontSize:sizeFile.titleText,
+            color:colorFile.textColor,
+        },
+        cardItemStyle:{
+            paddingTop:16,
+            paddingBottom:16,
+            backgroundColor:colorFile.backgroundColor
+         },
+         dictionaryText:{
+            fontSize:sizeFile.titleText,
+            color:colorFile.iconColor
         },
     })
 }

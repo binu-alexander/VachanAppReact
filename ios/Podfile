@@ -39,6 +39,8 @@ target 'AutographaGo_ReactNative' do
 
     pod 'toolbar-android', :path => '../node_modules/@react-native-community/toolbar-android'
 
+    pod 'react-native-webview', :path => '../node_modules/react-native-webview'
+
   end
 
   target 'AutographaGo_ReactNativeTests' do

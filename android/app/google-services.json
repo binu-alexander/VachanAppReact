@@ -8,18 +8,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:486797934259:android:c96f50f9d5c2478c66fac6",
+        "mobilesdk_app_id": "1:486797934259:android:272804dd9f18b7c166fac6",
         "android_client_info": {
-          "package_name": "com.vachango"
+          "package_name": "com.bridgeconn.vachango"
         }
       },
       "oauth_client": [
         {
-          "client_id": "486797934259-6agdicpq9fnv73h1p22j2qtgtu8odf6o.apps.googleusercontent.com",
+          "client_id": "486797934259-3dfht5vn63snkbef5d6h26srf6bbu5uc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.vachango",
-            "certificate_hash": "5395e95eedfd2e3342e8c7f70499579c6c15d1aa"
+            "package_name": "com.bridgeconn.vachango",
+            "certificate_hash": "dac3b0495b834415d351a94ee6be1d3b77d5f657"
           }
         },
         {

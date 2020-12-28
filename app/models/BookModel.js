@@ -12,7 +12,6 @@ BookModel.schema = {
       bookName: 'string',
       bookNumber: 'int',
       chapters: 'ChapterModel[]',
-      // bookmarksList: 'int?[]',
       section: {type: 'string', default: 'NT'},
       // bookOwner: {type: 'linkingObjects', objectType: 'VersionModel', property:'bookModels' }
     }

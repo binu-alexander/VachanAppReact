@@ -1,4 +1,5 @@
 import {StyleSheet,Dimensions, ColorPropType} from 'react-native'
+import { color } from 'react-native-reanimated'
 import colorConstants from '../../../utils/colorConstants'
 import Color from '../../../utils/colorConstants'
 
@@ -8,7 +9,6 @@ export const SelectBookPageStyle =(colorFile, sizeFile) =>{
     flex:1,
     backgroundColor:colorFile.backgroundColor,
   
-    // flexDirection:'row'
    },
     textStyle: {
         fontSize:sizeFile.titleText,
@@ -21,7 +21,6 @@ export const SelectBookPageStyle =(colorFile, sizeFile) =>{
    },
     sideBarContainer:{
         flexDirection:'column',
-        // width:width/5,
         backgroundColor:Color.Black
     },
     sideBarIconCustom:{
@@ -56,7 +55,22 @@ export const SelectBookPageStyle =(colorFile, sizeFile) =>{
         color:colorFile.iconColor,
         fontSize:sizeFile.iconSize
     },
-   cardItemStyle:{paddingTop:16,paddingBottom:16},
+   cardItemStyle:{
+       paddingTop:16,
+       paddingBottom:16
+    },
+    activeBgColor:{
+        backgroundColor:Color.Blue_Color
+    },
+    inactiveBgColor:{
+        backgroundColor:colorFile.backgroundColor
+    },
+    activetabText:{
+    color:colorFile.blueText
+    },
+    inactivetabText:{
+    color:Color.White
+    }
 })
 }
 

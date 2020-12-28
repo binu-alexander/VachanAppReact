@@ -7,11 +7,12 @@ export const searchStyle =(colorFile, sizeFile) =>{
     return StyleSheet.create({
         container:{
             backgroundColor:colorFile.backgroundColor,
-            // margin:8,
             flex:1
         },
         ListEmptyContainer:{
-            alignSelf:'center'
+            justifyContent:'center',
+            alignItems:'center',
+
         },
         searchedDataContainer:{
             margin:8,
@@ -23,10 +24,8 @@ export const searchStyle =(colorFile, sizeFile) =>{
             color:colorFile.textColor
         },
         text:{
-            // paddingLeft:16,
             fontSize:sizeFile.contentText,
             color:'#fff'
-            // color:colorFile.textColor
         },
         toggleBible:{
             fontSize:sizeFile.titleText,
@@ -39,7 +38,6 @@ export const searchStyle =(colorFile, sizeFile) =>{
             justifyContent:'space-between',
             paddingVertical:12,
             margin:8,
-            // backgroundColor:colorFile.fedBackgroundColor
         },
         searchedData:{
             padding:4,
@@ -58,8 +56,6 @@ export const searchStyle =(colorFile, sizeFile) =>{
             alignSelf:"center",
             color:colorFile.textColor,
             fontSize:sizeFile.contentText,
-            // justifyContent:'center',
-            // alignItems:'center'
         },
         headerText:{
             width:width,

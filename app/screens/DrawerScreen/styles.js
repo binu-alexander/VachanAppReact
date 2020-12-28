@@ -1,7 +1,5 @@
-import {StyleSheet,Dimensions} from 'react-native'
-import { Icon } from 'native-base';
+import {StyleSheet} from 'react-native'
 import Color from '../../utils/colorConstants'
-const width = Dimensions.get('window').width;
 
 export const styles =(colorFile, sizeFile) =>{
     return StyleSheet.create({
@@ -24,16 +22,19 @@ export const styles =(colorFile, sizeFile) =>{
         backgroundColor:colorFile.backgroundColor 
     },
     headerText: {
-    // padding:8,
     color: Color.White,
-    // textDecorationLine: 'underline',
-    // lineHeight:6
     },
     customText:{
     fontSize: 18,
     textAlign: 'center',
     color:Color.Black
 
+    },
+    versionText:{
+        color: colorFile.textColor,   
+        fontSize:16,
+        alignSelf:'center',
+        paddingVertical:10
     },
     textStyle: {
         color: colorFile.textColor,   

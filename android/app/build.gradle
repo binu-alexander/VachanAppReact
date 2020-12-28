@@ -75,12 +75,10 @@ import com.android.build.OutputFile
 
 project.ext.react = [
     entryFile: "index.js",
+    bundleInDebug: true,
     // whether to bundle JS and assets in release mode
-     bundleInDebug: false,
-     bundleInRelease: true, 
-     resourcesDirRelease   : "src/release/res"
-    //  root: "../../package.json",
-    //  resourcesDirRelease: "$buildDir/intermediates/res/merged/release"
+    //  bundleInRelease: true, 
+    //  resourcesDirRelease   : "src/release/res"
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -98,27 +96,19 @@ def enableSeparateBuildPerCPUArchitecture = false
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 android {
-
-    // compileOptions {
-    //     sourceCompatibility JavaVersion.VERSION_1_8
-    //     targetCompatibility JavaVersion.VERSION_1_8
-    // }
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.vachango"
+        applicationId "com.bridgeconn.vachango"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode versionMajor * 1000 + versionMinor * 10 + versionPatch
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         ndk {
-            abiFilters "armeabi-v7a", "x86"
-        }
-        dexOptions {
-            javaMaxHeapSize "4g"
+            abiFilters "armeabi-v7a", "x86","arm64-v8a", "x86_64"
         }
         multiDexEnabled true
     }
@@ -128,13 +118,12 @@ android {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
             universalApk false  // If true, also generate a universal APK
-            include "armeabi-v7a", "x86"
+            include "armeabi-v7a", "x86","arm64-v8a", "x86_64"
         }
     }
     signingConfigs {
         release {
             if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) {
-        //    java.lang.System.console(MYAPP_RELEASE_STORE_PASSWORD) 
                 storeFile file(MYAPP_RELEASE_STORE_FILE)
                 storePassword MYAPP_RELEASE_STORE_PASSWORD
                 keyAlias MYAPP_RELEASE_KEY_ALIAS
@@ -142,11 +131,12 @@ android {
             }
         }
     }
+    
     buildTypes {
         release {
             minifyEnabled enableProguardInReleaseBuilds
-            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
@@ -165,12 +155,11 @@ android {
 }
  
 dependencies {
-    // implementation project(':react-native-webview-bridge-updated')
+    implementation project(':react-native-version-check')
+    implementation project(':react-native-webview')
     implementation project(':react-native-screens')
     implementation project(':@react-native-community_toolbar-android')
-    compile project(':react-native-webview-bridge')
-    // implementation project(':react-native-community-toolbar-android')
-    // compile project(':react-native-orientation')
+    implementation project(':react-native-webview-bridge')
     implementation project(':react-native-gesture-handler')
     implementation project(':react-native-reanimated')
     implementation project(':react-native-splash-screen')
@@ -182,7 +171,6 @@ dependencies {
     implementation project(':react-native-google-signin')
     implementation project(':react-native-fbsdk')
     implementation project(':@react-native-community_async-storage')
-    implementation project(':react-native-zip-archive')
     implementation project(':realm')
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
@@ -200,15 +188,9 @@ dependencies {
 
     implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
     implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
-
-    // compile 'com.android.support:multidex:1.0.3'
-
-    // implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
-    // implementation "com.google.firebase:firebase-config:15.0.2"
     
     api "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     api "com.facebook.react:react-native:0.59.1"  // From node_modules
-    // implementation"com.facebook.react:react-native:+"
           
 
 }
@@ -221,6 +203,3 @@ task copyDownloadableDepsToLibs(type: Copy) {
 }
 
 apply plugin: 'com.google.gms.google-services'
-// apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); 
-// applyNativeModulesAppBuildGradle(project) 
-// com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true

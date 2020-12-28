@@ -7,71 +7,60 @@ import {
   ScrollView
 } from 'react-native';
 import { aboutPage } from './styles.js'
-import {connect} from 'react-redux'
+import { connect } from 'react-redux'
 const screenHeight = Dimensions.get('window').height
 class About extends Component {
   static navigationOptions = {
     headerTitle: 'About Us',
   };
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.styles = aboutPage(this.props.colorFile, this.props.sizeFile);   
+    this.styles = aboutPage(this.props.colorFile, this.props.sizeFile);
   }
-  
-  render() {
-    // const bullet = '\u2022'
-    return (
-      <View style={[this.styles.container,{height:screenHeight}]}> 
-      <ScrollView >
-      <View style={this.styles.textContainer}  >
-      <Text style={this.styles.textStyle}  textBreakStrategy={'simple'}>
-      The Vachan Project is the technology umbrella under which access to free digital scripture engagement resources is being made available to all. As part of this project the Vachan Online ( <Text textBreakStrategy={'simple'} style={this.styles.linkText} onPress={() =>{Linking.openURL('https://VachanOnline.com')}}>VachanOnline.com</Text> ) website and the Vachan Go companion mobile app have been developed for public use. The Vachan Project is an initiative of the  Friends of Agape (FOA), USA. The content herein is not for reuse or redistribution in any other format or platform without explicit permission as multiple licensing strategies are involved. {'\n'}
-      <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Translation Partners:{'\n'}</Text>
-      Bridge Connectivity Solutions Pvt. Ltd. (BCS) and its translation/localization partners; unfoldingWord, Wycliffe Associates, Crossway, Bridgeway Publications, BibleProject, and Visual Unit are involved in localisation of content and providing licenses to use on this site.{'\n'}
-      <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Technology Provider:{'\n'} </Text>
-      Bridge Connectivity Solutions Pvt. Ltd. (BCS) developed this platform with an in-house team of developers inspired from similar websites in other countries.  VachanEngine powers the backend. 
-      Permission to use Vachan APIs can be be provided for similar digital content delivery for products with like minded vision. Please contact us at <Text style={this.styles.linkText} onPress={() =>{Linking.openURL('thevachanproject@gmail.com')}}>thevachanproject@gmail.com</Text>. Also visit our company website <Text style={this.styles.linkText} textBreakStrategy={'simple'} onPress={() =>{Linking.openURL('www.bridgeconn.com')}}>www.bridgeconn.com</Text> {'\n'}
-      <Text textBreakStrategy={'simple'} style={{fontWeight:'bold'}}>{'\n'} Contact Us </Text>
-      <Text style={this.styles.linkText} onPress={() =>{Linking.openURL('thevachanproject@gmail.com')}}>{'\n'}thevachanproject@gmail.com</Text>
-    <Text textBreakStrategy={'simple'} style={{fontWeight:'bold'}}>{'\n'}Release Notes (3/7/2020) v1.0 {'\n'}</Text>
-    <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Platform:{'\n'}</Text>
-    The Vachan Online web application is developed in ReactJS enabled by Postgres APIs  (VachanEngine) in the back-end. The companion mobile app Vachan Go is written in ReactNative. {'\n'}
-    <Text textBreakStrategy={'simple'}  style={this.styles.TitleText}>{'\n'}Content Additions (using Vachan API’s):{'\n'}</Text> 
-    <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Bibles: Updated versions of IRV Bibles in all available Indian Gateway languages.{'\n'}
-    <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Commentary: IRV Notes (Hindi) + Mathew Henry Concise Bible Commentary (English) + Bridgeway Bible Commentary (English) + ESV Global Study Bible Notes (English).{'\n'}
-    <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Dictionary: IRV Dictionary (Hindi){'\n'}
-    <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Infographics: VisualUnit (Hindi)* {'\n'}
-    <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Audio: IRV NT Bible (Hindi){'\n'}
-    <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Video: BibleProject (English, Hindi & Telugu) *{'\n'}
-    * Not available on the Vachan Go companion mobile app{'\n'}
-    <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Feature Additions:{'\n'}</Text> 
-    <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Cleaner Bible reading pane with section-headings.{'\n'}
-    <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Parallel 2-pane feature to display Bibles and other content.{'\n'}
-    <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Added Commentary, Dictionary, & Infographics{'\n'}
-    <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Added Audio Player.{'\n'}
-    <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Embedded YouTube Video Player.{'\n'}
-    <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Personalisation and sync using simple login.{'\n'}
-    <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Bookmarks, Highlights & Notes.{'\n'}
-    <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Basic Bible search.{'\n'}
-    <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Dynamic Data{'\n'}
-    <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Personalisation{'\n'}
-    <Text textBreakStrategy={'simple'} style={[this.styles.bulletIcon,{padding:10}]}>{'\u2022' + " "}</Text>Seamless transfer of User Data between Vachan Online and Vachan Go.{'\n'}
 
-    {/* <Text style={this.styles.TitleText}>{'\n'}Operations Update:{'\n'}</Text>
-    <Text style={this.styles.bulletIcon}>{bullet + " "}</Text>Added DigitalOcean Spaces with CDN to serve Audio & Video. {'\n'}
-    <Text style={this.styles.bulletIcon}>{bullet + " "}</Text>Added Firebase for personalisation and synchronisation. {'\n'} */}
-    </Text>
-    </View>
-    </ScrollView>
-    </View>
+  render() {
+    return (
+      <View style={[this.styles.container, { height: screenHeight }]}>
+        <ScrollView >
+          <View style={this.styles.textContainer}>
+            <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>Release Notes for VachanGo 11/11/2020</Text>
+            <Text style={this.styles.textStyle} textBreakStrategy={'simple'}>
+              The Vachan Project <Text style={this.styles.linkText} onPress={() => { Linking.openURL('http://thevachanproject.in/') }}>(http://thevachanproject.in/)</Text> was established to provide free access to digital scripture engagement resources. The VachanGo app, developed under it’s umbrella is a cross platform Bible study tool in Indian languages that brings you biblical content under multiple licensing arrangements. Hence, the content available to you for personal or group Bible Study, is not for further redistribution in any other format or platform without explicit permission from the original copyright owners.{'\n'}
+              <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Content and Technology{'\n'}</Text>
+              VachanGo is being made available under a collaborative arrangement among Friends of Agape, unfoldingWord, Wycliffe Associates, Crossway, Bridgeway Publications, Dusty Sandals, BibleProject, Visual Unit, and is brought to you by Bridge Connectivity Solutions Pvt. Ltd. (BCS) <Text style={this.styles.linkText} onPress={() => { Linking.openURL('https://www.bridgeconn.com') }}>(https://www.bridgeconn.com)</Text> who is the localization and technology partner.{'\n'}
+              <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Release v1.0{'\n'}</Text>
+              <Text textBreakStrategy={'simple'} style={{ fontWeight: 'bold' }}>Platform: </Text>
+              The mobile app is written in ReactNative, powered by Postgres and Python APIs  (VachanEngine) in the back-end.{'\n'}
+              <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Content Available :{'\n'}</Text>
+              <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Bibles: Latest versions of IRV Bibles in all available Indian Gateway languages{'\n'}
+              <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Commentary: IRV Notes (Hindi) +  Bridgeway Bible Commentary (English){'\n'}
+              <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Dictionary: IRV Dictionary (Hindi){'\n'}
+              <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Infographics: VisualUnit (Hindi) {'\n'}
+              <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Audio: IRV NT Bible (Hindi){'\n'}
+              <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Video: BibleProject (English, Hindi & Telugu) {'\n'}
+              <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Features:{'\n'}</Text>
+              <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Clean Bible reading pane with section-headings.{'\n'}
+              <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Parallel 2-pane feature to display Bibles, Commentaries etc.{'\n'}
+              <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Personalization using simple login.{'\n'}
+              <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Bookmarks, Highlights & Notes.{'\n'}
+              <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Basic Bible search.{'\n'}
+              <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Backend Services:{'\n'}</Text>
+              <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>DigitalOcean Spaces with CDN to serve Audio & Video  {'\n'}
+              <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Firebase for personalisation and synchronisation {'\n'}
+              <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Contact Us</Text>{'\n'}
+              thevachanproject@gmail.com
+            </Text>
+          </View>
+        </ScrollView>
+      </View>
     );
   }
 }
-const mapStateToProps = state =>{
-  return{
-    sizeFile:state.updateStyling.sizeFile,
-    colorFile:state.updateStyling.colorFile,
+const mapStateToProps = state => {
+  return {
+    sizeFile: state.updateStyling.sizeFile,
+    colorFile: state.updateStyling.colorFile,
   }
 }
 
-export  default connect(mapStateToProps,null)(About)
+export default connect(mapStateToProps, null)(About)

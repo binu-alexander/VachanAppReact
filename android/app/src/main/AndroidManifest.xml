@@ -1,20 +1,17 @@
 <manifest 
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.vachango"
+    package="com.bridgeconn.vachango"
     >
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
-    <uses-feature android:name="android.hardware.camera.front" android:required="false" />
 
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
-      android:hardwareAccelerated="false" 
+      android:hardwareAccelerated="true" 
       android:icon="@mipmap/bcs_old_favicon"
       android:allowBackup="false"
       android:theme="@style/AppTheme"

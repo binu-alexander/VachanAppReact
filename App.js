@@ -1,63 +1,106 @@
 import React, { Component } from 'react';
-import  {AppNavigator} from './app/routes/';
-import {NetInfo} from 'react-native'
-import AsyncStorageUtil from './app/utils/AsyncStorageUtil';
-import {nightColors, dayColors} from './app/utils/colors.js'
-import {extraSmallFont,smallFont,mediumFont,largeFont,extraLargeFont} from './app/utils/dimens.js'
-import { styleFile } from './app/utils/styles.js'
-import {AsyncStorageConstants} from './app/utils/AsyncStorageConstants'
-import SplashScreen from 'react-native-splash-screen'
-import {connect} from 'react-redux'
+import { AppNavigator } from './app/routes/';
+import SplashScreen from 'react-native-splash-screen';
+import { connect } from 'react-redux'
 import { Root } from "native-base";
-import {fetchAllContent,fetchVersionBooks} from './app/store/action/'
-// import isSignedIn from './app/routes/auth'
+import VersionCheck from 'react-native-version-check';
+import { fetchAllContent, fetchVersionLanguage, APIBaseURL, updateVersion } from './app/store/action/';
+import { Alert, BackHandler, Linking } from 'react-native';
+import firebase from 'react-native-firebase'
 
 class App extends Component {
-    constructor(props){
-        super(props)
-        this.state = {
-          isloading:false,
-          signedIn: false,
-          checkedSignIn: false
-        }
-      }
-    async componentDidMount(){
-       var email = await AsyncStorageUtil.getItem(AsyncStorageConstants.Keys.BackupRestoreEmail, "")
-       this.setState({email})          
-   
-      setTimeout(() => {  
-         SplashScreen.hide()
-      }, 400)
-      this.props.fetchAllContent()
-        SplashScreen.hide()
-    }
-
-    render() {
-      return (
-      <Root>
-        <AppNavigator/>
-      </Root>
-      )
-         
+  constructor(props) {
+    super(props)
+    this.state = {
+      isloading: false,
+      signedIn: false,
+      checkedSignIn: false
     }
   }
-  const mapStateToProps = state =>{
-    return{
-      language: state.updateVersion.language,
-      languageCode:state.updateVersion.languageCode,
-      versionCode:state.updateVersion.versionCode,
-      sourceId:state.updateVersion.sourceId,
-      downloaded:state.updateVersion.downloaded,
-      contentType:state.updateVersion.parallelContentType,
-    }
-  }  
+  checkUpdateNeeded = async () => {
+    let latestVersion = await VersionCheck.getLatestVersion();
+    let currentVersion = await VersionCheck.getCurrentVersion();
+    VersionCheck.needUpdate({
+      currentVersion: currentVersion,
+      latestVersion: latestVersion,
+    }).then(res => {
+      if (res.isNeeded) {
+        Alert.alert('Please update your app ',
+          'You have to update your app to the latest version to continue using',
+          [{
+            text: 'Update',
+            onPress: () => {
+              BackHandler.exitApp();
+              Linking.openURL(updateNeeded.storeUrl)
+            }
+          },
+          {
+            text: 'Cancel',
+            onPress: () => {
+              return
+            }
+          }
+          ]
+        )
+      }
+    });
+  }
 
-const mapDispatchToProps = dispatch =>{
+
+  async componentDidMount() {
+    setTimeout(() => {
+      SplashScreen.hide()
+    }, 400)
+    firebase.database().ref("/apiBaseUrl/").on('value', (snapshot) => {
+      this.props.APIBaseURL(snapshot.val())
+      this.props.fetchVersionLanguage()
+      this.props.fetchAllContent()
+    })
+    this.checkUpdateNeeded()
+
+  }
+  componentDidUpdate(prevProps) {
+    if (this.props.updatedVersionData != prevProps.updatedVersionData) {
+      this.props.updateVersion({
+        language: this.props.updatedVersionData.language.name,
+        languageCode: this.props.updatedVersionData.language.code,
+        version: this.props.updatedVersionData.version.name,
+        versionCode: this.props.updatedVersionData.version.code,
+        sourceId: this.props.updatedVersionData.sourceId
+      })
+
+    }
+  }
+
+  render() {
+    return (
+      <Root>
+        <AppNavigator />
+      </Root>
+    )
+
+  }
+}
+const mapStateToProps = state => {
   return {
-    fetchAllContent:()=>dispatch(fetchAllContent()),
-    fetchVersionBooks:(payload)=>dispatch(fetchVersionBooks(payload)),
+    language: state.updateVersion.language,
+    languageCode: state.updateVersion.languageCode,
+    versionCode: state.updateVersion.versionCode,
+    sourceId: state.updateVersion.sourceId,
+    downloaded: state.updateVersion.downloaded,
+    contentType: state.updateVersion.parallelContentType,
+    updatedVersionData: state.versionFetch.bible,
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchAllContent: () => dispatch(fetchAllContent()),
+    fetchVersionLanguage: () => dispatch(fetchVersionLanguage()),
+    APIBaseURL: (payload) => dispatch(APIBaseURL(payload)),
+    updateVersion: (payload) => dispatch(updateVersion(payload)),
 
   }
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(App)
+export default connect(mapStateToProps, mapDispatchToProps)(App)

@@ -1,4 +1,7 @@
-import { FETCH_PARALLEL_BIBLE, PARALLEL_BIBLE_SUCCESS, PARALLEL_BIBLE_FAILURE,PARALLEL_SELECTED_BOOK,PARALLEL_SELECTED_CHAPTER,PARALLEL_SELECTED_VERSE } from "../actionsType";
+import { FETCH_PARALLEL_BIBLE, 
+  PARALLEL_BIBLE_SUCCESS,
+   PARALLEL_BIBLE_FAILURE,
+   } from "../actionsType";
 
 
 export const fetchParallelBible = payload=>({
@@ -15,4 +18,5 @@ export const parallelBiblefailure = error => ({
   type: PARALLEL_BIBLE_FAILURE,
   error:error,
 })
+
 

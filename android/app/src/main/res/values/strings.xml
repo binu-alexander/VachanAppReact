@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Vachan Go</string>
+    <string name="app_name">VachanGo</string>
     <string name="facebook_app_id">2669512326652312</string>
     <string name="fb_login_protocol_scheme">fb2669512326652312</string>
 </resources>

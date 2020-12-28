@@ -3,48 +3,43 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
-  Image,
   TouchableOpacity,
   FlatList
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'
 import Spinner from 'react-native-loading-spinner-overlay';
 import Color from '../../utils/colorConstants'
 
 
 
-const SelectionGrid=({
-    styles,
-    onNumPress,
-    numbers,
-    loader,
-    heighlightedNumber
+const SelectionGrid = ({
+  styles,
+  onNumPress,
+  numbers,
+  loader,
+  heighlightedNumber
 
-})=>(
+}) => (
     <View style={styles.chapterSelectionContainer}>
-      {loader && 
-         <Spinner
-         visible={true}
-         textContent={'Loading...'}
-        //  textStyle={styles.spinnerTextStyle}
-      />}
-        <FlatList
+      {loader &&
+        <Spinner
+          visible={true}
+          textContent={'Loading...'}
+        />}
+      <FlatList
         numColumns={4}
         data={numbers}
-        renderItem={({item,index}) => 
-        <TouchableOpacity 
-        style={[styles.selectGridNum,
-          {backgroundColor:Color.Transparent}]}
-          onPress={()=>{onNumPress(item,index)}}>
+        renderItem={({ item, index }) =>
+          <TouchableOpacity
+            style={[styles.selectGridNum,
+            { backgroundColor: Color.Transparent }]}
+            onPress={() => { onNumPress(item, index) }}>
             <View>
-                <Text style={[styles.chapterNum,{fontWeight: item == heighlightedNumber ? "bold":"normal"}]}>{item}</Text>
+              <Text style={[styles.chapterNum, { fontWeight: item == heighlightedNumber ? "bold" : "normal" }]}>{item}</Text>
             </View>
-            </TouchableOpacity>
+          </TouchableOpacity>
         }
-        // keyExtractor={item}
       />
-      </View>
-)
+    </View>
+  )
 export default SelectionGrid;
 

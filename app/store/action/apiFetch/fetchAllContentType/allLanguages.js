@@ -3,7 +3,6 @@ import {FECTH_ALL_LANGUAGE, ALL_LANGUAGE_SUCCESS, ALL_LANGUAGE_FAILURE } from ".
 
 export const fetchAllLanguage =()=>({
   type: FECTH_ALL_LANGUAGE,
-  // payload
 })
 
 export const allLanguageSuccess= payload => ({

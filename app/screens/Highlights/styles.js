@@ -1,6 +1,4 @@
-import {StyleSheet,Dimensions} from 'react-native'
-import { Icon } from 'native-base';
-const width = Dimensions.get('window').width;
+import {StyleSheet} from 'react-native'
 
 export const highlightstyle=(colorFile, sizeFile) =>{
     return StyleSheet.create({
@@ -31,7 +29,6 @@ export const highlightstyle=(colorFile, sizeFile) =>{
     messageEmpty:{
         fontSize:sizeFile.titleText,
         color:colorFile.textColor,
-        // textAlign:'center',
     },
     emptyMessageIcon:{
         fontSize:sizeFile.emptyIconSize,

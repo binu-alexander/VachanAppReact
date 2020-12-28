@@ -1,11 +1,7 @@
 import {StyleSheet,Dimensions} from 'react-native'
-import { Icon } from 'native-base';
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
 import Color from '../../../utils/colorConstants'
 
 export const styles =(colorFile, sizeFile) =>{
-    // console.log("color file ",colorFile,sizeFile)
     return StyleSheet.create({
     container:{
         flex:1,
@@ -39,7 +35,6 @@ export const styles =(colorFile, sizeFile) =>{
     },
 
     VerseText:{
-        // fontFamily:fontfamily, 
         fontWeight:'100'
     },
     textString:{
