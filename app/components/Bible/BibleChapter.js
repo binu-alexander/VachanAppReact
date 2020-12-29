@@ -25,6 +25,7 @@ class BibleChapter extends Component {
             bookId: this.props.bookId,
             bookName: this.props.bookName,
             bookNameList: [],
+            shortbookName: '',
             totalChapters: this.props.totalChapters,
             error: null,
         }
@@ -42,11 +43,13 @@ class BibleChapter extends Component {
         })
     }
     getRef = (item) => {
+        let shortbookName = item.bookName != null && (item.bookName.length > 8 ? item.bookName.slice(0, 3) + "..." : item.bookName)
         this.setState({
             currentParallelViewChapter: item.chapterNumber,
             id: item.bookId,
             bookName: item.bookName,
-            totalChapters: item.totalChapters
+            totalChapters: item.totalChapters,
+            shortbookName
         }, () => {
             this.props.fetchParallelBible({
                 isDownloaded: false, sourceId: this.props.parallelLanguage.sourceId,
@@ -62,6 +65,24 @@ class BibleChapter extends Component {
         try {
             let response = await vApi.get('booknames')
             this.setState({ bookNameList: response })
+            var bookName = null
+            if (response) {
+                for (var i = 0; i <= response.length - 1; i++) {
+                    if (response[i].language.name === this.props.parallelLanguage.languageName.toLowerCase()) {
+                        for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
+                            var bId = response[i].bookNames[j].book_code
+                            if (bId == this.state.bookId) {
+                                bookName = response[i].bookNames[j].short
+                            }
+                        }
+
+                    }
+                }
+            } else {
+                return
+            }
+            let shortbookName = bookName != null && (bookName.length > 8 ? bookName.slice(0, 3) + "..." : bookName)
+            this.setState({ shortbookName })
         } catch (error) {
             this.setState({ error: error, bookNameList: [] });
         }
@@ -105,30 +126,12 @@ class BibleChapter extends Component {
 
     }
     render() {
-        var bookName = null
-        if (this.state.bookNameList) {
-            for (var i = 0; i <= this.state.bookNameList.length - 1; i++) {
-                if (this.state.bookNameList[i].language.name === this.props.parallelLanguage.languageName.toLowerCase()) {
-                    for (var j = 0; j <= this.state.bookNameList[i].bookNames.length - 1; j++) {
-                        var bId = this.state.bookNameList[i].bookNames[j].book_code
-                        if (bId == this.state.bookId) {
-                            bookName = this.state.bookNameList[i].bookNames[j].short
-                        }
-                    }
-
-                }
-            }
-        } else {
-            return
-        }
-        let shortbookName = bookName != null && (bookName.length > 8 ? bookName.slice(0, 3) + "..." : bookName)
-
         this.styles = styles(this.props.colorFile, this.props.sizeFile);
         return (
             <View style={this.styles.container}>
                 <Header style={{ backgroundColor: Color.Blue_Color, height: 40, borderLeftWidth: 0.2, borderLeftColor: Color.White }}>
                     <Button transparent onPress={this.goToSelectionTab}>
-                        <Title style={{ fontSize: 16 }}>{bookName != null && shortbookName} {this.state.currentParallelViewChapter}</Title>
+                        <Title style={{ fontSize: 16 }}>{this.state.shortbookName} {this.state.currentParallelViewChapter}</Title>
                         <Icon name="arrow-drop-down" color={Color.White} size={20} />
                     </Button>
                     <Right>
@@ -158,31 +161,49 @@ class BibleChapter extends Component {
                                         {verse.number == 1 ?
                                             <Text letterSpacing={24}
                                                 style={this.styles.verseWrapperText}>
-                                                <Text style={this.styles.sectionHeading}>
-                                                    {verse.metadata ? (verse.metadata[0].section && verse.metadata[0].section.text + "\n") : null}
+                                                {this.props.parallelBibleHeading != null ?
+                                                    <Text style={this.styles.sectionHeading}>
+                                                        {this.props.parallelBibleHeading} {"\n"}
+                                                    </Text> : null}
+                                                <Text>
+                                                    <Text style={this.styles.verseChapterNumber}>
+                                                        {this.state.currentParallelViewChapter}{" "}
+                                                    </Text>
+                                                    <Text style={this.styles.textString}>
+                                                        {getResultText(verse.text)}
+                                                    </Text>
                                                 </Text>
-                                                <Text style={this.styles.verseChapterNumber} >
-                                                    {this.state.currentParallelViewChapter}{" "}
-                                                </Text>
-                                                <Text style={this.styles.textString}
-                                                >
-                                                    {getResultText(verse.text)}
-                                                </Text>
+                                                {
+                                                    (verse.metadata && verse.metadata[0].section)
+                                                        ?
+                                                        <Text style={this.styles.sectionHeading}>
+                                                        {"\n"}{verse.metadata[0].section.text}
+                                                        </Text>
+                                                        : null
+                                                }
                                             </Text>
                                             :
                                             <Text letterSpacing={24}
                                                 style={this.styles.verseWrapperText}>
-                                                <Text style={this.styles.sectionHeading}>
-                                                    {verse.metadata ? (verse.metadata[0].section && verse.metadata[0].section.text + "\n") : null}
+                                                <Text>
+                                                    <Text style={this.styles.verseNumber} >
+                                                        {verse.number}{" "}
+                                                    </Text>
+                                                    <Text style={this.styles.textString}
+                                                    >
+                                                        {getResultText(verse.text)}
+                                                    </Text>
                                                 </Text>
-                                                <Text style={this.styles.verseNumber} >
-                                                    {verse.number}{" "}
-                                                </Text>
-                                                <Text style={this.styles.textString}
-                                                >
-                                                    {getResultText(verse.text)}
-                                                </Text>
+                                                {
+                                                    (verse.metadata && verse.metadata[0].section)
+                                                        ?
+                                                        <Text style={this.styles.sectionHeading}>
+                                                        {"\n"}{verse.metadata[0].section.text}
+                                                        </Text>
+                                                        : null
+                                                }
                                             </Text>
+
                                         }
                                     </View>
                                 )}
@@ -195,6 +216,7 @@ class BibleChapter extends Component {
                                         </View>
                                     }
                                 </View>
+
                             </ScrollView>
 
                             <View style={{ justifyContent: (this.state.currentParallelViewChapter != 1 && this.state.currentParallelViewChapter == this.state.currentParallelViewChapter != this.state.totalChapters) ? 'center' : 'space-around', alignItems: 'center' }}>
@@ -239,10 +261,11 @@ const mapStateToProps = state => {
         bookId: state.updateVersion.bookId,
         bookName: state.updateVersion.bookName,
         parallelBible: state.parallel.parallelBible,
+        parallelBibleHeading: state.parallel.parallelBibleHeading,
         error: state.parallel.error,
         loading: state.parallel.loading,
         parallelLanguage: state.selectContent.parallelLanguage,
-        parallelMetaData: state.selectContent.parallelMetaData
+        parallelMetaData: state.selectContent.parallelMetaData,
     }
 }
 

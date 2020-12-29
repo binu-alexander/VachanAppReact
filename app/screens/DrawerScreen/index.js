@@ -34,10 +34,10 @@ class DrawerScreen extends Component {
   render() {
     const iconName = [
       { icon: 'account-circle', pressIcon: 'Auth', text: this.props.email ? 'Profile' : 'LogIn/SignUp' },
-      { icon: 'bookmark', pressIcon: 'BookMarks', text: 'BookMarks' },
+      { icon: 'bookmark', pressIcon: 'BookMarks', text: 'Bookmarks' },
       { icon: 'border-color', pressIcon: 'Highlights', text: 'Highlights' },
       { icon: 'note', pressIcon: 'Notes', text: 'Notes' },
-      { icon: 'video-library', pressIcon: 'Video', text: 'Video' },
+      { icon: 'videocam', pressIcon: 'Video', text: 'Video' },
       { icon: 'book', pressIcon: 'Dictionary', text: 'Dictionary' },
       { icon: 'image', pressIcon: 'Infographics', text: 'Infographics' },
       { icon: 'history', pressIcon: 'History', text: 'History' },

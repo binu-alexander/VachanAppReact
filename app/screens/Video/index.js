@@ -25,7 +25,8 @@ class Video extends Component {
       bookId: this.props.navigation.state.params ? this.props.navigation.state.params.bookId : null,
       bookName: this.props.navigation.state.params ? this.props.navigation.state.params.bookName : null,
       videos: [],
-      isLoading: false
+      isLoading: false,
+      duplicateValue: []
     }
     this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
   }
@@ -38,11 +39,26 @@ class Video extends Component {
     for (var key in videos[0].books) {
       if (this.state.bookId != null) {
         if (key == this.state.bookId) {
-          videoBook.push({ bookId: key, details: videos[0].books[key] })
-          found = true
+          for (var i = 0; i < videos[0].books[key].length; i++) {
+            videoBook.push({
+              title: videos[0].books[key][i].title,
+              url: videos[0].books[key][i].url,
+              description: videos[0].books[key][i].description,
+              theme: videos[0].books[key][i].theme
+            })
+            found = true
+          }
         }
+
       } else {
-        videoAll.push({ bookId: key, details: videos[0].books[key] })
+        for (var i = 0; i < videos[0].books[key].length; i++) {
+          videoAll.push({
+            title: videos[0].books[key][i].title,
+            url: videos[0].books[key][i].url,
+            description: videos[0].books[key][i].description,
+            theme: videos[0].books[key][i].theme
+          })
+        }
       }
     }
     if (found) {
@@ -54,10 +70,18 @@ class Video extends Component {
           duration: 2000
         })
       }
-      this.setState({ videos: videoAll, isLoading: false })
+      var elements = videoAll.reduce(function (previous, current) {
+        var object = previous.filter(object => object.title === current.title);
+        if (object.length == 0) {
+          previous.push(current);
+        }
+        return previous;
+      }, []);
+      this.setState({ videos: elements, isLoading: false })
     }
 
   }
+
   playVideo(val) {
     const videoId = val.url.replace("https://youtu.be/", "");
     this.props.navigation.navigate("PlayVideo", { url: videoId, title: val.title, description: val.description, theme: val.theme })
@@ -71,32 +95,16 @@ class Video extends Component {
     }
   }
   renderItem = ({ item }) => {
-    var bookName = null
-    if (this.props.books) {
-      for (var i = 0; i <= this.props.books.length - 1; i++) {
-        var bId = this.props.books[i].bookId
-        if (bId == item.bookId) {
-          bookName = this.props.books[i].bookName
-        }
-      }
-    } else {
-      this.setState({ videos: [] })
-      return
-    }
-    var value = item.details.map(e =>
+    return (
       <Card>
         <CardItem style={this.styles.cardItemStyle}>
-          <TouchableOpacity style={this.styles.videoView} onPress={() => this.playVideo(e)}>
-            <Text style={this.styles.videoText}>{bookName} : {e.title}</Text>
+          <TouchableOpacity style={this.styles.videoView} onPress={() => this.playVideo(item)}>
+            <Text style={this.styles.videoText}>{item.title}</Text>
           </TouchableOpacity>
         </CardItem>
       </Card>
     )
-    return (
-      <View>
-        {bookName && value}
-      </View>
-    )
+
   }
   render() {
     return (

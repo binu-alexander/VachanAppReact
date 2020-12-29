@@ -175,7 +175,7 @@ class Login extends Component {
             </View>
             <Button
               color={Color.Blue_Color}
-              title="Signin"
+              title="Sign In"
               onPress={() => this.login()}
             />
             <Text

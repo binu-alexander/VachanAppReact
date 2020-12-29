@@ -123,7 +123,7 @@ class BookMarks extends Component {
     var value = item.chapterNumber.length > 0 &&
       item.chapterNumber.map(e =>
         <TouchableOpacity style={this.styles.bookmarksView} onPress={() => { this.navigateToBible(item.bookId, bookName, e) }} >
-          <Text style={this.styles.bookmarksText}>{bookName} {":"} {e}</Text>
+          <Text style={this.styles.bookmarksText}>{this.props.languageName && this.props.languageName.charAt(0).toUpperCase() + this.props.languageName.slice(1)} {this.props.versionCode && this.props.versionCode.toUpperCase()} {bookName}  {e}</Text>
           <Icon name='delete-forever' style={this.styles.iconCustom}
             onPress={() => { this.onBookmarkRemove(item.bookId, e) }}
           />

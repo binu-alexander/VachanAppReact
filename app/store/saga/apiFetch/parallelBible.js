@@ -23,7 +23,9 @@ function* fetchParalleBible(params) {
         const response = yield res.json()
         const chapterContent = response.chapterContent.verses
         const totalVerses = response.chapterContent.verses.length
-        yield put(parallelBibleSuccess({ parallelBible: chapterContent, totalVerses: totalVerses }))
+        let parallelBibleHeading = response.chapterContent.metadata &&
+        (response.chapterContent.metadata[0].section && response.chapterContent.metadata[0].section.text)
+        yield put(parallelBibleSuccess({ parallelBible: chapterContent, parallelBibleHeading: parallelBibleHeading, totalVerses: totalVerses }))
         yield put(parallelBiblefailure(null))
       }
     }

@@ -134,7 +134,7 @@ class Register extends Component {
             </View>
             <Button
               color={Color.Blue_Color}
-              title="Signup"
+              title="Sign Up"
               onPress={() => this.registerUser()}
             />
             <Text

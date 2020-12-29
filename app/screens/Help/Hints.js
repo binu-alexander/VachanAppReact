@@ -26,11 +26,10 @@ class Help extends Component {
       iconName: [
         { icon: 'menu', pressIcon: 'Menu', hint: 'See all available functionality from left drawer', visible: false },
         { icon: 'volume-up', pressIcon: 'Audio', hint: 'Listen to audio Bible', visible: false },
-        { icon: 'video-library', pressIcon: 'Video', hint: 'Watch Bible videos', visible: false },
+        { icon: 'videocam', pressIcon: 'Video', hint: 'Watch Bible videos', visible: false },
         { icon: 'image', pressIcon: 'Image', hint: 'Infographic Images', visible: false },
         { icon: 'search', pressIcon: 'Search', hint: 'Search for text', visible: false },
         { icon: 'bookmark', pressIcon: 'Bookmarks', hint: 'Manage your bookmarks', visible: false },
-        { icon: 'local-library', pressIcon: 'local-library', hint: 'Continue reading where you last left', visible: false },
         { icon: 'history', pressIcon: 'history', hint: 'See all your reading history', visible: false },
         { icon: 'note', pressIcon: 'Notes', hint: 'Manage your notes', visible: false },
         { icon: 'border-color', pressIcon: 'Highlights', hint: 'Manage your highlights', visible: false },

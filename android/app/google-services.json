@@ -42,43 +42,6 @@
           ]
         }
       }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:486797934259:android:c96f50f9d5c2478c66fac6",
-        "android_client_info": {
-          "package_name": "com.vachango"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "486797934259-t1l2hfcrnv2f66vpjtifhbfpvdfr1nh9.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.vachango",
-            "certificate_hash": "dac3b0495b834415d351a94ee6be1d3b77d5f657"
-          }
-        },
-        {
-          "client_id": "486797934259-gkdusccl094153bdj8cbugfcf5tqqb4j.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBNFB3Do02iHg4oA7LVU9VtfH4HsMM5YPs"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "486797934259-gkdusccl094153bdj8cbugfcf5tqqb4j.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
     }
   ],
   "configuration_version": "1"

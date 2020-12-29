@@ -436,7 +436,7 @@ class Bible extends Component {
   async getBookMarks() {
     if (this.state.connection_Status) {
       if (this.props.email) {
-        firebase.database().ref("users/" + this.props.userId + "/bookmarks/" + this.props.sourceId + "/" + this.props.bookId).once('value', (snapshot) => {
+        firebase.database().ref("users/" + this.props.userId + "/bookmarks/" + this.props.sourceId + "/" + this.props.bookId).on('value', (snapshot) => {
           if (snapshot.val() === null) {
             this.setState({ bookmarksList: [], isBookmark: false })
           }
@@ -457,7 +457,7 @@ class Bible extends Component {
   getNotes() {
     if (this.state.connection_Status) {
       if (this.props.email) {
-        firebase.database().ref("users/" + this.props.userId + "/notes/" + this.props.sourceId + "/" + this.props.bookId + "/" + this.state.currentVisibleChapter).once('value', (snapshot) => {
+        firebase.database().ref("users/" + this.props.userId + "/notes/" + this.props.sourceId + "/" + this.props.bookId + "/" + this.state.currentVisibleChapter).on('value', (snapshot) => {
           this.state.notesList = []
           if (snapshot.val() === null) {
             this.setState({ notesList: [] })
@@ -693,16 +693,21 @@ class Bible extends Component {
     })
   }
   navigateToVideo = () => {
+    this.setState({ status: false })
     this.props.navigation.navigate("Video", { bookId: this.props.bookId, bookName: this.props.bookName })
   }
   navigateToImage = () => {
+    this.setState({ status: false })
     this.props.navigation.navigate("Infographics", { bookId: this.props.bookId, bookName: this.props.bookName })
   }
   navigateToSettings = () => {
+    this.setState({ status: false })
+
     this.props.navigation.navigate("Settings")
   }
 
   toggleParallelView(value) {
+    this.setState({ status: false })
     this.props.selectContent({ visibleParallelView: value })
     // this.setState({ visibleParallelView: value })
   }
