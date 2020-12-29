@@ -81,7 +81,6 @@ class BibleChapter extends Component {
             } else {
                 return
             }
-            console.log(" BOOK NAME ....", bookName)
             let shortbookName = bookName != null && (bookName.length > 8 ? bookName.slice(0, 3) + "..." : bookName)
             this.setState({ shortbookName })
         } catch (error) {
@@ -127,7 +126,6 @@ class BibleChapter extends Component {
 
     }
     render() {
-        console.log(" parallelBibleHeading ", this.props.parallelBibleHeading)
         this.styles = styles(this.props.colorFile, this.props.sizeFile);
         return (
             <View style={this.styles.container}>

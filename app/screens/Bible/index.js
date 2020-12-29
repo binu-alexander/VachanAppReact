@@ -306,7 +306,6 @@ class Bible extends Component {
         if (this.props.baseAPI != null) {
           var content = await vApi.get("bibles" + "/" + this.props.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentVisibleChapter)
           if (content) {
-            console.log(" HEADER >>>??? ", content.chapterContent.metadata)
             var header = content.chapterContent.metadata &&
               (content.chapterContent.metadata[0].section && content.chapterContent.metadata[0].section.text)
             this.setState({ chapterHeader: header, chapterContent: content.chapterContent.verses, error: null, isLoading: false, currentVisibleChapter: this.state.currentVisibleChapter })
@@ -751,7 +750,6 @@ class Bible extends Component {
     }
   }
   render() {
-    console.log(" NOTES LIST ", this.state.notesList)
     return (
       <View style={this.styles.container}>
         {
