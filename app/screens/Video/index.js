@@ -107,7 +107,6 @@ class Video extends Component {
 
   }
   render() {
-    console.log(" video s ....", this.state.videos)
     return (
       <View style={this.styles.container}>
         {
