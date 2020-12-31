@@ -65,7 +65,7 @@ class Bible extends Component {
       bookmarksList: [],
       isBookmark: false,
       showColorGrid: false,
-      currentVisibleChapter: JSON.parse(this.props.chapterNumber),
+      currentVisibleChapter: parseInt(this.props.chapterNumber),
       bookNumber: this.props.bookNumber,
       selectedReferenceSet: [],
       verseInLine: this.props.verseInLine,
@@ -104,13 +104,7 @@ class Bible extends Component {
   _clampedScrollValue = 0;
   _offsetValue = 0;
   _scrollValue = 0;
-  componentWillReceiveProps(nextProps, prevState) {
-    this.setState({
-      colorFile: nextProps.colorFile,
-      sizeFile: nextProps.sizeFile,
-    })
-    this.styles = styles(nextProps.colorFile, nextProps.sizeFile);
-  }
+
 
   async componentDidMount() {
     if (this.state.initializing) {
@@ -147,7 +141,8 @@ class Bible extends Component {
     );
     AppState.addEventListener('change', this._handleAppStateChange);
     this.subs = this.props.navigation.addListener("didFocus", () => {
-      this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false, bookId: this.props.bookId, currentVisibleChapter: this.props.chapterNumber }, () => {
+      console.log(" did focus ",this.props.chapterNumber,"  ",this.state.currentVisibleChapter)
+      this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false,showColorGrid:false, bookId: this.props.bookId, currentVisibleChapter: this.props.chapterNumber }, () => {
         this.getChapter()
         this.audioComponentUpdate()
         this.getHighlights()
@@ -166,7 +161,12 @@ class Bible extends Component {
     })
   }
   componentDidUpdate(prevProps) {
-    if (prevProps.sourceId != this.props.sourceId || prevProps.baseAPI != this.props.baseAPI || this.props.email != prevProps.email) {
+    console.log(" chapter number ",prevProps.chapterNumber,this.props.chapterNumber)
+    if (prevProps.sourceId != this.props.sourceId 
+      || prevProps.baseAPI != this.props.baseAPI 
+      || prevProps.email != this.props.email 
+      || prevProps.bookId != this.props.bookId
+      || prevProps.chapterNumber != this.props.chapterNumber) {
       this.queryBookFromAPI(null)
       this.audioComponentUpdate()
       if (this.props.books.length == 0) {
@@ -221,16 +221,17 @@ class Bible extends Component {
 
   // update book name and chapter number onback from referenceSelection page (callback function) also this function is usefull to update only few required values of redux 
   getReference = async (item) => {
-    this.setState({ selectedReferenceSet: [], showBottomBar: false })
+    this.setState({ selectedReferenceSet: [], showBottomBar: false,showColorGrid:false })
     if (item) {
+      this.setState({currentVisibleChapter:item.chapterNumber})
       var time = new Date()
       DbQueries.addHistory(this.props.sourceId, this.props.language, this.props.languageCode,
-        this.props.versionCode, item.bookId, item.bookName, JSON.parse(item.chapterNumber), this.props.downloaded, time)
+        this.props.versionCode, item.bookId, item.bookName, parseInt(item.chapterNumber), this.props.downloaded, time)
 
       this.props.updateVersionBook({
         bookId: item.bookId,
         bookName: item.bookName,
-        chapterNumber: JSON.parse(item.chapterNumber),
+        chapterNumber: parseInt(item.chapterNumber),
         totalChapters: item.totalChapters,
       })
     }
@@ -240,7 +241,7 @@ class Bible extends Component {
   }
   // update language and version  onback from language list page (callback function) also this function is usefull to update only few required values of redux 
   updateLangVer = async (item) => {
-    this.setState({ selectedReferenceSet: [], showBottomBar: false })
+    this.setState({ selectedReferenceSet: [], showBottomBar: false,showColorGrid:false })
 
     if (item) {
       var bookName = null
@@ -277,17 +278,16 @@ class Bible extends Component {
         language: item.languageName, languageCode: item.languageCode,
         versionCode: item.versionCode, sourceId: item.sourceId, downloaded: item.downloaded
       })
-
       this.props.updateVersionBook({
         bookId: bookId,
         bookName: bookName,
-        chapterNumber: JSON.parse(this.state.currentVisibleChapter),
+        chapterNumber: parseInt(this.state.currentVisibleChapter),
         totalChapters: this.props.totalChapters,
       })
       var time = new Date()
       DbQueries.addHistory(item.sourceId, item.languageName, item.languageCode,
         item.versionCode, bookId, bookName,
-        JSON.parse(this.state.currentVisibleChapter), item.downloaded, time)
+        parseInt(this.state.currentVisibleChapter), item.downloaded, time)
 
       this.props.fetchVersionBooks({
         language: item.languageName, versionCode: item.versionCode,
@@ -335,12 +335,12 @@ class Bible extends Component {
     catch (error) {
       this.setState({ error: error, isLoading: false, chapterContent: [], unAvailableContent: true })
     }
-    this.setState({ selectedReferenceSet: [], showBottomBar: false })
+    this.setState({ selectedReferenceSet: [], showBottomBar: false,showColorGrid:false })
   }
 
   // fetching chapter content on next or prev icon press
   queryBookFromAPI = async (val) => {
-    this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false, currentVisibleChapter: val != null ? JSON.parse(this.state.currentVisibleChapter) + val : this.state.currentVisibleChapter, error: null }, async () => {
+    this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false,showBottomBar:false, currentVisibleChapter: val != null ? parseInt(this.props.chapterNumber) + val : this.props.chapterNumber, error: null }, async () => {
       try {
         if (this.props.downloaded) {
           if (this.state.downloadedBook.length > 0) {
@@ -366,11 +366,10 @@ class Bible extends Component {
             this.setState({ isLoading: false, error: error, chapterContent: [], unAvailableContent: true })
           }
         }
-
         this.props.updateVersionBook({
           bookId: this.props.bookId,
           bookName: this.props.bookName,
-          chapterNumber: JSON.parse(this.state.currentVisibleChapter),
+          chapterNumber: parseInt(this.state.currentVisibleChapter),
           totalChapters: this.props.totalChapters,
         })
 
@@ -581,7 +580,7 @@ class Bible extends Component {
             if (this.state.HightlightedVerseArray[i]) {
               let match = this.state.HightlightedVerseArray[i].match(regexMatch)
               if (match) {
-                if (parseInt(match[1]) == JSON.parse(tempVal[2])) {
+                if (parseInt(match[1]) == parseInt(tempVal[2])) {
                   highlightCount++
                 }
               }
@@ -607,7 +606,7 @@ class Bible extends Component {
         for (let item of this.state.selectedReferenceSet) {
 
           let tempVal = item.split('_')
-          const verseNumber = JSON.parse(tempVal[2])
+          const verseNumber = parseInt(tempVal[2])
           let refModel = {
             bookId: id,
             bookName: name,
@@ -643,7 +642,7 @@ class Bible extends Component {
     }
 
 
-    this.setState({ selectedReferenceSet: [], showBottomBar: false })
+    this.setState({ selectedReferenceSet: [], showBottomBar: false,showColorGrid:false })
   }
   onbackNote = () => {
   }
@@ -651,28 +650,22 @@ class Bible extends Component {
     let value = Color.highlightColorA.const
     switch (color) {
       case Color.highlightColorA.code:
-        // code 
         value = Color.highlightColorA.const
         break;
       case Color.highlightColorB.code:
-        // code 
         value = Color.highlightColorB.const
         break;
       case Color.highlightColorC.code:
-        // code 
         value = Color.highlightColorC.const
         break;
       case Color.highlightColorD.code:
-        // code 
         value = Color.highlightColorD.const
         break;
       case Color.highlightColorE.code:
-        // code 
         value = Color.highlightColorE.const
         break;
       default:
         value = Color.highlightColorA.const
-      // code 
     }
     return value
   }
@@ -735,7 +728,7 @@ class Bible extends Component {
 
     }
     Share.share({ message: shareText })
-    this.setState({ selectedReferenceSet: [], showBottomBar: false })
+    this.setState({ selectedReferenceSet: [], showBottomBar: false,showColorGrid:false })
   }
 
   componentWillUnmount() {
@@ -938,6 +931,7 @@ class Bible extends Component {
     }
   }
   render() {
+    console.log(" state ",this.state.currentVisibleChapter," props ",this.props.chapterNumber)
     return (
       <View style={this.styles.container}>
         {
@@ -1042,7 +1036,7 @@ class Bible extends Component {
                   navigation={this.props.navigation}
                   queryBookFromAPI={this.queryBookFromAPI}
                 />
-                {(this.state.showColorGrid && this.state.bottomHighlightText) &&
+                {(this.state.showColorGrid && this.state.bottomHighlightText && this.props.visibleParallelView == false) && 
                   <HighlightColorGrid
                     styles={this.styles}
                     bottomHighlightText={this.state.bottomHighlightText}

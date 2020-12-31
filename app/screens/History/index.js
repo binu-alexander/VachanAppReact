@@ -110,6 +110,7 @@ class History extends Component {
       versionCode: item.versionCode, sourceId: item.sourceId,
       downloaded: item.downloaded
     })
+    console.log(" item chapter ",item.chapterNumber)
     this.props.updateVersionBook({
       bookId: item.bookId,
       bookName: item.bookName,
@@ -152,10 +153,9 @@ class History extends Component {
           this.state.isLoading ? <ActivityIndicator animate={true} /> :
             data.list.map((item, index) =>
               <TouchableOpacity onPress={() => { this.goToContent(item) }}>
-                <Text style={this.styles.contentText}> {item.languageName} : {item.bookName} : {item.chapterNumber} </Text>
+                <Text style={this.styles.contentText}> {item.languageName} {item.versionCode} {item.bookName} {":"} {item.chapterNumber} </Text>
               </TouchableOpacity>
             )
-
         }
 
       </View>

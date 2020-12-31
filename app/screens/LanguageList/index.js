@@ -1,4 +1,4 @@
-
+"use strict";
 import React, { Component } from 'react';
 import { Text, View, TouchableOpacity, Alert } from 'react-native';
 import { Accordion } from 'native-base'
@@ -67,26 +67,26 @@ componentWillUnmount(){
   }
   
   async fetchLanguages() {
-    var lanVer = []
-    const languageList = await DbQueries.getLangaugeList()
+    let lanVer = []
+    let languageList = await DbQueries.getLangaugeList()
     try {
       if (languageList == null) {
-        const books = await vApi.get("booknames")
-        var languages = this.props.bibleLanguages[0].content
+        let books = await vApi.get("booknames")
+        let languages = this.props.bibleLanguages[0].content
         if (languages && books) {
           for (var i = 0; i < languages.length; i++) {
             for (var j = 0; j < books.length; j++) {
-              var bookArr = []
+              let bookArr = []
               if (languages[i].languageName.toLowerCase() == books[j].language.name) {
                 for (var k = 0; k < books[j].bookNames.length; k++) {
-                  const bookObj = {
+                  let bookObj = {
                     bookId: books[j].bookNames[k].book_code,
                     bookName: books[j].bookNames[k].short,
                     bookNumber: books[j].bookNames[k].book_id,
                   }
                   bookArr.push(bookObj)
                 }
-                var bookList = bookArr.sort(function (a, b) { return a.bookNumber - b.bookNumber })
+                let bookList = bookArr.sort(function (a, b) { return a.bookNumber - b.bookNumber })
                 lanVer.push({
                   languageName: languages[i].languageName,
                   languageCode: languages[i].languageCode,
@@ -113,11 +113,10 @@ componentWillUnmount(){
     }
     catch (error) {
     }
-    
-
+    lanVer.length = 0
+    languageList.length = 0
   }
   downloadBible = async (langName, verCode, books, sourceId) => {
-  
       try {
         this.setState({ startDownload: true })
         let bookModels =[]
@@ -152,7 +151,7 @@ componentWillUnmount(){
     for (var id in content) {
       if (content != null && id == bookId) {
         for (var c = 0; c < content[id].chapters.length; c++) {
-          var verseModels = []
+          let verseModels = []
           chapterHeading = content[id].chapters[c].metadata && (content[id].chapters[c].metadata[0].section) ?  content[id].chapters[c].metadata[0].section.text : null
           for (var v = 0; v < content[id].chapters[c].verses.length; v++) {
             let verseData = content[id].chapters[c].verses[v] 

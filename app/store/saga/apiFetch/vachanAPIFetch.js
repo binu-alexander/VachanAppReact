@@ -4,10 +4,10 @@ import { put, takeLatest, call } from 'redux-saga/effects'
 import store from '../../../store'
 
 function* vachanAPIFetch(value) {
-    const state = store.getState()
-    const res = yield call(fetch, state.updateVersion.baseAPI + value.url)
+    let state = store.getState()
+    let res = yield call(fetch, state.updateVersion.baseAPI + value.url)
     if (res.ok && res.status == 200) {
-      const result = yield res.json()
+      let result = yield res.json()
       yield put(vachanAPISuccess(result))
       yield put(vachanAPIFailure(null))
     } else {

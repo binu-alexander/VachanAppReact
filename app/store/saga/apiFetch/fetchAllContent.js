@@ -8,26 +8,26 @@ import store from '../../../store'
 
 function* fetchAllContent() {
   try {
-    const state = store.getState()
-    const commentaryKey = securityVaraibles.COMMENTARY_KEY ? '?key=' + securityVaraibles.COMMENTARY_KEY : ''
-    const bibleAPI = state.updateVersion.baseAPI + 'bibles'
-    const commentaryAPI = state.updateVersion.baseAPI + 'commentaries' + commentaryKey
-    const [bibleLanguage, commentaryLanguage] = yield all([
+    let state = store.getState()
+    let commentaryKey = securityVaraibles.COMMENTARY_KEY ? '?key=' + securityVaraibles.COMMENTARY_KEY : ''
+    let bibleAPI = state.updateVersion.baseAPI + 'bibles'
+    let commentaryAPI = state.updateVersion.baseAPI + 'commentaries' + commentaryKey
+    let [bibleLanguage, commentaryLanguage] = yield all([
       call(fetchApi, bibleAPI),
       call(fetchApi, commentaryAPI),
     ])
-    const bible = []
-    const commentary = []
+    let bible = []
+    let commentary = []
     for (var i = 0; i < bibleLanguage.length; i++) {
-      var versions = []
-      const language = bibleLanguage[i].language.charAt(0).toUpperCase() + bibleLanguage[i].language.slice(1)
+      let versions = []
+      let language = bibleLanguage[i].language.charAt(0).toUpperCase() + bibleLanguage[i].language.slice(1)
       let languageCode = ''
       for (var j = 0; j < bibleLanguage[i].languageVersions.length; j++) {
       let LatestBible = false
         languageCode = bibleLanguage[i].languageVersions[j].language.code
-        const { version } = bibleLanguage[i].languageVersions[j]
-        const metaD = bibleLanguage[i].languageVersions[j].metadata
-        var mData = [{
+        let { version } = bibleLanguage[i].languageVersions[j]
+        let metaD = bibleLanguage[i].languageVersions[j].metadata
+        let mData = [{
           abbreviation: metaD && (metaD.hasOwnProperty("Abbreviation") ? metaD["Abbreviation"] : ''),
           contact: metaD && (metaD.hasOwnProperty("Contact") ? metaD["Contact"] : ''),
           contentType: metaD && (metaD.hasOwnProperty("Content Type") ? metaD["Content Type"] : ''),
@@ -57,12 +57,12 @@ function* fetchAllContent() {
       }
     }
     for (var i = 0; i < commentaryLanguage.length; i++) {
-      var versions = []
-      const language = commentaryLanguage[i].language.charAt(0).toUpperCase() + commentaryLanguage[i].language.slice(1)
-      const languageCode = commentaryLanguage[i].languageCode
+      let versions = []
+      let language = commentaryLanguage[i].language.charAt(0).toUpperCase() + commentaryLanguage[i].language.slice(1)
+      let languageCode = commentaryLanguage[i].languageCode
       for (var j = 0; j < commentaryLanguage[i].commentaries.length; j++) {
-        const metaD = commentaryLanguage[i].commentaries[j].metadata
-        var mData = [{
+        let metaD = commentaryLanguage[i].commentaries[j].metadata
+        let mData = [{
           abbreviation: metaD && (metaD.hasOwnProperty("Abbreviation") ? metaD["Abbreviation"] : ''),
           contact: metaD && (metaD.hasOwnProperty("Contact") ? metaD["Contact"] : ''),
           contentType: metaD && (metaD.hasOwnProperty("Content Type") ? metaD["Content Type"] : ''),
@@ -104,8 +104,8 @@ function* fetchAllContent() {
 
 function* fetchAllLanguage() {
   try {
-    const state = store.getState()
-    const response = yield call(fetchApi, state.updateVersion.baseAPI + 'languages')
+    let state = store.getState()
+    let response = yield call(fetchApi, state.updateVersion.baseAPI + 'languages')
     yield put(allLanguageSuccess(response))
     yield put(allLanguageFailure(null))
 
