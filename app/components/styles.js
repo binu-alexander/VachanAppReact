@@ -5,6 +5,7 @@ export const buttonstyle = (colorFile, sizeFile) => {
     return StyleSheet.create({
         reloadButton: {
             backgroundColor: Color.Blue_Color,
+            justifyContent: 'center', flex: 1
         },
         reloadText: {
             textAlign: 'center',
@@ -14,7 +15,7 @@ export const buttonstyle = (colorFile, sizeFile) => {
         buttonContainer: {
             flex: 1,
             justifyContent: 'center',
-            alignItems: 'center'
+            alignSelf: 'center'
         },
 
 

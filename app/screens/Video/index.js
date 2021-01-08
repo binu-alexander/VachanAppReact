@@ -67,7 +67,8 @@ class Video extends Component {
       if (this.state.bookId) {
         Toast.show({
           text: 'Video for ' + this.state.bookName + ' is unavaialble. You can checkout other books',
-          duration: 2000
+          duration: 2000,
+          position: "top"
         })
       }
       var elements = videoAll.reduce(function (previous, current) {

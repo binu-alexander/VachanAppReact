@@ -5,6 +5,7 @@ import {
   Dimensions,
   TouchableOpacity,
   FlatList,
+  Alert
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Segment, Button } from 'native-base'
@@ -23,7 +24,7 @@ class SelectBook extends Component {
       activeTab: true,
       NTSize: 0,
       OTSize: 0,
-      isLoading: false
+      isLoading: false,
     }
     this.styles = SelectBookPageStyle(this.props.colorFile, this.props.sizeFile);
     this.navigateTo = this.navigateTo.bind(this)
@@ -41,7 +42,6 @@ class SelectBook extends Component {
       this.flatlistRef.scrollToIndex({ index: 0, viewPosition: 0, animated: false, viewOffset: 0 })
     }
   }
-
   getItemLayout = (data, index) => (
     { length: 48, offset: 48 * index, index }
   )
@@ -92,12 +92,26 @@ class SelectBook extends Component {
   componentDidMount() {
     this.getOTSize()
     this.getNTSize()
+    this.checkForNotAvailableBook()
   }
-
+  checkForNotAvailableBook() {
+    let found = false
+    for (var i = 0; i < this.props.books.length; i++) {
+      if (this.props.books[i].bookId == this.props.screenProps.selectedBookId) {
+        console.log(" this.props.books[i].bookId ", this.props.books[i].bookId)
+        found = true
+        break;
+      }
+    }
+    if (!found) {
+      Alert.alert("Please Select the book ", "The book you were reading is not available in this version", [{ text: 'OK', onPress: () => { return } }]);
+  }
+}
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.books !== this.props.books) {
       this.getOTSize()
       this.getNTSize()
+      this.checkForNotAvailableBook()
     }
   }
   renderItem = ({ item, index }) => {
@@ -108,7 +122,7 @@ class SelectBook extends Component {
           style={this.styles.bookList}>
           <Text
             style={[this.styles.textStyle,
-              { fontWeight: item.bookId == this.props.screenProps.selectedBookId ? "bold" : "normal" }
+            { fontWeight: item.bookId == this.props.screenProps.selectedBookId ? "bold" : "normal" }
             ]}
           >
             {item.bookName}

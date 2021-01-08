@@ -8,8 +8,6 @@ import { numberSelection } from './styles.js';
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-
-
 class ChapterSelection extends Component {
 
   constructor(props) {

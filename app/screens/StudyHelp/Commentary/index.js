@@ -133,6 +133,7 @@ class Commentary extends Component {
               <ReloadButton
                 styles={this.styles}
                 reloadFunction={this.updateData}
+                message={null}
               />
             </View>
             :

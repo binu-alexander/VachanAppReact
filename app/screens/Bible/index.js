@@ -19,6 +19,7 @@ import DbQueries from '../../utils/dbQueries';
 import VerseView from './VerseView';
 import { extraSmallFont, smallFont, mediumFont, largeFont, extraLargeFont } from '../../utils/dimens.js'
 import { APIAudioURL, fetchVersionBooks, selectContent, APIBaseURL, updateNetConnection, userInfo, updateVersionBook, updateFontSize, updateVersion, updateMetadata } from '../../store/action/'
+import {getBookChaptersFromMapping} from '../../utils/UtilFunctions'
 import CustomHeader from '../../components/Bible/CustomHeader'
 import SelectBottomTabBar from '../../components/Bible/SelectBottomTabBar';
 import ChapterNdAudio from '../../components/Bible/ChapterNdAudio';
@@ -27,7 +28,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { styles } from './styles.js';
 import { connect } from 'react-redux';
 import Commentary from '../StudyHelp/Commentary/';
-import Color, { highlightColorB } from '../../utils/colorConstants';
+import Color from '../../utils/colorConstants';
 import { Header, Button, Title, Toast } from 'native-base';
 import BibleChapter from '../../components/Bible/BibleChapter';
 import firebase from 'react-native-firebase';
@@ -141,6 +142,7 @@ class Bible extends Component {
     );
     AppState.addEventListener('change', this._handleAppStateChange);
     this.subs = this.props.navigation.addListener("didFocus", () => {
+      console.log(" did focus ",this.props.chapterNumber,"  ",this.state.currentVisibleChapter)
       this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false,showColorGrid:false, bookId: this.props.bookId, currentVisibleChapter: this.props.chapterNumber }, () => {
         this.getChapter()
         this.audioComponentUpdate()
@@ -160,6 +162,7 @@ class Bible extends Component {
     })
   }
   componentDidUpdate(prevProps) {
+    console.log(" chapter number ",prevProps.chapterNumber,this.props.chapterNumber)
     if (prevProps.sourceId != this.props.sourceId 
       || prevProps.baseAPI != this.props.baseAPI 
       || prevProps.email != this.props.email 
@@ -240,16 +243,15 @@ class Bible extends Component {
   // update language and version  onback from language list page (callback function) also this function is usefull to update only few required values of redux 
   updateLangVer = async (item) => {
     this.setState({ selectedReferenceSet: [], showBottomBar: false,showColorGrid:false })
-
     if (item) {
-      var bookName = null
-      var bookId = null
+      let bookName = null
+      let bookId = null
       for (var i = 0; i <= item.books.length - 1; i++) {
         if (item.books[i].bookId == this.props.bookId) {
           bookName = item.books[i].bookName
           bookId = item.books[i].bookId
         } else {
-          if (item.books[i].bookId.bookNumber >= 39) {
+          if (item.books[i].bookId >= 39) {
             if (item.books[i].bookId == 'gen') {
               bookName = item.books[i].bookName
               bookId = item.books[i].bookId
@@ -279,8 +281,8 @@ class Bible extends Component {
       this.props.updateVersionBook({
         bookId: bookId,
         bookName: bookName,
-        chapterNumber: parseInt(this.state.currentVisibleChapter),
-        totalChapters: this.props.totalChapters,
+        chapterNumber: parseInt(this.state.currentVisibleChapter) > getBookChaptersFromMapping(bookId) ? 1 :  parseInt(this.state.currentVisibleChapter),
+        totalChapters: getBookChaptersFromMapping(bookId)
       })
       var time = new Date()
       DbQueries.addHistory(item.sourceId, item.languageName, item.languageCode,
@@ -338,7 +340,7 @@ class Bible extends Component {
 
   // fetching chapter content on next or prev icon press
   queryBookFromAPI = async (val) => {
-    this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false,showBottomBar:false, currentVisibleChapter: val != null ? parseInt(this.props.chapterNumber) + val : this.props.chapterNumber, error: null }, async () => {
+    this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false,showBottomBar:false, currentVisibleChapter: val != null ? parseInt(this.state.currentVisibleChapter) + val : this.props.chapterNumber, error: null }, async () => {
       try {
         if (this.props.downloaded) {
           if (this.state.downloadedBook.length > 0) {
@@ -929,6 +931,7 @@ class Bible extends Component {
     }
   }
   render() {
+    console.log(" state ",this.state.currentVisibleChapter," props ",this.props.chapterNumber)
     return (
       <View style={this.styles.container}>
         {
@@ -970,7 +973,7 @@ class Bible extends Component {
         }
         {(this.state.unAvailableContent && this.state.chapterContent.length == 0) &&
           <View style={{ flex: 1, justifyContent: 'center', alignSelf: 'center' }}>
-            <ReloadButton styles={this.styles} reloadFunction={this.queryBookFromAPI} />
+            <ReloadButton styles={this.styles} reloadFunction={this.queryBookFromAPI} message={null} />
           </View>
         }
         {/** Main View for the single or parrallel View */}

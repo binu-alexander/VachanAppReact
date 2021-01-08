@@ -15,9 +15,9 @@ import store from '../../../store'
 
 function* fetchVersionLanguage() {
   try {
-    let state = store.getState()
-    let url = state.updateVersion.baseAPI + "bibles"
-    let response = yield call(fetchApi, url)
+    const state = store.getState()
+    const url = state.updateVersion.baseAPI + "bibles"
+    const response = yield call(fetchApi, url)
     for (var i = 0; i <= response.length - 1; i++) {
       if(response[i].language == state.updateVersion.language.toLowerCase()){
         yield put(versionLanguageSuccess(response[i].languageVersions))
@@ -34,13 +34,13 @@ function* fetchVersionLanguage() {
 
 function* fetchVersionBooks(params) {
   try {
-    let state = store.getState()
-    let payload = params.payload
+    const state = store.getState()
+    const payload = params.payload
     let bookListData = []
     if (payload.downloaded) {
       var response = yield DbQueries.getDownloadedBook(payload.language)
       for (var i = 0; i <= response.length - 1; i++) {
-        let books = {
+        var books = {
           bookId: response[i].bookId,
           bookName: response[i].bookName,
           section: getBookSectionFromMapping(response[i].bookId),
@@ -51,13 +51,13 @@ function* fetchVersionBooks(params) {
       }
     }
     else {
-      let result = yield call(fetch, state.updateVersion.baseAPI + 'booknames')
+      var result = yield call(fetch, state.updateVersion.baseAPI + 'booknames')
       if (result.ok && result.status == 200) {
-        let response = yield result.json()
+        const response = yield result.json()
         for (var i = 0; i < response.length; i++) {
           if (payload.language.toLowerCase() == response[i].language.name) {
             for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
-              let books = {
+              var books = {
                 bookId: response[i].bookNames[j].book_code,
                 bookName: response[i].bookNames[j].short,
                 section: getBookSectionFromMapping(response[i].bookNames[j].book_code),
@@ -70,7 +70,7 @@ function* fetchVersionBooks(params) {
         }
       }
     }
-    let res = bookListData.length == 0 ? [] : bookListData.sort(function (a, b) { return a.bookNumber - b.bookNumber })
+    var res = bookListData.length == 0 ? [] : bookListData.sort(function (a, b) { return a.bookNumber - b.bookNumber })
     yield put(versionBooksSuccess(res))
     yield put(versionBooksFailure(null))
 
@@ -82,7 +82,7 @@ function* fetchVersionBooks(params) {
 
 function* queryDownloadedBook(params) {
   try {
-    let content = yield DbQueries.queryVersions(params.languageName, params.versionCode, params.bookId)
+    var content = yield DbQueries.queryVersions(params.languageName, params.versionCode, params.bookId)
     if (content !== null) {
       yield put(downloadedBookSuccess(content[0].chapters))
       yield put(downloadedBookFailure(null))
@@ -96,14 +96,14 @@ function* queryDownloadedBook(params) {
 
 function* fetchVersionContent(params) {
   try {
-    let state = store.getState()
-    let payload = params.payload
-    let url = state.updateVersion.baseAPI + "bibles" + "/" + payload.sourceId + "/" + "books" + "/" + payload.bookId + "/" + "chapter" + "/" + payload.chapter
-    let res = yield call(fetch, url)
+    const state = store.getState()
+    const payload = params.payload
+    const url = state.updateVersion.baseAPI + "bibles" + "/" + payload.sourceId + "/" + "books" + "/" + payload.bookId + "/" + "chapter" + "/" + payload.chapter
+    const res = yield call(fetch, url)
     if (res.ok && res.status == 200) {
-      let response = yield res.json()
-      let chapterContent = response.chapterContent.verses
-      let totalVerses = response.chapterContent.verses.length
+      const response = yield res.json()
+      const chapterContent = response.chapterContent.verses
+      const totalVerses = response.chapterContent.verses.length
       yield put(versionContentSuccess({ chapterContent: chapterContent, totalVerses: totalVerses }))
       yield put(versionContentFailure(null))
     }
