@@ -14,7 +14,6 @@ import { connect } from 'react-redux'
 import { updateVersionBook } from '../../store/action/'
 import firebase from 'react-native-firebase'
 
-
 class HighLights extends Component {
   static navigationOptions = {
     headerTitle: 'Highlights',
