@@ -329,7 +329,6 @@ class Search extends Component {
       sourceId: item.sourceId, languageCode: item.languageCode,
       languageName: item.languageName, versionCode: item.versionCode,
       downloaded: item.downloaded, books: item.books,metadata:item.metadata
-
     })
   }
   render() {

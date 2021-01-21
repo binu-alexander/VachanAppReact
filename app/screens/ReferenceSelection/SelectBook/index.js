@@ -90,6 +90,7 @@ class SelectBook extends Component {
   }
 
   componentDidMount() {
+
     this.getOTSize()
     this.getNTSize()
     this.checkForNotAvailableBook()
@@ -98,7 +99,6 @@ class SelectBook extends Component {
     let found = false
     for (var i = 0; i < this.props.books.length; i++) {
       if (this.props.books[i].bookId == this.props.screenProps.selectedBookId) {
-        console.log(" this.props.books[i].bookId ", this.props.books[i].bookId)
         found = true
         break;
       }
@@ -150,6 +150,7 @@ class SelectBook extends Component {
   }
 
   render() {
+
     return (
       <View style={this.styles.container}>
         {this.props.isLoading ?

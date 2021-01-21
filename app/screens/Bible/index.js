@@ -142,7 +142,6 @@ class Bible extends Component {
     );
     AppState.addEventListener('change', this._handleAppStateChange);
     this.subs = this.props.navigation.addListener("didFocus", () => {
-      console.log(" did focus ",this.props.chapterNumber,"  ",this.state.currentVisibleChapter)
       this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false,showColorGrid:false, bookId: this.props.bookId, currentVisibleChapter: this.props.chapterNumber }, () => {
         this.getChapter()
         this.audioComponentUpdate()
@@ -162,8 +161,8 @@ class Bible extends Component {
     })
   }
   componentDidUpdate(prevProps) {
-    console.log(" chapter number ",prevProps.chapterNumber,this.props.chapterNumber)
-    if (prevProps.sourceId != this.props.sourceId 
+    if (prevProps.language != this.props.language ||
+      prevProps.sourceId != this.props.sourceId 
       || prevProps.baseAPI != this.props.baseAPI 
       || prevProps.email != this.props.email 
       || prevProps.bookId != this.props.bookId
@@ -264,6 +263,7 @@ class Bible extends Component {
           }
         }
       }
+      let chapterNum = parseInt(this.state.currentVisibleChapter) > getBookChaptersFromMapping(bookId) ? 1 :  parseInt(this.state.currentVisibleChapter)
       this.props.updateMetadata({
         copyrightHolder: item.metadata[0].copyrightHolder,
         description: item.metadata[0].description,
@@ -281,13 +281,13 @@ class Bible extends Component {
       this.props.updateVersionBook({
         bookId: bookId,
         bookName: bookName,
-        chapterNumber: parseInt(this.state.currentVisibleChapter) > getBookChaptersFromMapping(bookId) ? 1 :  parseInt(this.state.currentVisibleChapter),
+        chapterNumber: chapterNum,
         totalChapters: getBookChaptersFromMapping(bookId)
       })
       var time = new Date()
       DbQueries.addHistory(item.sourceId, item.languageName, item.languageCode,
         item.versionCode, bookId, bookName,
-        parseInt(this.state.currentVisibleChapter), item.downloaded, time)
+        chapterNum, item.downloaded, time)
 
       this.props.fetchVersionBooks({
         language: item.languageName, versionCode: item.versionCode,
@@ -369,8 +369,8 @@ class Bible extends Component {
         this.props.updateVersionBook({
           bookId: this.props.bookId,
           bookName: this.props.bookName,
-          chapterNumber: parseInt(this.state.currentVisibleChapter),
-          totalChapters: this.props.totalChapters,
+          chapterNumber: parseInt(this.state.currentVisibleChapter) > getBookChaptersFromMapping(this.props.bookId) ? 1 :  parseInt(this.state.currentVisibleChapter),
+          totalChapters: getBookChaptersFromMapping(this.props.bookId)
         })
 
         this.getHighlights()
@@ -931,7 +931,6 @@ class Bible extends Component {
     }
   }
   render() {
-    console.log(" state ",this.state.currentVisibleChapter," props ",this.props.chapterNumber)
     return (
       <View style={this.styles.container}>
         {
