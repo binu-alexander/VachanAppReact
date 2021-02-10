@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Spinner from 'react-native-loading-spinner-overlay';
-import { fetchParallelBible, fetchVersionBooks } from '../../store/action'
+import { fetchVersionBooks } from '../../store/action'
 import { styles } from './styles';
 import { connect } from 'react-redux'
 import { getResultText } from '../../utils/UtilFunctions'
@@ -25,23 +25,41 @@ class BibleChapter extends Component {
             bookId: this.props.bookId,
             bookName: this.props.bookName,
             bookNameList: [],
-            shortbookName: '',
+            shortbookName: null,
             totalChapters: this.props.totalChapters,
             error: null,
-            message: null
+            message: null,
+            parallelBible: null,
+            parallelBibleHeading: null,
+            totalVerses: null,
+            isLoading:false
         }
         this.alertPresent = false
     }
     queryParallelBible = (val) => {
-        this.setState({ currentParallelViewChapter: val != null ? this.state.currentParallelViewChapter + val : this.props.currentChapter }, () => {
-            this.props.fetchParallelBible({
-                isDownloaded: false, sourceId: this.props.parallelLanguage.sourceId,
-                language: this.props.parallelLanguage.languageName,
-                version: this.props.parallelLanguage.versionCode,
-                bookId: this.props.bookId,
-                chapter: this.state.currentParallelViewChapter
-            })
-        })
+        try{
+            if(this.props.parallelLanguage){
+                this.setState({isLoading:true, currentParallelViewChapter: val != null ? this.state.currentParallelViewChapter + val : this.props.currentChapter }, async () => {
+                    let url = "bibles" + "/" + this.props.parallelLanguage.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentParallelViewChapter
+                    let response = await vApi.get(url)
+                    let chapterContent = response.chapterContent.verses
+                    let totalVerses = response.chapterContent.verses.length
+                    let parallelBibleHeading = response.chapterContent.metadata &&
+                        (response.chapterContent.metadata[0].section && response.chapterContent.metadata[0].section.text)
+                    this.setState({
+                        parallelBible: chapterContent,
+                        parallelBibleHeading: parallelBibleHeading,
+                        totalVerses: totalVerses,
+                        isLoading:false
+                    })
+                })
+            }
+           
+        }
+        catch(error){
+            this.setState({error})
+        }
+        
     }
     getRef = async (item) => {
         try {
@@ -49,7 +67,7 @@ class BibleChapter extends Component {
             this.setState({ bookNameList: response })
             if (response) {
                 for (var i = 0; i <= response.length - 1; i++) {
-                    if (response[i].language.name === this.props.parallelLanguage.languageName.toLowerCase()) {
+                    if (response[i].language.name === this.props.parallelLanguage && this.props.parallelLanguage.languageName.toLowerCase()) {
                         for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
                             let bId = response[i].bookNames[j].book_code
                             if (bId == item.bookId) {
@@ -61,12 +79,7 @@ class BibleChapter extends Component {
                                     totalChapters: item.totalChapters,
                                     shortbookName
                                 }, () => {
-                                    this.props.fetchParallelBible({
-                                        isDownloaded: false, sourceId: this.props.parallelLanguage.sourceId,
-                                        language: this.props.parallelLanguage.languageName, version: this.props.parallelLanguage.versionCode,
-                                        bookId: item.bookId, chapter: item.chapterNumber
-                                    })
-
+                                    this.queryParallelBible(item.chapterNumber)
                                 })
                             } else {
                                 if (response[i].bookNames[j].bookNumber >= 39) {
@@ -80,12 +93,7 @@ class BibleChapter extends Component {
                                             totalChapters: item.totalChapters,
                                             shortbookName
                                         }, () => {
-                                            this.props.fetchParallelBible({
-                                                isDownloaded: false, sourceId: this.props.parallelLanguage.sourceId,
-                                                language: this.props.parallelLanguage.languageName, version: this.props.parallelLanguage.versionCode,
-                                                bookId: bId, chapter: item.chapterNumber
-                                            })
-
+                                            this.queryParallelBible(item.chapterNumber)
                                         })
                                     }
                                 } else {
@@ -99,12 +107,7 @@ class BibleChapter extends Component {
                                             totalChapters: item.totalChapters,
                                             shortbookName
                                         }, () => {
-                                            this.props.fetchParallelBible({
-                                                isDownloaded: false, sourceId: this.props.parallelLanguage.sourceId,
-                                                language: this.props.parallelLanguage.languageName, version: this.props.parallelLanguage.versionCode,
-                                                bookId: bId, chapter: item.chapterNumber
-                                            })
-
+                                            this.queryParallelBible()
                                         })
                                     }
 
@@ -118,7 +121,7 @@ class BibleChapter extends Component {
                 return
             }
         } catch (error) {
-
+            this.setState({error})
         }
 
     }
@@ -129,7 +132,8 @@ class BibleChapter extends Component {
             let bookName = null
             if (response) {
                 for (var i = 0; i <= response.length - 1; i++) {
-                    if (response[i].language.name === this.props.parallelLanguage.languageName.toLowerCase()) {
+                    let parallelLanguage =  this.props.parallelLanguage && this.props.parallelLanguage.languageName.toLowerCase()
+                    if (response[i].language.name === parallelLanguage) {
                         for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
                             let bId = response[i].bookNames[j].book_code
                             if (bId == this.state.bookId) {
@@ -137,7 +141,7 @@ class BibleChapter extends Component {
                                 this.setState({ message: null })
 
                             } else {
-                                this.setState({ message:'This will be available Soon '})
+                                this.setState({ message: 'This will be available Soon ' })
                             }
                         }
 
@@ -168,7 +172,7 @@ class BibleChapter extends Component {
     errorMessage() {
         if (!this.alertPresent) {
             this.alertPresent = true;
-            if (this.props.error || this.state.error) {
+            if (this.state.error) {
                 Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
             } else {
                 this.alertPresent = false;
@@ -177,7 +181,7 @@ class BibleChapter extends Component {
     }
 
     updateData = () => {
-        if (this.props.error) {
+        if (this.state.error) {
             this.errorMessage()
             this.queryParallelBible(null)
         }
@@ -186,21 +190,23 @@ class BibleChapter extends Component {
         }
     }
     goToSelectionTab = () => {
-        this.props.navigation.navigate("SelectionTab", {
-            getReference: this.getRef, parallelContent: true, bookId: this.state.bookId, bookName: this.state.bookName,
-            chapterNumber: this.state.currentParallelViewChapter, totalChapters: this.state.totalChapters,
-            language: this.props.parallelLanguage.languageName, version: this.props.parallelLanguage.versionCode,
-            sourceId: this.props.parallelLanguage.sourceId, downloaded: false,
-        })
-
+        if(this.props.parallelLanguage){
+            this.props.navigation.navigate("SelectionTab", {
+                getReference: this.getRef, parallelContent: true, bookId: this.state.bookId, bookName: this.state.bookName,
+                chapterNumber: this.state.currentParallelViewChapter, totalChapters: this.state.totalChapters,
+                language: this.props.parallelLanguage.languageName, version: this.props.parallelLanguage.versionCode,
+                sourceId: this.props.parallelLanguage.sourceId, downloaded: false,
+            })
+        }
     }
     render() {
+        console.log(" BOOK name ", this.state.shortbookName)
         this.styles = styles(this.props.colorFile, this.props.sizeFile);
         return (
             <View style={this.styles.container}>
                 <Header style={{ backgroundColor: Color.Blue_Color, height: 40, borderLeftWidth: 0.2, borderLeftColor: Color.White }}>
                     <Button transparent onPress={this.goToSelectionTab}>
-                        <Title style={{ fontSize: 16 }}>{this.state.shortbookName} {this.state.currentParallelViewChapter}</Title>
+                        {this.state.shortbookName ? <Title style={{ fontSize: 16 }}>{this.state.shortbookName} {this.state.currentParallelViewChapter} </Title> : null}
                         <Icon name="arrow-drop-down" color={Color.White} size={20} />
                     </Button>
                     <Right style={{ position: 'absolute', right: 4 }}>
@@ -209,13 +215,13 @@ class BibleChapter extends Component {
                         </Button>
                     </Right>
                 </Header>
-                {this.props.isLoading &&
+                {this.state.isLoading &&
                     <Spinner
                         visible={true}
                         textContent={'Loading...'}
                     />}
                 {
-                    (this.props.error) ?
+                    (this.state.error) ?
                         <View style={{ flex: 1, justifyContent: 'center', alignSelf: 'center' }}>
                             <ReloadButton
                                 styles={this.styles}
@@ -226,14 +232,14 @@ class BibleChapter extends Component {
                         :
                         <View style={{ flex: 1 }}>
                             <ScrollView contentContainerStyle={{ paddingBottom: 20 }} showsVerticalScrollIndicator={false} ref={(ref) => { this.scrollViewRef = ref; }} >
-                                {this.props.parallelBible.map((verse, index) =>
+                                {this.state.parallelBible && this.state.parallelBible.map((verse, index) =>
                                     <View style={{ marginHorizontal: 16, paddingTop: 8 }}>
                                         {verse.number == 1 ?
                                             <Text letterSpacing={24}
                                                 style={this.styles.verseWrapperText}>
-                                                {this.props.parallelBibleHeading != null ?
+                                                {this.state.parallelBibleHeading != null ?
                                                     <Text style={this.styles.sectionHeading}>
-                                                        {this.props.parallelBibleHeading} {"\n"}
+                                                        {this.state.parallelBibleHeading} {"\n"}
                                                     </Text> : null}
                                                 <Text>
                                                     <Text style={this.styles.verseChapterNumber}>
@@ -279,6 +285,7 @@ class BibleChapter extends Component {
                                 )}
                                 <View style={this.styles.addToSharefooterComponent}>
                                     {
+                                        (this.props.parallelMetaData != null && this.state.parallelBible)&&
                                         <View style={this.styles.footerView}>
                                             {(this.props.parallelMetaData.revision !== null && this.props.parallelMetaData.revision !== '') && <Text style={this.styles.textListFooter}><Text style={this.styles.footerText}>Copyright:</Text>{' '}{this.props.parallelMetaData.revision}</Text>}
                                             {(this.props.parallelMetaData.license !== null && this.props.parallelMetaData.license !== '') && <Text style={this.styles.textListFooter}><Text style={this.styles.footerText}>License:</Text>{' '}{this.props.parallelMetaData.license}</Text>}
@@ -330,18 +337,13 @@ const mapStateToProps = state => {
         downloaded: state.updateVersion.downloaded,
         bookId: state.updateVersion.bookId,
         bookName: state.updateVersion.bookName,
-        parallelBible: state.parallel.parallelBible,
-        parallelBibleHeading: state.parallel.parallelBibleHeading,
-        error: state.parallel.error,
-        loading: state.parallel.loading,
-        parallelLanguage: state.selectContent.parallelLanguage,
+        parallelLanguage: state.selectContent.parallelLanguage ,
         parallelMetaData: state.selectContent.parallelMetaData,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        fetchParallelBible: (data) => dispatch(fetchParallelBible(data)),
         fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
     }
 }

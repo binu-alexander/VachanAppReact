@@ -96,9 +96,11 @@ class SelectBook extends Component {
     this.checkForNotAvailableBook()
   }
   checkForNotAvailableBook() {
+    console.log("books ",this.props.books)
     let found = false
     for (var i = 0; i < this.props.books.length; i++) {
       if (this.props.books[i].bookId == this.props.screenProps.selectedBookId) {
+        console.log(" this.props.books[i].bookId ", this.props.books[i].bookId)
         found = true
         break;
       }
@@ -108,6 +110,8 @@ class SelectBook extends Component {
   }
 }
   componentDidUpdate(prevProps, prevState) {
+    console.log("books ",this.props.books)
+    console.log("books ",prevProps.books)
     if (prevProps.books !== this.props.books) {
       this.getOTSize()
       this.getNTSize()
@@ -150,6 +154,9 @@ class SelectBook extends Component {
   }
 
   render() {
+    console.log("books ",this.props.books)
+    // console.log("books ",this.props.language)
+
 
     return (
       <View style={this.styles.container}>

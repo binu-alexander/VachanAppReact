@@ -56,6 +56,7 @@ class LanguageList extends Component {
   componentDidUpdate(prevProps){
     if(prevProps.bibleContent !=this.props.bibleContent){
       this.fetchLanguages()
+      console.log("reload")
     }
   }
   componentWillUnmount() {
@@ -81,6 +82,7 @@ class LanguageList extends Component {
           }
         }
       }
+      console.log("updatedObj ",Object.keys(updatedObj).length,updateSourceId)
       if (updateSourceId) {
         if(Object.keys(updatedObj).length>0){
           this.props.navigation.state.params.updateLangVer(updatedObj)
@@ -171,6 +173,7 @@ class LanguageList extends Component {
       }
     }
     catch (error) {
+      console.log(" ERROr ", error)
     }
   }
 
@@ -280,7 +283,7 @@ class LanguageList extends Component {
               <Text style={[this.styles.text, { marginLeft: 8, fontWeight: 'bold' }]} >{element.versionCode} </Text>
               <Text style={[this.styles.text, { marginLeft: 8 }]} >{element.versionName}</Text>
             </View>
-            <View>
+            <View style={{padding:20}}>
               {
                 element.downloaded === true ?
                   item.languageName.toLowerCase() === 'english' ? null :

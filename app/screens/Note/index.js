@@ -30,7 +30,7 @@ class Note extends Component {
       notesData: [],
       referenceList: [],
       isLoading: false,
-      message: ''
+      message:''
     }
     this.styles = noteStyle(props.colorFile, props.sizeFile);
 
@@ -69,7 +69,7 @@ class Note extends Component {
         var firebaseRef = firebase.database().ref("users/" + this.props.uid + "/notes/" + this.props.sourceId)
         firebaseRef.once('value', (snapshot) => {
           if (snapshot.val() === null) {
-            this.setState({ notesData: [], message: 'No Note for ' + this.props.languageName, isLoading: false })
+            this.setState({ notesData: [],message:'No Note for '+this.props.languageName, isLoading: false })
           }
           else {
             var arr = []
@@ -108,12 +108,12 @@ class Note extends Component {
         this.setState({ isLoading: false })
       })
     }
-    else {
+    else{
       this.setState({
-        notesData: [],
-        message: 'Please login'
+        notesData:[],
+        message:'Please login'
       })
-
+      
     }
 
   }
@@ -132,10 +132,10 @@ class Note extends Component {
     var date = new Date(modifiedTime).toLocaleString()
     return date
   }
-  emptyMessageNavigation = () => {
-    if (this.props.email) {
+  emptyMessageNavigation=()=>{
+    if(this.props.email){
       this.props.navigation.navigate("Bible")
-    } else {
+    }else{
       this.props.navigation.navigate("Login")
     }
   }
