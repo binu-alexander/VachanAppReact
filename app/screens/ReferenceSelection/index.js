@@ -68,7 +68,6 @@ class ReferenceSelection extends Component {
   // all books to render
   getBooks() {
     if (this.props.navigation.state.params) {
-      console.log(" get books ",this.props.navigation.state.params)
       let params = this.props.navigation.state.params
       this.props.fetchVersionBooks({
         language: params.language, versionCode: params.versionCode,

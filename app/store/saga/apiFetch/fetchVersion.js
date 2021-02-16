@@ -56,7 +56,6 @@ function* fetchVersionBooks(params) {
         let found = false
         const response = yield result.json()
         for (var i = 0; i < response.length; i++) {
-        // console.log(" book name ",payload.language,response[i].language.name)
           if (payload.language.toLowerCase() == response[i].language.name) {
             for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
               var books = {

@@ -142,7 +142,6 @@ class Bible extends Component {
     );
     AppState.addEventListener('change', this._handleAppStateChange);
     this.subs = this.props.navigation.addListener("didFocus", () => {
-      console.log(" did focus ",this.props.chapterNumber,"  ",this.state.currentVisibleChapter)
       this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false,showColorGrid:false, bookId: this.props.bookId, currentVisibleChapter: this.props.chapterNumber }, () => {
         this.getChapter()
         this.audioComponentUpdate()
@@ -162,7 +161,6 @@ class Bible extends Component {
     })
   }
   componentDidUpdate(prevProps) {
-    console.log(" chapter number ",prevProps.chapterNumber,this.props.chapterNumber)
     if (prevProps.language != this.props.language ||
       prevProps.sourceId != this.props.sourceId 
       || prevProps.baseAPI != this.props.baseAPI 
@@ -933,7 +931,6 @@ class Bible extends Component {
     }
   }
   render() {
-    console.log(" state book Id ",this.props.bookId)
     return (
       <View style={this.styles.container}>
         {
