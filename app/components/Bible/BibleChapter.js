@@ -27,37 +27,50 @@ class BibleChapter extends Component {
             bookNameList: [],
             shortbookName: null,
             totalChapters: this.props.totalChapters,
-            error: null,
+            error: false,
             message: null,
             parallelBible: null,
             parallelBibleHeading: null,
             totalVerses: null,
-            isLoading:false
+            loading:false
         }
         this.alertPresent = false
     }
-    queryParallelBible = (val) => {
+    queryParallelBible = (val,bookId) => {
         try{
             if(this.props.parallelLanguage){
-                this.setState({isLoading:true, currentParallelViewChapter: val != null ? this.state.currentParallelViewChapter + val : this.props.currentChapter }, async () => {
-                    let url = "bibles" + "/" + this.props.parallelLanguage.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentParallelViewChapter
+                this.setState({loading:true, currentParallelViewChapter: val != null ? this.state.currentParallelViewChapter + val : this.props.currentChapter}, async () => {
+                    let bookId = bookId != null ? bookId : this.state.bookId 
+                    let url = "bibles" + "/" + this.props.parallelLanguage.sourceId + "/" + "books" + "/" + bookId + "/" + "chapter" + "/" + this.state.currentParallelViewChapter
                     let response = await vApi.get(url)
-                    let chapterContent = response.chapterContent.verses
-                    let totalVerses = response.chapterContent.verses.length
-                    let parallelBibleHeading = response.chapterContent.metadata &&
-                        (response.chapterContent.metadata[0].section && response.chapterContent.metadata[0].section.text)
-                    this.setState({
-                        parallelBible: chapterContent,
-                        parallelBibleHeading: parallelBibleHeading,
-                        totalVerses: totalVerses,
-                        isLoading:false
-                    })
+                    if(response.chapterContent){
+                        let chapterContent = response.chapterContent.verses
+                        let totalVerses = response.chapterContent.verses.length
+                        let parallelBibleHeading = response.chapterContent.metadata &&
+                            (response.chapterContent.metadata[0].section && response.chapterContent.metadata[0].section.text)
+                        this.setState({
+                            parallelBible: chapterContent,
+                            parallelBibleHeading: parallelBibleHeading,
+                            totalVerses: totalVerses,
+                            loading:false,
+                            error:false,message:null
+                        })
+                    }else{
+                        this.setState({
+                            parallelBible: null,
+                            parallelBibleHeading: null,
+                            totalVerses: null,
+                            loading:false,
+                            error:true,
+                            message:null
+                        })
+                    }
+                   
                 })
             }
-           
         }
         catch(error){
-            this.setState({error})
+            this.setState({message:null,error:true,loading:false})
         }
         
     }
@@ -67,7 +80,8 @@ class BibleChapter extends Component {
             this.setState({ bookNameList: response })
             if (response) {
                 for (var i = 0; i <= response.length - 1; i++) {
-                    if (response[i].language.name === this.props.parallelLanguage && this.props.parallelLanguage.languageName.toLowerCase()) {
+                    let parallelLanguage = this.props.parallelLanguage && this.props.parallelLanguage.languageName.toLowerCase()
+                    if (response[i].language.name == parallelLanguage ) {
                         for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
                             let bId = response[i].bookNames[j].book_code
                             if (bId == item.bookId) {
@@ -77,9 +91,9 @@ class BibleChapter extends Component {
                                     bookId: item.bookId,
                                     bookName: item.bookName,
                                     totalChapters: item.totalChapters,
-                                    shortbookName
-                                }, () => {
-                                    this.queryParallelBible(item.chapterNumber)
+                                    shortbookName,error:false
+                                },  () => {
+                                     this.queryParallelBible(item.chapterNumber,item.bookId)
                                 })
                             } else {
                                 if (response[i].bookNames[j].bookNumber >= 39) {
@@ -91,9 +105,9 @@ class BibleChapter extends Component {
                                             bookId: bId,
                                             bookName: bookName,
                                             totalChapters: item.totalChapters,
-                                            shortbookName
+                                            shortbookName,error:false
                                         }, () => {
-                                            this.queryParallelBible(item.chapterNumber)
+                                            this.queryParallelBible(item.chapterNumber,item.bookId)
                                         })
                                     }
                                 } else {
@@ -105,9 +119,9 @@ class BibleChapter extends Component {
                                             bookId: bId,
                                             bookName: bookName,
                                             totalChapters: item.totalChapters,
-                                            shortbookName
+                                            shortbookName,error:false
                                         }, () => {
-                                            this.queryParallelBible()
+                                            this.queryParallelBible(item.chapterNumber,item.bookId)
                                         })
                                     }
 
@@ -121,7 +135,7 @@ class BibleChapter extends Component {
                 return
             }
         } catch (error) {
-            this.setState({error})
+            this.setState({error:true,message:null})
         }
 
     }
@@ -136,28 +150,31 @@ class BibleChapter extends Component {
                     if (response[i].language.name === parallelLanguage) {
                         for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
                             let bId = response[i].bookNames[j].book_code
-                            if (bId == this.state.bookId) {
-                                bookName = response[i].bookNames[j].short
-                                this.setState({ message: null })
-
-                            } else {
-                                this.setState({ message: 'This will be available Soon ' })
+                            if(this.state.bookId != null){
+                                if (bId == this.state.bookId) {
+                                    bookName = response[i].bookNames[j].short
+                                    this.setState({ message: null,error:false })
+                                } else {
+                                    this.setState({error:true, message: 'This will be available Soon ' })
+                                }
                             }
+                            
                         }
 
                     }
                 }
             } else {
+                this.setState({ message: null,error:false })
                 return
             }
             let shortbookName = bookName != null && (bookName.length > 10 ? bookName.slice(0, 9) + "..." : bookName)
             this.setState({ shortbookName })
         } catch (error) {
-            this.setState({ error: error, bookNameList: [] });
+            this.setState({ error: true, bookNameList: [] });
         }
     }
     componentDidMount() {
-        this.queryParallelBible(null)
+        this.queryParallelBible(null,null)
         this.updateBook()
     }
     componentWillUnmount() {
@@ -183,7 +200,7 @@ class BibleChapter extends Component {
     updateData = () => {
         if (this.state.error) {
             this.errorMessage()
-            this.queryParallelBible(null)
+            this.queryParallelBible(null,null)
         }
         else {
             return
@@ -200,7 +217,7 @@ class BibleChapter extends Component {
         }
     }
     render() {
-        console.log(" BOOK name ", this.state.shortbookName)
+
         this.styles = styles(this.props.colorFile, this.props.sizeFile);
         return (
             <View style={this.styles.container}>
@@ -215,13 +232,13 @@ class BibleChapter extends Component {
                         </Button>
                     </Right>
                 </Header>
-                {this.state.isLoading &&
+                {this.state.loading &&
                     <Spinner
                         visible={true}
                         textContent={'Loading...'}
                     />}
                 {
-                    (this.state.error) ?
+                    (this.state.parallelBible == null && this.state.error ) ?
                         <View style={{ flex: 1, justifyContent: 'center', alignSelf: 'center' }}>
                             <ReloadButton
                                 styles={this.styles}
@@ -302,7 +319,7 @@ class BibleChapter extends Component {
                                         <View style={this.styles.bottomBarParallelPrevView}>
                                             <Icon name={'chevron-left'} color={Color.Blue_Color} size={16}
                                                 style={this.styles.bottomBarChevrontIcon}
-                                                onPress={() => this.queryParallelBible(-1)}
+                                                onPress={() => this.queryParallelBible(-1,null)}
                                             />
                                         </View>
                                 }
@@ -311,7 +328,7 @@ class BibleChapter extends Component {
                                         <View style={this.styles.bottomBarNextParallelView}>
                                             <Icon name={'chevron-right'} color={Color.Blue_Color} size={16}
                                                 style={this.styles.bottomBarChevrontIcon}
-                                                onPress={() => this.queryParallelBible(1)}
+                                                onPress={() => this.queryParallelBible(1,null)}
                                             />
                                         </View>
                                 }

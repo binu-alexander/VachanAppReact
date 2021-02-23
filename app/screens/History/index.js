@@ -110,7 +110,6 @@ class History extends Component {
       versionCode: item.versionCode, sourceId: item.sourceId,
       downloaded: item.downloaded
     })
-    console.log(" item chapter ",item.chapterNumber)
     this.props.updateVersionBook({
       bookId: item.bookId,
       bookName: item.bookName,

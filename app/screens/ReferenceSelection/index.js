@@ -68,7 +68,6 @@ class ReferenceSelection extends Component {
   // all books to render
   getBooks() {
     if (this.props.navigation.state.params) {
-      console.log(" get books ",this.props.navigation.state.params)
       let params = this.props.navigation.state.params
       this.props.fetchVersionBooks({
         language: params.language, versionCode: params.versionCode,
@@ -104,7 +103,7 @@ class ReferenceSelection extends Component {
           textContent={'Loading...'}
         /> : (
           this.props.error ?
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={this.styles.mainContainerReloadButton}>
               <ReloadButton
                 styles={this.styles}
                 reloadFunction={this.reloadBooks}

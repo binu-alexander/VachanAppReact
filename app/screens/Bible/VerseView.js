@@ -34,7 +34,7 @@ class VerseView extends Component {
             parallelMetaData:null,
             visibleParallelView:false,
             parallelLanguage:null})
-        Alert.alert("","Your text is selected please choose any option from bottom bar or unselect the text.")
+        Alert.alert("","Your text is selected, please choose any option from the bottom bar or unselect the text.")
         }
         return true;
       }

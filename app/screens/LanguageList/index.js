@@ -56,7 +56,6 @@ class LanguageList extends Component {
   componentDidUpdate(prevProps){
     if(prevProps.bibleContent !=this.props.bibleContent){
       this.fetchLanguages()
-      console.log("reload")
     }
   }
   componentWillUnmount() {
@@ -82,7 +81,7 @@ class LanguageList extends Component {
           }
         }
       }
-      console.log("updatedObj ",Object.keys(updatedObj).length,updateSourceId)
+      com.bridgeconn.vachangotest("updatedObj ",Object.keys(updatedObj).length,updateSourceId)
       if (updateSourceId) {
         if(Object.keys(updatedObj).length>0){
           this.props.navigation.state.params.updateLangVer(updatedObj)
@@ -173,7 +172,6 @@ class LanguageList extends Component {
       }
     }
     catch (error) {
-      console.log(" ERROr ", error)
     }
   }
 

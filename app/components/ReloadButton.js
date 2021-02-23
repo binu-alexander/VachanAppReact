@@ -13,11 +13,9 @@ const ReloadButton = ({
         onPress={() => reloadFunction(null)}
         style={buttonstyle.reloadButton}>
         <Icon name='signal-cellular-connected-no-internet-4-bar' style={styles.emptyMessageIcon} />
-        <Text style={buttonstyle.reloadText}>{!message ? <Text>Offline. Content unavailable.</Text> : <Text>{message}</Text>}</Text>
+        <Text style={styles.reloadText}>{!message ? <Text>Offline. Content unavailable.</Text> : <Text>{message}</Text>}</Text>
       </TouchableOpacity>
     </View>
   )
 
 export default ReloadButton
-
-
