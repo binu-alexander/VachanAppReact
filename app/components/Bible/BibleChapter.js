@@ -21,7 +21,7 @@ class BibleChapter extends Component {
         super(props)
         this.styles = styles(this.props.colorFile, this.props.sizeFile);
         this.state = {
-            currentParallelViewChapter: JSON.parse(this.props.currentChapter),
+            currentParallelViewChapter:this.props.currentChapter,
             bookId: this.props.bookId,
             bookName: this.props.bookName,
             bookNameList: [],
@@ -36,11 +36,13 @@ class BibleChapter extends Component {
         }
         this.alertPresent = false
     }
-    queryParallelBible = (val,bookId) => {
+    queryParallelBible = (val,bkId) => {
         try{
             if(this.props.parallelLanguage){
-                this.setState({loading:true, currentParallelViewChapter: val != null ? this.state.currentParallelViewChapter + val : this.props.currentChapter}, async () => {
-                    let bookId = bookId != null ? bookId : this.state.bookId 
+                let currentParallelViewChapter = (val !=null && bkId==null) ? this.state.currentParallelViewChapter + parseInt(val) : (val !=null && bkId !=null ? parseInt(val) : this.state.currentParallelViewChapter) 
+                let bookId = bkId != null ? bkId : this.state.bookId 
+                console.log("current visible chappter ",currentParallelViewChapter)
+                this.setState({loading:true, currentParallelViewChapter:currentParallelViewChapter,bookId }, async () => {
                     let url = "bibles" + "/" + this.props.parallelLanguage.sourceId + "/" + "books" + "/" + bookId + "/" + "chapter" + "/" + this.state.currentParallelViewChapter
                     let response = await vApi.get(url)
                     if(response.chapterContent){
@@ -60,6 +62,7 @@ class BibleChapter extends Component {
                             parallelBible: null,
                             parallelBibleHeading: null,
                             totalVerses: null,
+                            bookId:bookId,
                             loading:false,
                             error:true,
                             message:null
@@ -76,64 +79,8 @@ class BibleChapter extends Component {
     }
     getRef = async (item) => {
         try {
-            let response = await vApi.get('booknames')
-            this.setState({ bookNameList: response })
-            if (response) {
-                for (var i = 0; i <= response.length - 1; i++) {
-                    let parallelLanguage = this.props.parallelLanguage && this.props.parallelLanguage.languageName.toLowerCase()
-                    if (response[i].language.name == parallelLanguage ) {
-                        for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
-                            let bId = response[i].bookNames[j].book_code
-                            if (bId == item.bookId) {
-                                let shortbookName = item.bookName != null && (item.bookName.length > 10 ? item.bookName.slice(0, 9) + "..." : item.bookName)
-                                this.setState({
-                                    currentParallelViewChapter: item.chapterNumber,
-                                    bookId: item.bookId,
-                                    bookName: item.bookName,
-                                    totalChapters: item.totalChapters,
-                                    shortbookName,error:false
-                                },  () => {
-                                     this.queryParallelBible(item.chapterNumber,item.bookId)
-                                })
-                            } else {
-                                if (response[i].bookNames[j].bookNumber >= 39) {
-                                    if (bId == 'gen') {
-                                        let bookName = response[i].bookNames[j].short
-                                        let shortbookName = bookName != null && (bookName.length > 10 ? bookName.slice(0, 9) + "..." : bookName)
-                                        this.setState({
-                                            currentParallelViewChapter: item.chapterNumber,
-                                            bookId: bId,
-                                            bookName: bookName,
-                                            totalChapters: item.totalChapters,
-                                            shortbookName,error:false
-                                        }, () => {
-                                            this.queryParallelBible(item.chapterNumber,item.bookId)
-                                        })
-                                    }
-                                } else {
-                                    if (bId == 'mat') {
-                                        let bookName = response[i].bookNames[j].short
-                                        let shortbookName = bookName != null && (bookName.length > 10 ? bookName.slice(0, 9) + "..." : bookName)
-                                        this.setState({
-                                            currentParallelViewChapter: item.chapterNumber,
-                                            bookId: bId,
-                                            bookName: bookName,
-                                            totalChapters: item.totalChapters,
-                                            shortbookName,error:false
-                                        }, () => {
-                                            this.queryParallelBible(item.chapterNumber,item.bookId)
-                                        })
-                                    }
-
-                                }
-                            }
-                        }
-
-                    }
-                }
-            } else {
-                return
-            }
+            this.queryParallelBible(item.chapterNumber,item.bookId)
+            this.updateBook()
         } catch (error) {
             this.setState({error:true,message:null})
         }
@@ -153,7 +100,8 @@ class BibleChapter extends Component {
                             if(this.state.bookId != null){
                                 if (bId == this.state.bookId) {
                                     bookName = response[i].bookNames[j].short
-                                    this.setState({ message: null,error:false })
+                                    let shortbookName = bookName != null && (bookName.length > 10 ? bookName.slice(0, 9) + "..." : bookName)
+                                    this.setState({ message: null,error:false,bookName,shortbookName })
                                 } else {
                                     this.setState({error:true, message: 'This will be available Soon ' })
                                 }
