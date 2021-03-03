@@ -15,7 +15,6 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { createResponder } from 'react-native-gesture-responder';
-
 import DbQueries from '../../utils/dbQueries';
 import VerseView from './VerseView';
 import { extraSmallFont, smallFont, mediumFont, largeFont, extraLargeFont } from '../../utils/dimens.js'
