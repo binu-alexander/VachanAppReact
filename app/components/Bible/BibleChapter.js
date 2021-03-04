@@ -111,7 +111,8 @@ class BibleChapter extends Component {
                 } else {
                     this.setState({ error: true, message: 'This will be available soon' })
                     if (parallelLanguage) {
-                        Alert.alert("", "The book you were reading is not available in " + parallelLanguage, [{ text: 'OK', onPress: () => { return } }]);
+                        let lang = parallelLanguage.charAt(0).toUpperCase() + parallelLanguage.slice(1)
+                        Alert.alert("", "The book you were reading is not available in " + lang, [{ text: 'OK', onPress: () => { return } }]);
                     }
                 }
             } else {
