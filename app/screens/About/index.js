@@ -30,6 +30,10 @@ class About extends Component {
               Since the content is brought to you under multiple licensing arrangements, it is requested that it not be further redistributed in any other format or platform without explicit permission from the original copyright owners.{'\n'}
               <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Content and Technology Partners{'\n'}</Text>
               VachanGo is being made available under a collaborative arrangement of Friends of Agape, unfoldingWord, Wycliffe Associates, Crossway, Bridgeway Publications, Dusty Sandals, BibleProject, Visual Unit, and is brought to you by Bridge Connectivity Solutions Pvt. Ltd. (BCS) <Text style={this.styles.linkText} onPress={() => { Linking.openURL('https://www.bridgeconn.com') }}>(https://www.bridgeconn.com)</Text> who is the localization and technology partner.{'\n'}
+              <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Release Notes (17/03/2021) v1.1.1</Text>
+              <Text textBreakStrategy={'simple'} style={this.styles.rlsNoteTitleText}>{'\n'}Bug Fixes:{'\n'}</Text>
+              <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Fixed Google Authentication issue{'\n'}
+            
               <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Release Notes (05/03/2021) v1.1</Text>
               <Text textBreakStrategy={'simple'} style={this.styles.rlsNoteTitleText}>{'\n'}Content Additions (using Vachan API’s):{'\n'}</Text>
               <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>Bibles: Nagamese NT{'\n'}

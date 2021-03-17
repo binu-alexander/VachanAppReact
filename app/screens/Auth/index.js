@@ -27,7 +27,6 @@ class Auth extends Component {
       this.props.userInfo({ email: null, uid: null, userName: '', phoneNumber: null, photo: null })
       this.setState({ user: null })
       this.props.navigation.navigate("Bible")
-
     } catch (error) {
       console.error("logout error",error);
     }
@@ -40,7 +39,7 @@ class Auth extends Component {
         offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
         // hostedDomain: 'localhost', // specifies a hosted domain restriction
         // loginHint: '', // [iOS] The user's ID, or email address, to be prefilled in the authentication UI if possible. [See docs here](https://developers.google.com/identity/sign-in/ios/api/interface_g_i_d_sign_in.html#a0a68c7504c31ab0b728432565f6e33fd)
-        forceConsentPrompt: true, // [Android] if you want to show the authorization prompt at each login.
+        forceConsentPrompt: false, // [Android] if you want to show the authorization prompt at each login.
         // accountName: '', // [Android] specifies an account name on the device that should be used
         // iosClientId: '<FROM DEVELOPER CONSOLE>', // [iOS] optional, if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
       });
