@@ -188,7 +188,7 @@ class Bible extends Component {
       Toast.show({
         text: "Online. Now content available.",
         type: "success",
-        duration: 2000
+        duration: 5000
       })
       if (this.props.books.length == 0) {
         this.props.fetchVersionBooks({
@@ -202,7 +202,7 @@ class Bible extends Component {
       Toast.show({
         text: "Offline. Check your internet Connection.",
         type: "warning",
-        duration: 2000
+        duration: 5000
       })
     }
   }
@@ -392,7 +392,7 @@ class Bible extends Component {
     else {
       Toast.show({
         text: 'No audio for ' + this.props.language + " " + this.props.bookName,
-        duration: 2000
+        duration: 5000
       })
     }
   }
@@ -543,7 +543,7 @@ class Bible extends Component {
         Toast.show({
           text: isbookmark ? 'Bookmarked chapter removed' : 'Chapter bookmarked',
           type: isbookmark ? "default" : "success",
-          duration: 2000
+          duration: 5000
         })
       }
       else {

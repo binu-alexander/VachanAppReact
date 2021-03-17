@@ -23,8 +23,7 @@ class ProfilePage extends Component {
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
   async componentDidMount() {
-
-    firebase.auth().onAuthStateChanged((user) => {
+    await firebase.auth().onAuthStateChanged((user) => {
       if (!user) {
         return
       }
