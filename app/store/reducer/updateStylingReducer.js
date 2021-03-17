@@ -15,7 +15,7 @@ const initialState = {
 function updateStyling(state = initialState, action) {
     switch (action.type) {
         case UPDATE_FONT_SIZE:
-            const sizes = {
+            let sizes = {
                 sizeMode: () => {
                     switch (action.sizeMode) {
                         case 0:

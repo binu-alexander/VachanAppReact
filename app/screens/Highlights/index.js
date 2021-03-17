@@ -14,6 +14,7 @@ import { connect } from 'react-redux'
 import { updateVersionBook } from '../../store/action/'
 import firebase from 'react-native-firebase'
 
+
 class HighLights extends Component {
   static navigationOptions = {
     headerTitle: 'Highlights',
@@ -71,7 +72,22 @@ class HighLights extends Component {
             for (var key in highlights) {
               for (var val in highlights[key]) {
                 if (highlights[key][val] != null) {
-                  array.push({ bookId: key, chapterNumber: val, verseNumber: highlights[key][val] })
+                  let regexMatch = /(\d+)\:([a-zA-Z]+)/;
+                  let value = highlights[key][val]
+                  let verseNumber = []
+                  for(var i=0;i<value.length;i++){
+                    if(value[i]){
+                      if(isNaN(value[i])){
+                        let match = value[i].match(regexMatch)
+                        if(match){
+                          verseNumber.push(parseInt(match[1]))
+                        }
+                      }else{
+                        verseNumber.push(parseInt(value[i]))
+                      }
+                    }
+                  }
+                  array.push({ bookId: key, chapterNumber: val, verseNumber:verseNumber })
                 }
               }
             }
@@ -128,7 +144,7 @@ class HighLights extends Component {
     let value = item.verseNumber &&
       item.verseNumber.map(e =>
         <TouchableOpacity style={this.styles.bookmarksView} onPress={() => { this.navigateToBible(item.bookId, bookName, item.chapterNumber, e) }} >
-          <Text style={this.styles.bookmarksText}>{this.props.languageName && this.props.languageName.charAt(0).toUpperCase() + this.props.languageName.slice(1)} {this.props.versionCode && this.props.versionCode.toUpperCase()} {bookName}  {":"} {item.chapterNumber} {":"} {e}</Text>
+          <Text style={this.styles.bookmarksText}>{this.props.languageName && this.props.languageName.charAt(0).toUpperCase() + this.props.languageName.slice(1)} {this.props.versionCode && this.props.versionCode.toUpperCase()} {bookName} {item.chapterNumber} {":"} {e}</Text>
           <Icon name='delete-forever' style={this.styles.iconCustom}
             onPress={() => { this.removeHighlight(item.bookId, item.chapterNumber, e) }}
           />

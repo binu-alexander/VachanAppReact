@@ -23,6 +23,7 @@ LanguageMetaData.schema = {
         technologyPartner:{type: 'string', optional: true},
         versionName:{type: 'string', optional: true},
         versionNameGL:{type: 'string', optional: true},
+        Latest:{type:'bool',optional: true}
     }
 };
 

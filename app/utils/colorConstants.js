@@ -21,6 +21,11 @@ module.exports = {
         Semi_Trans_White: 'rgba(210,210,210,0.5)',
         Yellow: '#FFFF00',
         NightYellow: '#999900',
+        highlightColorA:{code:"#fffe00",const:"a"},
+        highlightColorB:{code:"#5dff79",const:"b"},
+        highlightColorC:{code:"#56f3ff",const:"c"},
+        highlightColorD:{code:"#ffcaf7",const:"d"},
+        highlightColorE:{code:'#ffc66f',const:"e"}
 
 }
 

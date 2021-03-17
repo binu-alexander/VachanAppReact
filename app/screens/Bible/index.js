@@ -13,9 +13,13 @@ import {
   NetInfo,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { createResponder } from 'react-native-gesture-responder';
+
 import DbQueries from '../../utils/dbQueries';
 import VerseView from './VerseView';
-import { APIAudioURL, fetchVersionBooks, selectContent, APIBaseURL, updateNetConnection, userInfo, updateVersionBook, updateVersion, updateMetadata } from '../../store/action/'
+import { extraSmallFont, smallFont, mediumFont, largeFont, extraLargeFont } from '../../utils/dimens.js'
+import { APIAudioURL, fetchVersionBooks, selectContent, APIBaseURL, updateNetConnection, userInfo, updateVersionBook, updateFontSize, updateVersion, updateMetadata } from '../../store/action/'
+import {getBookChaptersFromMapping} from '../../utils/UtilFunctions'
 import CustomHeader from '../../components/Bible/CustomHeader'
 import SelectBottomTabBar from '../../components/Bible/SelectBottomTabBar';
 import ChapterNdAudio from '../../components/Bible/ChapterNdAudio';
@@ -29,6 +33,7 @@ import { Header, Button, Title, Toast } from 'native-base';
 import BibleChapter from '../../components/Bible/BibleChapter';
 import firebase from 'react-native-firebase';
 import vApi from '../../utils/APIFetch';
+import HighlightColorGrid from '../../components/Bible/HighlightColorGrid';
 
 
 const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
@@ -60,7 +65,8 @@ class Bible extends Component {
       showBottomBar: false,
       bookmarksList: [],
       isBookmark: false,
-      currentVisibleChapter: JSON.parse(this.props.chapterNumber),
+      showColorGrid: false,
+      currentVisibleChapter: parseInt(this.props.chapterNumber),
       bookNumber: this.props.bookNumber,
       selectedReferenceSet: [],
       verseInLine: this.props.verseInLine,
@@ -73,6 +79,7 @@ class Bible extends Component {
       initializing: true,
       user: this.props.email,
       imageUrl: this.props.photo,
+      unAvailableContent: null,
       // visibleParallelView: false,
       userData: '',
       scrollAnim,
@@ -98,13 +105,7 @@ class Bible extends Component {
   _clampedScrollValue = 0;
   _offsetValue = 0;
   _scrollValue = 0;
-  componentWillReceiveProps(nextProps, prevState) {
-    this.setState({
-      colorFile: nextProps.colorFile,
-      sizeFile: nextProps.sizeFile,
-    })
-    this.styles = styles(nextProps.colorFile, nextProps.sizeFile);
-  }
+
 
   async componentDidMount() {
     if (this.state.initializing) {
@@ -122,7 +123,7 @@ class Bible extends Component {
         })
       }
     })
-
+    this.ZoomTextSize()
     this.state.scrollAnim.addListener(({ value }) => {
       const diff = value - this._scrollValue;
       this._scrollValue = value;
@@ -141,7 +142,7 @@ class Bible extends Component {
     );
     AppState.addEventListener('change', this._handleAppStateChange);
     this.subs = this.props.navigation.addListener("didFocus", () => {
-      this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false, bookId: this.props.bookId, currentVisibleChapter: this.props.chapterNumber }, () => {
+      this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false,showColorGrid:false, bookId: this.props.bookId, currentVisibleChapter: this.props.chapterNumber }, () => {
         this.getChapter()
         this.audioComponentUpdate()
         this.getHighlights()
@@ -160,7 +161,12 @@ class Bible extends Component {
     })
   }
   componentDidUpdate(prevProps) {
-    if (prevProps.sourceId != this.props.sourceId || prevProps.baseAPI != this.props.baseAPI) {
+    if (prevProps.language != this.props.language ||
+      prevProps.sourceId != this.props.sourceId 
+      || prevProps.baseAPI != this.props.baseAPI 
+      || prevProps.email != this.props.email 
+      || prevProps.bookId != this.props.bookId
+      || prevProps.chapterNumber != this.props.chapterNumber) {
       this.queryBookFromAPI(null)
       this.audioComponentUpdate()
       if (this.props.books.length == 0) {
@@ -171,7 +177,6 @@ class Bible extends Component {
           sourceId: this.props.sourceId
         })
       }
-
     }
   }
   // check internet connection to fetch api's accordingly
@@ -216,16 +221,17 @@ class Bible extends Component {
 
   // update book name and chapter number onback from referenceSelection page (callback function) also this function is usefull to update only few required values of redux 
   getReference = async (item) => {
-    this.setState({ selectedReferenceSet: [], showBottomBar: false })
+    this.setState({ selectedReferenceSet: [], showBottomBar: false,showColorGrid:false })
     if (item) {
+      this.setState({currentVisibleChapter:item.chapterNumber})
       var time = new Date()
       DbQueries.addHistory(this.props.sourceId, this.props.language, this.props.languageCode,
-        this.props.versionCode, item.bookId, item.bookName, JSON.parse(item.chapterNumber), this.props.downloaded, time)
+        this.props.versionCode, item.bookId, item.bookName, parseInt(item.chapterNumber), this.props.downloaded, time)
 
       this.props.updateVersionBook({
         bookId: item.bookId,
         bookName: item.bookName,
-        chapterNumber: JSON.parse(item.chapterNumber),
+        chapterNumber: parseInt(item.chapterNumber),
         totalChapters: item.totalChapters,
       })
     }
@@ -235,15 +241,29 @@ class Bible extends Component {
   }
   // update language and version  onback from language list page (callback function) also this function is usefull to update only few required values of redux 
   updateLangVer = async (item) => {
-    this.setState({ selectedReferenceSet: [], showBottomBar: false })
-
+    this.setState({ selectedReferenceSet: [], showBottomBar: false,showColorGrid:false })
     if (item) {
-      var bookName = null
+      let bookName = null
+      let bookId = null
       for (var i = 0; i <= item.books.length - 1; i++) {
         if (item.books[i].bookId == this.props.bookId) {
           bookName = item.books[i].bookName
+          bookId = item.books[i].bookId
+        } else {
+          if (item.books[i].bookId >= 39) {
+            if (item.books[i].bookId == 'gen') {
+              bookName = item.books[i].bookName
+              bookId = item.books[i].bookId
+            }
+          } else {
+            if (item.books[i].bookId == 'mat') {
+              bookName = item.books[i].bookName
+              bookId = item.books[i].bookId
+            }
+          }
         }
       }
+      let chapterNum = parseInt(this.state.currentVisibleChapter) > getBookChaptersFromMapping(bookId) ? 1 :  parseInt(this.state.currentVisibleChapter)
       this.props.updateMetadata({
         copyrightHolder: item.metadata[0].copyrightHolder,
         description: item.metadata[0].description,
@@ -258,17 +278,16 @@ class Bible extends Component {
         language: item.languageName, languageCode: item.languageCode,
         versionCode: item.versionCode, sourceId: item.sourceId, downloaded: item.downloaded
       })
-
       this.props.updateVersionBook({
-        bookId: this.props.bookId,
+        bookId: bookId,
         bookName: bookName,
-        chapterNumber: JSON.parse(this.state.currentVisibleChapter),
-        totalChapters: this.props.totalChapters,
+        chapterNumber: chapterNum,
+        totalChapters: getBookChaptersFromMapping(bookId)
       })
       var time = new Date()
       DbQueries.addHistory(item.sourceId, item.languageName, item.languageCode,
-        item.versionCode, this.props.bookId, bookName,
-        JSON.parse(this.state.currentVisibleChapter), item.downloaded, time)
+        item.versionCode, bookId, bookName,
+        chapterNum, item.downloaded, time)
 
       this.props.fetchVersionBooks({
         language: item.languageName, versionCode: item.versionCode,
@@ -293,7 +312,7 @@ class Bible extends Component {
       })
     }
     else {
-      this.setState({ chapterContent: [], isLoading: false })
+      this.setState({ chapterContent: [], unAvailableContent: true, isLoading: false })
     }
 
   }
@@ -314,14 +333,14 @@ class Bible extends Component {
       }
     }
     catch (error) {
-      this.setState({ error: error, isLoading: false, chapterContent: [] })
+      this.setState({ error: error, isLoading: false, chapterContent: [], unAvailableContent: true })
     }
-    this.setState({ selectedReferenceSet: [], showBottomBar: false })
+    this.setState({ selectedReferenceSet: [], showBottomBar: false,showColorGrid:false })
   }
 
   // fetching chapter content on next or prev icon press
   queryBookFromAPI = async (val) => {
-    this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false, currentVisibleChapter: val != null ? JSON.parse(this.state.currentVisibleChapter) + val : this.state.currentVisibleChapter, error: null }, async () => {
+    this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false,showBottomBar:false, currentVisibleChapter: val != null ? parseInt(this.state.currentVisibleChapter) + val : this.props.chapterNumber, error: null }, async () => {
       try {
         if (this.props.downloaded) {
           if (this.state.downloadedBook.length > 0) {
@@ -344,15 +363,14 @@ class Bible extends Component {
             }
           }
           catch (error) {
-            this.setState({ isLoading: false, error: error, chapterContent: [] })
+            this.setState({ isLoading: false, error: error, chapterContent: [], unAvailableContent: true })
           }
         }
-
         this.props.updateVersionBook({
           bookId: this.props.bookId,
           bookName: this.props.bookName,
-          chapterNumber: JSON.parse(this.state.currentVisibleChapter),
-          totalChapters: this.props.totalChapters,
+          chapterNumber: parseInt(this.state.currentVisibleChapter) > getBookChaptersFromMapping(this.props.bookId) ? 1 :  parseInt(this.state.currentVisibleChapter),
+          totalChapters: getBookChaptersFromMapping(this.props.bookId)
         })
 
         this.getHighlights()
@@ -360,7 +378,7 @@ class Bible extends Component {
         this.isBookmark()
       }
       catch (error) {
-        this.setState({ isLoading: false, error: error, chapterContent: [] })
+        this.setState({ isLoading: false, error: error, chapterContent: [], unAvailableContent: true })
       }
     })
   }
@@ -410,9 +428,21 @@ class Bible extends Component {
       if (this.props.email) {
         firebase.database().ref("users/" + this.props.userId + "/highlights/" + this.props.sourceId + "/" + this.props.bookId + "/" + this.state.currentVisibleChapter).on('value', (snapshot) => {
           if (snapshot.val() != null) {
-            this.setState({
-              HightlightedVerseArray: snapshot.val()
-            })
+            let value = snapshot.val()
+            let HightlightedVerseArray = []
+            for (var i = 0; i < value.length; i++) {
+              if (isNaN(value[i])) {
+                HightlightedVerseArray.push(value[i])
+
+              } else {
+                let addColor = value[i] + ":" + Color.highlightColorA.const
+                HightlightedVerseArray.push(addColor)
+              }
+              this.setState({
+                HightlightedVerseArray
+              })
+            }
+
           }
           else {
             this.setState({
@@ -546,12 +576,22 @@ class Bible extends Component {
         for (let item of this.state.selectedReferenceSet) {
           let tempVal = item.split('_')
           for (var i = 0; i <= this.state.HightlightedVerseArray.length - 1; i++) {
-            if (this.state.HightlightedVerseArray[i] == JSON.parse(tempVal[2])) {
-              highlightCount++
+            let regexMatch = /(\d+)\:([a-zA-Z]+)/;
+            if (this.state.HightlightedVerseArray[i]) {
+              let match = this.state.HightlightedVerseArray[i].match(regexMatch)
+              if (match) {
+                if (parseInt(match[1]) == parseInt(tempVal[2])) {
+                  highlightCount++
+                }
+              }
             }
           }
         }
-        this.setState({ showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false, bottomHighlightText: selectedCount == highlightCount ? false : true })
+        this.setState({
+          showBottomBar: this.state.selectedReferenceSet.length > 0 ? true : false,
+          bottomHighlightText: selectedCount == highlightCount ? false : true,
+          showColorGrid: selectedCount == highlightCount ? false : true
+        })
       })
     }
   }
@@ -566,7 +606,7 @@ class Bible extends Component {
         for (let item of this.state.selectedReferenceSet) {
 
           let tempVal = item.split('_')
-          const verseNumber = JSON.parse(tempVal[2])
+          const verseNumber = parseInt(tempVal[2])
           let refModel = {
             bookId: id,
             bookName: name,
@@ -602,28 +642,66 @@ class Bible extends Component {
     }
 
 
-    this.setState({ selectedReferenceSet: [], showBottomBar: false })
+    this.setState({ selectedReferenceSet: [], showBottomBar: false,showColorGrid:false })
   }
   onbackNote = () => {
   }
-
-  doHighlight = async () => {
+  setHighlightColor = (color) => {
+    let value = Color.highlightColorA.const
+    switch (color) {
+      case Color.highlightColorA.code:
+        value = Color.highlightColorA.const
+        break;
+      case Color.highlightColorB.code:
+        value = Color.highlightColorB.const
+        break;
+      case Color.highlightColorC.code:
+        value = Color.highlightColorC.const
+        break;
+      case Color.highlightColorD.code:
+        value = Color.highlightColorD.const
+        break;
+      case Color.highlightColorE.code:
+        value = Color.highlightColorE.const
+        break;
+      default:
+        value = Color.highlightColorA.const
+    }
+    return value
+  }
+  doHighlight = async (color) => {
     if (this.state.connection_Status) {
       if (this.props.email) {
         var array = [...this.state.HightlightedVerseArray]
         for (let item of this.state.selectedReferenceSet) {
           let tempVal = item.split('_')
-          var index = array.indexOf(JSON.parse(tempVal[2]))
+          let selectedColor = this.setHighlightColor(color)
+          let val = tempVal[2].trim() + ":" + selectedColor
+
+          for (var i = 0; i < array.length; i++) {
+            let regexMatch = /(\d+)\:([a-zA-Z]+)/;
+            if (array[i]) {
+              let match = array[i].match(regexMatch)
+              if (match) {
+                if (parseInt(match[1]) == parseInt(tempVal[2])) {
+                  array.splice(i, 1)
+                  this.setState({ HightlightedVerseArray: array })
+                }
+              }
+            }
+          }
+          var index = array.indexOf(val)
+          //solve the issue of 2 color on single verse
           if (this.state.bottomHighlightText) {
             if (index == -1) {
-              array.push(JSON.parse(tempVal[2]))
+              array.push(val)
             }
             this.setState({ HightlightedVerseArray: array })
           }
-          else {
-            array.splice(index, 1)
-            this.setState({ HightlightedVerseArray: array })
-          }
+          // else {
+          //   array.splice(index, 1)
+          //   this.setState({ HightlightedVerseArray: array })
+          // }
         }
         firebase.database().ref("users/" + this.props.userId + "/highlights/" + this.props.sourceId + "/" + this.props.bookId + "/" + this.state.currentVisibleChapter).set(array)
       }
@@ -633,8 +711,7 @@ class Bible extends Component {
     } else {
       Alert.alert("Please check internet connection")
     }
-
-    this.setState({ selectedReferenceSet: [], showBottomBar: false })
+    this.setState({ selectedReferenceSet: [], showBottomBar: false, showColorGrid: false })
   }
 
   //share verse
@@ -651,7 +728,7 @@ class Bible extends Component {
 
     }
     Share.share({ message: shareText })
-    this.setState({ selectedReferenceSet: [], showBottomBar: false })
+    this.setState({ selectedReferenceSet: [], showBottomBar: false,showColorGrid:false })
   }
 
   componentWillUnmount() {
@@ -675,6 +752,111 @@ class Bible extends Component {
 
   onSearch = () => {
     this.props.navigation.navigate('Search')
+  }
+  changeSizeByOne = (value) => {
+    switch (this.props.sizeMode) {
+      case 0: {
+        if (value == -1) {
+          return
+        } else {
+          this.styles = styles(this.props.colorFile, smallFont)
+          this.props.updateFontSize(1)
+        }
+        break;
+      }
+      case 1: {
+        if (value == -1) {
+          this.styles = styles(this.props.colorFile, extraSmallFont)
+          this.props.updateFontSize(0)
+        } else {
+          this.styles = styles(this.props.colorFile, mediumFont)
+          this.props.updateFontSize(2)
+        }
+        break;
+      }
+      case 2: {
+        if (value == -1) {
+          this.styles = styles(this.props.colorFile, smallFont)
+          this.props.updateFontSize(1)
+        } else {
+          this.styles = styles(this.props.colorFile, largeFont)
+          this.props.updateFontSize(3)
+        }
+        break;
+      }
+      case 3: {
+        if (value == -1) {
+          this.styles = styles(this.props.colorFile, mediumFont)
+          this.props.updateFontSize(2)
+        } else {
+          this.styles = styles(this.props.colorFile, extraLargeFont)
+          this.props.updateFontSize(4)
+        }
+        break;
+      }
+      case 4: {
+        if (value == -1) {
+          this.styles = styles(this.props.colorFile, largeFont)
+          this.props.updateFontSize(3)
+        } else {
+          return
+        }
+        break;
+      }
+    }
+  }
+  ZoomTextSize = () => {
+    this.gestureResponder = createResponder({
+      onStartShouldSetResponder: (evt, gestureState) => true,
+      onStartShouldSetResponderCapture: (evt, gestureState) => true,
+      onMoveShouldSetResponder: (evt, gestureState) => true,
+      onMoveShouldSetResponderCapture: (evt, gestureState) => true,
+      onResponderGrant: (evt, gestureState) => { },
+      onResponderMove: (evt, gestureState) => {
+        let thumbSize = this.state.thumbSize;
+        if (gestureState.pinch && gestureState.previousPinch) {
+          thumbSize *= (gestureState.pinch / gestureState.previousPinch)
+          let currentDate = new Date().getTime()
+          let diff = currentDate - this.pinchTime
+          if (diff > this.pinchDiff) {
+            if (gestureState.pinch - gestureState.previousPinch > 5) {
+              // large
+              this.changeSizeByOne(1)
+            } else if (gestureState.previousPinch - gestureState.pinch > 5) {
+              // small
+              this.changeSizeByOne(-1)
+            }
+          }
+          this.pinchDiff = diff
+          this.pinchTime = currentDate
+        }
+        let { left, top } = this.state;
+        left += (gestureState.moveX - gestureState.previousMoveX);
+        top += (gestureState.moveY - gestureState.previousMoveY);
+        this.setState({
+          gestureState: {
+            ...gestureState
+          },
+          left, top, thumbSize
+        })
+      },
+      onResponderTerminationRequest: (evt, gestureState) => true,
+      onResponderRelease: (evt, gestureState) => {
+        this.setState({
+          gestureState: {
+            ...gestureState
+          }
+        })
+      },
+      onResponderTerminate: (evt, gestureState) => { },
+
+      onResponderSingleTapConfirmed: (evt, gestureState) => {
+      },
+
+      moveThreshold: 2,
+      debug: false
+    });
+
   }
   navigateToLanguage = () => {
     this.setState({ status: false })
@@ -705,11 +887,10 @@ class Bible extends Component {
 
     this.props.navigation.navigate("Settings")
   }
-
   toggleParallelView(value) {
     this.setState({ status: false })
     this.props.selectContent({ visibleParallelView: value })
-    // this.setState({ visibleParallelView: value })
+    
   }
 
   _onScrollEndDrag = () => {
@@ -789,11 +970,20 @@ class Bible extends Component {
             textContent={'Loading...'}
           />
         }
+        {(this.state.unAvailableContent && this.state.chapterContent.length == 0) &&
+          <View style={{ flex: 1, justifyContent: 'center', alignSelf: 'center' }}>
+            <ReloadButton styles={this.styles} reloadFunction={this.queryBookFromAPI} message={null} />
+          </View>
+        }
         {/** Main View for the single or parrallel View */}
-        <View style={this.styles.singleView}>
+        <View
+          style={this.styles.singleView}
+        >
           {/** Single view with only bible text */}
           <View style={{ flex: 1, flexDirection: 'column', width: this.props.visibleParallelView ? '50%' : width }}>
+
             <AnimatedFlatlist
+              {...this.gestureResponder}
               data={this.state.chapterContent}
               contentContainerStyle={this.state.chapterContent.length === 0 ? this.styles.centerEmptySet : { margin: 16, marginTop: this.props.visibleParallelView ? 46 : 90, paddingBottom: 90 }}
               extraData={this.state}
@@ -826,7 +1016,7 @@ class Bible extends Component {
               }
               keyExtractor={this._keyExtractor}
               ListFooterComponent={this.renderFooter}
-              ListEmptyComponent={<ReloadButton styles={this.styles} reloadFunction={this.queryBookFromAPI} />}
+            // ListEmptyComponent={<ReloadButton styles={this.styles} reloadFunction={this.queryBookFromAPI} />}
             />
             {
               this.state.chapterContent.length > 0 &&
@@ -845,9 +1035,17 @@ class Bible extends Component {
                   navigation={this.props.navigation}
                   queryBookFromAPI={this.queryBookFromAPI}
                 />
+                {(this.state.showColorGrid && this.state.bottomHighlightText && this.props.visibleParallelView == false) && 
+                  <HighlightColorGrid
+                    styles={this.styles}
+                    bottomHighlightText={this.state.bottomHighlightText}
+                    doHighlight={this.doHighlight}
+                  />
+                }
                 {this.props.visibleParallelView == false &&
                   this.state.showBottomBar &&
                   <SelectBottomTabBar
+                    showColorGrid={() => this.setState({ showColorGrid: !this.state.showColorGrid })}
                     styles={this.styles}
                     bottomHighlightText={this.state.bottomHighlightText}
                     doHighlight={this.doHighlight}
@@ -962,6 +1160,7 @@ const mapStateToProps = state => {
 
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
+    sizeMode: state.updateStyling.sizeMode,
 
     email: state.userInfo.email,
     userId: state.userInfo.uid,
@@ -983,6 +1182,7 @@ const mapDispatchToProps = dispatch => {
     APIAudioURL: (payload) => dispatch(APIAudioURL(payload)),
     selectContent: (payload) => dispatch(selectContent(payload)),
     APIBaseURL: (payload) => dispatch(APIBaseURL(payload)),
+    updateFontSize: (payload) => dispatch(updateFontSize(payload)),
 
   }
 }

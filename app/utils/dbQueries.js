@@ -1,3 +1,4 @@
+import dbHelper from './dbHelper';
 import DbHelper from './dbHelper';
 
 class DbQueries {
@@ -31,6 +32,9 @@ class DbQueries {
     }
     getLangaugeList() {
         return DbHelper.getLangaugeList()
+    }
+    deleteLangaugeList(){
+        return dbHelper.deleteLangaugeList()
     }
     queryVersions(lang, ver, bookId) {
         return DbHelper.queryVersions(lang, ver, bookId)

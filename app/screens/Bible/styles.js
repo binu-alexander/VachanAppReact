@@ -168,7 +168,7 @@ export const styles = (colorFile, sizeFile) => {
             fontWeight: 'bold'
         },
         verseTextSelectedHighlighted: {
-            backgroundColor: colorFile.highlightColor,
+            // backgroundColor: colorFile.highlightColor,
             textDecorationLine: 'underline',
             lineHeight: sizeFile.lineHeight
         },
@@ -176,11 +176,14 @@ export const styles = (colorFile, sizeFile) => {
             lineHeight: sizeFile.lineHeight
         },
         verseTextNotSelectedHighlighted: {
-            backgroundColor: colorFile.highlightColor,
+            // backgroundColor: colorFile.highlightColor,
             lineHeight: sizeFile.lineHeight
         },
         verseTextSelectedNotHighlighted: {
             textDecorationLine: 'underline',
+            lineHeight: sizeFile.lineHeight
+        },
+        textHighlight:{
             lineHeight: sizeFile.lineHeight
         },
         textStyle: {

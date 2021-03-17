@@ -33,7 +33,7 @@ class DrawerScreen extends Component {
 
   render() {
     const iconName = [
-      { icon: 'account-circle', pressIcon: 'Auth', text: this.props.email ? 'Profile' : 'LogIn/SignUp' },
+      { icon: 'account-circle', pressIcon: 'Auth', text: this.props.email ? 'Profile' : 'Log In/Sign Up' },
       { icon: 'bookmark', pressIcon: 'BookMarks', text: 'Bookmarks' },
       { icon: 'border-color', pressIcon: 'Highlights', text: 'Highlights' },
       { icon: 'note', pressIcon: 'Notes', text: 'Notes' },
@@ -85,7 +85,10 @@ class DrawerScreen extends Component {
               </TouchableOpacity>
             )
           }
-        <Text style={this.styles.versionText}>APP VERSION {this.state.currentVersion}</Text>
+           {/*for appstore app*/}
+        {/* <Text style={this.styles.versionText}>APP VERSION {this.state.currentVersion}</Text> */}
+        { /*//for tesing */}
+        <Text style={this.styles.versionText}>APP VERSION 1.0.0</Text>
         </ScrollView>
       </View>
     );
