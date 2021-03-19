@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { Root } from "native-base";
 import VersionCheck from 'react-native-version-check';
 import { fetchAllContent, fetchVersionLanguage, APIBaseURL, updateVersion } from './app/store/action/';
-import { Alert, BackHandler, Linking } from 'react-native';
+import { Alert, Linking } from 'react-native';
 import firebase from 'react-native-firebase'
 
 class App extends Component {
@@ -30,7 +30,6 @@ class App extends Component {
           [{
             text: 'Update',
             onPress: () => {
-              BackHandler.exitApp();
               Linking.openURL(updateNeeded.storeUrl)
             }
           },
