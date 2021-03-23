@@ -103,7 +103,7 @@ class ReferenceSelection extends Component {
           textContent={'Loading...'}
         /> : (
           this.props.error ?
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={this.styles.mainContainerReloadButton}>
               <ReloadButton
                 styles={this.styles}
                 reloadFunction={this.reloadBooks}

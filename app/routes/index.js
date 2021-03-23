@@ -121,7 +121,6 @@ const NavStack = createStackNavigator(
 )
 
 const DrawerNavigate = createDrawerNavigator({
-
   StackNavigate: {
     screen: NavStack
   },

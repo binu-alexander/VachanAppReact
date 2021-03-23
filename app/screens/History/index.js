@@ -152,7 +152,7 @@ class History extends Component {
           this.state.isLoading ? <ActivityIndicator animate={true} /> :
             data.list.map((item, index) =>
               <TouchableOpacity onPress={() => { this.goToContent(item) }}>
-                <Text style={this.styles.contentText}> {item.languageName} {item.versionCode} {item.bookName} {":"} {item.chapterNumber} </Text>
+                <Text style={this.styles.contentText}> {item.languageName} {item.versionCode} {item.bookName} {item.chapterNumber} </Text>
               </TouchableOpacity>
             )
         }

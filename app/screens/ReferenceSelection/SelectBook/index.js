@@ -90,28 +90,27 @@ class SelectBook extends Component {
   }
 
   componentDidMount() {
-
     this.getOTSize()
     this.getNTSize()
-    this.checkForNotAvailableBook()
+    // this.checkForNotAvailableBook()
   }
-  checkForNotAvailableBook() {
-    let found = false
-    for (var i = 0; i < this.props.books.length; i++) {
-      if (this.props.books[i].bookId == this.props.screenProps.selectedBookId) {
-        found = true
-        break;
-      }
-    }
-    if (!found) {
-      Alert.alert("Please Select the book ", "The book you were reading is not available in this version", [{ text: 'OK', onPress: () => { return } }]);
-  }
-}
+//   checkForNotAvailableBook() {
+//     let found = false
+//     for (var i = 0; i < this.props.books.length; i++) {
+//       if (this.props.books[i].bookId == this.props.screenProps.selectedBookId) {
+//         found = true
+//         break;
+//       }
+//     }
+//     if (!found) {
+//       Alert.alert("Please Select the book ", "The book you were reading is not available in this version", [{ text: 'OK', onPress: () => { return } }]);
+//   }
+// }
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.books !== this.props.books) {
       this.getOTSize()
       this.getNTSize()
-      this.checkForNotAvailableBook()
+      // this.checkForNotAvailableBook()
     }
   }
   renderItem = ({ item, index }) => {
@@ -215,14 +214,14 @@ class SelectBook extends Component {
               onViewableItemsChanged={this.onViewableItemsChanged}
               viewabilityConfig={this.viewabilityConfig}
               contentContainerStyle={{ paddingBottom: 60 }}
+              ListFooterComponent={<View style={{marginBottom:84}}/>}
             />
           </View>
         }
-        {(this.props.books && this.props.books.length > 0) && <Icon name="check-circle" color='rgba(62, 64, 149, 0.8)' onPress={() => this.props.screenProps.updateSelectedChapter(null, null)} size={64} style={{ position: 'absolute', bottom: 0, right: 0, padding: 20 }} />}
+        {(this.props.books && this.props.books.length > 0) && <Icon name="check-circle" color='rgba(62, 64, 149, 0.8)' onPress={() => this.props.screenProps.updateSelectedChapter(null, null)} size={64} style={{ position: 'absolute', bottom: 0, right: 0, paddingRight: 20,paddingBottom:10}} />}
       </View>
     );
   }
-
 }
 const mapStateToProps = state => {
   return {
