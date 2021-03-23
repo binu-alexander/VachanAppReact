@@ -101,6 +101,7 @@ class BibleChapter extends Component {
                                     bukName = response[i].bookNames[j].short
                                 }
                             }
+                            
                         }
 
                     }
