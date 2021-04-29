@@ -15,6 +15,7 @@ import { Header, Button, Right, Title } from 'native-base'
 import Color from '../../utils/colorConstants'
 import ReloadButton from '../ReloadButton';
 import vApi from '../../utils/APIFetch';
+import {getHeading} from '../../utils/UtilFunctions'
 
 class BibleChapter extends Component {
     constructor(props) {
@@ -45,13 +46,12 @@ class BibleChapter extends Component {
                     let url = "bibles" + "/" + this.props.parallelLanguage.sourceId + "/" + "books" + "/" + bookId + "/" + "chapter" + "/" + this.state.currentParallelViewChapter
                     let response = await vApi.get(url)
                     if (response.chapterContent) {
-                        let chapterContent = response.chapterContent.verses
-                        let totalVerses = response.chapterContent.verses.length
-                        let parallelBibleHeading = response.chapterContent.metadata &&
-                            (response.chapterContent.metadata[0].section && response.chapterContent.metadata[0].section.text)
+                        let chapterContent = response.chapterContent.contents
+                        let totalVerses = response.chapterContent.contents.length
+                        // let parallelBibleHeading = getHeading(response.chapterContent.contents)
                         this.setState({
                             parallelBible: chapterContent,
-                            parallelBibleHeading: parallelBibleHeading,
+                            parallelBibleHeading: getHeading(response.chapterContent.contents),
                             totalVerses: totalVerses,
                             loading: false,
                             error: false, message: null
@@ -167,7 +167,6 @@ class BibleChapter extends Component {
         }
     }
     render() {
-
         this.styles = styles(this.props.colorFile, this.props.sizeFile);
         return (
             <View style={this.styles.container}>
@@ -201,7 +200,7 @@ class BibleChapter extends Component {
                             <ScrollView contentContainerStyle={{ paddingBottom: 20 }} showsVerticalScrollIndicator={false} ref={(ref) => { this.scrollViewRef = ref; }} >
                                 {this.state.parallelBible && this.state.parallelBible.map((verse, index) =>
                                     <View style={{ marginHorizontal: 16, paddingTop: 8 }}>
-                                        {verse.number == 1 ?
+                                        {verse.verseNumber == 1 ?
                                             <Text letterSpacing={24}
                                                 style={this.styles.verseWrapperText}>
                                                 {this.state.parallelBibleHeading != null ?
@@ -213,14 +212,14 @@ class BibleChapter extends Component {
                                                         {this.state.currentParallelViewChapter}{" "}
                                                     </Text>
                                                     <Text style={this.styles.textString}>
-                                                        {getResultText(verse.text)}
+                                                        {getResultText(verse.verseText)}
                                                     </Text>
                                                 </Text>
                                                 {
-                                                    (verse.metadata && verse.metadata[0].section)
+                                                    getHeading(verse.contents)
                                                         ?
                                                         <Text style={this.styles.sectionHeading}>
-                                                            {"\n"}{verse.metadata[0].section.text}
+                                                            {"\n"}{getHeading(verse.contents)}
                                                         </Text>
                                                         : null
                                                 }
@@ -230,18 +229,18 @@ class BibleChapter extends Component {
                                                 style={this.styles.verseWrapperText}>
                                                 <Text>
                                                     <Text style={this.styles.verseNumber} >
-                                                        {verse.number}{" "}
+                                                        {verse.verseNumber}{" "}
                                                     </Text>
                                                     <Text style={this.styles.textString}
                                                     >
-                                                        {getResultText(verse.text)}
+                                                        {getResultText(verse.verseText)}
                                                     </Text>
                                                 </Text>
                                                 {
-                                                    (verse.metadata && verse.metadata[0].section)
+                                                    getHeading(verse.contents)
                                                         ?
                                                         <Text style={this.styles.sectionHeading}>
-                                                            {"\n"}{verse.metadata[0].section.text}
+                                                            {"\n"}{getHeading(verse.contents)}
                                                         </Text>
                                                         : null
                                                 }

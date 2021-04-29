@@ -1,6 +1,6 @@
 
 
-export { updateVersion, updateContentType, updateVersionBook, updateMetadata, parallelMetadta,APIBaseURL,APIAudioURL } from './updateVersion'
+export { updateVersion, updateContentType, updateVersionBook, updateMetadata, parallelMetadta,APIBaseURL,APIAudioURL,updateLangList } from './updateVersion'
 export { updateFontSize, updateColorMode,updateNetConnection } from './updateStyling'
 
 export { vachanAPIFetch,vachanAPISuccess, vachanAPIFailure } from './apiFetch/vachanAPIFetch'

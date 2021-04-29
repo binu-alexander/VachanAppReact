@@ -122,7 +122,7 @@ class DbHelper {
 		return null
 	}
 
-	async getVersionMetaData(langName,verCode,sourceId){
+	async getVersionMetaData(langName, verCode, sourceId) {
 		let realm = await this.getRealm();
 		if (realm) {
 			let result = realm.objectForPrimaryKey("LanguageModel", langName)
@@ -132,7 +132,7 @@ class DbHelper {
 		}
 		return null
 	}
-	
+
 
 	async clearHistory() {
 		let realm = await this.getRealm();
@@ -162,6 +162,8 @@ class DbHelper {
 			for (var i = 0; i < languages.length; i++) {
 				for (var j = 0; j < books.length; j++) {
 					var bookArr = []
+					console.log("LANGUAGE NAME ",languages[i].languageName)
+					console.log("BOOK NAMELIST  ", books[j].language.name)
 					if (languages[i].languageName.toLowerCase() == books[j].language.name) {
 						for (var k = 0; k < books[j].bookNames.length; k++) {
 							const bookObj = {
@@ -198,14 +200,39 @@ class DbHelper {
 			}
 		}
 	}
-	async deleteLangaugeList(){
+	async deleteLangaugeList() {
 		let realm = await this.getRealm();
 		realm.write(() => {
 			let languages = realm.objects('LanguageModel')
 			realm.delete(languages);
 		});
 	}
+	async updateLanguageList() {
+		let realm = await this.getRealm();
+		if (realm) {
+			let bible = realm.objects("BookModel")
+			if (Object.keys(bible).length > 0) {
+				for (var i = 0; i < bible.length; i++) {
+					let result = realm.objectForPrimaryKey("LanguageModel", bible[i].languageName)
+					let resultsA = result.versionModels
+					var resultsB = resultsA.filtered('versionCode  =="' + bible[i].versionCode + '"')
+					if (resultsB) {
+						realm.write(() => {
+							resultsB[0].downloaded = true;
 
+						})
+					} else {
+						realm.write(() => {
+							let bibleA = bible.filtered('languageName ==[c] "' + bible[i].languageName + '" && versionCode ==[c] "' + bible[i].versionCode + '"')
+							realm.delete(bibleA);
+						})
+					}
+
+				}
+			}
+		}
+
+	}
 	//get all available booklist
 	async getDownloadedBook(langName) {
 		let realm = await this.getRealm();

@@ -34,7 +34,7 @@ import BibleChapter from '../../components/Bible/BibleChapter';
 import firebase from 'react-native-firebase';
 import vApi from '../../utils/APIFetch';
 import HighlightColorGrid from '../../components/Bible/HighlightColorGrid';
-
+import {getHeading} from '../../utils/UtilFunctions'
 
 const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
 const width = Dimensions.get('window').width;
@@ -317,6 +317,7 @@ class Bible extends Component {
     }
 
   }
+  
   // fetch chapter on didmount call
   async getChapter() {
     try {
@@ -326,9 +327,8 @@ class Bible extends Component {
         if (this.props.baseAPI != null) {
           var content = await vApi.get("bibles" + "/" + this.props.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentVisibleChapter)
           if (content) {
-            var header = content.chapterContent.metadata &&
-              (content.chapterContent.metadata[0].section && content.chapterContent.metadata[0].section.text)
-            this.setState({ chapterHeader: header, chapterContent: content.chapterContent.verses, error: null, isLoading: false, currentVisibleChapter: this.state.currentVisibleChapter })
+            let header=getHeading(content.chapterContent.contents)
+            this.setState({ chapterHeader: header, chapterContent: content.chapterContent.contents, error: null, isLoading: false, currentVisibleChapter: this.state.currentVisibleChapter })
           }
         }
       }
@@ -358,9 +358,10 @@ class Bible extends Component {
           try {
             var content = await vApi.get("bibles" + "/" + this.props.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentVisibleChapter)
             if (content) {
-              var header = content.chapterContent.metadata &&
-                (content.chapterContent.metadata[0].section && content.chapterContent.metadata[0].section.text)
-              this.setState({ chapterHeader: header, chapterContent: content.chapterContent.verses, isLoading: false, currentVisibleChapter: this.state.currentVisibleChapter })
+              let header = getHeading(content.chapterContent.contents)
+              // var header = content.chapterContent.metadata &&
+              //   (content.chapterContent.metadata[0].section && content.chapterContent.metadata[0].section.text)
+              this.setState({ chapterHeader: header, chapterContent: content.chapterContent.contents, isLoading: false, currentVisibleChapter: this.state.currentVisibleChapter })
             }
           }
           catch (error) {
@@ -1004,6 +1005,7 @@ class Bible extends Component {
                   <VerseView
                     ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
                     verseData={item}
+                    sectionHeading={getHeading(this.props.downloaded ? null : item.contents)}
                     chapterHeader={this.state.chapterHeader}
                     index={index}
                     styles={this.styles}

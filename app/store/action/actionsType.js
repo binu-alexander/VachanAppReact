@@ -50,3 +50,4 @@ export const ALL_LANGUAGE_FAILURE = 'all_language_failure'
 export const USER_INFO = 'user_info'
 
 export const SELECT_CONTENT = 'select_content'
+export const UPDATE_LANGUAGELIST  ='update_languageList'
