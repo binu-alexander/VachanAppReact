@@ -111,33 +111,30 @@ class VerseView extends Component {
   }
 
   render() {
-    let verseNumber =this.props.downloaded ? this.props.verseData.number:   this.props.verseData.verseNumber
-    let verseText =this.props.downloaded ? this.props.verseData.text:   this.props.verseData.verseText
+    let verseNumber = this.props.downloaded ? this.props.verseData.number : this.props.verseData.verseNumber
+    let verseText = this.props.downloaded ? this.props.verseData.text : this.props.verseData.verseText
+    let sectionHeading = this.props.downloaded ? this.props.verseData.section : this.props.sectionHeading
     let obj = this.props.chapterNumber + '_' + this.props.index + '_' + verseNumber + '_' + verseText;
     let isSelect = this.has(this.props.selectedReferences, obj)
     let isHighlight = this.isHighlight()
     let isNoted = this.isNoted()
-   
-    if (verseNumber == 1)
-     {
+
+    if (verseNumber == 1) {
       return (
         <Text style={this.props.styles.textStyle}>
           {
-            this.props.chapterHeader ? 
+            this.props.chapterHeader ?
               <Text style={this.props.styles.sectionHeading}>
                 {this.props.chapterHeader} {"\n"}
               </Text>
               :
               null
           }
-          <Text onPress={() => { this.props.downloaded  ? null : this.onPress() }}>
+          <Text onPress={() => { this.props.downloaded ? null : this.onPress() }}>
             <Text style={this.props.styles.verseChapterNumber}>
               {this.props.chapterNumber}{" "}
             </Text>
             <Text
-              //  style={[isSelect && isHighlight ? this.props.styles.verseTextSelectedHighlighted
-              //   : !isSelect && !isHighlight? this.props.styles.verseTextNotSelectedNotHighlighted
-              //     : !isSelect && isHighlight? this.props.styles.verseTextNotSelectedHighlighted : this.props.styles.verseTextSelectedNotHighlighted]}
               style={[this.props.styles.textHighlight,
               isSelect && isHighlight ?
                 {
@@ -155,9 +152,9 @@ class VerseView extends Component {
             {isNoted ? <Icon onPress={() => this.goToNote(verseNumber)} name="note-outline" size={20} style={{ padding: 8 }} /> : null}
           </Text>
           {
-            this.props.sectionHeading?
+            sectionHeading ?
               <Text style={this.props.styles.sectionHeading}>
-                {"\n"} {this.props.sectionHeading}
+                {"\n"} {sectionHeading}
               </Text>
               : null
           }
@@ -165,20 +162,12 @@ class VerseView extends Component {
       )
     }
     return (
-      <Text style={this.props.styles.textStyle} onPress={() => { this.props.downloaded  ? null : this.onPress()}} >
+      <Text style={this.props.styles.textStyle} onPress={() => { this.props.downloaded ? null : this.onPress() }} >
         <Text>
           <Text style={this.props.styles.verseNumber}>
             {verseNumber}{" "}
           </Text>
           <Text
-            // style={[isSelect && isHighlight
-            //   ? this.props.styles.verseTextSelectedHighlighted
-            //   : !isSelect && !isHighlight
-            //     ? this.props.styles.verseTextNotSelectedNotHighlighted
-            //     : !isSelect && isHighlight
-            //       ? this.props.styles.verseTextNotSelectedHighlighted
-            //       : this.props.styles.verseTextSelectedNotHighlighted
-            // ]}
             style={[this.props.styles.textHighlight,
             isSelect && isHighlight ?
               {
@@ -195,9 +184,9 @@ class VerseView extends Component {
           {isNoted ? <Icon onPress={() => this.goToNote(verseNumber)} name="note-outline" size={20} style={{ padding: 8 }} /> : null}
         </Text>
         {
-          this.props.sectionHeading ?
+          sectionHeading ?
             <Text style={this.props.styles.sectionHeading}>
-              {"\n"} {this.props.sectionHeading}
+              {"\n"} {sectionHeading}
             </Text>
             : null
         }
@@ -213,7 +202,7 @@ const mapStateToProps = state => {
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
     visibleParallelView: state.selectContent.visibleParallelView,
-    downloaded:state.updateVersion.downloaded
+    downloaded: state.updateVersion.downloaded
   }
 }
 const mapDispatchToProps = dispatch => {

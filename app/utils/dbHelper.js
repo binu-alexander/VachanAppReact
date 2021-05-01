@@ -13,7 +13,6 @@ import VerseMetadataModel from '../models/VerseMetadataModel';
 import bookNameList from '../models/bookNameList';
 import LanguageMetaData from '../models/LanguageMetaData'
 
-
 import {
 	Platform,
 } from 'react-native';
@@ -162,8 +161,6 @@ class DbHelper {
 			for (var i = 0; i < languages.length; i++) {
 				for (var j = 0; j < books.length; j++) {
 					var bookArr = []
-					console.log("LANGUAGE NAME ",languages[i].languageName)
-					console.log("BOOK NAMELIST  ", books[j].language.name)
 					if (languages[i].languageName.toLowerCase() == books[j].language.name) {
 						for (var k = 0; k < books[j].bookNames.length; k++) {
 							const bookObj = {

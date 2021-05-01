@@ -51,8 +51,7 @@ class LanguageList extends Component {
       // BackHandler.addEventListener('hardwareBackPress', this.onBack);
       const scheduledDate = new Date()
       let resolution = Date.parse(scheduledDate) - Date.parse(this.props.langTimeStamp)
-      // var resolutionTime = (((resolution / 1000) / 60 / 60 / 24))
-      var resolutionTime = (((resolution / 1000) / 60 ))
+      var resolutionTime = (((resolution / 1000) / 60 / 60 / 24))
       if (resolutionTime > 1) {
         let books = await vApi.get("booknames")
         let lang = this.props.bibleLanguages[0].content
@@ -243,6 +242,7 @@ class LanguageList extends Component {
             }
             let chapterModel = {
               chapterNumber: c + 1,
+              //it was for verse grid not in current use
               numberOfVerses: parseInt(vNumber),
               chapterHeading: getHeading(content[id].chapters[c].contents),
               verses: verseModels,
@@ -326,8 +326,6 @@ class LanguageList extends Component {
     )
   }
   render() {
-    console.log(" IS DOWNLOADING ", this.state.startDownload)
-    console.log(" IS DOWNLOADING ", this.state.startDownload)
 
     return (
       <View style={this.styles.MainContainer}>
