@@ -34,7 +34,7 @@ import BibleChapter from '../../components/Bible/BibleChapter';
 import firebase from 'react-native-firebase';
 import vApi from '../../utils/APIFetch';
 import HighlightColorGrid from '../../components/Bible/HighlightColorGrid';
-import {getHeading} from '../../utils/UtilFunctions'
+import { getHeading } from '../../utils/UtilFunctions'
 
 const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
 const width = Dimensions.get('window').width;
@@ -246,11 +246,12 @@ class Bible extends Component {
     if (item) {
       let bookName = null
       let bookId = null
-      for (var i = 0; i <= item.books.length - 1; i++) {
-        if (item.books[i].bookId == this.props.bookId) {
-          bookName = item.books[i].bookName
-          bookId = item.books[i].bookId
-        } else {
+      let bookItem = item.books.filter((i) => i.bookId == this.props.bookId)
+      if (bookItem) {
+        bookName = bookItem[0].bookName
+        bookId = bookItem[0].bookId
+      } else {
+        for (var i = 0; i <= item.books.length - 1; i++) {
           if (item.books[i].bookId >= 39) {
             if (item.books[i].bookId == 'gen') {
               bookName = item.books[i].bookName
@@ -294,7 +295,6 @@ class Bible extends Component {
         language: item.languageName, versionCode: item.versionCode,
         downloaded: item.downloaded, sourceId: item.sourceId
       })
-
     } else {
       return
     }
@@ -317,7 +317,7 @@ class Bible extends Component {
     }
 
   }
-  
+
   // fetch chapter on didmount call
   async getChapter() {
     try {
@@ -327,7 +327,7 @@ class Bible extends Component {
         if (this.props.baseAPI != null) {
           var content = await vApi.get("bibles" + "/" + this.props.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentVisibleChapter)
           if (content) {
-            let header=getHeading(content.chapterContent.contents)
+            let header = getHeading(content.chapterContent.contents)
             this.setState({ chapterHeader: header, chapterContent: content.chapterContent.contents, error: null, isLoading: false, currentVisibleChapter: this.state.currentVisibleChapter })
           }
         }
@@ -359,8 +359,6 @@ class Bible extends Component {
             var content = await vApi.get("bibles" + "/" + this.props.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentVisibleChapter)
             if (content) {
               let header = getHeading(content.chapterContent.contents)
-              // var header = content.chapterContent.metadata &&
-              //   (content.chapterContent.metadata[0].section && content.chapterContent.metadata[0].section.text)
               this.setState({ chapterHeader: header, chapterContent: content.chapterContent.contents, isLoading: false, currentVisibleChapter: this.state.currentVisibleChapter })
             }
           }

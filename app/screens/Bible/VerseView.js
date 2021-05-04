@@ -12,15 +12,20 @@ class VerseView extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      unableSelection: false
+      unableSelection: false,
+      verseNumber:this.props.downloaded ? this.props.verseData.number : this.props.verseData.verseNumber,
+      verseText:this.props.downloaded ? this.props.verseData.text : this.props.verseData.verseText,
+      sectionHeading:this.props.downloaded ? this.props.verseData.section : this.props.sectionHeading
     }
   }
   onPress() {
+    // let verseNumber = this.props.downloaded ? this.props.verseData.number : this.props.verseData.verseNumber
+    // let verseText = this.props.downloaded ? this.props.verseData.text : this.props.verseData.verseText
     this.props.getSelection(
       this.props.index,
       this.props.chapterNumber,
-      this.props.verseData.verseNumber,
-      this.props.verseData.verseText
+      this.state.verseNumber,
+      this.state.verseText
     );
     this.setState({ unableSelection: false })
   }
@@ -72,12 +77,13 @@ class VerseView extends Component {
     return value
   }
   isHighlight() {
+    // let verseNumber = this.props.downloaded ? this.props.verseData.number : this.props.verseData.verseNumber
     for (var i = 0; i <= this.props.HightlightedVerse.length; i++) {
       if (this.props.HightlightedVerse[i]) {
         let regexMatch = /(\d+)\:([a-zA-Z]+)/;
         let match = this.props.HightlightedVerse[i].match(regexMatch)
         if (match) {
-          if (parseInt(match[1]) == this.props.verseData.verseNumber) {
+          if (parseInt(match[1]) == this.state.verseNumber) {
             return this.getColor(match[2])
           }
         }
@@ -95,7 +101,7 @@ class VerseView extends Component {
         }
       }
     }
-    var value = arr.filter(v => v == this.props.verseData.number)
+    var value = arr.filter(v => v == this.state.verseNumber)
     if (value[0]) {
       return true
     }
@@ -111,14 +117,13 @@ class VerseView extends Component {
   }
 
   render() {
-    let verseNumber = this.props.downloaded ? this.props.verseData.number : this.props.verseData.verseNumber
-    let verseText = this.props.downloaded ? this.props.verseData.text : this.props.verseData.verseText
-    let sectionHeading = this.props.downloaded ? this.props.verseData.section : this.props.sectionHeading
+    let verseNumber = this.state.verseNumber
+    let verseText = this.state.verseText
+    let sectionHeading = this.state.sectionHeading
     let obj = this.props.chapterNumber + '_' + this.props.index + '_' + verseNumber + '_' + verseText;
     let isSelect = this.has(this.props.selectedReferences, obj)
     let isHighlight = this.isHighlight()
     let isNoted = this.isNoted()
-
     if (verseNumber == 1) {
       return (
         <Text style={this.props.styles.textStyle}>
@@ -130,7 +135,7 @@ class VerseView extends Component {
               :
               null
           }
-          <Text onPress={() => { this.props.downloaded ? null : this.onPress() }}>
+          <Text onPress={() => { this.onPress() }}>
             <Text style={this.props.styles.verseChapterNumber}>
               {this.props.chapterNumber}{" "}
             </Text>
@@ -162,7 +167,7 @@ class VerseView extends Component {
       )
     }
     return (
-      <Text style={this.props.styles.textStyle} onPress={() => { this.props.downloaded ? null : this.onPress() }} >
+      <Text style={this.props.styles.textStyle} onPress={() => { this.onPress() }} >
         <Text>
           <Text style={this.props.styles.verseNumber}>
             {verseNumber}{" "}

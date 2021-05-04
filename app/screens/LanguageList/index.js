@@ -21,7 +21,7 @@ var moment = require('moment');
 class LanguageList extends Component {
   static navigationOptions = ({ navigation }) => ({
     headerTitle: 'Languages',
-    // headerLeft: (<HeaderBackButton tintColor={Color.White} onPress={() => navigation.state.params.handleBack()} />),
+    headerLeft: (<HeaderBackButton tintColor={Color.White} onPress={() => navigation.state.params.handleBack()} />),
   });
   constructor(props) {
     super(props)
@@ -47,7 +47,7 @@ class LanguageList extends Component {
   async recallFunc() {
     try {
       await this.props.fetchAllContent()
-      // this.props.navigation.setParams({ handleBack: this.onBack })
+      this.props.navigation.setParams({ handleBack: this.onBack })
       // BackHandler.addEventListener('hardwareBackPress', this.onBack);
       const scheduledDate = new Date()
       let resolution = Date.parse(scheduledDate) - Date.parse(this.props.langTimeStamp)
@@ -182,7 +182,6 @@ class LanguageList extends Component {
       })
     }
     catch (error) {
-      console.log("ERROR ", error)
     }
   }
 
@@ -205,7 +204,6 @@ class LanguageList extends Component {
 
         }
       }
-      // console.log(" book model ",bookModels)
       await DbQueries.addNewVersion(langName, verCode, bookModels, sourceId)
       await this.fetchLanguages()
       this.setState({ startDownload: false })
@@ -213,14 +211,12 @@ class LanguageList extends Component {
       console.log(" Error", error)
       this.setState({ startDownload: false })
       Alert.alert("", "Something went wrong. Try Again", [{ text: 'OK', onPress: () => { return } }], { cancelable: false });
-      // console.log(" Error",error)
     }
   }
 
   // this function is calling in downloadbible function
   getChapters = (content, bookId) => {
     try {
-      // console.log("VERSE MODEL ",verseData.contents)
       let chapterModels = []
       let chapterHeading = null
       let vNumber = null
@@ -228,7 +224,6 @@ class LanguageList extends Component {
         if (content != null && id == bookId) {
           for (var c = 0; c < content[id].chapters.length; c++) {
             var verseModels = []
-            // console.log("CHAPTER NUMBER ",c)
             for (var v = 0; v < content[id].chapters[c].contents.length; v++) {
               let verseData = content[id].chapters[c].contents[v]
               if (verseData.verseNumber) {
@@ -249,7 +244,6 @@ class LanguageList extends Component {
             }
             chapterModels.push(chapterModel)
           }
-          // console.log("CHAPTER MODELS ", chapterModels[3])
           return chapterModels
         }
       }
