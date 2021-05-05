@@ -13,19 +13,16 @@ class VerseView extends Component {
     super(props)
     this.state = {
       unableSelection: false,
-      verseNumber:this.props.downloaded ? this.props.verseData.number : this.props.verseData.verseNumber,
-      verseText:this.props.downloaded ? this.props.verseData.text : this.props.verseData.verseText,
-      sectionHeading:this.props.downloaded ? this.props.verseData.section : this.props.sectionHeading
     }
   }
   onPress() {
-    // let verseNumber = this.props.downloaded ? this.props.verseData.number : this.props.verseData.verseNumber
-    // let verseText = this.props.downloaded ? this.props.verseData.text : this.props.verseData.verseText
+    let verseNumber = this.props.downloaded ? this.props.verseData.number : this.props.verseData.verseNumber
+    let verseText = this.props.downloaded ? this.props.verseData.text : this.props.verseData.verseText
     this.props.getSelection(
       this.props.index,
       this.props.chapterNumber,
-      this.state.verseNumber,
-      this.state.verseText
+     verseNumber,
+      verseText
     );
     this.setState({ unableSelection: false })
   }
@@ -77,13 +74,13 @@ class VerseView extends Component {
     return value
   }
   isHighlight() {
-    // let verseNumber = this.props.downloaded ? this.props.verseData.number : this.props.verseData.verseNumber
+    let verseNumber = this.props.downloaded ? this.props.verseData.number : this.props.verseData.verseNumber
     for (var i = 0; i <= this.props.HightlightedVerse.length; i++) {
       if (this.props.HightlightedVerse[i]) {
         let regexMatch = /(\d+)\:([a-zA-Z]+)/;
         let match = this.props.HightlightedVerse[i].match(regexMatch)
         if (match) {
-          if (parseInt(match[1]) == this.state.verseNumber) {
+          if (parseInt(match[1]) == verseNumber) {
             return this.getColor(match[2])
           }
         }
@@ -117,9 +114,9 @@ class VerseView extends Component {
   }
 
   render() {
-    let verseNumber = this.state.verseNumber
-    let verseText = this.state.verseText
-    let sectionHeading = this.state.sectionHeading
+    let verseNumber=this.props.downloaded ? this.props.verseData.number : this.props.verseData.verseNumber
+    let   verseText=this.props.downloaded ? this.props.verseData.text : this.props.verseData.verseText
+    let  sectionHeading=this.props.downloaded ? this.props.verseData.section : this.props.sectionHeading
     let obj = this.props.chapterNumber + '_' + this.props.index + '_' + verseNumber + '_' + verseText;
     let isSelect = this.has(this.props.selectedReferences, obj)
     let isHighlight = this.isHighlight()

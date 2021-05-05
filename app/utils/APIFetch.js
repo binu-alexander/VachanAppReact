@@ -12,8 +12,7 @@ class vApi {
     };
     const state = store.getState()
     if(state.updateVersion.baseAPI != null){
-    // state.updateVersion.baseAPI
-      return fetch('https://www.api.vachanonline.net/v1/' + url, requestParams)
+      return fetch(state.updateVersion.baseAPI + url, requestParams)
         .then(ApiUtils.checkStatus)
         .then(response => {
           return response.json();

@@ -42,6 +42,7 @@ class Login extends Component {
         .auth()
         .signInWithEmailAndPassword(this.state.email, this.state.password)
         .then((res) => {
+          console.log(" RES ",res)
           this.props.navigation.navigate("Bible")
           this.setState({
             isLoading: false,

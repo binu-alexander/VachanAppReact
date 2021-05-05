@@ -23,7 +23,7 @@ class ProfilePage extends Component {
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
   async componentDidMount() {
-    await firebase.auth().onAuthStateChanged((user) => {
+    this.unsubscriber =  firebase.auth().onAuthStateChanged((user) => {
       if (!user) {
         return
       }
@@ -37,7 +37,11 @@ class ProfilePage extends Component {
       }
     })
   }
-  
+  componentWillUnmount(){
+    if (this.unsubscriber) {
+      this.unsubscriber();
+    }
+  }
   render() {
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
     return (

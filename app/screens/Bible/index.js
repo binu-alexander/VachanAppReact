@@ -18,7 +18,7 @@ import { createResponder } from 'react-native-gesture-responder';
 import DbQueries from '../../utils/dbQueries';
 import VerseView from './VerseView';
 import { extraSmallFont, smallFont, mediumFont, largeFont, extraLargeFont } from '../../utils/dimens.js'
-import { APIAudioURL, fetchVersionBooks, selectContent, APIBaseURL, updateNetConnection, userInfo, updateVersionBook, updateFontSize, updateVersion, updateMetadata } from '../../store/action/'
+import { APIAudioURL, fetchVersionBooks, selectContent, updateNetConnection, userInfo, updateVersionBook, updateFontSize, updateVersion, updateMetadata } from '../../store/action/'
 import { getBookChaptersFromMapping } from '../../utils/UtilFunctions'
 import CustomHeader from '../../components/Bible/CustomHeader'
 import SelectBottomTabBar from '../../components/Bible/SelectBottomTabBar';
@@ -326,6 +326,7 @@ class Bible extends Component {
       } else {
         if (this.props.baseAPI != null) {
           var content = await vApi.get("bibles" + "/" + this.props.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentVisibleChapter)
+          console.log(" SOURCE ID ",this.props.sourceId)
           if (content) {
             let header = getHeading(content.chapterContent.contents)
             this.setState({ chapterHeader: header, chapterContent: content.chapterContent.contents, error: null, isLoading: false, currentVisibleChapter: this.state.currentVisibleChapter })
@@ -1185,9 +1186,7 @@ const mapDispatchToProps = dispatch => {
     updateNetConnection: (payload) => dispatch(updateNetConnection(payload)),
     APIAudioURL: (payload) => dispatch(APIAudioURL(payload)),
     selectContent: (payload) => dispatch(selectContent(payload)),
-    APIBaseURL: (payload) => dispatch(APIBaseURL(payload)),
     updateFontSize: (payload) => dispatch(updateFontSize(payload)),
-
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Bible) 

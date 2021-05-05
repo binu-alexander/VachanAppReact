@@ -21,14 +21,12 @@ class Auth extends Component {
 
   logOut = async() => {
     try {
-      await GoogleSignin.revokeAccess();
       await firebase.auth().signOut()
-      await GoogleSignin.signOut();
       this.props.userInfo({ email: null, uid: null, userName: '', phoneNumber: null, photo: null })
       this.setState({ user: null })
       this.props.navigation.navigate("Bible")
     } catch (error) {
-      console.error("logout error",error);
+      console.log("logout error",error);
     }
    
   }
