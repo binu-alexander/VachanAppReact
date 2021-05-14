@@ -247,7 +247,7 @@ class Bible extends Component {
       let bookName = null
       let bookId = null
       let bookItem = item.books.filter((i) => i.bookId == this.props.bookId)
-      if (bookItem) {
+      if (bookItem.length>0) {
         bookName = bookItem[0].bookName
         bookId = bookItem[0].bookId
       } else {
@@ -726,7 +726,6 @@ class Bible extends Component {
       shareText = shareText.concat(this.props.bookName + " " + chapterNumber + ":" + verseNumber + " ");
       shareText = shareText.concat(tempVal[3])
       shareText = shareText.concat("\n");
-
     }
     Share.share({ message: shareText })
     this.setState({ selectedReferenceSet: [], showBottomBar: false, showColorGrid: false })

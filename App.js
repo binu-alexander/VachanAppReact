@@ -51,7 +51,7 @@ class App extends Component {
       SplashScreen.hide()
     }, 400)
     firebase.database().ref("/apiBaseUrl/").on('value', (snapshot) => {
-	this.props.APIBaseURL('https://www.api.vachanonline.net/v1/')
+	this.props.APIBaseURL('https://stagingapi.autographamt.com/v1/')
       //this.props.APIBaseURL(snapshot.val())
       this.props.fetchVersionLanguage()
       this.props.fetchAllContent()

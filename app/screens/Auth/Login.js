@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { ActivityIndicator, View, KeyboardAvoidingView, Platform, Text, Alert, TextInput, Button, Image } from 'react-native';
 import firebase from 'react-native-firebase'
-import { userInfo } from '../../store/action'
+import { userInfo,userPassLogedIn } from '../../store/action'
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { GoogleSignin, GoogleSigninButton,statusCodes, } from 'react-native-google-signin';
@@ -42,7 +42,7 @@ class Login extends Component {
         .auth()
         .signInWithEmailAndPassword(this.state.email, this.state.password)
         .then((res) => {
-          console.log(" RES ",res)
+          this.props.userPassLogedIn({logedIn:true})
           this.props.navigation.navigate("Bible")
           this.setState({
             isLoading: false,
@@ -75,6 +75,7 @@ class Login extends Component {
           const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken);
           // Login with the credential
           await firebase.auth().signInWithCredential(credential);
+          this.props.userPassLogedIn({logedIn:false})
             this.setState({ isLoading: false })
             this.props.navigation.navigate("Bible")
         })
@@ -228,7 +229,8 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = dispatch => {
   return {
-    userInfo: (payload) => dispatch(userInfo(payload))
+    userInfo: (payload) => dispatch(userInfo(payload)),
+    userPassLogedIn:(payload)=>dispatch(userPassLogedIn(payload))
   }
 }
 
