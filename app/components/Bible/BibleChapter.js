@@ -15,7 +15,7 @@ import { Header, Button, Right, Title } from 'native-base'
 import Color from '../../utils/colorConstants'
 import ReloadButton from '../ReloadButton';
 import vApi from '../../utils/APIFetch';
-import {getHeading} from '../../utils/UtilFunctions'
+import { getHeading } from '../../utils/UtilFunctions'
 
 class BibleChapter extends Component {
     constructor(props) {
@@ -185,7 +185,7 @@ class BibleChapter extends Component {
                     <Spinner
                         visible={true}
                         textContent={'Loading...'}
-                    />}
+                    /> }
                 {
                     (this.state.parallelBible == null && this.state.error) ?
                         <View style={{ flex: 1, justifyContent: 'center', alignSelf: 'center' }}>
@@ -197,55 +197,67 @@ class BibleChapter extends Component {
                         </View>
                         :
                         <View style={{ flex: 1 }}>
-                            <ScrollView contentContainerStyle={{ paddingBottom: 20 }} showsVerticalScrollIndicator={false} ref={(ref) => { this.scrollViewRef = ref; }} >
+                            <ScrollView
+                            contentContainerStyle={{ paddingBottom: 20 }}
+                                showsVerticalScrollIndicator={false} ref={(ref) => { this.scrollViewRef = ref; }} >
                                 {this.state.parallelBible && this.state.parallelBible.map((verse, index) =>
-                                    <View style={{ marginHorizontal: 16, paddingTop: 8 }}>
-                                        {verse.verseNumber == 1 ?
+                                    <View style={{ marginHorizontal: 16 }}>
+                                        {(verse.verseNumber == 1 && typeof verse.verseNumber != 'undefined') == 1 ?
                                             <Text letterSpacing={24}
                                                 style={this.styles.verseWrapperText}>
-                                                {this.state.parallelBibleHeading != null ?
-                                                    <Text style={this.styles.sectionHeading}>
-                                                        {this.state.parallelBibleHeading} {"\n"}
-                                                    </Text> : null}
-                                                <Text>
-                                                    <Text style={this.styles.verseChapterNumber}>
-                                                        {this.state.currentParallelViewChapter}{" "}
-                                                    </Text>
-                                                    <Text style={this.styles.textString}>
-                                                        {getResultText(verse.verseText)}
-                                                    </Text>
-                                                </Text>
                                                 {
-                                                    getHeading(verse.contents)
-                                                        ?
-                                                        <Text style={this.styles.sectionHeading}>
-                                                            {"\n"}{getHeading(verse.contents)}
+                                                    typeof verse.verseText == 'undefined' ? null :
+                                                        <Text>
+                                                            {this.state.parallelBibleHeading != null ?
+                                                                <Text style={this.styles.sectionHeading}>
+                                                                    {this.state.parallelBibleHeading} {"\n"}
+                                                                </Text> : null}
+                                                            <Text>
+                                                                <Text style={this.styles.verseChapterNumber}>
+                                                                    {this.state.currentParallelViewChapter}{" "}
+                                                                </Text>
+                                                                <Text style={this.styles.textString}>
+                                                                    {getResultText(verse.verseText)}
+                                                                </Text>
+                                                            </Text>
+                                                            {
+                                                                getHeading(verse.contents)
+                                                                    ?
+                                                                    <Text style={this.styles.sectionHeading}>
+                                                                        {"\n"}{getHeading(verse.contents)}
+                                                                    </Text>
+                                                                    : null
+                                                            }
                                                         </Text>
-                                                        : null
                                                 }
                                             </Text>
                                             :
-                                            <Text letterSpacing={24}
-                                                style={this.styles.verseWrapperText}>
-                                                <Text>
-                                                    <Text style={this.styles.verseNumber} >
-                                                        {verse.verseNumber}{" "}
-                                                    </Text>
-                                                    <Text style={this.styles.textString}
-                                                    >
-                                                        {getResultText(verse.verseText)}
-                                                    </Text>
-                                                </Text>
+                                            (typeof verse.verseNumber != 'undefined') ?
+                                            <Text>
                                                 {
-                                                    getHeading(verse.contents)
-                                                        ?
-                                                        <Text style={this.styles.sectionHeading}>
-                                                            {"\n"}{getHeading(verse.contents)}
-                                                        </Text>
-                                                        : null
-                                                }
-                                            </Text>
+                                                    typeof verse.verseText == 'undefined' ? null :
 
+                                                        <Text letterSpacing={24}
+                                                            style={this.styles.verseWrapperText}>
+                                                            <Text>
+                                                                <Text style={this.styles.verseNumber} >
+                                                                    {verse.verseNumber}{" "}
+                                                                </Text>
+                                                                <Text style={this.styles.textString}
+                                                                >
+                                                                    {getResultText(verse.verseText)}
+                                                                </Text>
+                                                            </Text>
+                                                            {
+                                                                getHeading(verse.contents)
+                                                                    ?
+                                                                    <Text style={this.styles.sectionHeading}>
+                                                                        {"\n"}{getHeading(verse.contents)}
+                                                                    </Text>
+                                                                    : null
+                                                            }
+                                                        </Text>}
+                                            </Text> : null
                                         }
                                     </View>
                                 )}

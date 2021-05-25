@@ -177,8 +177,14 @@ class LanguageList extends Component {
           lanVer.push(languageList[i])
         }
       }
+     
+      var res = lanVer.length == 0 ? [] : lanVer.sort(function (a, b) {
+        var textA = a.languageName.toUpperCase();
+        var textB = b.languageName.toUpperCase();
+        return textA.localeCompare(textB); 
+      })
       this.setState({
-        languages: lanVer,
+        languages: res,
       })
     }
     catch (error) {
@@ -265,7 +271,16 @@ class LanguageList extends Component {
       this.props.navigation.pop()
     } else {
       // for downloading bible from settings page no need to navigate
-      Alert.alert("To download bible click on download icon.")
+      if(langName.toLowerCase() === 'english'){
+        Alert.alert("","This version is not currently available for download.")
+      }else{
+        if(downloaded){
+          Alert.alert("","Version "+verCode+" is already downloaded.") 
+        }else{
+          Alert.alert("","To Download the Bible, click on download icon.")
+        }
+      }
+    
     }
   }
   deleteBible(languageName, languageCode, versionCode, sourceId, downloaded) {

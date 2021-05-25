@@ -136,7 +136,8 @@ const navStyles = StyleSheet.create({
     alignItems:'center',
     backgroundColor: Color.Blue_Color,
     zIndex: 0,
-    width: '100%'
+    width: '100%',
+    // marginBottom:30
   },
 
   border: {

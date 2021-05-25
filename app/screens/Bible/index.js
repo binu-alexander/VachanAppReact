@@ -11,7 +11,6 @@ import {
   AppState,
   Animated,
   NetInfo,
-  TouchableOpacity
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { createResponder } from 'react-native-gesture-responder';
@@ -247,7 +246,7 @@ class Bible extends Component {
       let bookName = null
       let bookId = null
       let bookItem = item.books.filter((i) => i.bookId == this.props.bookId)
-      if (bookItem.length>0) {
+      if (bookItem.length > 0) {
         bookName = bookItem[0].bookName
         bookId = bookItem[0].bookId
       } else {
@@ -326,7 +325,7 @@ class Bible extends Component {
       } else {
         if (this.props.baseAPI != null) {
           var content = await vApi.get("bibles" + "/" + this.props.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentVisibleChapter)
-          console.log(" SOURCE ID ",this.props.sourceId)
+          console.log(" SOURCE ID ", this.props.sourceId)
           if (content) {
             let header = getHeading(content.chapterContent.contents)
             this.setState({ chapterHeader: header, chapterContent: content.chapterContent.contents, error: null, isLoading: false, currentVisibleChapter: this.state.currentVisibleChapter })
@@ -398,23 +397,19 @@ class Bible extends Component {
   }
   // check available book having audio or not
   async audioComponentUpdate() {
-    var found = false
     let res = await vApi.get('audiobibles')
     try {
       if (res.length !== 0) {
-        for (var i = 0; i < res.length; i++) {
-          for (var key in res[i].audioBibles[0].books) {
-            if (key == this.props.bookId && res[i].language.name == this.props.language.toLowerCase()) {
-              found = true
-              this.props.APIAudioURL({ audioURL: res[i].audioBibles[0].url, audioFormat: res[i].audioBibles[0].format })
-              this.setState({ audio: true })
-              break;
-            } else {
-              this.props.APIAudioURL({ audioURL: null, audioFormat: null })
-            }
+        let data = res.filter( (item) => {
+          if(item.language.name == this.props.language.toLowerCase()){
+            return item 
           }
-        }
-        if (found == false) {
+        })
+        if(data.length !=0){
+          this.props.APIAudioURL({ audioURL: data[0].audioBibles[0].url, audioFormat: data[0].audioBibles[0].format })
+          this.setState({ audio: true })
+        }else{
+          this.props.APIAudioURL({ audioURL: null, audioFormat: null })
           this.setState({ audio: false })
         }
       }
@@ -856,7 +851,6 @@ class Bible extends Component {
       moveThreshold: 2,
       debug: false
     });
-
   }
   navigateToLanguage = () => {
     this.setState({ status: false })
@@ -987,7 +981,7 @@ class Bible extends Component {
               <AnimatedFlatlist
                 {...this.gestureResponder}
                 data={this.state.chapterContent}
-                contentContainerStyle={this.state.chapterContent.length === 0 ? this.styles.centerEmptySet : { margin: 16, marginTop: this.props.visibleParallelView ? 46 : 90, paddingBottom: 90 }}
+                contentContainerStyle={this.state.chapterContent.length === 0 ? this.styles.centerEmptySet : { paddingHorizontal: 16, paddingTop: this.props.visibleParallelView ?  52: 90, paddingBottom: 90 }}
                 extraData={this.state}
                 scrollEventThrottle={1}
                 onMomentumScrollBegin={this._onMomentumScrollBegin}
@@ -1003,7 +997,7 @@ class Bible extends Component {
                   <VerseView
                     ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
                     verseData={item}
-                    sectionHeading={getHeading(this.props.downloaded ? null : item.contents)}
+                    sectionHeading={getHeading(item.contents)}
                     chapterHeader={this.state.chapterHeader}
                     index={index}
                     styles={this.styles}

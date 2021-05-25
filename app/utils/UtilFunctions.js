@@ -2,27 +2,31 @@ import id_name_map from '../assets/mappings.json'
 const Constants = require('./constants')
 
 export function getHeading(contents) {
-  if(contents){
+  if (contents) {
     let data = contents.find((item) => Array.isArray(item));
-    if(data){
+    if (data) {
       for (let section of data) {
         if (Object.keys(section)[0].startsWith('s')) {
           return section[Object.keys(section)[0]][0];
         }
       }
+    } else {
+      return null
     }
+  } else {
+    return null
   }
 }
 export function getBookNameFromMapping(id) {
   var obj = id_name_map.id_name_map;
   for (var key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        const bookId = id.toUpperCase()
-          if (key == bookId) {
-              var val = obj[key];
-              return val.book_name;
-          }
+    if (obj.hasOwnProperty(key)) {
+      const bookId = id.toUpperCase()
+      if (key == bookId) {
+        var val = obj[key];
+        return val.book_name;
       }
+    }
   }
   return null;
 }
