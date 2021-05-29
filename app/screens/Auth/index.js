@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { userInfo, userPassLogedIn } from '../../store/action'
+import { userInfo, userLogedIn } from '../../store/action'
 import Login from './Login'
 import { GoogleSignin } from 'react-native-google-signin';
 import firebase from 'react-native-firebase'
@@ -19,24 +19,7 @@ class Auth extends Component {
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
 
-  logOut = async () => {
-    try {
-      if (this.props.logedIn) {
-        this.props.userPassLogedIn({ logedIn: false })
-        firebase.auth().signOut()
-      } else {
-        await GoogleSignin.revokeAccess();
-        await GoogleSignin.signOut();
-      }
-      this.props.userInfo({ email: null, uid: null, userName: '', phoneNumber: null, photo: null })
-      this.setState({ user: null })
-      this.props.navigation.navigate("Bible")
-    } catch (error) {
-      console.log("logout error", error);
-    }
-
-  }
-  componentDidMount() {
+  async componentDidMount() {
     try {
       GoogleSignin.configure({
         webClientId: '486797934259-gkdusccl094153bdj8cbugfcf5tqqb4j.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
@@ -51,14 +34,13 @@ class Auth extends Component {
       console.log(" configuration error ", error)
     }
   }
+
   render() {
-    if (!this.state.user) {
-      return <Login navigation={this.props.navigation} user={this.state.user} />
+    if (this.props.email) {
+      return <ProfilePage navigation={this.props.navigation} />
     }
     else {
-      return (
-        <ProfilePage navigation={this.props.navigation} logOut={this.logOut} />
-      )
+      return <Login navigation={this.props.navigation} />
     }
   }
 }
@@ -70,7 +52,9 @@ const mapStateToProps = state => {
     uid: state.userInfo.uid,
     photo: state.userInfo.photo,
     userName: state.userInfo.userName,
-    logedIn: state.userInfo.logedIn,
+    pasLogedIn: state.userInfo.pasLogedIn,
+    googleLogIn: state.userInfo.googleLogIn,
+
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
   }
@@ -78,7 +62,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     userInfo: (payload) => dispatch(userInfo(payload)),
-    userPassLogedIn: (payload) => dispatch(userPassLogedIn(payload))
+    userLogedIn: (payload) => dispatch(userLogedIn(payload))
 
   }
 }
