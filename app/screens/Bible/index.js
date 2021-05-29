@@ -57,6 +57,7 @@ class Bible extends Component {
       sizeFile: this.props.sizeFile,
       downloadedBook: [],
       audio: false,
+      uid:this.props.userId,
       chapterContent: [],
       chapterHeader: null,
       error: null,
@@ -76,7 +77,7 @@ class Bible extends Component {
       status: false,
       notesList: [],
       initializing: true,
-      user: this.props.email,
+      email: this.props.email,
       imageUrl: this.props.photo,
       unAvailableContent: null,
       // visibleParallelView: false,
@@ -111,15 +112,21 @@ class Bible extends Component {
       this.setState({ initializing: false })
     }
     this.unsubscriber = firebase.auth().onAuthStateChanged((user) => {
-      if (!user) {
-        return
-      }
-      else {
+      if(user){
+      console.log(" User ON BIBle ",user._user.uid,user._user.email)
         this.setState({ user: user._user.email, userData: user, isLoading: false, imageUrl: user._user.photoURL })
         this.props.userInfo({
           email: user._user.email, uid: user._user.uid,
           userName: user._user.displayName, phoneNumber: null, photo: user._user.photoURL
         })
+        this.setState({uid: user._user.uid,email:user._user.email})
+        
+      }else{
+        this.props.userInfo({
+          email: null, uid: null,
+          userName: null, phoneNumber: null, photo: null
+        })
+        this.setState({uid:null,email:null})
       }
     })
     this.ZoomTextSize()
@@ -162,8 +169,7 @@ class Bible extends Component {
   componentDidUpdate(prevProps) {
     if (prevProps.language != this.props.language ||
       prevProps.sourceId != this.props.sourceId
-      || prevProps.baseAPI != this.props.baseAPI
-      || prevProps.email != this.props.email
+      || prevProps.baseAPI != this.props.baseAPI 
       || prevProps.bookId != this.props.bookId
       || prevProps.chapterNumber != this.props.chapterNumber
     ) {
@@ -421,8 +427,8 @@ class Bible extends Component {
   // get highlights from firebase
   async getHighlights() {
     if (this.state.connection_Status) {
-      if (this.props.email) {
-        firebase.database().ref("users/" + this.props.userId + "/highlights/" + this.props.sourceId + "/" + this.props.bookId + "/" + this.state.currentVisibleChapter).on('value', (snapshot) => {
+      if (this.state.email) {
+        firebase.database().ref("users/" + this.state.uid + "/highlights/" + this.props.sourceId + "/" + this.props.bookId + "/" + this.state.currentVisibleChapter).on('value', (snapshot) => {
           if (snapshot.val() != null) {
             let value = snapshot.val()
             let HightlightedVerseArray = []
@@ -461,8 +467,8 @@ class Bible extends Component {
   // get bookmarks from firebase
   async getBookMarks() {
     if (this.state.connection_Status) {
-      if (this.props.email) {
-        firebase.database().ref("users/" + this.props.userId + "/bookmarks/" + this.props.sourceId + "/" + this.props.bookId).on('value', (snapshot) => {
+      if (this.state.email) {
+        firebase.database().ref("users/" + this.state.uid + "/bookmarks/" + this.props.sourceId + "/" + this.props.bookId).on('value', (snapshot) => {
           if (snapshot.val() === null) {
             this.setState({ bookmarksList: [], isBookmark: false })
           }
@@ -482,8 +488,8 @@ class Bible extends Component {
   //get notes from firebase
   getNotes() {
     if (this.state.connection_Status) {
-      if (this.props.email) {
-        firebase.database().ref("users/" + this.props.userId + "/notes/" + this.props.sourceId + "/" + this.props.bookId + "/" + this.state.currentVisibleChapter).on('value', (snapshot) => {
+      if (this.state.email) {
+        firebase.database().ref("users/" + this.state.uid + "/notes/" + this.props.sourceId + "/" + this.props.bookId + "/" + this.state.currentVisibleChapter).on('value', (snapshot) => {
           this.state.notesList = []
           if (snapshot.val() === null) {
             this.setState({ notesList: [] })
@@ -528,11 +534,11 @@ class Bible extends Component {
   //add book mark from header icon 
   onBookmarkPress = (isbookmark) => {
     if (this.state.connection_Status) {
-      if (this.props.email) {
+      if (this.state.email) {
         var newBookmarks = isbookmark
           ? this.state.bookmarksList.filter((a) => a !== this.state.currentVisibleChapter)
           : this.state.bookmarksList.concat(this.state.currentVisibleChapter)
-        firebase.database().ref("users/" + this.props.userId + "/bookmarks/" + this.props.sourceId + "/" + this.props.bookId).set(newBookmarks)
+        firebase.database().ref("users/" + this.state.uid + "/bookmarks/" + this.props.sourceId + "/" + this.props.bookId).set(newBookmarks)
         this.setState({ bookmarksList: newBookmarks })
         this.setState({ isBookmark: !isbookmark })
         Toast.show({
@@ -594,7 +600,7 @@ class Bible extends Component {
 
   addToNotes = () => {
     if (this.state.connection_Status) {
-      if (this.props.email) {
+      if (this.state.email) {
         let refList = []
         let id = this.props.bookId
         let name = this.props.bookName
@@ -667,7 +673,7 @@ class Bible extends Component {
   }
   doHighlight = async (color) => {
     if (this.state.connection_Status) {
-      if (this.props.email) {
+      if (this.state.email) {
         var array = [...this.state.HightlightedVerseArray]
         for (let item of this.state.selectedReferenceSet) {
           let tempVal = item.split('_')
@@ -699,7 +705,7 @@ class Bible extends Component {
           //   this.setState({ HightlightedVerseArray: array })
           // }
         }
-        firebase.database().ref("users/" + this.props.userId + "/highlights/" + this.props.sourceId + "/" + this.props.bookId + "/" + this.state.currentVisibleChapter).set(array)
+        firebase.database().ref("users/" + this.state.uid + "/highlights/" + this.props.sourceId + "/" + this.props.bookId + "/" + this.state.currentVisibleChapter).set(array)
       }
       else {
         this.props.navigation.navigate("Login")
