@@ -1,4 +1,4 @@
-import { USER_INFO ,USER_PASS_LOGED_IN} from '../action/actionsType';
+import { USER_INFO ,USER_LOGED_IN} from '../action/actionsType';
 
 const initialState = {
     email: null,
@@ -18,10 +18,11 @@ function UserInfoReducer(state = initialState, action) {
                 phoneNumber: action.payload.phoneNumber,
                 photo: action.payload.photo
             }
-        case USER_PASS_LOGED_IN:
+        case USER_LOGED_IN:
             return {
                 ...state,
-                logedIn:action.payload.logedIn
+                pasLogedIn:action.payload.pasLogedIn,
+                googleLogIn:action.payload.googleLogIn
             }
         default:
             return state

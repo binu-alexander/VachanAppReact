@@ -12,4 +12,4 @@ export { queryDownloadedBook, downloadedBookSuccess, downloadedBookFailure } fro
 
 export { fetchAllContent, allContentSuccess, allContentFailure } from './apiFetch/fetchAllContentType/fetchAllContent'
 export { fetchAllLanguage, allLanguageSuccess, allLanguageFailure } from './apiFetch/fetchAllContentType/allLanguages'
-export { userInfo,userPassLogedIn } from './UserInfo'
+export { userInfo,userLogedIn } from './UserInfo'

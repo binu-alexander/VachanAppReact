@@ -48,7 +48,7 @@ export const ALL_LANGUAGE_SUCCESS = 'all_language_success';
 export const ALL_LANGUAGE_FAILURE = 'all_language_failure'
 
 export const USER_INFO = 'user_info';
-export const USER_PASS_LOGED_IN = 'user_pass_loged_in';
+export const USER_LOGED_IN = 'user_loged_in';
 
 export const SELECT_CONTENT = 'select_content'
 export const UPDATE_LANGUAGELIST  ='update_languageList'

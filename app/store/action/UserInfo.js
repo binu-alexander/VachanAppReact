@@ -1,4 +1,4 @@
-import { USER_INFO,USER_PASS_LOGED_IN } from "./actionsType";
+import { USER_INFO,USER_LOGED_IN } from "./actionsType";
 
 export const userInfo = (payload) => {
     return {
@@ -6,9 +6,9 @@ export const userInfo = (payload) => {
         payload
     }
 }
-export const userPassLogedIn = (payload) => {
+export const userLogedIn = (payload) => {
     return {
-        type: USER_PASS_LOGED_IN,
+        type: USER_LOGED_IN,
         payload
     }
 }
