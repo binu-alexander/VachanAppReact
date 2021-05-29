@@ -39,6 +39,13 @@ class About extends Component {
               <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Content and Technology Partners{'\n'}</Text>
               VachanGo is being made available under a collaborative arrangement of Friends of Agape, unfoldingWord, Wycliffe Associates, Crossway, Bridgeway Publications, Dusty Sandals, BibleProject, Visual Unit, and is brought to you by Bridge Connectivity Solutions Pvt. Ltd. (BCS) <Text style={this.styles.linkText} onPress={() => { Linking.openURL('https://www.bridgeconn.com') }}>(https://www.bridgeconn.com)</Text> who is the localization and technology partner.{'\n'}
 
+              <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Release Notes (28/05/2021) v1.2.0</Text>
+              <Text textBreakStrategy={'simple'} style={this.styles.rlsNoteTitleText}>{'\n'}Content Additions (Using Vachan API’s):{'\n'}</Text>
+              <Text textBreakStrategy={'simple'} style={[this.styles.bulletIcon,{...padding}]}>{'\u2022' + " "}</Text>Bibles: ESV Bible, Haryanvi NT, Bilaspuri NT{'\n'}
+              <Text textBreakStrategy={'simple'} style={[this.styles.bulletIcon,{...padding}]}>{'\u2022' + " "}</Text>Audio Bible: Hindi IRV OT, Punjabi IRV, Bilaspuri NT, Haryanvi NT{'\n'}
+              <Text textBreakStrategy={'simple'} style={this.styles.rlsNoteTitleText}>{'\n'}Operations Update:{'\n'}</Text>
+              <Text textBreakStrategy={'simple'} style={[this.styles.bulletIcon,{...padding}]}>{'\u2022' + " "}</Text>usfm-grammar version upgrade to 2.0.0{'\n'}
+             
               <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Release Notes (19/03/2021) v1.1.2</Text>
               <Text textBreakStrategy={'simple'} style={this.styles.rlsNoteTitleText}>{'\n'}Bug Fixes:{'\n'}</Text>
               <Text textBreakStrategy={'simple'} style={[this.styles.bulletIcon,{...padding}]}>{'\u2022' + " "}</Text>Fixed bug on update version alert{'\n'}
