@@ -113,7 +113,6 @@ class Bible extends Component {
     }
     this.unsubscriber = firebase.auth().onAuthStateChanged((user) => {
       if(user){
-      console.log(" User ON BIBle ",user._user.uid,user._user.email)
         this.setState({ user: user._user.email, userData: user, isLoading: false, imageUrl: user._user.photoURL })
         this.props.userInfo({
           email: user._user.email, uid: user._user.uid,
@@ -146,6 +145,7 @@ class Bible extends Component {
       'connectionChange',
       this._handleConnectivityChange
     );
+
     AppState.addEventListener('change', this._handleAppStateChange);
     this.subs = this.props.navigation.addListener("didFocus", () => {
       this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false, showColorGrid: false, bookId: this.props.bookId, currentVisibleChapter: this.props.chapterNumber }, () => {
@@ -215,7 +215,7 @@ class Bible extends Component {
   // handle audio status on background, inactive and active state 
   _handleAppStateChange = (currentAppState) => {
     if (currentAppState == "background") {
-      this.setState({ status: false })
+      this.setState({ status: false,})
     }
     if (currentAppState == "inactive") {
       this.setState({ status: false })
@@ -224,7 +224,6 @@ class Bible extends Component {
       this.setState({ status: true })
     }
   }
-
   // update book name and chapter number onback from referenceSelection page (callback function) also this function is usefull to update only few required values of redux 
   getReference = async (item) => {
     this.setState({ selectedReferenceSet: [], showBottomBar: false, showColorGrid: false })
@@ -331,7 +330,6 @@ class Bible extends Component {
       } else {
         if (this.props.baseAPI != null) {
           var content = await vApi.get("bibles" + "/" + this.props.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentVisibleChapter)
-          console.log(" SOURCE ID ", this.props.sourceId)
           if (content) {
             let header = getHeading(content.chapterContent.contents)
             this.setState({ chapterHeader: header, chapterContent: content.chapterContent.contents, error: null, isLoading: false, currentVisibleChapter: this.state.currentVisibleChapter })

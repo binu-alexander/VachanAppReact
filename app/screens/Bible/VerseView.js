@@ -99,7 +99,8 @@ class VerseView extends Component {
         }
       }
     }
-    var value = arr.filter(v => v == this.state.verseNumber)
+    let verseNumber = this.props.downloaded ? this.props.verseData.number : this.props.verseData.verseNumber
+    var value = arr.filter(v => v == verseNumber)
     if (value[0]) {
       return true
     }
