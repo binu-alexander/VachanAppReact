@@ -4,7 +4,8 @@ import { bookStyle } from './styles.js'
 import {
     View,
     Text,
-    ActivityIndicator
+    ActivityIndicator,
+    AppState
 } from 'react-native';
 import { connect } from 'react-redux'
 
@@ -21,10 +22,10 @@ class PlayVideo extends Component {
         this.state = {
             url: this.props.navigation.state.params ? this.props.navigation.state.params.url : null,
             title: this.props.navigation.state.params ? this.props.navigation.state.params.title : null,
-            description:this.props.navigation.state.params ?  this.props.navigation.state.params.description: null,
-            theme:this.props.navigation.state.params ? this.props.navigation.state.params.theme : null,
-            playing:true,
-            isLoading:false
+            description: this.props.navigation.state.params ? this.props.navigation.state.params.description : null,
+            theme: this.props.navigation.state.params ? this.props.navigation.state.params.theme : null,
+            playing: false,
+            isLoading: false
         }
         this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
 
@@ -36,35 +37,54 @@ class PlayVideo extends Component {
         this.onChangeState()
     }
     onError = () => alert('Oh! ', error);
-    onReady(){
-      this.setState({playing:true})
+    onReady() {
+        this.setState({ playing: this.state.playing })
     }
-    onChangeState(event){
-      if(event === undefined){
-        this.setState({isLoading:true})
-      }else{
-        this.setState({isLoading:false})
-      }
+    onChangeState(event) {
+        if (event === undefined) {
+            this.setState({ isLoading: true })
+        } else {
+            this.setState({ isLoading: false })
+        }
     }
+    handleYoutubePlay = (currentAppState) => {
+        if (currentAppState == "background") {
+            this.setState({ playing: false, })
+        }
+        if (currentAppState == "inactive") {
+            this.setState({ playing: false })
+        }
+        if (currentAppState == "active") {
+            this.setState({ playing: true })
+        }
+    }
+    componentDidMount() {
+        this.setState({playing:true})
+        AppState.addEventListener('change', this.handleYoutubePlay)
+    }
+    componentWillUnmount() {
+        AppState.removeEventListener('change', this.handleYoutubePlay);
+    }
+
     render() {
         return (
             <View style={this.styles.container}>
                 <Text style={this.styles.title}>
                     {this.state.title}
                 </Text>
-                {this.state.isLoading ? <View style={{justifyContent:'center',alignItems:'center'}}><ActivityIndicator animate={true} size={32} /></View>: null}
+                {this.state.isLoading ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator animate={true} size={32} /></View> : null}
                 <YoutubePlayer
                     ref={'playerRef'}
                     height={'36%'}
                     width={'100%'}
                     videoId={this.state.url}
                     play={this.state.playing}
-                    onChangeState={(event) =>this.onChangeState(event)}
+                    onChangeState={(event) => this.onChangeState(event)}
                     onReady={() => this.onReady}
                     onError={this.onError}
                     volume={50}
                     playbackRate={1}
-                    />
+                />
                 <Text style={this.styles.description}>
                     {this.state.description}
                 </Text>

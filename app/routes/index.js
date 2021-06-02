@@ -14,7 +14,6 @@ import DictionaryWords from '../screens/StudyHelp/Dictionary/DictionaryWords'
 import Infographics from '../screens/StudyHelp/InfoGraphics/';
 import InfographicsImage from '../screens/StudyHelp/InfoGraphics/infographicsImage';
 
-
 import Reset from '../screens/Auth/Reset'
 import Register from '../screens/Auth/Register'
 import Login from '../screens/Auth/Login'
@@ -99,9 +98,6 @@ const NavStack = createStackNavigator(
         header: null
       }),
     },
-
-
-
   },
   {
     defaultNavigationOptions: {

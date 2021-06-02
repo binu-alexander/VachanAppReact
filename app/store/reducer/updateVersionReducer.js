@@ -1,4 +1,4 @@
-import { UPDATE_VERSION, UPDATE_VERSION_BOOK, UPDATE_CONTENT_TYPE, UPDATE_MATA_DATA, API_BASE_URL, AUDIO_URL } from '../action/actionsType';
+import { UPDATE_VERSION, UPDATE_VERSION_BOOK, UPDATE_CONTENT_TYPE,UPDATE_LANGUAGELIST, UPDATE_MATA_DATA, API_BASE_URL, AUDIO_URL } from '../action/actionsType';
 
 const initialState = {
     language: 'Hindi',
@@ -24,7 +24,9 @@ const initialState = {
     parallelContentType: 'bible',
     baseAPI: null,
     audioURL:null,
-    audioFormat:'mp3'
+    audioFormat:'mp3',
+
+    langTimeStamp: new Date(),
 }
 
 function updateVersionReducer(state = initialState, action) {
@@ -73,6 +75,11 @@ function updateVersionReducer(state = initialState, action) {
                 ...state,
                 audioURL: action.payload.audioURL,
                 audioFormat:action.payload.audioFormat
+            }
+        case UPDATE_LANGUAGELIST:
+            return{
+                ...state,
+                langTimeStamp: action.payload.langTimeStamp
             }
         default:
             return state

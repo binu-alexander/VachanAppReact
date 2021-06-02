@@ -1,4 +1,4 @@
-import { UPDATE_VERSION, UPDATE_CONTENT_TYPE,API_BASE_URL,AUDIO_URL, PARALLEL_METADATA, UPDATE_VERSION_BOOK, UPDATE_MATA_DATA } from "./actionsType";
+import { UPDATE_VERSION, UPDATE_CONTENT_TYPE,UPDATE_LANGUAGELIST,API_BASE_URL,AUDIO_URL, PARALLEL_METADATA, UPDATE_VERSION_BOOK, UPDATE_MATA_DATA } from "./actionsType";
 
 export const updateVersion = (payload) => {
     return {
@@ -42,6 +42,13 @@ export const APIBaseURL = (baseAPI) => {
 export const APIAudioURL = (payload) => {
     return {
         type: AUDIO_URL,
+        payload
+    }
+}
+
+export const updateLangList = (payload) =>{
+    return {
+        type:UPDATE_LANGUAGELIST,
         payload
     }
 }

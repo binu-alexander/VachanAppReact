@@ -33,6 +33,9 @@ class DbQueries {
     getLangaugeList() {
         return DbHelper.getLangaugeList()
     }
+    updateLanguageList(lang,books){
+       return DbHelper.updateLanguageList(lang,books)
+    }
     deleteLangaugeList(){
         return dbHelper.deleteLangaugeList()
     }

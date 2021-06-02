@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { ActivityIndicator, View, KeyboardAvoidingView, Platform, Text, Alert, TextInput, Button, Image } from 'react-native';
 import firebase from 'react-native-firebase'
-import { userInfo } from '../../store/action'
+import { userInfo, userLogedIn } from '../../store/action'
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { GoogleSignin, GoogleSigninButton,statusCodes, } from 'react-native-google-signin';
+import { GoogleSignin, GoogleSigninButton, statusCodes, } from 'react-native-google-signin';
 import { AccessToken, LoginManager, LoginButton } from 'react-native-fbsdk';
 import { styles } from './styles.js'
 import Color from '../../utils/colorConstants'
@@ -42,6 +42,7 @@ class Login extends Component {
         .auth()
         .signInWithEmailAndPassword(this.state.email, this.state.password)
         .then((res) => {
+          this.props.userLogedIn({ pasLogedIn: true,googleLogIn:false })
           this.props.navigation.navigate("Bible")
           this.setState({
             isLoading: false,
@@ -65,20 +66,24 @@ class Login extends Component {
     }
   }
 
-  _signInGoogle = async() => {
-    try{
+  _signInGoogle = async () => {
+    try {
       await GoogleSignin.hasPlayServices();
       const data = await GoogleSignin.signIn();
-      if(data){
-        this.setState({ isLoading: true }, async() => {
+      if (data) {
+        this.setState({ isLoading: true }, async () => {
           const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken);
           // Login with the credential
           await firebase.auth().signInWithCredential(credential);
-            this.setState({ isLoading: false })
-            this.props.navigation.navigate("Bible")
+          // console.log(" USER DATA ",data)
+          this.props.userLogedIn({ pasLogedIn: false,googleLogIn:true })
+          this.setState({ isLoading: false })
+          this.props.navigation.navigate("Bible")
         })
+      }else{
+        console.log("NO DATA ")
       }
-    }catch(error){
+    } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
         Alert.alert('Signin Cancelled');
@@ -91,9 +96,9 @@ class Login extends Component {
       } else {
         // some other error happened
       }
-      console.log(" SIGN IN ERROR",error)
+      console.log(" SIGN IN ERROR", error)
     }
-  
+
   }
 
   _signInFacebook = () => {
@@ -121,6 +126,7 @@ class Login extends Component {
         const { code, message } = error;
       });
   }
+ 
   render() {
     if (this.state.isLoading) {
       return (
@@ -227,7 +233,8 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = dispatch => {
   return {
-    userInfo: (payload) => dispatch(userInfo(payload))
+    userInfo: (payload) => dispatch(userInfo(payload)),
+    userLogedIn: (payload) => dispatch(userLogedIn(payload))
   }
 }
 

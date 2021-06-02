@@ -11,14 +11,13 @@ import {
   AppState,
   Animated,
   NetInfo,
-  TouchableOpacity
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { createResponder } from 'react-native-gesture-responder';
 import DbQueries from '../../utils/dbQueries';
 import VerseView from './VerseView';
 import { extraSmallFont, smallFont, mediumFont, largeFont, extraLargeFont } from '../../utils/dimens.js'
-import { APIAudioURL, fetchVersionBooks, selectContent, APIBaseURL, updateNetConnection, userInfo, updateVersionBook, updateFontSize, updateVersion, updateMetadata } from '../../store/action/'
+import { APIAudioURL, fetchVersionBooks, selectContent, updateNetConnection, userInfo, updateVersionBook, updateFontSize, updateVersion, updateMetadata } from '../../store/action/'
 import { getBookChaptersFromMapping } from '../../utils/UtilFunctions'
 import CustomHeader from '../../components/Bible/CustomHeader'
 import SelectBottomTabBar from '../../components/Bible/SelectBottomTabBar';
@@ -34,7 +33,7 @@ import BibleChapter from '../../components/Bible/BibleChapter';
 import firebase from 'react-native-firebase';
 import vApi from '../../utils/APIFetch';
 import HighlightColorGrid from '../../components/Bible/HighlightColorGrid';
-
+import { getHeading } from '../../utils/UtilFunctions'
 
 const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
 const width = Dimensions.get('window').width;
@@ -58,6 +57,7 @@ class Bible extends Component {
       sizeFile: this.props.sizeFile,
       downloadedBook: [],
       audio: false,
+      uid:this.props.userId,
       chapterContent: [],
       chapterHeader: null,
       error: null,
@@ -77,7 +77,7 @@ class Bible extends Component {
       status: false,
       notesList: [],
       initializing: true,
-      user: this.props.email,
+      email: this.props.email,
       imageUrl: this.props.photo,
       unAvailableContent: null,
       // visibleParallelView: false,
@@ -112,15 +112,20 @@ class Bible extends Component {
       this.setState({ initializing: false })
     }
     this.unsubscriber = firebase.auth().onAuthStateChanged((user) => {
-      if (!user) {
-        return
-      }
-      else {
+      if(user){
         this.setState({ user: user._user.email, userData: user, isLoading: false, imageUrl: user._user.photoURL })
         this.props.userInfo({
           email: user._user.email, uid: user._user.uid,
           userName: user._user.displayName, phoneNumber: null, photo: user._user.photoURL
         })
+        this.setState({uid: user._user.uid,email:user._user.email})
+        
+      }else{
+        this.props.userInfo({
+          email: null, uid: null,
+          userName: null, phoneNumber: null, photo: null
+        })
+        this.setState({uid:null,email:null})
       }
     })
     this.ZoomTextSize()
@@ -140,6 +145,7 @@ class Bible extends Component {
       'connectionChange',
       this._handleConnectivityChange
     );
+
     AppState.addEventListener('change', this._handleAppStateChange);
     this.subs = this.props.navigation.addListener("didFocus", () => {
       this.setState({ isLoading: true, selectedReferenceSet: [], showBottomBar: false, showColorGrid: false, bookId: this.props.bookId, currentVisibleChapter: this.props.chapterNumber }, () => {
@@ -163,8 +169,7 @@ class Bible extends Component {
   componentDidUpdate(prevProps) {
     if (prevProps.language != this.props.language ||
       prevProps.sourceId != this.props.sourceId
-      || prevProps.baseAPI != this.props.baseAPI
-      || prevProps.email != this.props.email
+      || prevProps.baseAPI != this.props.baseAPI 
       || prevProps.bookId != this.props.bookId
       || prevProps.chapterNumber != this.props.chapterNumber
     ) {
@@ -210,7 +215,7 @@ class Bible extends Component {
   // handle audio status on background, inactive and active state 
   _handleAppStateChange = (currentAppState) => {
     if (currentAppState == "background") {
-      this.setState({ status: false })
+      this.setState({ status: false,})
     }
     if (currentAppState == "inactive") {
       this.setState({ status: false })
@@ -219,7 +224,6 @@ class Bible extends Component {
       this.setState({ status: true })
     }
   }
-
   // update book name and chapter number onback from referenceSelection page (callback function) also this function is usefull to update only few required values of redux 
   getReference = async (item) => {
     this.setState({ selectedReferenceSet: [], showBottomBar: false, showColorGrid: false })
@@ -246,11 +250,12 @@ class Bible extends Component {
     if (item) {
       let bookName = null
       let bookId = null
-      for (var i = 0; i <= item.books.length - 1; i++) {
-        if (item.books[i].bookId == this.props.bookId) {
-          bookName = item.books[i].bookName
-          bookId = item.books[i].bookId
-        } else {
+      let bookItem = item.books.filter((i) => i.bookId == this.props.bookId)
+      if (bookItem.length > 0) {
+        bookName = bookItem[0].bookName
+        bookId = bookItem[0].bookId
+      } else {
+        for (var i = 0; i <= item.books.length - 1; i++) {
           if (item.books[i].bookId >= 39) {
             if (item.books[i].bookId == 'gen') {
               bookName = item.books[i].bookName
@@ -294,7 +299,6 @@ class Bible extends Component {
         language: item.languageName, versionCode: item.versionCode,
         downloaded: item.downloaded, sourceId: item.sourceId
       })
-
     } else {
       return
     }
@@ -317,6 +321,7 @@ class Bible extends Component {
     }
 
   }
+
   // fetch chapter on didmount call
   async getChapter() {
     try {
@@ -326,9 +331,8 @@ class Bible extends Component {
         if (this.props.baseAPI != null) {
           var content = await vApi.get("bibles" + "/" + this.props.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentVisibleChapter)
           if (content) {
-            var header = content.chapterContent.metadata &&
-              (content.chapterContent.metadata[0].section && content.chapterContent.metadata[0].section.text)
-            this.setState({ chapterHeader: header, chapterContent: content.chapterContent.verses, error: null, isLoading: false, currentVisibleChapter: this.state.currentVisibleChapter })
+            let header = getHeading(content.chapterContent.contents)
+            this.setState({ chapterHeader: header, chapterContent: content.chapterContent.contents, error: null, isLoading: false, currentVisibleChapter: this.state.currentVisibleChapter })
           }
         }
       }
@@ -358,9 +362,8 @@ class Bible extends Component {
           try {
             var content = await vApi.get("bibles" + "/" + this.props.sourceId + "/" + "books" + "/" + this.props.bookId + "/" + "chapter" + "/" + this.state.currentVisibleChapter)
             if (content) {
-              var header = content.chapterContent.metadata &&
-                (content.chapterContent.metadata[0].section && content.chapterContent.metadata[0].section.text)
-              this.setState({ chapterHeader: header, chapterContent: content.chapterContent.verses, isLoading: false, currentVisibleChapter: this.state.currentVisibleChapter })
+              let header = getHeading(content.chapterContent.contents)
+              this.setState({ chapterHeader: header, chapterContent: content.chapterContent.contents, isLoading: false, currentVisibleChapter: this.state.currentVisibleChapter })
             }
           }
           catch (error) {
@@ -398,23 +401,19 @@ class Bible extends Component {
   }
   // check available book having audio or not
   async audioComponentUpdate() {
-    var found = false
     let res = await vApi.get('audiobibles')
     try {
       if (res.length !== 0) {
-        for (var i = 0; i < res.length; i++) {
-          for (var key in res[i].audioBibles[0].books) {
-            if (key == this.props.bookId && res[i].language.name == this.props.language.toLowerCase()) {
-              found = true
-              this.props.APIAudioURL({ audioURL: res[i].audioBibles[0].url, audioFormat: res[i].audioBibles[0].format })
-              this.setState({ audio: true })
-              break;
-            } else {
-              this.props.APIAudioURL({ audioURL: null, audioFormat: null })
-            }
+        let data = res.filter( (item) => {
+          if(item.language.name == this.props.language.toLowerCase()){
+            return item 
           }
-        }
-        if (found == false) {
+        })
+        if(data.length !=0){
+          this.props.APIAudioURL({ audioURL: data[0].audioBibles[0].url, audioFormat: data[0].audioBibles[0].format })
+          this.setState({ audio: true })
+        }else{
+          this.props.APIAudioURL({ audioURL: null, audioFormat: null })
           this.setState({ audio: false })
         }
       }
@@ -426,8 +425,8 @@ class Bible extends Component {
   // get highlights from firebase
   async getHighlights() {
     if (this.state.connection_Status) {
-      if (this.props.email) {
-        firebase.database().ref("users/" + this.props.userId + "/highlights/" + this.props.sourceId + "/" + this.props.bookId + "/" + this.state.currentVisibleChapter).on('value', (snapshot) => {
+      if (this.state.email) {
+        firebase.database().ref("users/" + this.state.uid + "/highlights/" + this.props.sourceId + "/" + this.props.bookId + "/" + this.state.currentVisibleChapter).on('value', (snapshot) => {
           if (snapshot.val() != null) {
             let value = snapshot.val()
             let HightlightedVerseArray = []
@@ -466,8 +465,8 @@ class Bible extends Component {
   // get bookmarks from firebase
   async getBookMarks() {
     if (this.state.connection_Status) {
-      if (this.props.email) {
-        firebase.database().ref("users/" + this.props.userId + "/bookmarks/" + this.props.sourceId + "/" + this.props.bookId).on('value', (snapshot) => {
+      if (this.state.email) {
+        firebase.database().ref("users/" + this.state.uid + "/bookmarks/" + this.props.sourceId + "/" + this.props.bookId).on('value', (snapshot) => {
           if (snapshot.val() === null) {
             this.setState({ bookmarksList: [], isBookmark: false })
           }
@@ -487,8 +486,8 @@ class Bible extends Component {
   //get notes from firebase
   getNotes() {
     if (this.state.connection_Status) {
-      if (this.props.email) {
-        firebase.database().ref("users/" + this.props.userId + "/notes/" + this.props.sourceId + "/" + this.props.bookId + "/" + this.state.currentVisibleChapter).on('value', (snapshot) => {
+      if (this.state.email) {
+        firebase.database().ref("users/" + this.state.uid + "/notes/" + this.props.sourceId + "/" + this.props.bookId + "/" + this.state.currentVisibleChapter).on('value', (snapshot) => {
           this.state.notesList = []
           if (snapshot.val() === null) {
             this.setState({ notesList: [] })
@@ -533,11 +532,11 @@ class Bible extends Component {
   //add book mark from header icon 
   onBookmarkPress = (isbookmark) => {
     if (this.state.connection_Status) {
-      if (this.props.email) {
+      if (this.state.email) {
         var newBookmarks = isbookmark
           ? this.state.bookmarksList.filter((a) => a !== this.state.currentVisibleChapter)
           : this.state.bookmarksList.concat(this.state.currentVisibleChapter)
-        firebase.database().ref("users/" + this.props.userId + "/bookmarks/" + this.props.sourceId + "/" + this.props.bookId).set(newBookmarks)
+        firebase.database().ref("users/" + this.state.uid + "/bookmarks/" + this.props.sourceId + "/" + this.props.bookId).set(newBookmarks)
         this.setState({ bookmarksList: newBookmarks })
         this.setState({ isBookmark: !isbookmark })
         Toast.show({
@@ -599,7 +598,7 @@ class Bible extends Component {
 
   addToNotes = () => {
     if (this.state.connection_Status) {
-      if (this.props.email) {
+      if (this.state.email) {
         let refList = []
         let id = this.props.bookId
         let name = this.props.bookName
@@ -672,7 +671,7 @@ class Bible extends Component {
   }
   doHighlight = async (color) => {
     if (this.state.connection_Status) {
-      if (this.props.email) {
+      if (this.state.email) {
         var array = [...this.state.HightlightedVerseArray]
         for (let item of this.state.selectedReferenceSet) {
           let tempVal = item.split('_')
@@ -704,7 +703,7 @@ class Bible extends Component {
           //   this.setState({ HightlightedVerseArray: array })
           // }
         }
-        firebase.database().ref("users/" + this.props.userId + "/highlights/" + this.props.sourceId + "/" + this.props.bookId + "/" + this.state.currentVisibleChapter).set(array)
+        firebase.database().ref("users/" + this.state.uid + "/highlights/" + this.props.sourceId + "/" + this.props.bookId + "/" + this.state.currentVisibleChapter).set(array)
       }
       else {
         this.props.navigation.navigate("Login")
@@ -726,7 +725,6 @@ class Bible extends Component {
       shareText = shareText.concat(this.props.bookName + " " + chapterNumber + ":" + verseNumber + " ");
       shareText = shareText.concat(tempVal[3])
       shareText = shareText.concat("\n");
-
     }
     Share.share({ message: shareText })
     this.setState({ selectedReferenceSet: [], showBottomBar: false, showColorGrid: false })
@@ -857,7 +855,6 @@ class Bible extends Component {
       moveThreshold: 2,
       debug: false
     });
-
   }
   navigateToLanguage = () => {
     this.setState({ status: false })
@@ -988,7 +985,7 @@ class Bible extends Component {
               <AnimatedFlatlist
                 {...this.gestureResponder}
                 data={this.state.chapterContent}
-                contentContainerStyle={this.state.chapterContent.length === 0 ? this.styles.centerEmptySet : { margin: 16, marginTop: this.props.visibleParallelView ? 46 : 90, paddingBottom: 90 }}
+                contentContainerStyle={this.state.chapterContent.length === 0 ? this.styles.centerEmptySet : { paddingHorizontal: 16, paddingTop: this.props.visibleParallelView ?  52: 90, paddingBottom: 90 }}
                 extraData={this.state}
                 scrollEventThrottle={1}
                 onMomentumScrollBegin={this._onMomentumScrollBegin}
@@ -1004,6 +1001,7 @@ class Bible extends Component {
                   <VerseView
                     ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
                     verseData={item}
+                    sectionHeading={getHeading(item.contents)}
                     chapterHeader={this.state.chapterHeader}
                     index={index}
                     styles={this.styles}
@@ -1185,9 +1183,7 @@ const mapDispatchToProps = dispatch => {
     updateNetConnection: (payload) => dispatch(updateNetConnection(payload)),
     APIAudioURL: (payload) => dispatch(APIAudioURL(payload)),
     selectContent: (payload) => dispatch(selectContent(payload)),
-    APIBaseURL: (payload) => dispatch(APIBaseURL(payload)),
     updateFontSize: (payload) => dispatch(updateFontSize(payload)),
-
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Bible) 

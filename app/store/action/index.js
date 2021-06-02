@@ -1,6 +1,6 @@
 
 
-export { updateVersion, updateContentType, updateVersionBook, updateMetadata, parallelMetadta,APIBaseURL,APIAudioURL } from './updateVersion'
+export { updateVersion, updateContentType, updateVersionBook, updateMetadata, parallelMetadta,APIBaseURL,APIAudioURL,updateLangList } from './updateVersion'
 export { updateFontSize, updateColorMode,updateNetConnection } from './updateStyling'
 
 export { vachanAPIFetch,vachanAPISuccess, vachanAPIFailure } from './apiFetch/vachanAPIFetch'
@@ -12,4 +12,4 @@ export { queryDownloadedBook, downloadedBookSuccess, downloadedBookFailure } fro
 
 export { fetchAllContent, allContentSuccess, allContentFailure } from './apiFetch/fetchAllContentType/fetchAllContent'
 export { fetchAllLanguage, allLanguageSuccess, allLanguageFailure } from './apiFetch/fetchAllContentType/allLanguages'
-export { userInfo } from './UserInfo'
+export { userInfo,userLogedIn } from './UserInfo'

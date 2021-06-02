@@ -21,7 +21,6 @@ class vApi {
           return error;
         });
     }
-   
   }
 }
 

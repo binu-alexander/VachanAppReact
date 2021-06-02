@@ -13,7 +13,6 @@ import VerseMetadataModel from '../models/VerseMetadataModel';
 import bookNameList from '../models/bookNameList';
 import LanguageMetaData from '../models/LanguageMetaData'
 
-
 import {
 	Platform,
 } from 'react-native';
@@ -122,7 +121,7 @@ class DbHelper {
 		return null
 	}
 
-	async getVersionMetaData(langName,verCode,sourceId){
+	async getVersionMetaData(langName, verCode, sourceId) {
 		let realm = await this.getRealm();
 		if (realm) {
 			let result = realm.objectForPrimaryKey("LanguageModel", langName)
@@ -132,7 +131,7 @@ class DbHelper {
 		}
 		return null
 	}
-	
+
 
 	async clearHistory() {
 		let realm = await this.getRealm();
@@ -198,14 +197,39 @@ class DbHelper {
 			}
 		}
 	}
-	async deleteLangaugeList(){
+	async deleteLangaugeList() {
 		let realm = await this.getRealm();
 		realm.write(() => {
 			let languages = realm.objects('LanguageModel')
 			realm.delete(languages);
 		});
 	}
+	async updateLanguageList() {
+		let realm = await this.getRealm();
+		if (realm) {
+			let bible = realm.objects("BookModel")
+			if (Object.keys(bible).length > 0) {
+				for (var i = 0; i < bible.length; i++) {
+					let result = realm.objectForPrimaryKey("LanguageModel", bible[i].languageName)
+					let resultsA = result.versionModels
+					var resultsB = resultsA.filtered('versionCode  =="' + bible[i].versionCode + '"')
+					if (resultsB) {
+						realm.write(() => {
+							resultsB[0].downloaded = true;
 
+						})
+					} else {
+						realm.write(() => {
+							let bibleA = bible.filtered('languageName ==[c] "' + bible[i].languageName + '" && versionCode ==[c] "' + bible[i].versionCode + '"')
+							realm.delete(bibleA);
+						})
+					}
+
+				}
+			}
+		}
+
+	}
 	//get all available booklist
 	async getDownloadedBook(langName) {
 		let realm = await this.getRealm();

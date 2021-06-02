@@ -6,7 +6,8 @@ export const styles =(colorFile, sizeFile) =>{
     return StyleSheet.create({
     MainContainer :{
     flex:1,
-    backgroundColor:colorFile.backgroundColor
+    backgroundColor:colorFile.backgroundColor,
+    // paddingBottom:20
     },
     container:{
         backgroundColor:colorFile.backgroundColor

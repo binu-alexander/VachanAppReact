@@ -1,11 +1,11 @@
-import { USER_INFO } from '../action/actionsType';
+import { USER_INFO ,USER_LOGED_IN} from '../action/actionsType';
 
 const initialState = {
     email: null,
     uid: null,
     userName: '',
-    phoneNumber: ''
-
+    phoneNumber: '',
+    lodenIn:false
 }
 function UserInfoReducer(state = initialState, action) {
     switch (action.type) {
@@ -17,6 +17,12 @@ function UserInfoReducer(state = initialState, action) {
                 userName: action.payload.userName,
                 phoneNumber: action.payload.phoneNumber,
                 photo: action.payload.photo
+            }
+        case USER_LOGED_IN:
+            return {
+                ...state,
+                pasLogedIn:action.payload.pasLogedIn,
+                googleLogIn:action.payload.googleLogIn
             }
         default:
             return state

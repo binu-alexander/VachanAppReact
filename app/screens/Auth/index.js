@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { userInfo } from '../../store/action'
+import { userInfo, userLogedIn } from '../../store/action'
 import Login from './Login'
 import { GoogleSignin } from 'react-native-google-signin';
 import firebase from 'react-native-firebase'
@@ -19,21 +19,8 @@ class Auth extends Component {
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
 
-  logOut = async() => {
+  async componentDidMount() {
     try {
-      await GoogleSignin.revokeAccess();
-      await firebase.auth().signOut()
-      await GoogleSignin.signOut();
-      this.props.userInfo({ email: null, uid: null, userName: '', phoneNumber: null, photo: null })
-      this.setState({ user: null })
-      this.props.navigation.navigate("Bible")
-    } catch (error) {
-      console.error("logout error",error);
-    }
-   
-  }
-  componentDidMount() {
-    try{
       GoogleSignin.configure({
         webClientId: '486797934259-gkdusccl094153bdj8cbugfcf5tqqb4j.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
         offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
@@ -43,18 +30,17 @@ class Auth extends Component {
         // accountName: '', // [Android] specifies an account name on the device that should be used
         // iosClientId: '<FROM DEVELOPER CONSOLE>', // [iOS] optional, if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
       });
-    }catch(error){
-      console.log(" configuration error ",error)
+    } catch (error) {
+      console.log(" configuration error ", error)
     }
   }
+
   render() {
-    if (!this.state.user) {
-      return <Login navigation={this.props.navigation} user={this.state.user} />
+    if (this.props.email) {
+      return <ProfilePage navigation={this.props.navigation} />
     }
     else {
-      return (
-        <ProfilePage navigation={this.props.navigation} logOut={this.logOut} />
-      )
+      return <Login navigation={this.props.navigation} />
     }
   }
 }
@@ -66,6 +52,8 @@ const mapStateToProps = state => {
     uid: state.userInfo.uid,
     photo: state.userInfo.photo,
     userName: state.userInfo.userName,
+    pasLogedIn: state.userInfo.pasLogedIn,
+    googleLogIn: state.userInfo.googleLogIn,
 
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
@@ -73,7 +61,9 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = dispatch => {
   return {
-    userInfo: (payload) => dispatch(userInfo(payload))
+    userInfo: (payload) => dispatch(userInfo(payload)),
+    userLogedIn: (payload) => dispatch(userLogedIn(payload))
+
   }
 }
 

@@ -7,10 +7,11 @@ import {
 import { connect } from 'react-redux'
 import { Card, CardItem, Header, Left, Button, Body, Title } from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import { userInfo } from '../../store/action'
+import { userInfo,userLogedIn } from '../../store/action'
 import firebase from 'react-native-firebase'
 import { styles } from './styles.js'
 import Color from '../../utils/colorConstants'
+import { GoogleSignin } from 'react-native-google-signin';
 
 class ProfilePage extends Component {
   constructor(props) {
@@ -22,22 +23,25 @@ class ProfilePage extends Component {
     }
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
-  async componentDidMount() {
-    await firebase.auth().onAuthStateChanged((user) => {
-      if (!user) {
-        return
+ 
+  logOut = async () => {
+    try {
+      console.log(" LOGED IN ",this.props.pasLogedIn,"GOOGLE ",this.props.googleLogIn)
+      if (this.props.pasLogedIn){
+        firebase.auth().signOut()
+      } else if(this.props.googleLogIn){
+        firebase.auth().signOut()
+        await GoogleSignin.revokeAccess();
+        await GoogleSignin.signOut();
       }
-      else {
-        this.setState({ user: user._user.email, userData: user, isLoading: false, imageUrl: user._user.photoURL })
-        this.props.userInfo({
-          email: user._user.email, uid: user._user.uid,
-          userName: user._user.displayName, phoneNumber: null, photo: user._user.photoURL
-        })
-        this.setState({ isLoading: true })
-      }
-    })
+      this.props.userLogedIn({ pasLogedIn: false,googleLogIn:false })
+      this.props.userInfo({ email: null, uid: null, userName: '', phoneNumber: null, photo: null })
+      this.setState({ user: null })
+      this.props.navigation.navigate("Bible")
+    } catch (error) {
+      console.log("logout error", error);
+    }
   }
-  
   render() {
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
     return (
@@ -76,7 +80,7 @@ class ProfilePage extends Component {
             </CardItem>
           </Card>
           <Card style={this.styles.cardStyling}>
-            <CardItem header button onPress={this.props.logOut} style={[this.styles.cardItemStyling, { alignItems: 'center', justifyContent: 'center' }]}>
+            <CardItem header button onPress={this.logOut} style={[this.styles.cardItemStyling, { alignItems: 'center', justifyContent: 'center' }]}>
               <Text style={this.styles.textStyle}>LOG OUT</Text>
             </CardItem>
           </Card>
@@ -93,14 +97,16 @@ const mapStateToProps = state => {
     uid: state.userInfo.uid,
     photo: state.userInfo.photo,
     userName: state.userInfo.userName,
-
+    pasLogedIn: state.userInfo.pasLogedIn,
+    googleLogIn: state.userInfo.googleLogIn,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
   }
 }
 const mapDispatchToProps = dispatch => {
   return {
-    userInfo: (payload) => dispatch(userInfo(payload))
+    userInfo: (payload) => dispatch(userInfo(payload)),
+    userLogedIn: (payload) => dispatch(userLogedIn(payload))
   }
 }
 

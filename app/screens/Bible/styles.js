@@ -111,10 +111,13 @@ export const styles = (colorFile, sizeFile) => {
             margin: 8,
         },
         showBottomBar: {
-            bottom: 60
+            bottom: 120
         },
         hideBottomBar: {
             bottom: 20
+        },
+        showColorGrid:{
+            bottom:100
         },
         bottomBarPrevView: {
             left: 0
