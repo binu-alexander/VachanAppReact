@@ -218,7 +218,7 @@ class SelectBook extends Component {
             />
           </View>
         }
-        {(this.props.books && this.props.books.length > 0) && <Icon name="check-circle" color='rgba(62, 64, 149, 0.8)' onPress={() => this.props.screenProps.updateSelectedChapter(null, null)} size={64} style={{ position: 'absolute', bottom: 0, right: 0, paddingRight: 20,paddingBottom:10}} />}
+        {/* {(this.props.books && this.props.books.length > 0) && <Icon name="check-circle" color='rgba(62, 64, 149, 0.8)' onPress={() => this.props.screenProps.updateSelectedChapter(null, null)} size={64} style={{ position: 'absolute', bottom: 0, right: 0, paddingRight: 20,paddingBottom:10}} />} */}
       </View>
     );
   }

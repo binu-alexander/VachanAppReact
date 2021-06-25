@@ -33,6 +33,7 @@ import Help from '../screens/Help'
 import Feedback from '../screens/Help/Feedback'
 import Hints from '../screens/Help/Hints'
 import OBS from '../screens/StudyHelp/OBS/'
+import BRP from '../screens/StudyHelp/BRP/'
 
 
 const NavStack = createStackNavigator(
@@ -89,6 +90,12 @@ const NavStack = createStackNavigator(
     },
     OBS: {
       screen: OBS,
+      navigationOptions: () => ({
+        header: null
+      })
+    },
+    BRP: {
+      screen: BRP,
       navigationOptions: () => ({
         header: null
       })
