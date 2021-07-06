@@ -7,6 +7,7 @@ import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { OBSStyle } from './styles.js'
 import Color from '../../../utils/colorConstants';
+import ApiUtils from '../../../utils/ApiUtils'
 const Github_URL = 'https://raw.githubusercontent.com/Bridgeconn/vachancontentrepository/master/obs/'
 
 class OBS extends Component {
@@ -18,9 +19,9 @@ class OBS extends Component {
       langCodeObj: {},
       obsData: null,
       obsLang: [],
+      defaultLanguage: null,
       storyList: [],
       bsIndex: '01',
-      defaultLanguage: this.props.languageName && this.props.languageName.charAt(0).toUpperCase() + this.props.languageName.slice(1)
     }
     this.styles = OBSStyle(this.props.colorFile, this.props.sizeFile);
 
@@ -28,67 +29,69 @@ class OBS extends Component {
   componentDidMount() {
     this.fetchLangList()
   }
-  fetchLangList() {
+  fetchGitData(url) {
+    return fetch(Github_URL + url)
+      .then(ApiUtils.checkStatus)
+      .then(response => {
+        return response.json();
+      })
+      .catch(error => {
+        return error;
+      });
+  }
+  async fetchLangList() {
     try {
-      fetch(Github_URL + 'languages.json')
-        .then((response) => response.json())
-        .then((json) => {
-          // console.log("JSON RES LANG",json)
-          let obslangList = []
-          let foundLangCode = false
-          for (var key in json) {
-            obslangList.push(json[key])
-            if (key == this.state.langCode) {
-              foundLangCode = true
-              this.setState({ langCode: key, defaultLanguage: json[key] })
-              fetch(Github_URL + this.state.langCode + '/manifest.json')
-                .then((response) => response.json())
-                .then((json) => {
-                  let storyList = []
-                  for (var i = 0; i < json.length; i++) {
-                    storyList.push(i + 1 + ' ' + json[i])
-                  }
-                  // console.log("MENIFEST res",json)
-                  this.setState({ storyList })
-                })
-                .catch((error) => { console.log("MANIFEST DIDMOUNT", error) })
-              fetch(Github_URL + this.state.langCode + '/content/' + this.state.bsIndex + '.md')
-                .then((response) => response.text())
-                .then((json) => {
-                  // console.log("CONTENT res",json)
-                  this.setState({ obsData: json })
-                })
-                .catch((error) => { console.log("CONTENT DID MOUNT ", error) })
+      let urlLan = 'languages.json'
+      let lan = await this.fetchGitData(urlLan)
+      if (lan) {
+        let obslangList = []
+        let foundLangCode = false
+        for (var key in lan) {
+          obslangList.push(lan[key])
+          if (key == this.state.langCode) {
+            foundLangCode = true
+            this.setState({ langCode: key, defaultLanguage: lan[key] })
+            this.bibleStoryList()
+            this.mdFileFetch()
+          }
+        }
+        if (!foundLangCode) {
+          this.setState({ langCode: Object.keys(lan)[0], defaultLanguage: lan[Object.keys(lan)[0]] },
+            () => {
+              this.bibleStoryList()
+              this.mdFileFetch()
+
             }
-          }
-          if (!foundLangCode) {
-            this.setState({ langCode: null })
-          }
-          this.setState({ obsLang: obslangList, languagesList: [...this.state.languagesList, json] })
-        })
-        .catch((error) => { "LANGUAGE LIST", console.log(error) })
+          )
+        }
+        this.setState({ obsLang: obslangList, languagesList: [...this.state.languagesList, lan] })
+      }
+
     } catch (erorr) {
       console.log("ERROR ")
     }
 
   }
-  mdFileFetch() {
+  async mdFileFetch() {
     fetch(Github_URL + this.state.langCode + '/content/' + this.state.bsIndex + '.md')
       .then((response) => response.text())
       .then((json) => { this.setState({ obsData: json }) })
       .catch((error) => { console.log("CONTENT  ", error) })
   }
-  bibleStoryList() {
-    fetch(Github_URL + this.state.langCode + '/manifest.json')
-      .then((response) => response.json())
-      .then((json) => {
+  async bibleStoryList() {
+    try {
+      let url = this.state.langCode + '/manifest.json'
+      let data = await this.fetchGitData(url)
+      if (data) {
         let storyList = []
-        for (var i = 0; i < json.length; i++) {
-          storyList.push(i + 1 + ' ' + json[i])
+        for (var i = 0; i < data.length; i++) {
+          storyList.push(i + 1 + ' ' + data[i])
         }
         this.setState({ storyList })
-      })
-      .catch((error) => { console.log("MANIFEST ", error) })
+      }
+    } catch (error) {
+
+    }
   }
 
   onSelectLang = (index, lang) => {
@@ -129,7 +132,7 @@ class OBS extends Component {
             </Button>
           </Left>
           <Body style={{ flexDirection: 'row' }}>
-            <ModalDropdown options={this.state.obsLang} onSelect={this.onSelectLang} style={this.styles.modalStye} defaultValue={this.state.defaultLanguage} isFullWidth={true} dropdownStyle={{ padding: 10, width: '60%', height: '70%' }} dropdownTextStyle={{ fontSize: 18 }} textStyle={{ fontSize: 18, fontWeight: '400', color: '#fff' }} />
+            <ModalDropdown options={this.state.obsLang} onSelect={this.onSelectLang} defaultValue={this.state.defaultLanguage} style={this.styles.modalStye} isFullWidth={true} dropdownStyle={{ padding: 10, width: '60%', height: '70%' }} dropdownTextStyle={{ fontSize: 18 }} textStyle={{ fontSize: 18, fontWeight: '400', color: '#fff' }} />
             <Icon name="arrow-drop-down" color={Color.White} size={20} />
           </Body>
           <Right>
@@ -137,7 +140,6 @@ class OBS extends Component {
             <Icon name="arrow-drop-down" color={Color.White} size={20} />
           </Right>
         </Header>
-        {this.state.langCode ?
           <SafeAreaView style={this.styles.container}>
             <ScrollView
               contentInsetAdjustmentBehavior="automatic"
@@ -148,14 +150,7 @@ class OBS extends Component {
                 {this.state.obsData}
               </Markdown>
             </ScrollView>
-          </SafeAreaView> :
-          <View style={this.styles.emptyMessageContainer}>
-            <Icon name="image" style={this.styles.emptyMessageIcon} />
-            <Text style={this.styles.messageEmpty}>
-              Bible story for {this.props.languageName} not available{'\n'} Please select Language from header
-            </Text>
-          </View>
-        }
+          </SafeAreaView> 
       </>
     );
   }

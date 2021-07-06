@@ -41,6 +41,7 @@ export const OBSStyle = (colorFile, sizeFile) => {
         },
         emptyMessageContainer: {
             flex: 1,
+            backgroundColor: colorFile.backgroundColor,
             alignItems: 'center',
             flexDirection: 'column',
             justifyContent: 'center'
@@ -48,6 +49,7 @@ export const OBSStyle = (colorFile, sizeFile) => {
         messageEmpty: {
             fontSize: sizeFile.titleText,
             color: colorFile.textColor,
+            textAlign:'center'
         },
         emptyMessageIcon: {
             fontSize: sizeFile.emptyIconSize,

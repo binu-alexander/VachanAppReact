@@ -1,5 +1,6 @@
 import { StyleSheet, Dimensions } from 'react-native'
 import { Icon } from 'native-base';
+import colorConstants from '../../../utils/colorConstants';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
@@ -7,30 +8,61 @@ const height = Dimensions.get('window').height;
 export const OBSStyle = (colorFile, sizeFile) => {
     return StyleSheet.create({
         container: {
-            flex: 1,
             backgroundColor: colorFile.backgroundColor,
-            padding: 8
+        },
+        agendaBackgroundColor: {
+            backgroundColor: colorFile.backgroundColor,
         },
         textStyle: {
             fontSize: sizeFile.contentText,
-            color: colorFile.iconColor,
-            fontWeight: '400'
+            color: colorFile.textColor,
+            fontWeight: '400',
         },
         dropdownTextStyle: {
             fontSize: sizeFile.titleText,
             color: colorFile.iconColor
         },
-        // modalStye:{
-        //     backgroundColor:colorFile.backgroundColor,
-        // },
-        body: { color: colorFile.textColor, fontSize: sizeFile.contentText },
-        heading2: { color: colorFile.textColor },
-        code_block: { color: colorFile.textColor, fontSize: sizeFile.contentText },
-        // markDownStyle:{
-        //     body: {color:colorFile.textColor, fontSize: sizeFile.contentText},
-        //     heading2: {color:colorFile.textColor },
-        //     code_block: {color:colorFile.textColor, fontSize: sizeFile.contentText}
-        //   },
+        calenderHeader: {
+            flexDirection: 'row',
+            width: '100%',
+            justifyContent: 'space-between',
+            marginTop: 10,
+            marginBottom: 10
+        },
+        headerStyle: {
+            fontSize: 18,
+            fontWeight: 'bold',
+            paddingTop: 10,
+            paddingBottom: 10,
+            color: colorFile.blueText,
+            paddingRight: 5,
+            marginLeft: 5
+        },
+        item: {
+            backgroundColor: colorFile.backgroundColor,
+            shadowColor: colorFile.textColor,
+            shadowOpacity: 0.26,
+            shadowOffset: { width: 0, height: 4 },
+            shadowRadius: 10,
+            elevation: 3,
+            marginRight: 10,
+            marginTop: 32,
+            paddingLeft:16,
+            justifyContent:'center'
+        },
+        agendaDate: {
+            alignSelf: 'center',
+            color: colorFile.blueText,
+            fontSize: 18,
+            paddingVertical: 8,
+            backgroundColor: colorFile.backgroundColor
+        },
+        emptyDate: {
+            height: 15,
+            flex: 1,
+            paddingTop: 30,
+            backgroundColor: colorFile.backgroundColor
+        },
         dropdownStyle: {
             padding: 10,
             width: '60%',
