@@ -8,6 +8,7 @@ const height = Dimensions.get('window').height;
 export const OBSStyle = (colorFile, sizeFile) => {
     return StyleSheet.create({
         container: {
+            flex:1,
             backgroundColor: colorFile.backgroundColor,
         },
         agendaBackgroundColor: {
@@ -52,10 +53,10 @@ export const OBSStyle = (colorFile, sizeFile) => {
         },
         agendaDate: {
             alignSelf: 'center',
-            color: colorFile.blueText,
+            color: '#fff',
             fontSize: 18,
             paddingVertical: 8,
-            backgroundColor: colorFile.backgroundColor
+            // backgroundColor: colorFile.backgroundColor
         },
         emptyDate: {
             height: 15,

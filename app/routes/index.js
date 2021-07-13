@@ -90,15 +90,11 @@ const NavStack = createStackNavigator(
     },
     OBS: {
       screen: OBS,
-      navigationOptions: () => ({
-        header: null
-      })
+      navigationOptions: { headerTitle: "Bible Stories" }
     },
     BRP: {
       screen: BRP,
-      navigationOptions: () => ({
-        header: null
-      })
+      navigationOptions: { headerTitle: "Reading Plans" }
     },
     ProfilePage: {
       screen: ProfilePage,

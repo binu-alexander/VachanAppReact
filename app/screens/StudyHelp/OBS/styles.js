@@ -9,8 +9,8 @@ export const OBSStyle = (colorFile, sizeFile) => {
         container: {
             flex: 1,
             backgroundColor: colorFile.backgroundColor,
-            paddingHorizontal: 8,
-            alignItems:'center'
+            // paddingHorizontal: 8,
+            // alignItems:'center'
             // justifyContent:'center'
         },
         textStyle: {
@@ -22,10 +22,28 @@ export const OBSStyle = (colorFile, sizeFile) => {
             fontSize: sizeFile.titleText,
             color: colorFile.iconColor
         },
-        // modalStye:{
-        //     backgroundColor:colorFile.backgroundColor,
-        // },
-        body: { color: colorFile.textColor, fontSize: sizeFile.contentText,alignItems: "center",justifyContent:'center' },
+        modalStyle: {
+            alignSelf: 'flex-end',
+            width: 150,
+            marginTop: 32,
+            right: 8,
+            padding:10,
+            borderWidth: 0,
+            borderRadius: 3,
+            backgroundColor: colorFile.blueText,
+        },
+        modalStyle2: {
+            alignSelf: 'flex-start',
+            width: 150,
+            marginTop: 32,
+            left: 8,
+            padding:10,
+            borderWidth: 0,
+            borderRadius: 3,
+            backgroundColor: colorFile.blueText,
+        },
+
+        body: { color: colorFile.textColor, fontSize: sizeFile.contentText, alignItems: "center", justifyContent: 'center' },
         heading2: { color: colorFile.textColor },
         code_block: { color: colorFile.textColor, fontSize: sizeFile.contentText },
         // markDownStyle:{
@@ -33,6 +51,14 @@ export const OBSStyle = (colorFile, sizeFile) => {
         //     heading2: {color:colorFile.textColor },
         //     code_block: {color:colorFile.textColor, fontSize: sizeFile.contentText}
         //   },
+        row: {
+            // flex: 1,
+            flexDirection: 'row',
+          },
+          cell: {
+            // flex: 1,
+            borderWidth: StyleSheet.hairlineWidth,
+          },
         dropdownStyle: {
             padding: 10,
             width: '60%',
@@ -49,7 +75,7 @@ export const OBSStyle = (colorFile, sizeFile) => {
         messageEmpty: {
             fontSize: sizeFile.titleText,
             color: colorFile.textColor,
-            textAlign:'center'
+            textAlign: 'center'
         },
         emptyMessageIcon: {
             fontSize: sizeFile.emptyIconSize,
