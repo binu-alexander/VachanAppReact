@@ -6,24 +6,24 @@ import Color from '../../utils/colorConstants'
 
 const ChapterNdAudio = ({
     styles, audio,
-    currentVisibleChapter, queryBookFromAPI, bookId, status,visibleParallelView,showBottomBar,
-    totalChapters, languageCode, versionCode,
-    })=>(
+    currentVisibleChapter, queryBookFromAPI, bookId, status, visibleParallelView, showBottomBar,
+    totalChapters, languageCode, versionCode, nextContent, previousContent, downloaded
+}) => (
         <View style={{ justifyContent: (currentVisibleChapter != 1 && currentVisibleChapter == currentVisibleChapter != totalChapters) ? 'center' : 'space-around', alignItems: 'center' }}>
             {
-                currentVisibleChapter == 1
+                (currentVisibleChapter == 1 && downloaded == true)
                     ? null :
-                    <View style={[styles.bottomBarPrevView,showBottomBar ? styles.showBottomBar : styles.hideBottomBar, visibleParallelView ? 
-                    styles.bottomBarParallelPrevView : styles.bottomBarPosition]}>
+                    <View style={[styles.bottomBarPrevView, showBottomBar ? styles.showBottomBar : styles.hideBottomBar, visibleParallelView ?
+                        styles.bottomBarParallelPrevView : styles.bottomBarPosition]}>
                         <Icon name={'chevron-left'} color={Color.Blue_Color} size={visibleParallelView ? 16 : 32}
                             style={styles.bottomBarChevrontIcon}
-                            onPress={() => queryBookFromAPI(-1)}
+                            onPress={() => queryBookFromAPI(downloaded ? false :  (Object.keys(previousContent).length != 0  ? previousContent : null )) }
                         />
                     </View>
             }
             {
                 audio && (
-                    status && <View style={[styles.bottomBarAudioCenter,showBottomBar ? styles.showBottomBar : styles.hideBottomBar]}>
+                    status && <View style={[styles.bottomBarAudioCenter, showBottomBar ? styles.showBottomBar : styles.hideBottomBar]}>
                         <Player
                             styles={styles}
                             languageCode={languageCode}
@@ -34,13 +34,13 @@ const ChapterNdAudio = ({
                     </View>)
             }
             {
-                currentVisibleChapter == totalChapters
+                (currentVisibleChapter == totalChapters && downloaded)
                     ? null :
-                    <View style={[styles.bottomBarNextView,showBottomBar ? styles.showBottomBar : styles.hideBottomBar, visibleParallelView ? 
-                    styles.bottomBarNextParallelView : styles.bottomBarPosition]}>
+                    <View style={[styles.bottomBarNextView, showBottomBar ? styles.showBottomBar : styles.hideBottomBar, visibleParallelView ?
+                        styles.bottomBarNextParallelView : styles.bottomBarPosition]}>
                         <Icon name={'chevron-right'} color={Color.Blue_Color} size={visibleParallelView ? 16 : 32}
                             style={styles.bottomBarChevrontIcon}
-                            onPress={() => queryBookFromAPI(1)}
+                            onPress={() => queryBookFromAPI(downloaded ? true : (Object.keys(nextContent).length != 0 ? nextContent : null))}
                         />
                     </View>
             }

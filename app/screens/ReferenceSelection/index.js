@@ -140,7 +140,7 @@ const mapStateToProps = state => {
     sourceId: state.updateVersion.sourceId,
     downloaded: state.updateVersion.downloaded,
 
-    books: state.versionFetch.data,
+    books: state.versionFetch.versionBooks,
     error: state.versionFetch.error,
     isLoading: state.versionFetch.loading,
 

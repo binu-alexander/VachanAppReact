@@ -45,7 +45,11 @@ export const ALL_CONTENT_FAILURE = 'all_content_failure';
 
 export const FECTH_ALL_LANGUAGE = 'fetch_all_laguages';
 export const ALL_LANGUAGE_SUCCESS = 'all_language_success';
-export const ALL_LANGUAGE_FAILURE = 'all_language_failure'
+export const ALL_LANGUAGE_FAILURE = 'all_language_failure';
+
+export const FECTH_ALL_BOOKS = 'fetch_all_books'
+export const ALL_BOOKS_SUCCESS = 'all_books_success';
+export const ALL_BOOKS_FAILURE = 'all_books_failure';
 
 export const USER_INFO = 'user_info';
 export const USER_LOGED_IN = 'user_loged_in';

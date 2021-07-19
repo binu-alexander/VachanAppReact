@@ -24,14 +24,15 @@ class ChapterSelection extends Component {
     this.props.screenProps.updateSelectedChapter(item, index)
   }
   render() {
-
     return (
       <View style={{ flex: 1 }}>
         <SelectionGrid
           styles={this.styles}
           onNumPress={(item, index) => { this.onNumPress(item, index) }}
           numbers={this.state.chapterData}
-          heighlightedNumber={this.props.screenProps.selectedChapterNumber}
+          selectedChapterNumber={this.props.screenProps.selectedChapterNumber}
+          blueText={this.props.colorFile.blueText}
+          textColor={this.props.colorFile.textColor}
         />
         <Icon type="AntDesign" name="back" onPress={() => this.props.screenProps.updateSelectedChapter(this.props.screenProps.selectedChapterNumber, this.props.screenProps.selectedChapterIndex)} size={64} style={{ position: 'absolute', bottom: 0, right: 0, paddingRight: 20,paddingBottom:10,color:'rgba(62, 64, 149, 0.8)',fontSize:40 }} />
       </View>

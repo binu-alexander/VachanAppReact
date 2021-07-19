@@ -374,7 +374,7 @@ const mapStateToProps = state => {
     downloaded: state.updateVersion.downloaded,
     sourceId: state.updateVersion.sourceId,
     bookName: state.updateVersion.bookName,
-    books: state.versionFetch.data,
+    books: state.versionFetch.versionBooks,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
   }

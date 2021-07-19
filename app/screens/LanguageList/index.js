@@ -81,7 +81,7 @@ class LanguageList extends Component {
   componentWillUnmount() {
     // BackHandler.removeEventListener('hardwareBackPress', this.onBack);
   }
-  
+
   onBack = () => {
     let updateSourceId = false
     let updatedObj = {}
@@ -177,11 +177,11 @@ class LanguageList extends Component {
           lanVer.push(languageList[i])
         }
       }
-     
+
       var res = lanVer.length == 0 ? [] : lanVer.sort(function (a, b) {
         var textA = a.languageName.toUpperCase();
         var textB = b.languageName.toUpperCase();
-        return textA.localeCompare(textB); 
+        return textA.localeCompare(textB);
       })
       this.setState({
         languages: res,
@@ -224,7 +224,7 @@ class LanguageList extends Component {
   getChapters = (content, bookId) => {
     try {
       let chapterModels = []
-      let chapterHeading = null
+      // let chapterHeading = null
       let vNumber = null
       for (var id in content) {
         if (content != null && id == bookId) {
@@ -271,16 +271,16 @@ class LanguageList extends Component {
       this.props.navigation.pop()
     } else {
       // for downloading bible from settings page no need to navigate
-      if(langName.toLowerCase() === 'english'){
-        Alert.alert("","This version is not currently available for download.")
-      }else{
-        if(downloaded){
-          Alert.alert("","Version "+verCode+" is already downloaded.") 
-        }else{
-          Alert.alert("","To Download the Bible, click on download icon.")
+      if (langName.toLowerCase() === 'english') {
+        Alert.alert("", "This version is not currently available for download.")
+      } else {
+        if (downloaded) {
+          Alert.alert("", "Version " + verCode + " is already downloaded.")
+        } else {
+          Alert.alert("", "To Download the Bible, click on download icon.")
         }
       }
-    
+
     }
   }
   deleteBible(languageName, languageCode, versionCode, sourceId, downloaded) {
@@ -387,7 +387,7 @@ const mapStateToProps = state => {
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
     bibleLanguages: state.contents.contentLanguages,
-    books: state.versionFetch.data,
+    books: state.versionFetch.versionBooks,
     baseAPI: state.updateVersion.baseAPI,
     langTimeStamp: state.updateVersion.langTimeStamp
   }

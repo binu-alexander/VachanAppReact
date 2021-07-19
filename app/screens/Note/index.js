@@ -225,7 +225,7 @@ const mapStateToProps = state => {
     versionCode: state.updateVersion.versionCode,
     email: state.userInfo.email,
     uid: state.userInfo.uid,
-    books: state.versionFetch.data,
+    books: state.versionFetch.versionBooks,
 
   }
 }

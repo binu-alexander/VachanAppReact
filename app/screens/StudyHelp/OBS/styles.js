@@ -1,5 +1,4 @@
 import { StyleSheet, Dimensions } from 'react-native'
-import { Icon } from 'native-base';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
@@ -9,18 +8,15 @@ export const OBSStyle = (colorFile, sizeFile) => {
         container: {
             flex: 1,
             backgroundColor: colorFile.backgroundColor,
-            // paddingHorizontal: 8,
-            // alignItems:'center'
-            // justifyContent:'center'
         },
         textStyle: {
             fontSize: sizeFile.contentText,
-            color: colorFile.iconColor,
+            color: colorFile.textColor,
             fontWeight: '400'
         },
         dropdownTextStyle: {
             fontSize: sizeFile.titleText,
-            color: colorFile.iconColor
+            color: colorFile.textColor
         },
         modalStyle: {
             alignSelf: 'flex-end',
@@ -42,23 +38,6 @@ export const OBSStyle = (colorFile, sizeFile) => {
             borderRadius: 3,
             backgroundColor: colorFile.blueText,
         },
-
-        body: { color: colorFile.textColor, fontSize: sizeFile.contentText, alignItems: "center", justifyContent: 'center' },
-        heading2: { color: colorFile.textColor },
-        code_block: { color: colorFile.textColor, fontSize: sizeFile.contentText },
-        // markDownStyle:{
-        //     body: {color:colorFile.textColor, fontSize: sizeFile.contentText},
-        //     heading2: {color:colorFile.textColor },
-        //     code_block: {color:colorFile.textColor, fontSize: sizeFile.contentText}
-        //   },
-        row: {
-            // flex: 1,
-            flexDirection: 'row',
-          },
-          cell: {
-            // flex: 1,
-            borderWidth: StyleSheet.hairlineWidth,
-          },
         dropdownStyle: {
             padding: 10,
             width: '60%',

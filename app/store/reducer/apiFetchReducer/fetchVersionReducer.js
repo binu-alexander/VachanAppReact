@@ -5,7 +5,7 @@ import {
 } from '../../action/actionsType'
 
 const initialState = {
-    data: [],
+    versionBooks: [],
     bible:{},
     chapterContent: [],
     downloadedBook: [],
@@ -40,7 +40,7 @@ function fetchVersionReducer(state = initialState, action) {
             return {
                 ...state,
                 loading: false,
-                data: action.payload
+                versionBooks: action.payload
             }
         case VERSION_BOOKS_FAILURE:
             return {

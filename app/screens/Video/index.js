@@ -137,7 +137,7 @@ const mapStateToProps = state => {
   return {
     languageCode: state.updateVersion.languageCode,
     languageName: state.updateVersion.language,
-    books: state.versionFetch.data,
+    books: state.versionFetch.versionBooks,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
   }

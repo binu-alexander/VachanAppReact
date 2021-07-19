@@ -113,7 +113,9 @@ class SelectBook extends Component {
         }
         let wait = new Promise((resolve) => setTimeout(resolve, 500)); 
         wait.then( () => {
-        this.flatlistRef.scrollToIndex({ index: bookIndex, viewPosition: 0, animated: false, viewOffset: 0 })
+          if(this.flatlistRef){
+            this.flatlistRef.scrollToIndex({ index: bookIndex, viewPosition: 0, animated: false, viewOffset: 0 })
+          }
         });
       }
     }
@@ -238,7 +240,7 @@ class SelectBook extends Component {
 }
 const mapStateToProps = state => {
   return {
-    books: state.versionFetch.data,
+    books: state.versionFetch.versionBooks,
     isLoading: state.versionFetch.isLoading,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,

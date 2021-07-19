@@ -36,6 +36,7 @@ class Auth extends Component {
   }
 
   render() {
+    // console.log(" EMAIL PROPS IN LOGIN ", this.props.email)
     if (this.props.email) {
       return <ProfilePage navigation={this.props.navigation} />
     }

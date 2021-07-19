@@ -1,6 +1,6 @@
 
-import { FETCH_ALL_CONTENT, FECTH_ALL_LANGUAGE } from '../../action/actionsType'
-import { allContentFailure, allContentSuccess, allLanguageFailure, allLanguageSuccess } from '../../action/'
+import { FETCH_ALL_CONTENT, FECTH_ALL_LANGUAGE,FECTH_ALL_BOOKS } from '../../action/actionsType'
+import { allContentFailure, allContentSuccess, allLanguageFailure, allLanguageSuccess,allBooksSuccess,allBooksFailure } from '../../action/'
 import { put, takeLatest, call, fork, all } from 'redux-saga/effects'
 import securityVaraibles from './../../../../securityVaraibles.js'
 import fetchApi from '../../api';
@@ -115,10 +115,27 @@ function* fetchAllLanguage() {
 
   }
 }
+function* fetchAllBooks(){
+  try {
+    const state = store.getState()
+    var result = yield call(fetch, state.updateVersion.baseAPI + 'booknames')
+    if (result.ok && result.status == 200) {
+      const response = yield result.json()
+      yield put(allBooksSuccess(response))
+      yield put(allBooksFailure(null))
+    }
+  } catch (e) {
+    yield put(allBooksFailure(e))
+    yield put(allBooksSuccess([]))
+  }
+ 
 
+
+}
 export const watchAllContent = [
   takeLatest(FETCH_ALL_CONTENT, fetchAllContent),
   takeLatest(FECTH_ALL_LANGUAGE, fetchAllLanguage),
+  takeLatest(FECTH_ALL_BOOKS, fetchAllBooks),
 ]
 
 

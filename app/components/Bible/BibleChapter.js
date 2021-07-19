@@ -32,6 +32,8 @@ class BibleChapter extends Component {
             message: null,
             parallelBible: null,
             parallelBibleHeading: null,
+            pNextContent: null,
+            pNextContent: null,
             totalVerses: null,
             loading: false
         }
@@ -40,21 +42,25 @@ class BibleChapter extends Component {
     queryParallelBible = (val, bkId) => {
         try {
             if (this.props.parallelLanguage) {
-                let currentParallelViewChapter = (val != null && bkId == null) ? this.state.currentParallelViewChapter + parseInt(val) : (val != null && bkId != null ? parseInt(val) : this.state.currentParallelViewChapter)
+                let currentParallelViewChapter =  val != null ? val : this.state.currentParallelViewChapter
                 let bookId = bkId != null ? bkId : this.state.bookId
-                this.setState({ loading: true, currentParallelViewChapter: currentParallelViewChapter, bookId }, async () => {
-                    let url = "bibles" + "/" + this.props.parallelLanguage.sourceId + "/" + "books" + "/" + bookId + "/" + "chapter" + "/" + this.state.currentParallelViewChapter
+                this.setState({ loading: true,  currentParallelViewChapter: currentParallelViewChapter, bookId }, async () => {
+                    this.updateBook()
+                    let url = "bibles" + "/" + this.props.parallelLanguage.sourceId + "/" + "books" + "/" + this.state.bookId + "/" + "chapter" + "/" + this.state.currentParallelViewChapter
                     let response = await vApi.get(url)
                     if (response.chapterContent) {
                         let chapterContent = response.chapterContent.contents
                         let totalVerses = response.chapterContent.contents.length
-                        // let parallelBibleHeading = getHeading(response.chapterContent.contents)
+                        let pNextContent = Object.keys(response.next).length != 0 ? response.next : null 
+                        let PpeviousContent = Object.keys(response.previous).length != 0 ? response.previous : null
                         this.setState({
                             parallelBible: chapterContent,
                             parallelBibleHeading: getHeading(response.chapterContent.contents),
                             totalVerses: totalVerses,
                             loading: false,
-                            error: false, message: null
+                            error: false, message: null,
+                            pNextContent,
+                            PpeviousContent
                         })
                     } else {
                         this.setState({
@@ -64,10 +70,11 @@ class BibleChapter extends Component {
                             bookId: bookId,
                             loading: false,
                             error: true,
-                            message: null
+                            message: null,
+                            pNextContent: null,
+                            PpeviousContent: null
                         })
                     }
-
                 })
             }
         }
@@ -96,6 +103,7 @@ class BibleChapter extends Component {
                 for (var i = 0; i <= response.length - 1; i++) {
                     if (response[i].language.name === parallelLanguage) {
                         for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
+                            console.log("BOOK CODE ",this.state.bookId)
                             if (this.state.bookId != null) {
                                 if (response[i].bookNames[j].book_code == this.state.bookId) {
                                     bukName = response[i].bookNames[j].short
@@ -185,7 +193,7 @@ class BibleChapter extends Component {
                     <Spinner
                         visible={true}
                         textContent={'Loading...'}
-                    /> }
+                    />}
                 {
                     (this.state.parallelBible == null && this.state.error) ?
                         <View style={{ flex: 1, justifyContent: 'center', alignSelf: 'center' }}>
@@ -198,7 +206,7 @@ class BibleChapter extends Component {
                         :
                         <View style={{ flex: 1 }}>
                             <ScrollView
-                            contentContainerStyle={{ paddingBottom: 20 }}
+                                contentContainerStyle={{ paddingBottom: 20,marginTop:10 }}
                                 showsVerticalScrollIndicator={false} ref={(ref) => { this.scrollViewRef = ref; }} >
                                 {this.state.parallelBible && this.state.parallelBible.map((verse, index) =>
                                     <View style={{ marginHorizontal: 16 }}>
@@ -233,31 +241,31 @@ class BibleChapter extends Component {
                                             </Text>
                                             :
                                             (typeof verse.verseNumber != 'undefined') ?
-                                            <Text>
-                                                {
-                                                    typeof verse.verseText == 'undefined' ? null :
+                                                <Text>
+                                                    {
+                                                        typeof verse.verseText == 'undefined' ? null :
 
-                                                        <Text letterSpacing={24}
-                                                            style={this.styles.verseWrapperText}>
-                                                            <Text>
-                                                                <Text style={this.styles.verseNumber} >
-                                                                    {verse.verseNumber}{" "}
-                                                                </Text>
-                                                                <Text style={this.styles.textString}
-                                                                >
-                                                                    {getResultText(verse.verseText)}
-                                                                </Text>
-                                                            </Text>
-                                                            {
-                                                                getHeading(verse.contents)
-                                                                    ?
-                                                                    <Text style={this.styles.sectionHeading}>
-                                                                        {"\n"}{getHeading(verse.contents)}
+                                                            <Text letterSpacing={24}
+                                                                style={this.styles.verseWrapperText}>
+                                                                <Text>
+                                                                    <Text style={this.styles.verseNumber} >
+                                                                        {verse.verseNumber}{" "}
                                                                     </Text>
-                                                                    : null
-                                                            }
-                                                        </Text>}
-                                            </Text> : null
+                                                                    <Text style={this.styles.textString}
+                                                                    >
+                                                                        {getResultText(verse.verseText)}
+                                                                    </Text>
+                                                                </Text>
+                                                                {
+                                                                    getHeading(verse.contents)
+                                                                        ?
+                                                                        <Text style={this.styles.sectionHeading}>
+                                                                            {"\n"}{getHeading(verse.contents)}
+                                                                        </Text>
+                                                                        : null
+                                                                }
+                                                            </Text>}
+                                                </Text> : null
                                         }
                                     </View>
                                 )}
@@ -275,24 +283,19 @@ class BibleChapter extends Component {
                             </ScrollView>
 
                             <View style={{ justifyContent: (this.state.currentParallelViewChapter != 1 && this.state.currentParallelViewChapter == this.state.currentParallelViewChapter != this.state.totalChapters) ? 'center' : 'space-around', alignItems: 'center' }}>
-                                {
-                                    this.state.currentParallelViewChapter == 1 ? null :
-                                        <View style={this.styles.bottomBarParallelPrevView}>
-                                            <Icon name={'chevron-left'} color={Color.Blue_Color} size={16}
-                                                style={this.styles.bottomBarChevrontIcon}
-                                                onPress={() => this.queryParallelBible(-1, null)}
-                                            />
-                                        </View>
-                                }
-                                {
-                                    this.state.currentParallelViewChapter == this.state.totalChapters ? null :
-                                        <View style={this.styles.bottomBarNextParallelView}>
-                                            <Icon name={'chevron-right'} color={Color.Blue_Color} size={16}
-                                                style={this.styles.bottomBarChevrontIcon}
-                                                onPress={() => this.queryParallelBible(1, null)}
-                                            />
-                                        </View>
-                                }
+                                <View style={this.styles.bottomBarParallelPrevView}>
+                                    <Icon name={'chevron-left'} color={Color.Blue_Color} size={16}
+                                        style={this.styles.bottomBarChevrontIcon}
+                                        onPress={() => this.queryParallelBible( this.state.PpeviousContent ? this.state.PpeviousContent.chapterId :null,this.state.PpeviousContent ? this.state.PpeviousContent.bibleBookCode : null)}
+                                    />
+                                </View>
+                                <View style={this.styles.bottomBarNextParallelView}>
+                                    <Icon name={'chevron-right'} color={Color.Blue_Color} size={16}
+                                        style={this.styles.bottomBarChevrontIcon}
+                                        onPress={() => this.queryParallelBible( this.state.pNextContent ? this.state.pNextContent.chapterId : null ,this.state.pNextContent ?  this.state.pNextContent.bibleBookCode : null)}
+                                    />
+                                </View>
+
                             </View>
                         </View>
 
@@ -308,7 +311,7 @@ const mapStateToProps = state => {
     return {
         sizeFile: state.updateStyling.sizeFile,
         colorFile: state.updateStyling.colorFile,
-        books: state.versionFetch.data,
+        books: state.versionFetch.versionBooks,
         language: state.updateVersion.language,
         versionCode: state.updateVersion.versionCode,
         sourceId: state.updateVersion.sourceId,

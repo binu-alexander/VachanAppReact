@@ -306,7 +306,7 @@ class BRP extends Component {
 
 const mapStateToProps = state => {
   return {
-    books: state.versionFetch.data,
+    books: state.versionFetch.versionBooks,
     languageCode: state.updateVersion.languageCode,
     languageName: state.updateVersion.language,
     sizeFile: state.updateStyling.sizeFile,

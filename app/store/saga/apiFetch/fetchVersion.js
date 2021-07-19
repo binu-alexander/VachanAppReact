@@ -51,10 +51,8 @@ function* fetchVersionBooks(params) {
       }
     }
     else {
-      var result = yield call(fetch, state.updateVersion.baseAPI + 'booknames')
-      if (result.ok && result.status == 200) {
         let found = false
-        const response = yield result.json()
+        const response = state.contents.allBooks
         for (var i = 0; i < response.length; i++) {
           if (payload.language.toLowerCase() == response[i].language.name) {
             for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
@@ -74,7 +72,6 @@ function* fetchVersionBooks(params) {
           //can exit app to refresh the data or give alert
         Alert.alert("Check for update in languageList screen", [{ text: 'OK', onPress: () => {return} }], { cancelable: false });
         // BackHandler.exitApp();
-      }
       }
     }
     var res = bookListData.length == 0 ? [] : bookListData.sort(function (a, b) { return a.bookNumber - b.bookNumber })

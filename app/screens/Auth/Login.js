@@ -42,6 +42,7 @@ class Login extends Component {
         .auth()
         .signInWithEmailAndPassword(this.state.email, this.state.password)
         .then((res) => {
+          console.log("RES =====>",res)
           this.props.userLogedIn({ pasLogedIn: true,googleLogIn:false })
           this.props.navigation.navigate("Bible")
           this.setState({
@@ -49,6 +50,7 @@ class Login extends Component {
           })
         })
         .catch(error => {
+          // conso.log("ERROR ",error)
           if (error.code === 'auth/user-not-found') {
             Alert.alert("User not found")
           }

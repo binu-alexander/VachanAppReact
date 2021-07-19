@@ -168,7 +168,7 @@ export class InfographicsImage extends React.Component {
 const mapStateToProps = state => {
   return {
     languageCode: state.updateVersion.languageCode,
-    books: state.versionFetch.data,
+    books: state.versionFetch.versionBooks,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
     colorMode: state.updateStyling.colorMode

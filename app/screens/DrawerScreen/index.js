@@ -90,7 +90,7 @@ class DrawerScreen extends Component {
           {/*for appstore app*/}
           {/* <Text style={this.styles.versionText}>APP VERSION {this.state.currentVersion}</Text> */}
           { /*//for tesing */}
-          <Text style={this.styles.versionText}>APP VERSION 1.3.0-alpha.6</Text>
+          <Text style={this.styles.versionText}>APP VERSION 1.3.0-alpha.7</Text>
         </ScrollView>
       </View>
     );
@@ -101,7 +101,7 @@ const mapStateToProps = state => {
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
     email: state.userInfo.email,
-    books: state.versionFetch.data,
+    books: state.versionFetch.versionBooks,
     language: state.updateVersion.language,
     languageCode: state.updateVersion.languageCode,
     versionCode: state.updateVersion.versionCode,

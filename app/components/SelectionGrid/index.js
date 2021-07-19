@@ -9,15 +9,13 @@ import {
 import Spinner from 'react-native-loading-spinner-overlay';
 import Color from '../../utils/colorConstants'
 
-
-
 const SelectionGrid = ({
   styles,
   onNumPress,
   numbers,
   loader,
-  heighlightedNumber
-
+  selectedChapterNumber,
+  blueText,textColor
 }) => (
     <View style={styles.chapterSelectionContainer}>
       {loader &&
@@ -34,7 +32,7 @@ const SelectionGrid = ({
             { backgroundColor: Color.Transparent }]}
             onPress={() => { onNumPress(item, index) }}>
             <View>
-              <Text style={[styles.chapterNum, { fontWeight: item == heighlightedNumber ? "bold" : "normal" }]}>{item}</Text>
+              <Text style={[styles.chapterNum, { fontWeight: item == selectedChapterNumber ? 'bold' : 'normal',color: item == selectedChapterNumber ? blueText : textColor}]}>{item}</Text>
             </View>
           </TouchableOpacity>
         }

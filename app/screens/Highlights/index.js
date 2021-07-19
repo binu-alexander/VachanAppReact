@@ -190,7 +190,7 @@ const mapStateToProps = state => {
     uid: state.userInfo.uid,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-    books: state.versionFetch.data,
+    books: state.versionFetch.versionBooks,
   }
 }
 const mapDispatchToProps = dispatch => {

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { SafeAreaView, ScrollView, StatusBar, View, Text, Touchable } from 'react-native';
-import Markdown from 'react-native-markdown-display';
+import { ScrollView, View, Dimensions, ActivityIndicator } from 'react-native';
+// import Markdown from 'react-native-markdown-display';
+import Markdown from 'react-native-simple-markdown'
 import ModalDropdown from 'react-native-modal-dropdown';
 import { Header, Title, Button, Left, Right, Body } from "native-base";
 import { connect } from 'react-redux'
@@ -10,7 +11,8 @@ import Color from '../../../utils/colorConstants';
 import ApiUtils from '../../../utils/ApiUtils'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 const Github_URL = 'https://raw.githubusercontent.com/Bridgeconn/vachancontentrepository/master/obs/'
-
+const width = Dimensions.get('window').width;
+const height = Dimensions.get('window').height;
 class OBS extends Component {
   constructor(props) {
     super(props);
@@ -85,7 +87,7 @@ class OBS extends Component {
       if (data) {
         let storyList = []
         for (var i = 0; i < data.length; i++) {
-          storyList.push(i + 1 + ' ' + data[i])
+          storyList.push(i + 1 + '. ' + data[i])
         }
         this.setState({ storyList })
       }
@@ -124,37 +126,51 @@ class OBS extends Component {
   render() {
     return (
       <View style={this.styles.container}>
-        <SafeAreaView >
-          <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'flex-end' }}>
-            <TouchableOpacity onPress={() => { this._dropdown_1 && this._dropdown_1.show(); }} style={{ padding: 10, margin: 10, borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', backgroundColor: this.props.colorFile.blueText }}>
-              <ModalDropdown
-                ref={el => this._dropdown_1 = el}
-                options={this.state.obsLang} onSelect={this.onSelectLang}
-                defaultValue={this.state.defaultLanguage} isFullWidth={true}
-                dropdownStyle={{ width: '60%', height: '70%' }} dropdownTextStyle={{ fontSize: 18 }}
-                textStyle={{ fontSize: 18, fontWeight: '400', color: '#fff' }} />
-              <Icon name="arrow-drop-down" color={'#fff'} size={20} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => { this._dropdown_2 && this._dropdown_2.show(); }} style={{ padding: 10, margin: 10, borderRadius: 10, width: 150, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: this.props.colorFile.blueText }}>
-              <ModalDropdown
-                ref={el => this._dropdown_2 = el} options={this.state.storyList} onSelect={this.onSelectStory}
-                style={{ paddingRight: 20 }} defaultValue={this.state.storyList.length > 0 ? this.state.storyList[0] : ''}
-                isFullWidth={true} dropdownStyle={{ width: '60%', height: '70%' }}
-                // renderRow={this.renderRow}
-                dropdownTextStyle={{ fontSize: 18 }} textStyle={{ paddingHorizontal: 8, fontSize: 18, fontWeight: '400', color: '#fff' }} />
-              <Icon name="arrow-drop-down" color={'#fff'} size={20} />
-            </TouchableOpacity>
-          </View>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+          <TouchableOpacity onPress={() => { this._dropdown_1 && this._dropdown_1.show(); }} style={{ padding: 10, margin: 10, borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderColor: this.props.colorFile.iconColor, borderWidth: 0.5 }}>
+            <ModalDropdown
+              ref={el => this._dropdown_1 = el}
+              options={this.state.obsLang} onSelect={this.onSelectLang}
+              defaultValue={this.state.defaultLanguage} isFullWidth={true}
+              dropdownStyle={{ width: '60%', height: '70%' }} dropdownTextStyle={{ fontSize: 18 }}
+              textStyle={{ fontSize: 18, fontWeight: '400', color: this.props.colorFile.textColor }} />
+            <Icon name="arrow-drop-down" color={this.props.colorFile.iconColor} size={20} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { this._dropdown_2 && this._dropdown_2.show(); }} style={{ padding: 10, margin: 10, borderRadius: 10, width: 150, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderColor: this.props.colorFile.iconColor, borderWidth: 0.5 }}>
+            <ModalDropdown
+              ref={el => this._dropdown_2 = el} options={this.state.storyList} onSelect={this.onSelectStory}
+              style={{ paddingRight: 20 }} defaultValue={this.state.storyList.length > 0 ? this.state.storyList[0] : ''}
+              isFullWidth={true} dropdownStyle={{ width: '60%', height: '70%' }}
+              // renderRow={this.renderRow}
+              dropdownTextStyle={{ fontSize: 18 }}
+              textStyle={{ paddingHorizontal: 8, fontSize: 18, fontWeight: '400', color: this.props.colorFile.textColor }} />
+            <Icon name="arrow-drop-down" color={this.props.colorFile.iconColor} size={20} />
+          </TouchableOpacity>
+        </View>
+        {this.state.obsData ?
           <ScrollView
             contentInsetAdjustmentBehavior="automatic"
-            style={{ height: '100%', paddingHorizontal: 8 }}
+            style={{ paddingHorizontal: 12 }}
           >
             <Markdown
-              style={this.styles}>
+              styles={{
+                view: {
+                  alignItems: "center", justifyContent: 'center',
+                },
+                text: {
+                  color: this.props.colorFile.textColor,
+                  fontSize: this.props.sizeFile.contentText,
+                  lineHeight: this.props.sizeFile.lineHeight,
+                },
+                image: {
+                  height: height / 2.5, width: width - 10
+                }
+              }}
+            >
               {this.state.obsData}
             </Markdown>
           </ScrollView>
-        </SafeAreaView>
+          : <ActivityIndicator animate={true} style={{ flex: 1, justifyContent: 'center', alignSelf: 'center' }} />}
       </View>
     );
   }

@@ -173,7 +173,7 @@ const mapStateToProps = state => {
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
     contentType: state.updateVersion.contentType,
-    books: state.versionFetch.data,
+    books: state.versionFetch.versionBooks,
     commentaryContent: state.vachanAPIFetch.apiData,
     error: state.vachanAPIFetch.error,
     baseAPI: state.updateVersion.baseAPI,

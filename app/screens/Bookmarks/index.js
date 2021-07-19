@@ -179,7 +179,7 @@ const mapStateToProps = state => {
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
 
-    books: state.versionFetch.data,
+    books: state.versionFetch.versionBooks,
 
   }
 }

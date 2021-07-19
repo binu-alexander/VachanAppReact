@@ -2,11 +2,12 @@
 import React, { Component } from 'react';
 import { ActivityIndicator, View, Text, TextInput, Image, Button, Alert, Platform, KeyboardAvoidingView } from 'react-native';
 import firebase from 'react-native-firebase'
-import { userInfo } from '../../store/action/'
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { styles } from './styles.js'
-import Color from '../../utils/colorConstants'
+import Color from '../../utils/colorConstants';
+import { userInfo,userLogedIn } from '../../store/action'
+
 
 class Register extends Component {
   constructor(props) {
@@ -40,8 +41,10 @@ class Register extends Component {
       if (this.state.cpassword === this.state.password) {
         firebase
           .auth()
-          .createUserWithEmailAndPassword(this.state.email, this.state.password)
+          .createUserWithEmailAndPassword(this.state.email.trim(), this.state.password.trim())
           .then(async (res) => {
+            this.props.userLogedIn({ pasLogedIn: true,googleLogIn:false })
+            console.log("RES ==>CREATE USER",res)
             this.setState({ isLoading: false })
             this.props.navigation.navigate("Bible")
           })
@@ -166,7 +169,8 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = dispatch => {
   return {
-    userInfo: (payload) => dispatch(userInfo(payload))
+    userInfo: (payload) => dispatch(userInfo(payload)),
+    userLogedIn: (payload) => dispatch(userLogedIn(payload))
   }
 }
 
