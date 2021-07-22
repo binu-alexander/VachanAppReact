@@ -44,7 +44,6 @@ class Register extends Component {
           .createUserWithEmailAndPassword(this.state.email.trim(), this.state.password.trim())
           .then(async (res) => {
             this.props.userLogedIn({ pasLogedIn: true,googleLogIn:false })
-            console.log("RES ==>CREATE USER",res)
             this.setState({ isLoading: false })
             this.props.navigation.navigate("Bible")
           })

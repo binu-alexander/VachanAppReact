@@ -1,18 +1,13 @@
 import React, { Component } from 'react';
 import { ScrollView, View, Dimensions, ActivityIndicator } from 'react-native';
-// import Markdown from 'react-native-markdown-display';
-import Markdown from 'react-native-simple-markdown'
+import Markdown from 'react-native-markdown-display';
 import ModalDropdown from 'react-native-modal-dropdown';
-import { Header, Title, Button, Left, Right, Body } from "native-base";
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { OBSStyle } from './styles.js'
-import Color from '../../../utils/colorConstants';
 import ApiUtils from '../../../utils/ApiUtils'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 const Github_URL = 'https://raw.githubusercontent.com/Bridgeconn/vachancontentrepository/master/obs/'
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
 class OBS extends Component {
   constructor(props) {
     super(props);
@@ -29,6 +24,7 @@ class OBS extends Component {
     this.styles = OBSStyle(this.props.colorFile, this.props.sizeFile);
 
   }
+
   componentDidMount() {
     this.fetchLangList()
   }
@@ -124,58 +120,49 @@ class OBS extends Component {
     }
   }
   render() {
+    let colorFile = this.props.colorFile
+    let sizeFile = this.props.sizeFile
     return (
       <View style={this.styles.container}>
-        <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-          <TouchableOpacity onPress={() => { this._dropdown_1 && this._dropdown_1.show(); }} style={{ padding: 10, margin: 10, borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderColor: this.props.colorFile.iconColor, borderWidth: 0.5 }}>
+        {/* <SafeAreaView> */}
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between'}}>
+          <TouchableOpacity onPress={() => { this._dropdown_1 && this._dropdown_1.show(); }} style={{ padding: 10, margin: 10, borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderColor: colorFile.iconColor, borderWidth: 0.5 }}>
             <ModalDropdown
               ref={el => this._dropdown_1 = el}
               options={this.state.obsLang} onSelect={this.onSelectLang}
               defaultValue={this.state.defaultLanguage} isFullWidth={true}
               dropdownStyle={{ width: '60%', height: '70%' }} dropdownTextStyle={{ fontSize: 18 }}
-              textStyle={{ fontSize: 18, fontWeight: '400', color: this.props.colorFile.textColor }} />
+              textStyle={{ fontSize: 18, fontWeight: '400', color: colorFile.textColor }} />
             <Icon name="arrow-drop-down" color={this.props.colorFile.iconColor} size={20} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => { this._dropdown_2 && this._dropdown_2.show(); }} style={{ padding: 10, margin: 10, borderRadius: 10, width: 150, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderColor: this.props.colorFile.iconColor, borderWidth: 0.5 }}>
+          <TouchableOpacity onPress={() => { this._dropdown_2 && this._dropdown_2.show(); }} style={{ padding: 10, margin: 10, borderRadius: 10, width: 150, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderColor: colorFile.iconColor, borderWidth: 0.5 }}>
             <ModalDropdown
               ref={el => this._dropdown_2 = el} options={this.state.storyList} onSelect={this.onSelectStory}
               style={{ paddingRight: 20 }} defaultValue={this.state.storyList.length > 0 ? this.state.storyList[0] : ''}
               isFullWidth={true} dropdownStyle={{ width: '60%', height: '70%' }}
               // renderRow={this.renderRow}
               dropdownTextStyle={{ fontSize: 18 }}
-              textStyle={{ paddingHorizontal: 8, fontSize: 18, fontWeight: '400', color: this.props.colorFile.textColor }} />
-            <Icon name="arrow-drop-down" color={this.props.colorFile.iconColor} size={20} />
+              textStyle={{ paddingHorizontal: 8, fontSize: 18, fontWeight: '400', color: colorFile.textColor }} />
+            <Icon name="arrow-drop-down" color={colorFile.iconColor} size={20} />
           </TouchableOpacity>
         </View>
-        {this.state.obsData ?
-          <ScrollView
-            contentInsetAdjustmentBehavior="automatic"
-            style={{ paddingHorizontal: 12 }}
-          >
-            <Markdown
-              styles={{
-                view: {
-                  alignItems: "center", justifyContent: 'center',
-                },
-                text: {
-                  color: this.props.colorFile.textColor,
-                  fontSize: this.props.sizeFile.contentText,
-                  lineHeight: this.props.sizeFile.lineHeight,
-                },
-                image: {
-                  height: height / 2.5, width: width - 10
-                }
-              }}
+          {this.state.obsData ?
+            <ScrollView
+              // contentInsetAdjustmentBehavior="automatic"
+              style={{ paddingHorizontal: 12, height: '100%' }}
+            // contentContainerStyle={{paddingTop:20}}
             >
-              {this.state.obsData}
-            </Markdown>
-          </ScrollView>
-          : <ActivityIndicator animate={true} style={{ flex: 1, justifyContent: 'center', alignSelf: 'center' }} />}
+              <Markdown
+                style={this.styles}>
+                {this.state.obsData}
+              </Markdown>
+            </ScrollView>
+            : <ActivityIndicator animate={true} style={{ flex: 1, justifyContent: 'center', alignSelf: 'center' }} />}
       </View>
     );
   }
-
 };
+
 const mapStateToProps = state => {
   return {
     languageCode: state.updateVersion.languageCode,

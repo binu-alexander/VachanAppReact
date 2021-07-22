@@ -2,7 +2,6 @@ import { StyleSheet, Dimensions } from 'react-native'
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-
 export const OBSStyle = (colorFile, sizeFile) => {
     return StyleSheet.create({
         container: {
@@ -23,7 +22,7 @@ export const OBSStyle = (colorFile, sizeFile) => {
             width: 150,
             marginTop: 32,
             right: 8,
-            padding:10,
+            padding: 10,
             borderWidth: 0,
             borderRadius: 3,
             backgroundColor: colorFile.blueText,
@@ -33,7 +32,7 @@ export const OBSStyle = (colorFile, sizeFile) => {
             width: 150,
             marginTop: 32,
             left: 8,
-            padding:10,
+            padding: 10,
             borderWidth: 0,
             borderRadius: 3,
             backgroundColor: colorFile.blueText,
@@ -44,6 +43,9 @@ export const OBSStyle = (colorFile, sizeFile) => {
             height: '70%',
             backgroundColor: colorFile.backgroundColor,
         },
+        body: {color: colorFile.textColor, lineHeight: sizeFile.lineHeight, fontSize: sizeFile.contentText, alignItems: "center", justifyContent: 'center' },
+        text: { color: colorFile.textColor, lineHeight: sizeFile.lineHeight,fontSize: sizeFile.contentText,},
+        code_block: { color: colorFile.textColor, fontSize: sizeFile.contentText },
         emptyMessageContainer: {
             flex: 1,
             backgroundColor: colorFile.backgroundColor,

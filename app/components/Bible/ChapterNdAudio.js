@@ -11,13 +11,12 @@ const ChapterNdAudio = ({
 }) => (
         <View style={{ justifyContent: (currentVisibleChapter != 1 && currentVisibleChapter == currentVisibleChapter != totalChapters) ? 'center' : 'space-around', alignItems: 'center' }}>
             {
-                (currentVisibleChapter == 1 && downloaded == true)
-                    ? null :
+                ((currentVisibleChapter == 1 && downloaded == true) || (previousContent && Object.keys(previousContent).length == 0 && previousContent.constructor === Object)) ? null :
                     <View style={[styles.bottomBarPrevView, showBottomBar ? styles.showBottomBar : styles.hideBottomBar, visibleParallelView ?
                         styles.bottomBarParallelPrevView : styles.bottomBarPosition]}>
                         <Icon name={'chevron-left'} color={Color.Blue_Color} size={visibleParallelView ? 16 : 32}
                             style={styles.bottomBarChevrontIcon}
-                            onPress={() => queryBookFromAPI(downloaded ? false :  (Object.keys(previousContent).length != 0  ? previousContent : null )) }
+                            onPress={() => queryBookFromAPI(downloaded ? false : previousContent)}
                         />
                     </View>
             }
@@ -34,13 +33,12 @@ const ChapterNdAudio = ({
                     </View>)
             }
             {
-                (currentVisibleChapter == totalChapters && downloaded)
-                    ? null :
+                ((currentVisibleChapter == totalChapters && downloaded) || (nextContent && Object.keys(nextContent).length == 0 && nextContent.constructor === Object)) ? null :
                     <View style={[styles.bottomBarNextView, showBottomBar ? styles.showBottomBar : styles.hideBottomBar, visibleParallelView ?
                         styles.bottomBarNextParallelView : styles.bottomBarPosition]}>
                         <Icon name={'chevron-right'} color={Color.Blue_Color} size={visibleParallelView ? 16 : 32}
                             style={styles.bottomBarChevrontIcon}
-                            onPress={() => queryBookFromAPI(downloaded ? true : (Object.keys(nextContent).length != 0 ? nextContent : null))}
+                            onPress={() => queryBookFromAPI(downloaded ? true : nextContent)}
                         />
                     </View>
             }

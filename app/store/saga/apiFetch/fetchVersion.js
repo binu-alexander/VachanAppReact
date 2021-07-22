@@ -19,13 +19,14 @@ function* fetchVersionLanguage() {
     const url = state.updateVersion.baseAPI + "bibles"
     const response = yield call(fetchApi, url)
     for (var i = 0; i <= response.length - 1; i++) {
-      if(response[i].language == state.updateVersion.language.toLowerCase()){
-        yield put(versionLanguageSuccess(response[i].languageVersions))
-        yield put(versionLanguageFailure(null))
+      if(response[i].language == state.updateVersion.language.toLowerCase() ){
+        let versionMatch = response[i].languageVersions.filter((val)=>{return val.version.code == state.updateVersion.versionCode})
+        if(versionMatch.length>0){
+          yield put(versionLanguageSuccess(response[i].languageVersions))
+          yield put(versionLanguageFailure(null))
+        }
       }
     }
-    
-
   } catch (e) {
     yield put(versionLanguageFailure(e))
     yield put(versionLanguageSuccess([]))

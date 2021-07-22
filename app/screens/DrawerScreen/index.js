@@ -90,7 +90,7 @@ class DrawerScreen extends Component {
           {/*for appstore app*/}
           {/* <Text style={this.styles.versionText}>APP VERSION {this.state.currentVersion}</Text> */}
           { /*//for tesing */}
-          <Text style={this.styles.versionText}>APP VERSION 1.3.0-alpha.7</Text>
+          <Text style={this.styles.versionText}>APP VERSION 1.3.0-alpha.8</Text>
         </ScrollView>
       </View>
     );

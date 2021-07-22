@@ -237,9 +237,7 @@ class Bible extends Component {
       var time = new Date()
       DbQueries.addHistory(this.state.sourceId, this.props.language, this.props.languageCode,
         this.props.versionCode, item.bookId, item.bookName, parseInt(item.chapterNumber), this.props.downloaded, time)
-
       this.setState({ currentVisibleChapter: item.chapterNumber, bookId: item.bookId, bookName: item.bookName })
-
       this.props.updateVersionBook({
         bookId: item.bookId,
         bookName: item.bookName,
@@ -297,7 +295,7 @@ class Bible extends Component {
         chapterNumber: chapterNum,
         totalChapters: getBookChaptersFromMapping(bookId)
       })
-      this.setState({ bookId: bookId, bookName: bookName, sourceId: item.sourceId })
+      this.setState({ bookId: bookId, bookName: bookName, sourceId: item.sourceId,previousContent:{},nextContent:{} })
       var time = new Date()
       DbQueries.addHistory(item.sourceId, item.languageName, item.languageCode,
         item.versionCode, bookId, bookName,
@@ -334,7 +332,6 @@ class Bible extends Component {
   // fetch chapter on didmount call
   async getChapter() {
     try {
-
       if (this.props.downloaded) {
         this.getDownloadedContent()
       } else {

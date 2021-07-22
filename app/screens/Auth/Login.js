@@ -42,7 +42,6 @@ class Login extends Component {
         .auth()
         .signInWithEmailAndPassword(this.state.email, this.state.password)
         .then((res) => {
-          console.log("RES =====>",res)
           this.props.userLogedIn({ pasLogedIn: true,googleLogIn:false })
           this.props.navigation.navigate("Bible")
           this.setState({
@@ -77,13 +76,11 @@ class Login extends Component {
           const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken);
           // Login with the credential
           await firebase.auth().signInWithCredential(credential);
-          // console.log(" USER DATA ",data)
           this.props.userLogedIn({ pasLogedIn: false,googleLogIn:true })
           this.setState({ isLoading: false })
           this.props.navigation.navigate("Bible")
         })
       }else{
-        console.log("NO DATA ")
       }
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -98,7 +95,6 @@ class Login extends Component {
       } else {
         // some other error happened
       }
-      console.log(" SIGN IN ERROR", error)
     }
 
   }
@@ -128,7 +124,20 @@ class Login extends Component {
         const { code, message } = error;
       });
   }
- 
+  async componentDidMount() {
+    try {
+      GoogleSignin.configure({
+        webClientId: '486797934259-gkdusccl094153bdj8cbugfcf5tqqb4j.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
+        offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+        // hostedDomain: 'localhost', // specifies a hosted domain restriction
+        // loginHint: '', // [iOS] The user's ID, or email address, to be prefilled in the authentication UI if possible. [See docs here](https://developers.google.com/identity/sign-in/ios/api/interface_g_i_d_sign_in.html#a0a68c7504c31ab0b728432565f6e33fd)
+        forceConsentPrompt: false, // [Android] if you want to show the authorization prompt at each login.
+        // accountName: '', // [Android] specifies an account name on the device that should be used
+        // iosClientId: '<FROM DEVELOPER CONSOLE>', // [iOS] optional, if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
+      });
+    } catch (error) {
+    }
+  }
   render() {
     if (this.state.isLoading) {
       return (

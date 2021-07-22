@@ -33,7 +33,7 @@ class BibleChapter extends Component {
             parallelBible: null,
             parallelBibleHeading: null,
             pNextContent: null,
-            pNextContent: null,
+            PpeviousContent: null,
             totalVerses: null,
             loading: false
         }
@@ -42,17 +42,17 @@ class BibleChapter extends Component {
     queryParallelBible = (val, bkId) => {
         try {
             if (this.props.parallelLanguage) {
-                let currentParallelViewChapter =  val != null ? val : this.state.currentParallelViewChapter
-                let bookId = bkId != null ? bkId : this.state.bookId
-                this.setState({ loading: true,  currentParallelViewChapter: currentParallelViewChapter, bookId }, async () => {
+                let currentParallelViewChapter = val == null ?  this.state.currentParallelViewChapter : val
+                let bookId = bkId == null ? this.state.bookId : bkId 
+                this.setState({ loading: true, currentParallelViewChapter: currentParallelViewChapter, bookId }, async () => {
                     this.updateBook()
                     let url = "bibles" + "/" + this.props.parallelLanguage.sourceId + "/" + "books" + "/" + this.state.bookId + "/" + "chapter" + "/" + this.state.currentParallelViewChapter
                     let response = await vApi.get(url)
                     if (response.chapterContent) {
                         let chapterContent = response.chapterContent.contents
                         let totalVerses = response.chapterContent.contents.length
-                        let pNextContent = Object.keys(response.next).length != 0 ? response.next : null 
-                        let PpeviousContent = Object.keys(response.previous).length != 0 ? response.previous : null
+                        let pNextContent = Object.keys(response.next).length > 0 ? response.next : null
+                        let PpeviousContent = Object.keys(response.previous).length > 0 ? response.previous : null
                         this.setState({
                             parallelBible: chapterContent,
                             parallelBibleHeading: getHeading(response.chapterContent.contents),
@@ -103,7 +103,6 @@ class BibleChapter extends Component {
                 for (var i = 0; i <= response.length - 1; i++) {
                     if (response[i].language.name === parallelLanguage) {
                         for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
-                            console.log("BOOK CODE ",this.state.bookId)
                             if (this.state.bookId != null) {
                                 if (response[i].bookNames[j].book_code == this.state.bookId) {
                                     bukName = response[i].bookNames[j].short
@@ -206,7 +205,7 @@ class BibleChapter extends Component {
                         :
                         <View style={{ flex: 1 }}>
                             <ScrollView
-                                contentContainerStyle={{ paddingBottom: 20,marginTop:10 }}
+                                contentContainerStyle={{ paddingBottom: 20, marginTop: 10 }}
                                 showsVerticalScrollIndicator={false} ref={(ref) => { this.scrollViewRef = ref; }} >
                                 {this.state.parallelBible && this.state.parallelBible.map((verse, index) =>
                                     <View style={{ marginHorizontal: 16 }}>
@@ -283,19 +282,20 @@ class BibleChapter extends Component {
                             </ScrollView>
 
                             <View style={{ justifyContent: (this.state.currentParallelViewChapter != 1 && this.state.currentParallelViewChapter == this.state.currentParallelViewChapter != this.state.totalChapters) ? 'center' : 'space-around', alignItems: 'center' }}>
-                                <View style={this.styles.bottomBarParallelPrevView}>
-                                    <Icon name={'chevron-left'} color={Color.Blue_Color} size={16}
-                                        style={this.styles.bottomBarChevrontIcon}
-                                        onPress={() => this.queryParallelBible( this.state.PpeviousContent ? this.state.PpeviousContent.chapterId :null,this.state.PpeviousContent ? this.state.PpeviousContent.bibleBookCode : null)}
-                                    />
-                                </View>
-                                <View style={this.styles.bottomBarNextParallelView}>
-                                    <Icon name={'chevron-right'} color={Color.Blue_Color} size={16}
-                                        style={this.styles.bottomBarChevrontIcon}
-                                        onPress={() => this.queryParallelBible( this.state.pNextContent ? this.state.pNextContent.chapterId : null ,this.state.pNextContent ?  this.state.pNextContent.bibleBookCode : null)}
-                                    />
-                                </View>
-
+                                {(this.state.PpeviousContent && Object.keys(this.state.PpeviousContent).length > 0 && this.state.PpeviousContent.constructor === Object) ? 
+                                    <View style={this.styles.bottomBarParallelPrevView}>
+                                        <Icon name={'chevron-left'} color={Color.Blue_Color} size={16}
+                                            style={this.styles.bottomBarChevrontIcon}
+                                            onPress={() => this.queryParallelBible(this.state.PpeviousContent.chapterId, this.state.PpeviousContent.bibleBookCode)}
+                                        />
+                                    </View> : null}
+                                {(this.state.pNextContent && Object.keys(this.state.pNextContent).length > 0 && this.state.pNextContent.constructor === Object) ?
+                                    <View style={this.styles.bottomBarNextParallelView}>
+                                        <Icon name={'chevron-right'} color={Color.Blue_Color} size={16}
+                                            style={this.styles.bottomBarChevrontIcon}
+                                            onPress={() => this.queryParallelBible(this.state.pNextContent.chapterId,this.state.pNextContent.bibleBookCode)}
+                                        />
+                                    </View> : null }
                             </View>
                         </View>
 

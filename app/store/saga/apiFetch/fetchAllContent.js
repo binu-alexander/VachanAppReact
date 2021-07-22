@@ -128,9 +128,6 @@ function* fetchAllBooks(){
     yield put(allBooksFailure(e))
     yield put(allBooksSuccess([]))
   }
- 
-
-
 }
 export const watchAllContent = [
   takeLatest(FETCH_ALL_CONTENT, fetchAllContent),

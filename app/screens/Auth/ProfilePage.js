@@ -38,7 +38,6 @@ class ProfilePage extends Component {
       this.setState({ user: null })
       this.props.navigation.navigate("Bible")
     } catch (error) {
-      console.log("logout error", error);
     }
   }
   render() {

@@ -23,12 +23,10 @@ function validateEnv() {
   }
 
   if (!process.env.JENKINS_MASTER) {
-    console.log('not publishing on a different build');
     return false;
   }
 
   if (process.env.GIT_BRANCH !== ONLY_ON_BRANCH) {
-    console.log(`not publishing on branch ${process.env.GIT_BRANCH}`);
     return false;
   }
 
@@ -55,10 +53,8 @@ email=\${NPM_EMAIL}
 
 function versionTagAndPublish() {
   const packageVersion = semver.clean(process.env.npm_package_version);
-  console.log(`package version: ${packageVersion}`);
 
   const currentPublished = findCurrentPublishedVersion();
-  console.log(`current published version: ${currentPublished}`);
 
   const version = semver.gt(packageVersion, currentPublished) ? packageVersion : semver.inc(currentPublished, VERSION_INC);
   tryPublishAndTag(version);
@@ -73,21 +69,18 @@ function tryPublishAndTag(version) {
   for (let retry = 0; retry < 5; retry++) {
     try {
       tagAndPublish(theCandidate);
-      console.log(`Released ${theCandidate}`);
       return;
     } catch (err) {
       const alreadyPublished = _.includes(err.toString(), 'You cannot publish over the previously published version');
       if (!alreadyPublished) {
         throw err;
       }
-      console.log(`previously published. retrying with increased ${VERSION_INC}...`);
       theCandidate = semver.inc(theCandidate, VERSION_INC);
     }
   }
 }
 
 function tagAndPublish(newVersion) {
-  console.log(`trying to publish ${newVersion}...`);
   exec.execSync(`npm --no-git-tag-version --allow-same-version version ${newVersion}`);
   exec.execSyncRead(`npm publish --tag ${VERSION_TAG}`);
   exec.execSync(`git tag -a ${newVersion} -m "${newVersion}"`);
