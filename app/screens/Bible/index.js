@@ -360,6 +360,7 @@ class Bible extends Component {
       if (bookItem.length > 0) {
         bookName = bookItem[0].bookName
       }
+      
       let chapterType = typeof chapterInfo
       let allData = chapterType == 'object' && chapterInfo
 
@@ -374,7 +375,6 @@ class Bible extends Component {
         currentVisibleChapter: cNum,
         error: null
       }, async () => {
-        console.log(" currentVisibleChapter ",this.state.currentVisibleChapter)
         if (this.props.downloaded) {
           if (this.state.downloadedBook.length > 0) {
             this.setState({
@@ -411,7 +411,7 @@ class Bible extends Component {
         bookId: bookId,
         bookName: bName,
         chapterNumber: parseInt(cNum) > getBookChaptersFromMapping(bookId) ? 1 : parseInt(cNum),
-        totalChapters: getBookChaptersFromMapping(this.props.bookId)
+        totalChapters: getBookChaptersFromMapping(bookId)
       })
       this.getHighlights()
       this.getNotes()
