@@ -915,7 +915,6 @@ class Bible extends Component {
   }
   navigateToSettings = () => {
     this.setState({ status: false })
-
     this.props.navigation.navigate("Settings")
   }
   toggleParallelView(value) {

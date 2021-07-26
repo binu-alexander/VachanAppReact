@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, Dimensions, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import ModalDropdown from 'react-native-modal-dropdown';
-import { updateVersionBook } from '../../../store/action/'
+import { fetchVersionBooks, updateVersionBook } from '../../../store/action/'
 import { getBookChaptersFromMapping } from '../../../utils/UtilFunctions'
 import { GIT_BASE_API } from '../../../utils/APIConstant'
 import { Agenda } from '../../../lib/react-native-calendars';
@@ -10,8 +10,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import { OBSStyle } from './styles.js'
 import Color from '../../../utils/colorConstants'
 var moment = require('moment');
-const windowHeight = Dimensions.get('window').height
-const width = Dimensions.get('window').width
 
 class BRP extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -19,7 +17,7 @@ class BRP extends Component {
     if (Object.keys(params).length > 0) {
       return {
         headerRight: (
-          <TouchableOpacity style={{marginRight: 10, borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', backgroundColor:Color.white }}>
+          <TouchableOpacity style={{ marginRight: 10, borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', backgroundColor: Color.white }}>
             <ModalDropdown
               options={params.plans}
               onSelect={params.onSelect}
@@ -50,48 +48,55 @@ class BRP extends Component {
       calendarOpened: false
     }
     this.styles = OBSStyle(this.props.colorFile, this.props.sizeFile);
-    this._dropdown_1  = null
+    this._dropdown_1 = null
   }
   laodMonthItem(day) {
     if (Object.keys(this.state.items).length > 0) {
-      // let validDate = false
       for (var key in this.state.items) {
         if (day.dateString != 'undefined' && day.dateString == key) {
-          // validDate = true
           let val = this.state.items
           val.key = val[key]
           this.setState({ monthItems: val })
         }
       }
-      // if(!validDate){
-      //   this.setState({ monthItems: [] })
-      // }
     }
-
   }
   loadItems() {
     var currentYear = new Date().getFullYear();
-    this.state.items = []
-    if (this.state.readingPlan) {
-      for (var i = 0; i < this.state.readingPlan.length; i++) {
-        let planDate = currentYear + '-' + this.state.readingPlan[i].date
+    this.state.items = {}
+    var readingPlan = this.state.readingPlan
+    if (readingPlan) {
+      for (var i = 0; i < readingPlan.length; i++) {
+        let planDate = currentYear + '-' + readingPlan[i].date
         if (!this.state.items[planDate]) {
           this.state.items[planDate] = []
+          // readingPlan[i].reading.forEach((val) => {
+          //   var words = val.ref.split(" ")
+          //   var regmatch = val.text.split(" ")
+          //   if (this.props.books) {
+          //     var book = this.props.books.find((book) => words[0] == book.bookId)
+          //     if (book) {
+          //       if (regmatch) {
+          //         val['native_name'] = book.bookName + " " + regmatch[regmatch.length - 1]
+          //       }
+          //     }
+          //   }
+          // })
           this.state.items[planDate].push({
-            reading: this.state.readingPlan[i].reading,
+            reading: readingPlan[i].reading,
             height: Math.max(50, Math.floor(Math.random() * 80))
           });
         }
       }
     }
     const newItems = {};
-    if (this.state.items.length > 0) {
+    if (Object.keys(this.state.items).length > 0) {
       Object.keys(this.state.items).forEach(key => {
         newItems[key] = this.state.items[key];
       });
       this.setState({
         items: newItems
-      });
+      })
     }
   }
   navigateTo(item) {
@@ -130,13 +135,12 @@ class BRP extends Component {
           style={[this.styles.item, { height: item.height }]}
           onPress={() => this.navigateTo(val.ref)}
         >
-          <Text style={this.styles.textStyle}>{val.text}</Text>
+          <Text style={this.styles.textStyle}>{val.text} </Text>
         </TouchableOpacity>
       )
     });
 
   }
-
   rowHasChanged(r1, r2) {
     r1.reading.filter((val1) => {
       r2.reading.filter((val2) => {
@@ -144,27 +148,28 @@ class BRP extends Component {
       })
     })
   }
-  timeToString(time) {
-    const date = new Date(time);
-    return date.toISOString().split('T')[0];
-  }
 
   componentDidMount() {
+    this.props.navigation.setParams({
+      plans: this.state.planList,
+      onSelect: this.onSelect,
+    })
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+    let selectedDate = yyyy + "-" + mm + '-' + dd
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    let currentMonth = monthNames[mm - 1] + ' ' + yyyy
+    this.setState({ selectedDate, currentMonth }, () => {
+      this.fetchPlan()
+    })
+  }
+
+  fetchPlan() {
     try {
-      this.props.navigation.setParams({
-        plans: this.state.planList,
-        onSelect: this.onSelect,
-      })
-      var today = new Date();
-      var dd = String(today.getDate()).padStart(2, '0');
-      var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-      var yyyy = today.getFullYear();
-      let selectedDate = yyyy + "-" + mm + '-' + dd
-      const monthNames = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-      ];
-      let currentMonth = monthNames[mm - 1] + ' ' + yyyy
-      this.setState({ selectedDate, currentMonth })
       fetch(GIT_BASE_API + 'bible_reading_plans/manifest.json',)
         .then((response) => response.json())
         .then((json) => {
@@ -181,12 +186,13 @@ class BRP extends Component {
             .then((json) => {
               this.setState({ readingPlan: json }, () => {
                 this.loadItems()
+                this.laodMonthItem({ dateString: this.state.selectedDate })
               })
-              this.laodMonthItem({ dateString: selectedDate })
             })
         })
     } catch (error) {
     }
+
   }
   onSelect = (value) => {
     try {
@@ -202,47 +208,30 @@ class BRP extends Component {
           })
         })
     } catch (error) {
-
     }
   }
 
-  onDayPress(date) {
-    // var today = new Date();
-    // var currentYear = today.getFullYear()
-    // if(date.year ===currentYear){
-    this.agenda.onDayChange(date.dateString);
-    this.setState({ currentMonth: `${moment(date.dateString).format('MMMM')}` + ' ' + date.year })
-    // }
+  onUpdateSelectedDate = (date) => {
+    if (this.state.currentMonth == `${moment(date.dateString).format('MMMM')}` + ' ' + date.year) {
+      return
+    } else {
+      this.setState({ currentMonth: `${moment(date.dateString).format('MMMM')}` + ' ' + date.year })
+    }
+  }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.books.length != this.props.books.length || Object.keys(prevState.items).length != Object.keys(this.state.items).length) {
+      this.props.fetchVersionBooks({
+        language: this.props.languageName,
+        versionCode: this.props.versionCode,
+        downloaded: this.props.downloaded,
+        sourceId: this.props.sourceId
+      })
+      this.fetchPlan()
+    }
   }
-  renderCustomHeader(date) {
-    const header = date.toString('MMMM yyyy');
-    const [month, year] = header.split(' ');
-    const textStyle = {
-      fontSize: 18,
-      fontWeight: 'bold',
-      paddingTop: 10,
-      paddingBottom: 10,
-      color: '#3E4095',
-      paddingRight: 5
-    };
 
-    return (
-      <View style={{
-        flexDirection: 'row',
-        width: '100%',
-        justifyContent: 'space-between',
-        marginTop: 10,
-        marginBottom: 10
-      }}>
-        <Text style={[{ marginLeft: 5 }, textStyle]}>{`${month}`}</Text>
-        <Text style={[{ marginLeft: 5 }, textStyle]}>{year}</Text>
-      </View>
-    );
-  }
-  onUpdateSelectedDate = (date, f = true) => {
-    this.setState({ currentMonth: `${moment(date.dateString).format('MMMM')}` + ' ' + date.year })
-  }
+
   renderKnob = () => {
     return (
       <Icon name='keyboard-arrow-down' size={24} color={this.props.colorFile.blueText} />
@@ -285,14 +274,14 @@ class BRP extends Component {
               }}
               renderEmptyData={this.renderEmptyData.bind(this)}
               loadItemsForMonth={this.laodMonthItem.bind(this)}
-              // onMonthChange={(month) => {console.log('month changed', month)}}
+              onDayChange={this.onUpdateSelectedDate}
+              onDayPress={this.onUpdateSelectedDate}
               selected={this.state.selectedDate}
               renderItem={this.renderItem.bind(this)}
               rowHasChanged={this.rowHasChanged.bind(this)}
               pastScrollRange={new Date().getMonth()}
               futureScrollRange={12 - parseInt(new Date().getMonth() + 1)}
               renderKnob={this.renderKnob}
-              onDayPress={this.onUpdateSelectedDate}
               onCalendarToggled={(calendarOpened) => { this.setState({ calendarOpened }) }}
               theme={themeStyle}
             />
@@ -309,6 +298,9 @@ const mapStateToProps = state => {
     books: state.versionFetch.versionBooks,
     languageCode: state.updateVersion.languageCode,
     languageName: state.updateVersion.language,
+    versionCode: state.updateVersion.versionCode,
+    sourceId: state.updateVersion.sourceId,
+    downloaded: state.updateVersion.downloaded,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
   }
@@ -316,6 +308,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     updateVersionBook: (value) => dispatch(updateVersionBook(value)),
+    fetchVersionBooks: (value) => dispatch(fetchVersionBooks(value))
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(BRP)
