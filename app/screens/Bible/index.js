@@ -177,7 +177,6 @@ class Bible extends Component {
       // || prevProps.chapterNumber != this.props.chapterNumber
       || prevProps.books.length != this.props.books.length
     ) {
-      // console.log(" prevProps.chapterNumber != this.props.chapterNumber ", prevProps.chapterNumber, " ", this.props.chapterNumber)
       this.queryBookFromAPI(null)
       this.audioComponentUpdate()
       if (this.props.books.length == 0) {
@@ -959,7 +958,6 @@ class Bible extends Component {
     }
   }
   render() {
-    console.log(" CURRENT CHAPTER ", this.state.currentVisibleChapter, "  downloaded ", this.props.downloaded, " previous or next ", this.state.previousContent, this.state.nextContent)
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
     return (
       <View style={this.styles.container}>
