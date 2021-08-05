@@ -10,20 +10,13 @@ import {
 import { connect } from 'react-redux'
 
 class PlayVideo extends Component {
-    static navigationOptions = ({ navigation }) => {
-        const { params = {} } = navigation.state
-        return {
-            headerTitle: params.theme
-        }
-    }
-
     constructor(props) {
         super(props);
         this.state = {
-            url: this.props.navigation.state.params ? this.props.navigation.state.params.url : null,
-            title: this.props.navigation.state.params ? this.props.navigation.state.params.title : null,
-            description: this.props.navigation.state.params ? this.props.navigation.state.params.description : null,
-            theme: this.props.navigation.state.params ? this.props.navigation.state.params.theme : null,
+            url:this.props.route.params ?this.props.route.params.url : null,
+            title: this.props.route.params ? this.props.route.params.title : null,
+            description: this.props.route.params? this.props.route.params.description : null,
+            theme: this.props.route.params ? this.props.route.params.theme : null,
             playing: false,
             isLoading: false
         }
@@ -31,9 +24,7 @@ class PlayVideo extends Component {
 
     }
     componentDidMount() {
-        this.props.navigation.setParams({
-            theme: this.state.theme
-        })
+       
         this.onChangeState()
     }
     onError = () => alert('Oh! ', error);
@@ -59,6 +50,9 @@ class PlayVideo extends Component {
         }
     }
     componentDidMount() {
+        this.props.navigation.setOptions({
+            headerTitle: this.state.theme
+        })
         this.setState({playing:true})
         AppState.addEventListener('change', this.handleYoutubePlay)
     }

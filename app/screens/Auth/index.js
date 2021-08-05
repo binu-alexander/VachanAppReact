@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { userInfo, userLogedIn } from '../../store/action'
 import Login from './Login'
-import { GoogleSignin } from 'react-native-google-signin';
-import firebase from 'react-native-firebase'
 import { styles } from './styles.js'
 import ProfilePage from './ProfilePage';
 

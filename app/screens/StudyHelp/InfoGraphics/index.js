@@ -12,16 +12,11 @@ import { Toast } from 'native-base'
 import vApi from '../../../utils/APIFetch';
 
 class Infographics extends React.Component {
-  static navigationOptions = ({ navigation }) => {
-    return {
-      headerTitle: 'Infographics',
-    }
-  }
   constructor(props) {
     super(props);
     this.state = {
-      bookId: this.props.navigation.state.params ? this.props.navigation.state.params.bookId : null,
-      bookName: this.props.navigation.state.params ? this.props.navigation.state.params.bookName : null,
+      bookId: this.props.route.params ? this.props.route.params.bookId : null,
+      bookName:this.props.route.params ? this.props.route.params.bookName : null,
       infographics: [],
       url: null,
       isLoading: false

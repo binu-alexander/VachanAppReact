@@ -1,28 +1,23 @@
 "use strict";
 import React, { Component } from 'react';
 import { Text, View, TouchableOpacity, Alert, BackHandler } from 'react-native';
-import { Accordion } from 'native-base'
+import { Accordion } from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import { HeaderBackButton, NavigationActions } from 'react-navigation';
-import DbQueries from '../../utils/dbQueries'
+import { CommonActions } from '@react-navigation/native';
+import { HeaderBackButton } from '@react-navigation/stack';
+import DbQueries from '../../utils/dbQueries';
 import { styles } from './styles.js';
-import { getBookSectionFromMapping } from '../../utils/UtilFunctions'
+import { getBookSectionFromMapping } from '../../utils/UtilFunctions';
 import { connect } from 'react-redux';
 import { updateVersion, fetchVersionBooks, fetchAllContent, updateMetadata, updateLangList } from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 import ReloadButton from '../../components/ReloadButton';
 import vApi from '../../utils/APIFetch';
-import Color from '../../utils/colorConstants'
-import { getHeading } from '../../utils/UtilFunctions'
-var moment = require('moment');
-
-// import BackgroundTimer from '../../utils/BackgroundTimer';
+import Color from '../../utils/colorConstants';
+import { getHeading } from '../../utils/UtilFunctions';
 
 class LanguageList extends Component {
-  static navigationOptions = ({ navigation }) => ({
-    headerTitle: 'Languages',
-    headerLeft: (<HeaderBackButton tintColor={Color.White} onPress={() => navigation.state.params.handleBack()} />),
-  });
+
   constructor(props) {
     super(props)
     this.state = {
@@ -47,7 +42,6 @@ class LanguageList extends Component {
   async recallFunc() {
     try {
       await this.props.fetchAllContent()
-      this.props.navigation.setParams({ handleBack: this.onBack })
       // BackHandler.addEventListener('hardwareBackPress', this.onBack);
       const scheduledDate = new Date()
       let resolution = Date.parse(scheduledDate) - Date.parse(this.props.langTimeStamp)
@@ -70,6 +64,9 @@ class LanguageList extends Component {
 
   async componentDidMount() {
     await this.recallFunc()
+    this.props.navigation.setOptions({
+      headerLeft:()=> <HeaderBackButton tintColor={Color.White} onPress={this.goBack} />,
+    })
   }
 
   async componentDidUpdate(prevProps) {
@@ -102,10 +99,10 @@ class LanguageList extends Component {
       }
       if (updateSourceId) {
         if (Object.keys(updatedObj).length > 0) {
-          this.props.navigation.state.params.updateLangVer(updatedObj)
+          this.props.route.params.updateLangVer(updatedObj)
         }
       } else {
-        this.props.navigation.state.params.updateLangVer({
+        this.props.route.params.updateLangVer({
           sourceId: lanVer[0].versionModels[0].sourceId, languageName: lanVer[0].languageName,
           languageCode: lanVer[0].languageCode, versionCode: lanVer[0].versionModels[0].versionCode,
           downloaded: lanVer[0].versionModels[0].downloaded, books: lanVer[0].bookNameList,
@@ -114,7 +111,7 @@ class LanguageList extends Component {
         //can add alert for showing user that previous version you were reading not available set a default one
       }
     }
-    this.props.navigation.dispatch(NavigationActions.back())
+      this.props.navigation.dispatch(CommonActions.goBack());
   }
   errorMessage = () => {
     if (!this.alertPresent) {
@@ -257,9 +254,9 @@ class LanguageList extends Component {
   }
   // this is useful for reusing code as this page is calling at other places
   navigateTo(langName, langCode, booklist, verCode, sourceId, metadata, downloaded) {
-    if (this.props.navigation.state.params.updateLangVer) {
+    if (this.props.route.params.updateLangVer) {
       //call back fucntion to update perticular values on back
-      this.props.navigation.state.params.updateLangVer({
+      this.props.route.params.updateLangVer({
         sourceId: sourceId, languageName: langName, languageCode: langCode,
         versionCode: verCode, downloaded: downloaded,
         books: booklist,
@@ -363,7 +360,7 @@ class LanguageList extends Component {
             <Accordion
               dataArray={this.state.languages}
               animation={true}
-              expanded={true}
+              expanded={[0]}
               renderHeader={this._renderHeader}
               renderContent={this._renderContent}
             />

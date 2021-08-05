@@ -11,13 +11,9 @@ import { bookStyle } from './styles.js'
 import { updateVersionBook } from '../../store/action/'
 import { getBookChaptersFromMapping } from '../../utils/UtilFunctions';
 import { connect } from 'react-redux'
-import firebase from 'react-native-firebase'
+import database from '@react-native-firebase/database';
 
 class BookMarks extends Component {
-  static navigationOptions = {
-    headerTitle: 'Bookmarks',
-  };
-
   constructor(props) {
     super(props)
     this.state = {
@@ -36,7 +32,7 @@ class BookMarks extends Component {
   fecthBookmarks() {
     if (this.props.email) {
       this.setState({ isLoading: true }, () => {
-        var firebaseRef = firebase.database().ref("users/" + this.props.uid + "/bookmarks/" + this.props.sourceId);
+        var firebaseRef = database().ref("users/" + this.props.uid + "/bookmarks/" + this.props.sourceId);
         firebaseRef.once('value', (snapshot) => {
           var data = []
           var list = snapshot.val()
@@ -90,7 +86,7 @@ class BookMarks extends Component {
         if (a.bookId == id) {
           a.chapterNumber.filter((b, j) => {
             if (b == chapterNum) {
-              var firebaseRef = firebase.database().ref("users/" + this.props.uid + "/bookmarks/" + this.props.sourceId + "/" + id);
+              var firebaseRef = database().ref("users/" + this.props.uid + "/bookmarks/" + this.props.sourceId + "/" + id);
               if (a.chapterNumber.length == 1) {
                 data.splice(i, 1)
                 firebaseRef.remove()

@@ -12,29 +12,7 @@ import Color from '../../../utils/colorConstants'
 var moment = require('moment');
 
 class BRP extends Component {
-  static navigationOptions = ({ navigation }) => {
-    const { params = {} } = navigation.state;
-    if (Object.keys(params).length > 0) {
-      return {
-        headerRight: (
-          <TouchableOpacity style={{ marginRight: 10, borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', backgroundColor: Color.white }}>
-            <ModalDropdown
-              options={params.plans}
-              onSelect={params.onSelect}
-              defaultValue={params.plans.length > 0 ? params.plans[0] : ''}
-              isFullWidth={true}
-              dropdownStyle={{ padding: 10, width: '60%', height: 'auto' }}
-              adjustFrame={style => { params.plans.length > 2 ? 80 : -1; return style; }}
-              dropdownTextStyle={{ fontSize: 18 }}
-              textStyle={{ fontSize: 18, fontWeight: '800', color: '#fff' }}
-            />
-            <Icon name="arrow-drop-down" color={'#fff'} size={20} />
-          </TouchableOpacity>
-        )
-      }
-    }
-
-  }
+ 
   constructor(props) {
     super(props);
     this.state = {
@@ -150,9 +128,21 @@ class BRP extends Component {
   }
 
   componentDidMount() {
-    this.props.navigation.setParams({
-      plans: this.state.planList,
-      onSelect: this.onSelect,
+    this.props.navigation.setOptions({
+      headerRight: ()=>
+        <TouchableOpacity style={{ marginRight: 10, borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', backgroundColor: Color.white }}>
+          <ModalDropdown
+            options={this.planList}
+            onSelect={this.onSelect}
+            defaultValue={params.plans.length > 0 ? params.plans[0] : ''}
+            isFullWidth={true}
+            dropdownStyle={{ padding: 10, width: '60%', height: 'auto' }}
+            adjustFrame={style => { params.plans.length > 2 ? 80 : -1; return style; }}
+            dropdownTextStyle={{ fontSize: 18 }}
+            textStyle={{ fontSize: 18, fontWeight: '800', color: '#fff' }}
+          />
+          <Icon name="arrow-drop-down" color={'#fff'} size={20} />
+        </TouchableOpacity>
     })
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
@@ -178,9 +168,7 @@ class BRP extends Component {
             planList.push(json[i].name)
           }
           this.setState({ planList, manifestData: json })
-          this.props.navigation.setParams({
-            plans: planList,
-          })
+          
           fetch(GIT_BASE_API + 'bible_reading_plans/' + this.state.manifestData[0].file)
             .then((response) => response.json())
             .then((json) => {
@@ -201,9 +189,6 @@ class BRP extends Component {
         .then((response) => response.json())
         .then((json) => {
           this.setState({ planSelected: (String(this.state.planList[value])), readingPlan: json }, () => {
-            this.props.navigation.setParams({
-              plans: this.state.planList,
-            })
             this.loadItems()
           })
         })
@@ -220,6 +205,7 @@ class BRP extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+   
     if (prevProps.books.length != this.props.books.length || Object.keys(prevState.items).length != Object.keys(this.state.items).length) {
       this.props.fetchVersionBooks({
         language: this.props.languageName,
@@ -229,6 +215,7 @@ class BRP extends Component {
       })
       this.fetchPlan()
     }
+
   }
 
 

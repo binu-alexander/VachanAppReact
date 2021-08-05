@@ -21,6 +21,7 @@ const width = Dimensions.get('window').width;
 class SelectBook extends Component {
   constructor(props) {
     super(props)
+    console.log("PROPS IN BOOK PAGE ", props)
     this.state = {
       activeTab: true,
       NTSize: 0,
@@ -47,8 +48,11 @@ class SelectBook extends Component {
     { length: 48, offset: 48 * index, index }
   )
   navigateTo(item) {
-    this.props.screenProps.updateSelectedBook(item)
-    this.props.navigation.navigate('Chapters')
+    this.props.navigation.navigate('Chapters',{
+      selectedBookId: item.bookId,
+      selectedBookName: item.bookName,
+      totalChapters: item.numOfChapters
+    })
   }
 
   getOTSize = () => {
@@ -95,25 +99,25 @@ class SelectBook extends Component {
     this.getNTSize()
     this.selectTab()
   }
-  selectTab(){
+  selectTab() {
     let bookData = null
     let bookIndex = -1
     if (this.props.books.length > 0) {
       for (var i = 0; i < this.props.books.length; i++) {
-        if(this.props.books[i].bookId == this.props.screenProps.selectedBookId){
+        if (this.props.books[i].bookId == this.props.route.params.selectedBookId) {
           bookData = this.props.books[i]
           bookIndex = i
         }
       }
-      if(bookData && bookIndex != -1){
+      if (bookData && bookIndex != -1) {
         if (bookData.bookNumber >= 40) {
           this.setState({ activeTab: false })
         } else {
           this.setState({ activeTab: true })
         }
-        let wait = new Promise((resolve) => setTimeout(resolve, 500)); 
-        wait.then( () => {
-          if(this.flatlistRef){
+        let wait = new Promise((resolve) => setTimeout(resolve, 500));
+        wait.then(() => {
+          if (this.flatlistRef) {
             this.flatlistRef.scrollToIndex({ index: bookIndex, viewPosition: 0, animated: false, viewOffset: 0 })
           }
         });
@@ -135,9 +139,10 @@ class SelectBook extends Component {
           style={this.styles.bookList}>
           <Text
             style={[this.styles.textStyle,
-            { fontWeight: item.bookId == this.props.screenProps.selectedBookId ? "bold" : "normal",
-            color: item.bookId == this.props.screenProps.selectedBookId ?  this.props.colorFile.blueText : this.props.colorFile.textColor
-           }
+            {
+              fontWeight: item.bookId == this.props.route.params.selectedBookId ? "bold" : "normal",
+              color: item.bookId == this.props.route.params.selectedBookId ? this.props.colorFile.blueText : this.props.colorFile.textColor
+            }
             ]}
           >
             {item.bookName}
@@ -233,7 +238,6 @@ class SelectBook extends Component {
             />
           </View>
         }
-        {/* {(this.props.books && this.props.books.length > 0) && <Icon name="check-circle" color='rgba(62, 64, 149, 0.8)' onPress={() => this.props.screenProps.updateSelectedChapter(null, null)} size={64} style={{ position: 'absolute', bottom: 0, right: 0, paddingRight: 20,paddingBottom:10}} />} */}
       </View>
     );
   }

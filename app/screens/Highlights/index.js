@@ -12,12 +12,9 @@ import { getBookChaptersFromMapping } from '../../utils/UtilFunctions';
 import { highlightstyle } from './styles'
 import { connect } from 'react-redux'
 import { updateVersionBook } from '../../store/action/'
-import firebase from 'react-native-firebase'
+import database from '@react-native-firebase/database';
 
 class HighLights extends Component {
-  static navigationOptions = {
-    headerTitle: 'Highlights',
-  };
 
   constructor(props) {
     super(props)
@@ -44,7 +41,7 @@ class HighLights extends Component {
         a.verseNumber.forEach(async (b, j) => {
           if (b == verseNum) {
             if (a.verseNumber.length == 1) {
-                firebase.database().ref("users/" + this.props.uid + "/highlights/" + this.props.sourceId + "/" + id + "/" + chapterNum).remove()
+                database().ref("users/" + this.props.uid + "/highlights/" + this.props.sourceId + "/" + id + "/" + chapterNum).remove()
               data.splice(i, 1)
             }
             else {
@@ -52,7 +49,7 @@ class HighLights extends Component {
               var updates = {}
               index = i
               updates[chapterNum] = data[index].verseNumber
-              firebase.database().ref("users/" + this.props.uid + "/highlights/" + this.props.sourceId + "/" + id).update(updates)
+              database().ref("users/" + this.props.uid + "/highlights/" + this.props.sourceId + "/" + id).update(updates)
             }
           }
         })
@@ -64,7 +61,7 @@ class HighLights extends Component {
   fetchHighlights() {
     if (this.props.email) {
       this.setState({ isLoading: true }, () => {
-        firebase.database().ref("/users/" + this.props.uid + "/highlights/" + this.props.sourceId + "/").once('value', (snapshot) => {
+        database().ref("/users/" + this.props.uid + "/highlights/" + this.props.sourceId + "/").once('value', (snapshot) => {
           var highlights = snapshot.val()
           var array = []
           if (highlights != null) {

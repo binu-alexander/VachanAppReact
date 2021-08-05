@@ -20,17 +20,13 @@ import ReloadButton from '../../../components/ReloadButton'
 import vApi from '../../../utils/APIFetch';
 
 class DictionaryWords extends Component {
-  static navigationOptions = () => {
-    return {
-      headerTitle: 'Dictionary',
-    }
-  }
+
   constructor(props) {
     super(props)
 
     this.state = {
       modalVisibleDictionary: false,
-      dictionarySourceId:this.props.navigation.state.params ? this.props.navigation.state.params.dictionarySourceId : null,
+      dictionarySourceId:this.props.route.paramss ? this.props.route.params.dictionarySourceId : null,
       wordDescription: [],
     }
     this.styles = styles(this.props.colorFile, this.props.sizeFile)
@@ -125,7 +121,7 @@ class DictionaryWords extends Component {
               <Accordion
                 dataArray={this.props.dictionaryContent}
                 animation={true}
-                expanded={true}
+                expanded={[0]}
                 renderHeader={this._renderHeader}
                 renderContent={this._renderContent}
               />

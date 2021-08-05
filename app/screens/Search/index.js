@@ -29,32 +29,6 @@ const SearchResultTypes = {
 
 class Search extends Component {
 
-  static navigationOptions = ({ navigation }) => {
-    const { params = {} } = navigation.state;
-    return {
-
-      headerTitle: (
-        <TextInput
-          placeholder="Enter Search Text"
-          underlineColorAndroid={Color.Transparent}
-          style={{ color: Color.White, width: width - 90 }}
-          onChangeText={(text) => params.onTextChange(text)}
-          placeholderTextColor={Color.White}
-          returnKeyType="search"
-          multiline={false}
-          numberOfLines={1}
-          value={params.text}
-          onSubmitEditing={() => params.onSearchText()}
-        />
-      ),
-      headerRight: (
-        <TouchableOpacity onPress={() => params.onSearchText()}>
-          <Icon name={'search'} size={24} color={Color.White} style={{ marginHorizontal: 8 }} />
-        </TouchableOpacity>
-      )
-    }
-  }
-
   constructor(props) {
     super(props);
     this.state = {
@@ -134,7 +108,6 @@ class Search extends Component {
 
 
   clearData() {
-    this.props.navigation.setParams({ text: '' })
     if (this.state.text) {
       this.setState({ text: "" })
     }
@@ -201,7 +174,6 @@ class Search extends Component {
   }
 
   onTextChange = (text) => {
-    this.props.navigation.setParams({ text: text })
     this.setState({ text: text })
   }
 
@@ -224,19 +196,30 @@ class Search extends Component {
       this.setState({
         tabsData: [], searchedResult: [], text: '', isLoading: false
       })
-      this.props.navigation.setParams({
-        onTextChange: this.onTextChange,
-        onSearchText: this.onSearchText,
-        onChangeText: this.onChangeText,
-        clearData: this.clearData,
-        headerStyle: this.styles.headerText,
-        text: ''
-      })
-
+    })
+    this.props.navigation.setOptions({
+        headerTitle: ()=>
+          <TextInput
+            placeholder="Enter Search Text"
+            underlineColorAndroid={Color.Transparent}
+            style={{ color: Color.White, width: width - 90 }}
+            onChangeText={(text) => this.onTextChange(text)}
+            placeholderTextColor={Color.White}
+            returnKeyType="search"
+            multiline={false}
+            numberOfLines={1}
+            value={this.state.text}
+            onSubmitEditing={() => this.onSearchText()}
+          />,
+        headerRight: ()=>
+          <TouchableOpacity onPress={() => this.onSearchText()}>
+            <Icon name={'search'} size={24} color={Color.White} style={{ marginHorizontal: 8 }} />
+          </TouchableOpacity>
+        
     })
   }
   componentWillUnmount() {
-    this.subs.remove();
+    this.subs();
   }
 
   toggleButton(activeTab) {

@@ -1,5 +1,8 @@
 // all of our routes
-import { createStackNavigator, createDrawerNavigator, createSwitchNavigator, createAppContainer } from 'react-navigation'
+// import { createStackNavigator, createDrawerNavigator, createSwitchNavigator, createAppContainer } from 'react-navigation'
+import React, { Component } from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import About from '../screens/About/'
 import Search from '../screens/Search/'
 import Settings from '../screens/Settings'
@@ -12,7 +15,7 @@ import Commentary from '../screens/StudyHelp/Commentary/'
 import Dictionary from '../screens/StudyHelp/Dictionary/'
 import DictionaryWords from '../screens/StudyHelp/Dictionary/DictionaryWords'
 import Infographics from '../screens/StudyHelp/InfoGraphics/';
-import InfographicsImage from '../screens/StudyHelp/InfoGraphics/infographicsImage';
+import InfographicsImage from '../screens/StudyHelp/InfoGraphics/InfographicsImage';
 
 import Reset from '../screens/Auth/Reset'
 import Register from '../screens/Auth/Register'
@@ -24,9 +27,8 @@ import DrawerScreen from '../screens/DrawerScreen'
 import Bible from '../screens/Bible'
 import LanguageList from '../screens/LanguageList'
 
-import SelectionTab from '../screens/ReferenceSelection/'
-import BookMarks from '../screens/Bookmarks/';
-import Color from '../utils/colorConstants'
+import ReferenceSelection from '../screens/ReferenceSelection/'
+import Bookmarks from '../screens/Bookmarks/';
 import Video from '../screens/Video'
 import PlayVideo from '../screens/Video/PlayVideo'
 import Help from '../screens/Help'
@@ -35,114 +37,213 @@ import Hints from '../screens/Help/Hints'
 import OBS from '../screens/StudyHelp/OBS/'
 import BRP from '../screens/StudyHelp/BRP/'
 
+import Color from '../utils/colorConstants'
 
-const NavStack = createStackNavigator(
-  {
-    Bible: {
-      screen: Bible,
-      navigationOptions: () => ({
+const DrawerStack = createDrawerNavigator()
+const NavStack = createStackNavigator()
+
+function NavStackScreen() {
+  return (
+    <NavStack.Navigator
+      initialRouteName="Bible"
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: Color.Blue_Color,
+          elevation: 0,
+          shadowOpacity: 0,
+        },
         headerTintColor: Color.White,
         headerTitleStyle: {
           fontWeight: 'bold',
-        },
-      })
-    },
-    Search: { screen: Search },
-    SelectionTab: {
-      screen: SelectionTab,
-      navigationOptions: { headerTitle: null }
-    },
-    Notes: {
-      screen: Notes
-    },
-    LanguageList: { screen: LanguageList },
-    EditNote: { screen: EditNote },
-    Commentary: {
-      screen: Commentary,
-      navigationOptions: () => ({
-        header: null
-      })
-    },
-    Dictionary: { screen: Dictionary },
-    DictionaryWords: { screen: DictionaryWords },
-    About: { screen: About },
-    Settings: { screen: Settings },
-    History: { screen: History },
-    BookMarks: { screen: BookMarks },
-    Highlights: { screen: Highlights },
-    Infographics: { screen: Infographics },
-    InfographicsImage: { screen: InfographicsImage },
-    Login: { screen: Login },
-    Video: { screen: Video },
-    PlayVideo: { screen: PlayVideo },
-    Help: { screen: Help },
-    Feedback: { screen: Feedback },
-    Hints: { screen: Hints },
-    Register: {
-      screen: Register,
-      navigationOptions: () => ({
-        header: null
-      })
-    },
-    Reset: {
-      screen: Reset,
-      navigationOptions: { headerTitle: "Forgot Passsword ?" }
-    },
-    OBS: {
-      screen: OBS,
-      navigationOptions: { headerTitle: "Bible Stories" }
-    },
-    BRP: {
-      screen: BRP,
-      navigationOptions: { headerTitle: "Reading Plans" }
-    },
-    ProfilePage: {
-      screen: ProfilePage,
-      navigationOptions: () => ({
-        header: null
-      }),
-    },
-    Auth: {
-      screen: Auth,
-      navigationOptions: () => ({
-        header: null
-      }),
-    },
-  },
-  {
-    defaultNavigationOptions: {
-      headerStyle: {
-        backgroundColor: Color.Blue_Color,
-        elevation: 0,
-        shadowOpacity: 0,
-      },
-      headerTintColor: Color.White,
-      headerTitleStyle: {
-        fontWeight: 'bold',
-        color: Color.White
-      }
-    },
+          color: Color.White
+        }
+      }}
+    >
+      <NavStack.Screen name="Bible" component={Bible}
+        options={{
+          headerShown: false,
+          headerTintColor: Color.White,
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
+      />
+      <NavStack.Screen name="DrawerScreen" component={DrawerScreen}
+        options={{
 
+        }}
+      />
+      <NavStack.Screen name="LanguageList" component={LanguageList}
+        options={{
+          headerTitle: 'Languages',
+        }}
+      />
+
+      <NavStack.Screen name="ReferenceSelection" component={ReferenceSelection}
+        options={{
+          headerTitle: null,
+          headerStyle: {
+            backgroundColor: Color.Blue_Color,
+            height: 36,
+            elevation: 0,
+            shadowOpacity: 0,
+          },
+        }}
+      />
+      <NavStack.Screen name="Search" component={Search}
+        options={{
+
+        }}
+      />
+      <NavStack.Screen name="About" component={About}
+        options={{
+          headerTitle: 'About Us',
+        }}
+      />
+      <NavStack.Screen name="Settings" component={Settings}
+        options={{
+          headerTitle: 'Settings',
+        }}
+      />
+      <NavStack.Screen name="Notes" component={Notes}
+        options={{
+          headerTitle: 'Notes',
+        }}
+      />
+      <NavStack.Screen name="EditNote" component={EditNote}
+        options={{
+
+        }}
+      />
+      <NavStack.Screen name="Highlights" component={Highlights}
+        options={{
+          headerTitle: 'Highlights',
+        }}
+      />
+      <NavStack.Screen name="History" component={History}
+        options={{
+          headerTitle: 'History',
+        }}
+      />
+      <NavStack.Screen name="Commentary" component={Commentary}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <NavStack.Screen name="Dictionary" component={Dictionary}
+        options={{
+          headerTitle: 'Dictionary',
+        }}
+      />
+      <NavStack.Screen name="DictionaryWords" component={DictionaryWords}
+        options={{
+          headerTitle: 'Dictionary words',
+        }}
+      />
+      <NavStack.Screen name="Infographics" component={Infographics}
+        options={{
+          headerTitle: 'Infographics',
+        }}
+      />
+      <NavStack.Screen name="InfographicsImage" component={InfographicsImage}
+        options={{
+
+        }}
+      />
+      <NavStack.Screen name="Reset" component={Reset}
+        options={{
+          headerTitle: "Forgot Passsword ?"
+        }}
+      />
+      <NavStack.Screen name="Register" component={Register}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <NavStack.Screen name="Login" component={Login}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <NavStack.Screen name="ProfilePage" component={ProfilePage}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <NavStack.Screen name="Auth" component={Auth}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <NavStack.Screen name="Bookmarks" component={Bookmarks}
+        options={{
+          headerTitle: 'Bookmarks',
+        }}
+      />
+      <NavStack.Screen name="Video" component={Video}
+        options={{
+          headerTitle: 'Video',
+        }}
+      />
+      <DrawerStack.Screen name="BRP" component={BRP}
+        options={{
+          headerTitle: "Bible Stories"
+        }}
+      />
+      <NavStack.Screen name="OBS" component={OBS}
+        options={{
+          headerTitle: "Reading Plans"
+        }}
+      />
+      <NavStack.Screen name="PlayVideo" component={PlayVideo}
+        options={{
+
+        }}
+      />
+      <NavStack.Screen name="Help" component={Help}
+        options={{
+          headerTitle: 'Help',
+        }}
+      />
+      <NavStack.Screen name="Hints" component={Hints}
+        options={{
+          headerTitle: 'Hints',
+        }}
+      />
+      <NavStack.Screen name="Feedback" component={Feedback}
+        options={{
+          headerTitle: 'Feedback',
+        }}
+      />
+    </NavStack.Navigator>
+  )
+}
+
+function DrawerStackScreen() {
+  return (
+    <DrawerStack.Navigator
+      drawerContent={(props) => <DrawerScreen {...props} />}>
+      <DrawerStack.Screen name="stack" component={NavStackScreen} />
+    </DrawerStack.Navigator>
+  )
+}
+export default class AppNavigator extends Component {
+  render() {
+    return (
+      <DrawerStackScreen />
+    );
   }
-)
+}
 
-const DrawerNavigate = createDrawerNavigator({
-  StackNavigate: {
-    screen: NavStack
-  },
+// const DrawerNavigate = createDrawerNavigator({
+//   StackNavigate: {
+//     screen: DrawerStack
+//   },
 
-},
-  {
-    contentComponent: DrawerScreen,
-    drawerWidth: 250,
-    overlayColor: 'rgba(52, 52, 52, 0.8)'
-  },
-);
-
-const SwitchNavigator = createSwitchNavigator({
-  DrawerNavigate: DrawerNavigate
-});
-
-export const AppNavigator = createAppContainer(SwitchNavigator);
-
-
+// },
+//   {
+//     contentComponent: DrawerScreen,
+//     drawerWidth: 250,
+//     overlayColor: 'rgba(52, 52, 52, 0.8)'
+//   },
+// );

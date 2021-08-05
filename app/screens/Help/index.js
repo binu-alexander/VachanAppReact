@@ -7,9 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux'
 
 class Help extends Component {
-  static navigationOptions = {
-    headerTitle: 'Help',
-  };
+
   constructor(props) {
     super(props)
     this.state = {

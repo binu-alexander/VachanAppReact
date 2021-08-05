@@ -15,21 +15,19 @@ import vApi from '../../utils/APIFetch';
 
 
 class Video extends Component {
-  static navigationOptions = {
-    headerTitle: 'Video',
-  };
 
   constructor(props) {
     super(props);
     this.state = {
-      bookId: this.props.navigation.state.params ? this.props.navigation.state.params.bookId : null,
-      bookName: this.props.navigation.state.params ? this.props.navigation.state.params.bookName : null,
+      bookId: this.props.route.params ? this.props.route.params.bookId : null,
+      bookName: this.props.route.params ? this.props.route.params.bookName : null,
       videos: [],
       isLoading: false,
       duplicateValue: []
     }
     this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
   }
+  
   async fetchVideo() {
     this.setState({ isLoading: true })
     const videos = await vApi.get('videos?language=' + this.props.languageCode)

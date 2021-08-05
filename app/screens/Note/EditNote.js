@@ -7,37 +7,25 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
-import FlowLayout from '../../components/FlowLayout'
-import { HeaderBackButton, NavigationActions } from 'react-navigation';
+import FlowLayout from '../../components/FlowLayout';
+import { CommonActions } from '@react-navigation/native';
+import { HeaderBackButton } from '@react-navigation/stack';
 import { noteStyle } from './styles.js';
-import { connect } from 'react-redux'
-import firebase from 'react-native-firebase'
-import Color from '../../utils/colorConstants'
-import { getBookChaptersFromMapping } from '../../utils/UtilFunctions'
-
-import { updateVersionBook } from '../../store/action/'
-
+import { connect } from 'react-redux';
+import database from '@react-native-firebase/database';
+import Color from '../../utils/colorConstants';
+import { getBookChaptersFromMapping } from '../../utils/UtilFunctions';
+import { updateVersionBook } from '../../store/action/';
 
 class EditNote extends Component {
-  static navigationOptions = ({ navigation }) => ({
-    headerTitle: (<Text style={{ fontSize: 16, color: Color.White, fontWeight: '700', marginRight: 12 }}>Note</Text>),
-    headerLeft: (<HeaderBackButton tintColor={Color.White} onPress={() => navigation.state.params.handleBack()} />),
-    headerRight: (
-      <TouchableOpacity style={{ margin: 8 }} onPress={() => navigation.state.params.handleAdd()}>
-        <Text style={{ fontSize: 16, color: Color.White, fontWeight: '700', marginRight: 12 }}>Save</Text>
-      </TouchableOpacity>
-    ),
-
-  });
-
   constructor(props) {
     super(props);
     this.state = {
-      noteIndex: this.props.navigation.state.params.noteIndex,
-      noteObject: this.props.navigation.state.params.notesList,
-      bcvRef: this.props.navigation.state.params.bcvRef,
+      noteIndex: this.props.route.params.noteIndex,
+      noteObject: this.props.route.params.notesList,
+      bcvRef: this.props.route.params.bcvRef,
       isLoading: false,
-      contentBody: this.props.navigation.state.params.contentBody,
+      contentBody: tthis.props.route.params.contentBody,
       modalVisible: false,
     }
     this.styles = noteStyle(props.colorFile, props.sizeFile);
@@ -45,13 +33,13 @@ class EditNote extends Component {
   saveNote = async () => {
     var time = Date.now()
 
-    var firebaseRef = firebase.database().ref("users/" + this.props.uid + "/notes/" + this.props.sourceId + "/" + this.state.bcvRef.bookId)
+    var firebaseRef = database().ref("users/" + this.props.uid + "/notes/" + this.props.sourceId + "/" + this.state.bcvRef.bookId)
 
     if (this.state.contentBody == '') {
       alert(" Note should not be empty")
     }
     else {
-      var edit = firebase.database().ref("users/" + this.props.uid + "/notes/" + this.props.sourceId + "/" + this.state.bcvRef.bookId + "/" + this.state.bcvRef.chapterNumber)
+      var edit = database().ref("users/" + this.props.uid + "/notes/" + this.props.sourceId + "/" + this.state.bcvRef.bookId + "/" + this.state.bcvRef.chapterNumber)
       if (this.state.noteIndex != -1) {
         var updates = {}
         updates["/" + this.state.noteIndex] = {
@@ -73,7 +61,7 @@ class EditNote extends Component {
         updates[this.state.bcvRef.chapterNumber] = notesArray
         firebaseRef.update(updates)
       }
-      this.props.navigation.state.params.onbackNote()
+      this.props.route.params.onbackNote()
       this.props.navigation.pop()
     }
   }
@@ -98,24 +86,30 @@ class EditNote extends Component {
       return
     }
     else {
-      if (this.state.contentBody !== this.props.navigation.state.params.contentBody
-        || this.state.bcvRef.verses.length !== this.props.navigation.state.params.bcvRef.verses.length
+      if (this.state.contentBody !== this.props.route.params.contentBody
+        || this.state.bcvRef.verses.length !== this.props.route.params.bcvRef.verses.length
       ) {
         this.showAlert();
         return
       }
-      this.props.navigation.dispatch(NavigationActions.back())
+      this.props.navigation.dispatch(CommonActions.goBack());
     }
 
   }
   componentDidMount() {
-    this.props.navigation.setParams({ handleAdd: this.saveNote })
-    this.props.navigation.setParams({ handleBack: this.onBack })
+    this.props.navigation.setOptions({
+      headerTitle: ()=><Text style={{ fontSize: 16, color: Color.White, fontWeight: '700', marginRight: 12 }}>Note</Text>,
+      headerLeft: ()=><HeaderBackButton tintColor={Color.White} onPress={() =>this.onBack()} />,
+      headerRight: ()=>
+        <TouchableOpacity style={{ margin: 8 }} onPress={() => this.saveNote()}>
+          <Text style={{ fontSize: 16, color: Color.White, fontWeight: '700', marginRight: 12 }}>Save</Text>
+        </TouchableOpacity>,
+    })
   }
-  
+
   openReference = (index, value) => {
-    if (this.state.contentBody !== this.props.navigation.state.params.contentBody
-      || this.state.bcvRef.verses.length !== this.props.navigation.state.params.bcvRef.verses.length
+    if (this.state.contentBody !== this.props.route.params.contentBody
+      || this.state.bcvRef.verses.length !== this.props.route.params.bcvRef.verses.length
     ) {
       Alert.alert(
         'Save Changes ? ',

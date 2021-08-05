@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ActivityIndicator, View, KeyboardAvoidingView, Platform, Text, Alert, TextInput, Button, Image } from 'react-native';
-import firebase from 'react-native-firebase'
+import auth from '@react-native-firebase/auth';
 import { userInfo, userLogedIn } from '../../store/action'
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -10,9 +10,7 @@ import { styles } from './styles.js'
 import Color from '../../utils/colorConstants'
 
 class Login extends Component {
-  static navigationOptions = {
-    header: null,
-  };
+
   constructor(props) {
     super(props)
     this.state = {
@@ -38,8 +36,7 @@ class Login extends Component {
       this.setState({
         isLoading: true,
       })
-      firebase
-        .auth()
+        auth()
         .signInWithEmailAndPassword(this.state.email, this.state.password)
         .then((res) => {
           this.props.userLogedIn({ pasLogedIn: true,googleLogIn:false })
@@ -73,9 +70,9 @@ class Login extends Component {
       const data = await GoogleSignin.signIn();
       if (data) {
         this.setState({ isLoading: true }, async () => {
-          const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken);
+          const credential = auth.GoogleAuthProvider.credential(data.idToken, data.accessToken);
           // Login with the credential
-          await firebase.auth().signInWithCredential(credential);
+          await auth().signInWithCredential(credential);
           this.props.userLogedIn({ pasLogedIn: false,googleLogIn:true })
           this.setState({ isLoading: false })
           this.props.navigation.navigate("Bible")
@@ -109,9 +106,9 @@ class Login extends Component {
         return AccessToken.getCurrentAccessToken();
       })
       .then((data) => {
-        const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken);
+        const credential = auth.FacebookAuthProvider.credential(data.accessToken);
         // Login with the credential
-        return firebase.auth().signInWithCredential(credential);
+        return auth().signInWithCredential(credential);
       })
       .then((res) => {
         this.setState({ isLoading: true }, () => {

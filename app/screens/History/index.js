@@ -17,9 +17,6 @@ import { connect } from 'react-redux'
 var moment = require('moment');
 
 class History extends Component {
-  static navigationOptions = {
-    headerTitle: 'History',
-  };
 
   constructor(props) {
     super(props)
@@ -36,10 +33,6 @@ class History extends Component {
     this.styles = historyStyle(props.colorFile, props.sizeFile);
     this.onClearHistory = this.onClearHistory.bind(this)
 
-    this.props.navigation.setParams({
-      onClearHistory: this.onClearHistory,
-      historyListLength: 0
-    })
   }
 
   async componentDidMount() {
@@ -76,10 +69,7 @@ class History extends Component {
           }
         }
         this.setState({ historyList, isLoading: false })
-        this.props.navigation.setParams({
-          historyListLength: historyList.length,
-
-        })
+        
 
       }
     })
@@ -89,9 +79,6 @@ class History extends Component {
   onClearHistory = () => {
     DbQueries.clearHistory()
     this.setState({ historyList: [] })
-    this.props.navigation.setParams({
-      historyListLength: 0
-    })
   }
 
   _renderHeader = (data, index, isActive) => {
@@ -176,7 +163,7 @@ class History extends Component {
             :
             <Accordion
               dataArray={this.state.historyList}
-              expanded={true}
+              expanded={[0]}
               renderHeader={this._renderHeader}
               renderContent={this._renderContent}
             />

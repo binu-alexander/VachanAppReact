@@ -16,9 +16,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 const width = Dimensions.get('window').width;
 
 class Help extends Component {
-  static navigationOptions = {
-    headerTitle: 'Hints',
-  };
+
   constructor(props) {
     super(props)
     this.state = {

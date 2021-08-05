@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ActivityIndicator, View, Alert, TextInput, Text, TouchableOpacity, Button } from 'react-native';
-import firebase from 'react-native-firebase'
+import auth from '@react-native-firebase/auth';
 import { styles } from './styles.js'
 import { connect } from 'react-redux'
 import Color from '../../utils/colorConstants'
@@ -31,7 +31,7 @@ class Reset extends Component {
       this.setState({
         isLoading: true,
       })
-      firebase.auth().sendPasswordResetEmail(this.state.email)
+      auth().sendPasswordResetEmail(this.state.email)
         .then((onVal) => {
           alert('We will attempt to send a reset password email to ' + this.state.email + '\n' + "Click the email to Continue")
           this.setState({

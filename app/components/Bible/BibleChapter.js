@@ -165,7 +165,7 @@ class BibleChapter extends Component {
     }
     goToSelectionTab = () => {
         if (this.props.parallelLanguage) {
-            this.props.navigation.navigate("SelectionTab", {
+            this.props.navigation.navigate("ReferenceSelection", {
                 getReference: this.getRef, parallelContent: true, bookId: this.state.bookId, bookName: this.state.bookName,
                 chapterNumber: this.state.currentParallelViewChapter, totalChapters: this.state.totalChapters,
                 language: this.props.parallelLanguage.languageName, version: this.props.parallelLanguage.versionCode,

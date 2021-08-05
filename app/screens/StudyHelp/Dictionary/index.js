@@ -9,11 +9,7 @@ import { styles } from './styles.js'
 import vApi from '../../../utils/APIFetch';
 
 class Infographics extends React.Component {
-  static navigationOptions = ({ navigation }) => {
-    return {
-      headerTitle:'Dictionary',
-    }
-  }
+
   constructor(props) {
     super(props);
     this.state = {

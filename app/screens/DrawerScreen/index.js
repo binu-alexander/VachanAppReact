@@ -51,48 +51,55 @@ class DrawerScreen extends Component {
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
 
     return (
-      <View style={this.styles.container}>
-        <ScrollView style={this.styles.container}>
-          <View style={this.styles.headerContainer}>
-            <ImageBackground source={require('../../assets/headerbook.jpg')} style={{ flex: 1, width: 280, }} >
-              <View style={{ position: 'absolute', bottom: 0, margin: 8 }}>
-                <Image
-                  style={this.styles.imageStyle}
-                  source={require('../../assets/bcs_old_favicon.png')}
-                />
-                <View style={this.styles.goToLogin}>
-                  <Image source={require('../../assets/logo.png')} style={{ padding: 4, width: 136, height: 30 }} />
+        <View style={this.styles.container}>
+          <ScrollView style={this.styles.container}>
+            <View style={this.styles.headerContainer}>
+              <ImageBackground source={require('../../assets/headerbook.jpg')} style={{ flex: 1, width: 280, }} >
+                <View style={{ position: 'absolute', bottom: 0, margin: 8 }}>
+                  <Image
+                    style={this.styles.imageStyle}
+                    source={require('../../assets/bcs_old_favicon.png')}
+                  />
+                  <View style={this.styles.goToLogin}>
+                    <Image source={require('../../assets/logo.png')} style={{ padding: 4, width: 136, height: 30 }} />
+                  </View>
                 </View>
-              </View>
-            </ImageBackground>
-          </View>
-          {
-            iconName.map((iconName, index) =>
-              <TouchableOpacity
-                onPress={() => { this.props.navigation.navigate(iconName.pressIcon) }}
-                style={
-                  this.styles.drawerItem
-                }>
-                <View
-                  style={{
-                    flexDirection: "row",
-                  }}>
-                  <Icon name={iconName.icon} size={20} style={this.styles.iconStyleDrawer} />
-                  <Text
-                    style={this.styles.textStyle}>
-                    {iconName.text}
-                  </Text>
-                </View>
-                <Icon name='chevron-right' size={20} style={this.styles.iconStyleDrawer} />
-              </TouchableOpacity>
-            )
-          }
-          {/*for appstore app*/}
-          {/* <Text style={this.styles.versionText}>APP VERSION {this.state.currentVersion}</Text> */}
-          { /*//for tesing */}
-          <Text style={this.styles.versionText}>APP VERSION 1.3.0-alpha.9</Text>
-        </ScrollView>
-      </View>
+              </ImageBackground>
+            </View>
+            {
+              iconName.map((iconName, index) =>
+                <TouchableOpacity
+                  onPress={() => { this.props.navigation.navigate(iconName.pressIcon) }}
+                  style={
+                    this.styles.drawerItem
+                  }>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                    }}>
+                    <Icon name={iconName.icon} size={20} style={this.styles.iconStyleDrawer} />
+                    <Text
+                      style={this.styles.textStyle}>
+                      {iconName.text}
+                    </Text>
+                    {/* <DrawerItem
+                      label={iconName.text}
+                      labelStyle={this.styles.textStyle}
+                      onPress={() => {
+                        this.props.navigation.navigate(iconName.pressIcon)
+                      }}
+                    /> */}
+                  </View>
+                  <Icon name='chevron-right' size={20} style={this.styles.iconStyleDrawer} />
+                </TouchableOpacity>
+              )
+            }
+            {/*for appstore app*/}
+            {/* <Text style={this.styles.versionText}>APP VERSION {this.state.currentVersion}</Text> */}
+            { /*//for tesing */}
+            <Text style={this.styles.versionText}>APP VERSION 1.3.0-alpha.9</Text>
+          </ScrollView>
+        </View>
     );
   }
 }

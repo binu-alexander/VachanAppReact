@@ -15,9 +15,6 @@ import { updateColorMode, updateFontSize, updateVerseInLine } from '../../store/
 import Color from '../../utils/colorConstants'
 
 class Setting extends Component {
-  static navigationOptions = {
-    headerTitle: 'Settings',
-  };
 
   constructor(props) {
     super(props);

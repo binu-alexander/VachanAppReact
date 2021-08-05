@@ -14,24 +14,12 @@ import Color from '../../../utils/colorConstants'
 
 
 export class InfographicsImage extends React.Component {
-  static navigationOptions = ({ navigation }) => {
-    const { params = {} } = navigation.state
-    return {
-      headerTitle: (<Text style={{ fontSize: 18, color: Color.White, fontWeight: 'bold', marginRight: 12 }}>Image</Text>),
-      headerRight: (
-        <TouchableOpacity onPress={params.resetSize}>
-          <Text style={{ fontSize: 18, color: Color.White, fontWeight: 'bold', marginRight: 12 }}>
-            Reset Size
-          </Text>
-        </TouchableOpacity>
-      )
-    }
-  }
+
   constructor(props) {
     super(props);
     this.state = {
-      url: this.props.navigation.state.params.url,
-      fileName: this.props.navigation.state.params.fileName,
+      url: this.props.route.params.url,
+      fileName:this.props.route.params.fileName,
       image: null,
       isLoading: false
     }
@@ -92,8 +80,14 @@ export class InfographicsImage extends React.Component {
     }
   };
   async componentDidMount() {
-    this.props.navigation.setParams({
-      resetSize: this.resetSize
+    this.props.navigation.setOptions({
+    headerTitle: ()=><Text style={{ fontSize: 18, color: Color.White, fontWeight: 'bold', marginRight: 12 }}>Image</Text>,
+    headerRight: ()=>
+      <TouchableOpacity onPress={this.resetSize}>
+        <Text style={{ fontSize: 18, color: Color.White, fontWeight: 'bold', marginRight: 12 }}>
+          Reset Size
+        </Text>
+      </TouchableOpacity>
     })
     this.setState({ image: this.state.url + this.state.fileName })
   }

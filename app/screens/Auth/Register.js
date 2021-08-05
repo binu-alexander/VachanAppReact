@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import { ActivityIndicator, View, Text, TextInput, Image, Button, Alert, Platform, KeyboardAvoidingView } from 'react-native';
-import firebase from 'react-native-firebase'
+import auth from '@react-native-firebase/auth';
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { styles } from './styles.js'
@@ -39,8 +39,7 @@ class Register extends Component {
         isLoading: true,
       })
       if (this.state.cpassword === this.state.password) {
-        firebase
-          .auth()
+          auth()
           .createUserWithEmailAndPassword(this.state.email.trim(), this.state.password.trim())
           .then(async (res) => {
             this.props.userLogedIn({ pasLogedIn: true,googleLogIn:false })

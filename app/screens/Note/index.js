@@ -9,21 +9,16 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Card, CardItem } from 'native-base';
 import { connect } from 'react-redux'
-import firebase from 'react-native-firebase'
+import database from '@react-native-firebase/database';
 import { noteStyle } from './styles.js';
 
 class Note extends Component {
-
-  static navigationOptions = ({ navigation }) => ({
-    headerTitle: 'Notes',
-  });
-
   constructor(props) {
     super(props)
     this.state = {
-      verseNumber: this.props.navigation.state.params ? this.props.navigation.state.params.verseNumber : null,
-      chapterNumber: this.props.navigation.state.params ? this.props.navigation.state.params.chapterNumber : null,
-      bookId: this.props.navigation.state.params ? this.props.navigation.state.params.bookId : null,
+      verseNumber: this.props.route.params ? this.props.route.params.verseNumber : null,
+      chapterNumber:this.props.route.params ? this.props.route.params.chapterNumber : null,
+      bookId:this.props.route.params ? this.props.route.params.bookId : null,
 
       colorFile: this.props.colorFile,
       sizeFile: this.props.sizeFile,
@@ -41,7 +36,7 @@ class Note extends Component {
   onDelete = (createdTime, body, k, l) => {
     var data = [...this.state.notesData]
     data.forEach((a, i) => {
-      var firebaseRef = firebase.database().ref("users/" + this.props.uid + "/notes/" + this.props.sourceId + "/" + a.bookId)
+      var firebaseRef = database().ref("users/" + this.props.uid + "/notes/" + this.props.sourceId + "/" + a.bookId)
       if (i == k) {
         a.notes.forEach((b, j) => {
           if (b.body == body && j == l && createdTime == b.createdTime) {
@@ -66,7 +61,7 @@ class Note extends Component {
   fetchNotes() {
     if (this.props.email) {
       this.setState({ isLoading: true }, () => {
-        var firebaseRef = firebase.database().ref("users/" + this.props.uid + "/notes/" + this.props.sourceId)
+        var firebaseRef = database().ref("users/" + this.props.uid + "/notes/" + this.props.sourceId)
         firebaseRef.once('value', (snapshot) => {
           if (snapshot.val() === null) {
             this.setState({ notesData: [],message:'No Note for '+this.props.languageName, isLoading: false })

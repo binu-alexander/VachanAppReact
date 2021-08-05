@@ -10,9 +10,7 @@ import { aboutPage } from './styles.js'
 import { connect } from 'react-redux'
 const screenHeight = Dimensions.get('window').height
 class About extends Component {
-  static navigationOptions = {
-    headerTitle: 'About Us',
-  };
+ 
   constructor(props) {
     super(props);
     this.styles = aboutPage(this.props.colorFile, this.props.sizeFile);

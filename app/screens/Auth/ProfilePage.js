@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import { Card, CardItem, Header, Left, Button, Body, Title } from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { userInfo,userLogedIn } from '../../store/action'
-import firebase from 'react-native-firebase'
+import auth from '@react-native-firebase/auth';
 import { styles } from './styles.js'
 import Color from '../../utils/colorConstants'
 import { GoogleSignin } from 'react-native-google-signin';
@@ -27,9 +27,9 @@ class ProfilePage extends Component {
   logOut = async () => {
     try {
       if (this.props.pasLogedIn){
-        firebase.auth().signOut()
+        auth().signOut()
       } else if(this.props.googleLogIn){
-        firebase.auth().signOut()
+        auth().signOut()
         await GoogleSignin.revokeAccess();
         await GoogleSignin.signOut();
       }
