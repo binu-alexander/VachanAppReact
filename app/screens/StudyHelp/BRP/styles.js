@@ -1,9 +1,4 @@
 import { StyleSheet, Dimensions } from 'react-native'
-import { Icon } from 'native-base';
-import colorConstants from '../../../utils/colorConstants';
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
-
 
 export const OBSStyle = (colorFile, sizeFile) => {
     return StyleSheet.create({

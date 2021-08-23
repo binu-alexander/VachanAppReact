@@ -65,7 +65,7 @@ class LanguageList extends Component {
   async componentDidMount() {
     await this.recallFunc()
     this.props.navigation.setOptions({
-      headerLeft:()=> <HeaderBackButton tintColor={Color.White} onPress={this.goBack} />,
+      headerLeft:()=> <HeaderBackButton tintColor={Color.White} onPress={this.onBack}/>,
     })
   }
 

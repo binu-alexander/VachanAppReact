@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
-import { AppNavigator } from './app/routes/';
+import AppNavigator from './app/routes/';
+import { NavigationContainer } from '@react-navigation/native';
 import SplashScreen from 'react-native-splash-screen';
-import { connect } from 'react-redux'
-import { Root } from "native-base";
+import { connect } from 'react-redux';
+// import { Root } from "native-base";
 import VersionCheck from 'react-native-version-check';
 import { fetchAllContent, fetchVersionLanguage, APIBaseURL, updateVersion, fetchAllBooks, fetchVersionBooks } from './app/store/action/';
-import { Alert, Linking, NetInfo } from 'react-native';
-import firebase from 'react-native-firebase'
+import { Alert, Linking } from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
+import database from '@react-native-firebase/database';
+import { NativeBaseProvider, Text, Box, Root } from 'native-base'
 
 class App extends Component {
   constructor(props) {
@@ -17,6 +20,7 @@ class App extends Component {
       checkedSignIn: false
     }
   }
+
   checkUpdateNeeded = async () => {
     let latestVersion = await VersionCheck.getLatestVersion();
     let currentVersion = await VersionCheck.getCurrentVersion();
@@ -51,7 +55,7 @@ class App extends Component {
     setTimeout(() => {
       SplashScreen.hide()
     }, 400)
-    firebase.database().ref("/apiBaseUrl/").on('value', (snapshot) => {
+    database().ref("/apiBaseUrl/").on('value', (snapshot) => {
       this.props.APIBaseURL(snapshot.val())
       this.props.fetchVersionLanguage()
       this.props.fetchAllContent()
@@ -64,15 +68,15 @@ class App extends Component {
       })
     })
     this.checkUpdateNeeded()
-    NetInfo.isConnected.addEventListener(
-      'connectionChange',
+    this.unsubscribenetinfo = NetInfo.addEventListener(
       this._handleConnectionChange
     );
   }
-  _handleConnectionChange = (isConnected) => {
-    if (isConnected === true) {
+
+  _handleConnectionChange = (state) => {
+    if (state.isConnected === true) {
       if (this.props.baseAPI == null) {
-        firebase.database().ref("/apiBaseUrl/").on('value', (snapshot) => {
+        database().ref("/apiBaseUrl/").on('value', (snapshot) => {
           this.props.APIBaseURL(snapshot.val())
         })
       }
@@ -93,15 +97,14 @@ class App extends Component {
 
   }
   componentWillUnmount() {
-    NetInfo.isConnected.removeEventListener(
-      'connectionChange',
-      this._handleConnectionChange
-    )
+    this.unsubscribenetinfo && this.unsubscribenetinfo();
   }
   render() {
     return (
       <Root>
-        <AppNavigator />
+      <NavigationContainer>
+          <AppNavigator />
+      </NavigationContainer>
       </Root>
     )
   }

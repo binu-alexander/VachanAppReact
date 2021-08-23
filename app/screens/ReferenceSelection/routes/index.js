@@ -1,6 +1,4 @@
-// import {createMaterialTopTabNavigator} from "react-navigation";
 import React, { Component } from 'react';
-// import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import SelectBook from '../SelectBook/'
 import SelectChapter from '../SelectChapter'
@@ -11,7 +9,6 @@ const Tab = createMaterialTopTabNavigator();
 export default class SelectionTab extends Component {
     constructor(props) {
         super(props)
-        console.log('PARAMS',props )
         this.state = {
             selectedBookId: this.props.params ? this.props.params.bookId : null ,
             selectedBookName: this.props.params ? this.props.params.bookName : null,

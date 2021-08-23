@@ -1,5 +1,4 @@
 import {StyleSheet,Dimensions, ColorPropType} from 'react-native'
-import { color } from 'react-native-reanimated'
 import colorConstants from '../../../utils/colorConstants'
 import Color from '../../../utils/colorConstants'
 

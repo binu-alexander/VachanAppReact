@@ -5,9 +5,7 @@ import { styles } from './styles.js'
 import { connect } from 'react-redux'
 import Color from '../../utils/colorConstants'
 
-
 class Reset extends Component {
-
   constructor(props) {
     super(props)
     this.state = {

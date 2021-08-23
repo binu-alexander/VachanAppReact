@@ -234,16 +234,3 @@ export default class AppNavigator extends Component {
     );
   }
 }
-
-// const DrawerNavigate = createDrawerNavigator({
-//   StackNavigate: {
-//     screen: DrawerStack
-//   },
-
-// },
-//   {
-//     contentComponent: DrawerScreen,
-//     drawerWidth: 250,
-//     overlayColor: 'rgba(52, 52, 52, 0.8)'
-//   },
-// );

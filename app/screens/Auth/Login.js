@@ -4,7 +4,11 @@ import auth from '@react-native-firebase/auth';
 import { userInfo, userLogedIn } from '../../store/action'
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { GoogleSignin, GoogleSigninButton, statusCodes, } from 'react-native-google-signin';
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  statusCodes,
+} from '@react-native-community/google-signin';
 // import { AccessToken, LoginManager, LoginButton } from 'react-native-fbsdk';
 import { styles } from './styles.js'
 import Color from '../../utils/colorConstants'

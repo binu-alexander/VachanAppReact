@@ -9,12 +9,10 @@ import { fetchVersionBooks } from '../../store/action/'
 import Spinner from 'react-native-loading-spinner-overlay';
 import ReloadButton from '../../components/ReloadButton';
 import { styles } from './styles';
-import Color from '../../utils/colorConstants'
 
 class ReferenceSelection extends Component {
   constructor(props) {
     super(props)
-    console.log("REFERENCE SELECTION ",props)
     this.alertPresent = false
   }
 

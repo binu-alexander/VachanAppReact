@@ -13,10 +13,8 @@ import { styles } from './styles';
 import Color from '../../../utils/colorConstants';
 import ReloadButton from '../../../components/ReloadButton';
 import HTML from 'react-native-render-html';
-// import APIFetch from '../../../utils/APIFetch'
 import vApi from '../../../utils/APIFetch';
 import securityVaraibles from '../../../../securityVaraibles';
-import bookNameList from '../../../models/bookNameList';
 
 const commentaryKey = securityVaraibles.COMMENTARY_KEY ? '?key=' + securityVaraibles.COMMENTARY_KEY : ''
 

@@ -5,7 +5,6 @@ import {
   Dimensions,
   TouchableOpacity,
   FlatList,
-  Alert
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Segment, Button } from 'native-base'
@@ -13,7 +12,6 @@ import { SelectBookPageStyle } from './styles.js';
 import { connect } from 'react-redux'
 import Spinner from 'react-native-loading-spinner-overlay';
 import Color from '../../../utils/colorConstants'
-import { color } from 'react-native-reanimated';
 const width = Dimensions.get('window').width;
 
 //OT- old-testment

@@ -11,8 +11,9 @@ import { userInfo,userLogedIn } from '../../store/action'
 import auth from '@react-native-firebase/auth';
 import { styles } from './styles.js'
 import Color from '../../utils/colorConstants'
-import { GoogleSignin } from 'react-native-google-signin';
-
+import {
+  GoogleSignin,
+} from '@react-native-community/google-signin';
 class ProfilePage extends Component {
   constructor(props) {
     super(props)

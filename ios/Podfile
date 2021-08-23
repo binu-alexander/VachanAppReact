@@ -20,6 +20,8 @@ target 'VachanGo' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+  pod 'RealmJS', :path => '../node_modules/realm'
+
   target 'VachanGoTests' do
     inherit! :complete
     # Pods for testing
