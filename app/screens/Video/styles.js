@@ -1,4 +1,5 @@
 import {StyleSheet,Dimensions} from 'react-native'
+const height = Dimensions.get('window').height
 
 export const bookStyle=(colorFile, sizeFile) =>{
     return StyleSheet.create({
@@ -17,7 +18,7 @@ export const bookStyle=(colorFile, sizeFile) =>{
     },
 
     emptyMessageContainer:{
-        flex:1,
+        // flex:1,
         alignItems:'center',
         flexDirection:'column',
         justifyContent:'center'
@@ -34,10 +35,11 @@ export const bookStyle=(colorFile, sizeFile) =>{
     centerEmptySet: { 
         justifyContent: 'center', 
         alignItems: 'center',
-        height: '100%' 
+        height: height ,
+        // flexGrow: 1,
     },
     videoStyle:{
-        height:'50%',
+        height:height/2,
         width:'100%'
     },
     description:{

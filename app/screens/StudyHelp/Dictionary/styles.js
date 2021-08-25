@@ -82,7 +82,8 @@ export const styles =(colorFile, sizeFile) =>{
         centerEmptySet: { 
             justifyContent: 'center', 
             alignItems: 'center',
-            height: '100%' 
+            height: '100%',
+            flexGrow: 1,
         },
         emptyMessageContainer:{
             flex:1,

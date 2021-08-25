@@ -50,7 +50,6 @@ class Login extends Component {
           })
         })
         .catch(error => {
-          // conso.log("ERROR ",error)
           if (error.code === 'auth/user-not-found') {
             Alert.alert("User not found")
           }
@@ -84,6 +83,7 @@ class Login extends Component {
       }else{
       }
     } catch (error) {
+      console.log("ERROR GOOGLE LOGIN ",error)
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
         Alert.alert('Signin Cancelled');

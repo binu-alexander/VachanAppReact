@@ -21,11 +21,11 @@ class EditNote extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      noteIndex: this.props.route.params.noteIndex,
-      noteObject: this.props.route.params.notesList,
-      bcvRef: this.props.route.params.bcvRef,
+      noteIndex: this.props.route.params ? this.props.route.params.noteIndex : null,
+      noteObject:this.props.route.params ? this.props.route.params.notesList : null,
+      bcvRef:  this.props.route.params ? this.props.route.params.bcvRef : null,
       isLoading: false,
-      contentBody: tthis.props.route.params.contentBody,
+      contentBody: this.props.route.params ? this.props.route.params.contentBody : null,
       modalVisible: false,
     }
     this.styles = noteStyle(props.colorFile, props.sizeFile);

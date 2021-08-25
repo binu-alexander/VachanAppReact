@@ -134,10 +134,10 @@ class BRP extends Component {
           <ModalDropdown
             options={this.planList}
             onSelect={this.onSelect}
-            defaultValue={params.plans.length > 0 ? params.plans[0] : ''}
+            defaultValue={this.state.planList.length > 0 ? this.state.planList[0] : ''}
             isFullWidth={true}
             dropdownStyle={{ padding: 10, width: '60%', height: 'auto' }}
-            adjustFrame={style => { params.plans.length > 2 ? 80 : -1; return style; }}
+            adjustFrame={style => { this.state.planList.length > 2 ? 80 : -1; return style; }}
             dropdownTextStyle={{ fontSize: 18 }}
             textStyle={{ fontSize: 18, fontWeight: '800', color: '#fff' }}
           />

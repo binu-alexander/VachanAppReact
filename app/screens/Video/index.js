@@ -13,9 +13,7 @@ import { Card, CardItem } from 'native-base'
 import { Toast } from 'native-base'
 import vApi from '../../utils/APIFetch';
 
-
 class Video extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -27,60 +25,61 @@ class Video extends Component {
     }
     this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
   }
-  
+
   async fetchVideo() {
     this.setState({ isLoading: true })
     const videos = await vApi.get('videos?language=' + this.props.languageCode)
     let videoBook = []
     let videoAll = []
     let found = false
-    for (var key in videos[0].books) {
-      if (this.state.bookId != null) {
-        if (key == this.state.bookId) {
+    if (videos) {
+      for (var key in videos[0].books) {
+        if (this.state.bookId != null) {
+          if (key == this.state.bookId) {
+            for (var i = 0; i < videos[0].books[key].length; i++) {
+              videoBook.push({
+                title: videos[0].books[key][i].title,
+                url: videos[0].books[key][i].url,
+                description: videos[0].books[key][i].description,
+                theme: videos[0].books[key][i].theme
+              })
+              found = true
+            }
+          }
+
+        } else {
           for (var i = 0; i < videos[0].books[key].length; i++) {
-            videoBook.push({
+            videoAll.push({
               title: videos[0].books[key][i].title,
               url: videos[0].books[key][i].url,
               description: videos[0].books[key][i].description,
               theme: videos[0].books[key][i].theme
             })
-            found = true
           }
         }
+      }
 
+      if (found) {
+        this.setState({ videos: videoBook, isLoading: false })
       } else {
-        for (var i = 0; i < videos[0].books[key].length; i++) {
-          videoAll.push({
-            title: videos[0].books[key][i].title,
-            url: videos[0].books[key][i].url,
-            description: videos[0].books[key][i].description,
-            theme: videos[0].books[key][i].theme
+        if (this.state.bookId) {
+          Toast.show({
+            text: 'Video for ' + this.state.bookName + ' is unavailable. You can check other books',
+            duration: 8000,
+            position: "top"
           })
         }
+        var elements = videoAll.reduce(function (previous, current) {
+          var object = previous.filter(object => object.title === current.title);
+          if (object.length == 0) {
+            previous.push(current);
+          }
+          return previous;
+        }, []);
+        this.setState({ videos: elements, isLoading: false })
       }
     }
-    if (found) {
-      this.setState({ videos: videoBook, isLoading: false })
-    } else {
-      if (this.state.bookId) {
-        Toast.show({
-          text: 'Video for ' + this.state.bookName + ' is unavailable. You can check other books',
-          duration: 8000,
-          position: "top"
-        })
-      }
-      var elements = videoAll.reduce(function (previous, current) {
-        var object = previous.filter(object => object.title === current.title);
-        if (object.length == 0) {
-          previous.push(current);
-        }
-        return previous;
-      }, []);
-      this.setState({ videos: elements, isLoading: false })
-    }
-
   }
-
   playVideo(val) {
     const videoId = val.url.replace("https://youtu.be/", "");
     this.props.navigation.navigate("PlayVideo", { url: videoId, title: val.title, description: val.description, theme: val.theme })
@@ -88,7 +87,7 @@ class Video extends Component {
   componentDidMount() {
     this.fetchVideo()
   }
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (prevProps.books.length != this.props.books.length) {
       this.fetchVideo()
     }
@@ -115,11 +114,11 @@ class Video extends Component {
               data={this.state.videos}
               contentContainerStyle={this.state.videos.length === 0 && this.styles.centerEmptySet}
               renderItem={this.renderItem}
+              extraData={this.state}
               ListEmptyComponent={
                 <View style={this.styles.emptyMessageContainer}>
-                  <Icon name="video-library" style={this.styles.emptyMessageIcon} />
-                  <Text
-                    style={this.styles.messageEmpty}>
+                  <Icon name="video-library" style={this.styles.emptyMessageIcon}/>
+                  <Text style={this.styles.messageEmpty}>
                     No Video for {this.props.languageName}
                   </Text>
                 </View>

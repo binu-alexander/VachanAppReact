@@ -289,15 +289,16 @@ class Bible extends Component {
         chapterNumber: chapterNum,
         totalChapters: getBookChaptersFromMapping(bookId)
       })
+      this.props.fetchVersionBooks({
+        language: item.languageName, versionCode: item.versionCode,
+        downloaded: item.downloaded, sourceId: item.sourceId
+      })
       this.setState({ previousContent: null, nextContent: null })
       var time = new Date()
       DbQueries.addHistory(item.sourceId, item.languageName, item.languageCode,
         item.versionCode, bookId, bookName,
         chapterNum, item.downloaded, time)
-      this.props.fetchVersionBooks({
-        language: item.languageName, versionCode: item.versionCode,
-        downloaded: item.downloaded, sourceId: item.sourceId
-      })
+      
     } else {
       return
     }

@@ -35,7 +35,7 @@ class Search extends Component {
       searchedResult: [],
       activeTab: SearchResultTypes.ALL,
       isLoading: false,
-      text: '',
+      searchText: '',
       tabsData: [],
       sourceId: this.props.sourceId,
       languageName: this.props.languageName,
@@ -59,20 +59,21 @@ class Search extends Component {
     this.setState({ isLoading: true, searchedResult: [], tabsData: [] }, async () => {
 
       if (this.state.downloaded) {
-        let searchResultByBookName = await DbQueries.querySearchBookWithName(this.state.versionCode, this.state.languageName, this.state.text);
+        let searchResultByBookName = await DbQueries.querySearchBookWithName(this.state.versionCode, this.state.languageName, this.state.searchText
+          );
         if (searchResultByBookName) {
           let reference = [{
             bookId: searchResultByBookName.bookId,
             bookName: searchResultByBookName.bookName,
             chapterNumber: 1,
             verseNumber: '1',
-            text: '',
+            searchText: '',
           }]
           this.setState({ searchedResult: reference })
           this.addRefListToTab(reference)
         }
 
-        let searchResultByVerseText = await DbQueries.querySearchVerse(this.state.versionCode, this.state.languageName, this.state.text)
+        let searchResultByVerseText = await DbQueries.querySearchVerse(this.state.versionCode, this.state.languageName, this.state.searchText)
         if (searchResultByVerseText && searchResultByVerseText.length > 0) {
           this.setState({ searchedResult: [...this.state.searchedResult, ...searchResultByVerseText] })
           this.addRefListToTab(searchResultByVerseText)
@@ -80,7 +81,7 @@ class Search extends Component {
         this.setState({ isLoading: false })
       } else {
         
-        var res = await vApi.get('search/' + JSON.parse(this.state.sourceId) + '?keyword=' + this.state.text)
+        var res = await vApi.get('search/' + JSON.parse(this.state.sourceId) + '?keyword=' + this.state.searchText)
         var data = []
         if (res.result.length > 0 && this.state.books) {
           for (var i = 0; i < res.result.length; i++) {
@@ -108,8 +109,8 @@ class Search extends Component {
 
 
   clearData() {
-    if (this.state.text) {
-      this.setState({ text: "" })
+    if (this.state.searchText) {
+      this.setState({ searchText: "" })
     }
   }
 
@@ -173,9 +174,6 @@ class Search extends Component {
     })
   }
 
-  onTextChange = (text) => {
-    this.setState({ text: text })
-  }
 
    componentDidMount() {
     this.subs = this.props.navigation.addListener("didFocus", async () => {
@@ -194,7 +192,7 @@ class Search extends Component {
         }
       }
       this.setState({
-        tabsData: [], searchedResult: [], text: '', isLoading: false
+        tabsData: [], searchedResult: [], searchText: '', isLoading: false
       })
     })
     this.props.navigation.setOptions({
@@ -203,7 +201,8 @@ class Search extends Component {
             placeholder="Enter Search Text"
             underlineColorAndroid={Color.Transparent}
             style={{ color: Color.White, width: width - 90 }}
-            onChangeText={(text) => this.onTextChange(text)}
+            // onChange={(text) => this.setState({text:text})}
+            onChangeText={(text) => this.setState({searchText:text})}
             placeholderTextColor={Color.White}
             returnKeyType="search"
             multiline={false}

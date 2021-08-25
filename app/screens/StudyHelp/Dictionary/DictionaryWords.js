@@ -23,10 +23,9 @@ class DictionaryWords extends Component {
 
   constructor(props) {
     super(props)
-
     this.state = {
       modalVisibleDictionary: false,
-      dictionarySourceId:this.props.route.paramss ? this.props.route.params.dictionarySourceId : null,
+      dictionarySourceId:this.props.route.params ? this.props.route.params.dictionarySourceId : null,
       wordDescription: [],
     }
     this.styles = styles(this.props.colorFile, this.props.sizeFile)

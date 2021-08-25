@@ -131,7 +131,7 @@ const navStyles = StyleSheet.create({
   title: {
     color: '#333333',
     flexDirection:'row',
-    height: 32,
+    height: 40,
     // top:0,
     justifyContent: 'center',
     alignItems:'center',

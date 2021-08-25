@@ -187,12 +187,12 @@ function NavStackScreen() {
       />
       <DrawerStack.Screen name="BRP" component={BRP}
         options={{
-          headerTitle: "Bible Stories"
+          headerTitle: "Reading Plans"
         }}
       />
       <NavStack.Screen name="OBS" component={OBS}
         options={{
-          headerTitle: "Reading Plans"
+          headerTitle: "Bible Stories "
         }}
       />
       <NavStack.Screen name="PlayVideo" component={PlayVideo}
