@@ -1,27 +1,30 @@
-import id_name_map from '../assets/mappings.json'
-const Constants = require('./constants')
+import id_name_map from "../assets/mappings.json";
+const Constants = require("./constants");
 
 export function getHeading(contents) {
   if (contents) {
     let data = contents.find((item) => Array.isArray(item));
     if (data) {
       for (let section of data) {
-        if (Object.keys(section)[0].startsWith('s')) {
+        if (
+          Object.keys(section)[0].startsWith("s") &&
+          typeof section[Object.keys(section)[0]][0] === "string"
+        ) {
           return section[Object.keys(section)[0]][0];
         }
       }
     } else {
-      return null
+      return null;
     }
   } else {
-    return null
+    return null;
   }
 }
 export function getBookNameFromMapping(id) {
   var obj = id_name_map.id_name_map;
   for (var key in obj) {
     if (obj.hasOwnProperty(key)) {
-      const bookId = id.toUpperCase()
+      const bookId = id.toUpperCase();
       if (key == bookId) {
         var val = obj[key];
         return val.book_name;
@@ -35,7 +38,7 @@ export function getBookNumberFromMapping(id) {
   var obj = id_name_map.id_name_map;
   for (var key in obj) {
     if (obj.hasOwnProperty(key)) {
-      var bookId = id.toUpperCase()
+      var bookId = id.toUpperCase();
 
       if (key == bookId) {
         var val = obj[key];
@@ -50,7 +53,7 @@ export function getBookChaptersFromMapping(id) {
   var obj = id_name_map.id_name_map;
   for (var key in obj) {
     if (obj.hasOwnProperty(key)) {
-      var bookId = id.toUpperCase()
+      var bookId = id.toUpperCase();
       if (key == bookId) {
         var val = obj[key];
         return val.total_chapters;
@@ -63,7 +66,7 @@ export function getBookSectionFromMapping(id) {
   var obj = id_name_map.id_name_map;
   for (var key in obj) {
     if (obj.hasOwnProperty(key)) {
-      var bookId = id.toUpperCase()
+      var bookId = id.toUpperCase();
       if (key == bookId) {
         var val = obj[key];
         return val.section;
@@ -78,7 +81,7 @@ export function getResultText(text) {
     return "";
   }
   var initString = text;
-  var temp = initString.split(' ');
+  var temp = initString.split(" ");
   var footNote = false;
   var tempRes = [];
   for (var i = 0; i < temp.length; i++) {
@@ -100,12 +103,14 @@ export function getResultText(text) {
           for (var o = 0; o < parseInt(number, 10); o++) {
             tempRes.push(Constants.StylingConstants.TAB_SPACE);
           }
-        } else if (temp[i].startsWith(Constants.StylingConstants.REGEX_ESCAPE)) {
+        } else if (
+          temp[i].startsWith(Constants.StylingConstants.REGEX_ESCAPE)
+        ) {
           break;
         } else if (temp[i].startsWith(Constants.StylingConstants.FOOT_NOTE)) {
           footNote = true;
           tempRes.push(Constants.StylingConstants.OPEN_FOOT_NOTE);
-        } else if (temp[i] == ("\\b")) {
+        } else if (temp[i] == "\\b") {
           break;
         } else {
           tempRes.push(temp[i] + " ");

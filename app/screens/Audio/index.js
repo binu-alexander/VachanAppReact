@@ -1,11 +1,16 @@
-import { View } from "native-base";
+import { Card, CardItem, View } from "native-base";
 import React, { Component } from "react";
-import { Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
+import { Text, TouchableOpacity, FlatList } from "react-native";
 import { connect } from "react-redux";
 import { updateVersionBook, ToggleAudio } from "../../store/action/";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { AudioListStyle } from "./style";
 
 class Audio extends Component {
+  constructor(props) {
+    super(props);
+    this.styles = AudioListStyle(this.props.colorFile, this.props.sizeFile);
+  }
   navigateToBible = (bId, bookName, chapterNum) => {
     this.props.updateVersionBook({
       bookId: bId,
@@ -29,68 +34,48 @@ class Audio extends Component {
       }
     } else {
       return (
-        <View style={styles.messagContainer}>
-          <Icon name="volume-off" size={24} style={styles.icon} />
-          <Text style={styles.messageText}>No Audio Available !!!!</Text>
+        <View style={this.styles.messagContainer}>
+          <Icon
+            name="volume-off"
+            size={24}
+            style={this.styles.emptyMessageIcon}
+          />
+          <Text style={this.styles.audioText}>No Audio Available !!!!</Text>
         </View>
       );
     }
 
     return (
-      <FlatList
-        data={allAudioBooks}
-        keyExtractor={(item) => item && item.bookNumber.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() =>
-              this.navigateToBible(
-                item.bookId,
-                item.bookName,
-                item.numOfChapters
-              )
-            }
-          >
-            <View style={styles.container}>
-              <Text style={styles.listItem}>
-                {item && item.bookName} {item && item.numOfChapters}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        )}
-      />
+      <View style={this.styles.container}>
+        <FlatList
+          data={allAudioBooks}
+          keyExtractor={(item) => item && item.bookNumber.toString()}
+          renderItem={({ item }) => (
+            <Card>
+              <CardItem style={this.styles.cardItemStyle}>
+                <TouchableOpacity
+                  style={this.styles.audioView}
+                  onPress={() =>
+                    this.navigateToBible(
+                      item.bookId,
+                      item.bookName,
+                      item.numOfChapters
+                    )
+                  }
+                >
+                  <Text style={this.styles.audioText}>
+                    {item && item.bookName} {item && item.numOfChapters}
+                  </Text>
+                </TouchableOpacity>
+              </CardItem>
+            </Card>
+          )}
+        />
+      </View>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  listItem: {
-    fontSize: 18,
-    fontWeight: "500",
-    textTransform: "capitalize",
-    letterSpacing: 1,
-    borderColor: "#ddd",
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    margin: 5,
-  },
-  messagContainer: {
-    flexDirection: "row",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  messageText: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#000",
-  },
-  icon: {
-    marginHorizontal: 5,
-  },
-});
 const mapStateToProps = (state) => {
   return {
     language: state.updateVersion.language,
@@ -99,6 +84,8 @@ const mapStateToProps = (state) => {
     books: state.versionFetch.versionBooks,
     audio: state.audio.audio,
     status: state.audio.status,
+    sizeFile: state.updateStyling.sizeFile,
+    colorFile: state.updateStyling.colorFile,
   };
 };
 
