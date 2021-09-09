@@ -123,7 +123,6 @@ class VerseView extends Component {
     let isSelect = this.has(this.props.selectedReferences, obj)
     let isHighlight = this.isHighlight()
     let isNoted = this.isNoted()
-
     if (verseNumber == 1 && typeof verseNumber != 'undefined') {
       return (
         <Text style={this.props.styles.textStyle}>
@@ -165,39 +164,44 @@ class VerseView extends Component {
           }
         </Text>
       )
-    } else if (typeof verseText != 'undefined') {
-      return (
-        <Text textBreakStrategy={'simple'} style={this.props.styles.textStyle} onPress={() => { this.onPress() }} >
-          <Text textBreakStrategy={'simple'}>
-            <Text textBreakStrategy={'simple'} style={this.props.styles.verseNumber}>
-              {verseNumber}{" "}
-            </Text>
-            <Text
-              textBreakStrategy={'simple'}
-              style={[this.props.styles.textHighlight,
-              isSelect && isHighlight ?
-                {
-                  backgroundColor: isHighlight,
-                  textDecorationLine: 'underline'
-                }
-                : !isSelect && !isHighlight
-                  ? this.props.styles.textHighlight
-                  : !isSelect && isHighlight ? { backgroundColor: isHighlight }
-                    : { textDecorationLine: 'underline' }]}
-            >
-              {getResultText(verseText)}
-            </Text>
-            {isNoted ? <Icon onPress={() => this.goToNote(verseNumber)} name="note-outline" size={20} style={{ padding: 8 }} /> : null}
-          </Text>
-          {
-            sectionHeading ?
-              <Text textBreakStrategy={'simple'} style={this.props.styles.sectionHeading}>
-                {"\n"} {sectionHeading}
+    } else if (typeof verseText != 'undefined' && typeof verseNumber != 'undefined' ) {
+      if(typeof verseText === 'string' && typeof verseText === 'string'){
+        return (
+          <Text textBreakStrategy={'simple'} style={this.props.styles.textStyle} onPress={() => { this.onPress() }} >
+            <Text textBreakStrategy={'simple'}>
+              <Text textBreakStrategy={'simple'} style={this.props.styles.verseNumber}>
+                {verseNumber}{" "}
               </Text>
-              : null
-          }
-        </Text>
-      )
+              <Text
+                textBreakStrategy={'simple'}
+                style={[this.props.styles.textHighlight,
+                isSelect && isHighlight ?
+                  {
+                    backgroundColor: isHighlight,
+                    textDecorationLine: 'underline'
+                  }
+                  : !isSelect && !isHighlight
+                    ? this.props.styles.textHighlight
+                    : !isSelect && isHighlight ? { backgroundColor: isHighlight }
+                      : { textDecorationLine: 'underline' }]}
+              >
+                {getResultText(verseText)}
+              </Text>
+              {isNoted ? <Icon onPress={() => this.goToNote(verseNumber)} name="note-outline" size={20} style={{ padding: 8 }} /> : null}
+            </Text>
+            {
+              sectionHeading ?
+                <Text textBreakStrategy={'simple'} style={this.props.styles.sectionHeading}>
+                  {"\n"} {sectionHeading}
+                </Text>
+                : null
+            }
+          </Text>
+        )
+      }else{
+        return null
+      }
+
     } else {
       return null
     }

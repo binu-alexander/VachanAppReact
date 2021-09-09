@@ -4,7 +4,7 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -12,7 +12,7 @@ import { bookStyle } from './styles.js'
 import { Card, CardItem } from 'native-base'
 import { Toast } from 'native-base'
 import vApi from '../../utils/APIFetch';
-
+import Colors from '../../utils/colorConstants'
 class Video extends Component {
   constructor(props) {
     super(props);
@@ -63,11 +63,19 @@ class Video extends Component {
         this.setState({ videos: videoBook, isLoading: false })
       } else {
         if (this.state.bookId) {
+          // ToastAndroid.showWithGravityAndOffset(
+          //   'Video for ' + this.state.bookName + ' is unavailable. You can check other books',
+          //   ToastAndroid.LONG,
+          //   ToastAndroid.CENTER,
+          //   25,
+          //   50
+          // );
           Toast.show({
             text: 'Video for ' + this.state.bookName + ' is unavailable. You can check other books',
             duration: 8000,
             position: "top"
           })
+         
         }
         var elements = videoAll.reduce(function (previous, current) {
           var object = previous.filter(object => object.title === current.title);
@@ -109,7 +117,7 @@ class Video extends Component {
       <View style={this.styles.container}>
         {
           this.state.isLoading ?
-            <ActivityIndicator animate={true} style={{ justifyContent: 'center', alignSelf: 'center' }} /> :
+            <ActivityIndicator size="small" color={Colors.Blue_Color} animate={true} style={{flex:1 ,justifyContent: 'center', alignSelf: 'center' }} /> :
             <FlatList
               data={this.state.videos}
               contentContainerStyle={this.state.videos.length === 0 && this.styles.centerEmptySet}

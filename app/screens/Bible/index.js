@@ -36,6 +36,7 @@ import database from '@react-native-firebase/database';
 import vApi from '../../utils/APIFetch';
 import HighlightColorGrid from '../../components/Bible/HighlightColorGrid';
 import { getHeading } from '../../utils/UtilFunctions'
+import { filter } from 'lodash';
 
 const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
 const width = Dimensions.get('window').width;
@@ -171,7 +172,7 @@ class Bible extends Component {
       prevProps.sourceId != this.props.sourceId
       || prevProps.baseAPI != this.props.baseAPI
       || prevProps.bookId != this.props.bookId
-      // || prevProps.chapterNumber != this.props.chapterNumber
+      || prevProps.chapterNumber != this.props.chapterNumber
       || prevProps.books.length != this.props.books.length
     ) {
       this.queryBookFromAPI(null)
@@ -298,7 +299,7 @@ class Bible extends Component {
       DbQueries.addHistory(item.sourceId, item.languageName, item.languageCode,
         item.versionCode, bookId, bookName,
         chapterNum, item.downloaded, time)
-      
+
     } else {
       return
     }
@@ -404,15 +405,16 @@ class Bible extends Component {
           }
         }
       })
+      
+      this.getHighlights()
+      this.getNotes()
+      this.isBookmark()
       this.props.updateVersionBook({
         bookId: bookId,
         bookName: bName,
         chapterNumber: parseInt(cNum) > getBookChaptersFromMapping(bookId) ? 1 : parseInt(cNum),
         totalChapters: getBookChaptersFromMapping(bookId)
       })
-      this.getHighlights()
-      this.getNotes()
-      this.isBookmark()
     } catch (error) {
       this.setState({ isLoading: false, error: error, chapterContent: [], unAvailableContent: true })
     }
@@ -464,7 +466,6 @@ class Bible extends Component {
             for (var i = 0; i < value.length; i++) {
               if (isNaN(value[i])) {
                 HightlightedVerseArray.push(value[i])
-
               } else {
                 let addColor = value[i] + ":" + Color.highlightColorA.const
                 HightlightedVerseArray.push(addColor)
@@ -473,6 +474,7 @@ class Bible extends Component {
                 HightlightedVerseArray
               })
             }
+
           }
           else {
             this.setState({
@@ -699,6 +701,7 @@ class Bible extends Component {
     }
     return value
   }
+  
   doHighlight = async (color) => {
     if (this.state.connection_Status) {
       if (this.state.email) {
@@ -942,7 +945,7 @@ class Bible extends Component {
       return null
     } else {
       return (
-        <View style={this.styles.addToSharefooterComponent}>
+        <View style={[this.styles.addToSharefooterComponent, { marginBottom: this.state.showColorGrid && this.state.bottomHighlightText ? 32 : 16 }]}>
           {
             <View style={this.styles.footerView}>
               {(this.props.revision !== null && this.props.revision !== '') && <Text textBreakStrategy={'simple'} style={this.styles.textListFooter}><Text style={this.styles.footerText}>Copyright:</Text>{' '}{this.props.revision}</Text>}
@@ -955,6 +958,7 @@ class Bible extends Component {
     }
   }
   render() {
+    console.log("HIGHLIGHTS VERSES ", this.state.HightlightedVerseArray)
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
     return (
       <View style={this.styles.container}>
@@ -1213,4 +1217,4 @@ const mapDispatchToProps = dispatch => {
     updateFontSize: (payload) => dispatch(updateFontSize(payload)),
   }
 }
-export default connect(mapStateToProps, mapDispatchToProps)(Bible) 
+export default connect(mapStateToProps, mapDispatchToProps)(Bible)

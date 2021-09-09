@@ -12,6 +12,7 @@ import { updateVersionBook } from '../../store/action/'
 import { getBookChaptersFromMapping } from '../../utils/UtilFunctions';
 import { connect } from 'react-redux'
 import database from '@react-native-firebase/database';
+import Colors from '../../utils/colorConstants';
 
 class BookMarks extends Component {
   constructor(props) {
@@ -23,15 +24,25 @@ class BookMarks extends Component {
       versionCode: this.props.versionCode,
       sourceId: this.props.sourceId,
       bookId: this.props.bookId,
-      message: ''
+      message: '',
+      email:this.props.email
     }
 
     this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
   }
-
+  static getDerivedStateFromProps(props, state) {
+    // Any time the current user changes,
+    // Reset any parts of state that are tied to that user.
+    if (props.email !== state.email) {
+      return {
+        email: props.email,
+      };
+    }
+    return null;
+  }
   fecthBookmarks() {
-    if (this.props.email) {
-      this.setState({ isLoading: true }, () => {
+    this.setState({ isLoading: true }, () => {
+      if (this.state.email) {
         var firebaseRef = database().ref("users/" + this.props.uid + "/bookmarks/" + this.props.sourceId);
         firebaseRef.once('value', (snapshot) => {
           var data = []
@@ -54,11 +65,10 @@ class BookMarks extends Component {
           }
         })
         this.setState({ isLoading: false })
-      })
-    }
-    else {
-      this.setState({ bookmarksList: [], message: 'Please login' })
-    }
+      } else {
+        this.setState({isLoading:false, bookmarksList: [], message: 'Please login' })
+      }
+    })
   }
   async componentDidMount() {
     this.fecthBookmarks()
@@ -80,7 +90,7 @@ class BookMarks extends Component {
   }
 
   async onBookmarkRemove(id, chapterNum) {
-    if (this.props.email) {
+    if (this.state.email) {
       var data = this.state.bookmarksList
       data.filter((a, i) => {
         if (a.bookId == id) {
@@ -132,7 +142,7 @@ class BookMarks extends Component {
     )
   }
   emptyMessageNavigation = () => {
-    if (this.props.email) {
+    if (this.state.email) {
       this.props.navigation.navigate("Bible")
     } else {
       this.props.navigation.navigate("Login")
@@ -141,21 +151,21 @@ class BookMarks extends Component {
   render() {
     return (
       <View style={this.styles.container}>
-        {this.state.isLoading && <ActivityIndicator animate={true} style={{ justifyContent: 'center', alignSelf: 'center' }} />}
-        <FlatList
-          data={this.state.bookmarksList}
-          contentContainerStyle={this.state.bookmarksList.length === 0 && this.styles.centerEmptySet}
-          renderItem={this.renderItem}
-          ListEmptyComponent={
-            <View style={this.styles.emptyMessageContainer}>
-              <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon} onPress={this.emptyMessageNavigation} />
-              <Text
-                style={this.styles.messageEmpty}>
-                {this.state.message}
-              </Text>
-            </View>
-          }
-        />
+        {this.state.isLoading ? <ActivityIndicator size="small" color={Colors.Blue_Color} animate={true} style={{ flex: 1, justifyContent: 'center', alignSelf: 'center' }} /> :
+          <FlatList
+            data={this.state.bookmarksList}
+            contentContainerStyle={this.state.bookmarksList.length === 0 && this.styles.centerEmptySet}
+            renderItem={this.renderItem}
+            ListEmptyComponent={
+              <View style={this.styles.emptyMessageContainer}>
+                <Icon name="collections-bookmark" style={this.styles.emptyMessageIcon} onPress={this.emptyMessageNavigation} />
+                <Text
+                  style={this.styles.messageEmpty}>
+                  {this.state.message}
+                </Text>
+              </View>
+            }
+          />}
       </View>
     )
   }

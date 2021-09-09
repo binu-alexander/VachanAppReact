@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react';
 import {
   Text,
@@ -13,6 +14,7 @@ import { highlightstyle } from './styles'
 import { connect } from 'react-redux'
 import { updateVersionBook } from '../../store/action/'
 import database from '@react-native-firebase/database';
+import Colors from '../../utils/colorConstants';
 
 class HighLights extends Component {
 
@@ -21,46 +23,51 @@ class HighLights extends Component {
     this.state = {
       HightlightedVerseArray: [],
       isLoading: false,
-      message:''
+      message: '',
+      email: this.props.email
     }
     this.styles = highlightstyle(this.props.colorFile, this.props.sizeFile);
 
   }
-  async getHighlights() {
-    let model2 = await DbQueries.queryHighlights(this.props.languageName, this.props.versionCode, null)
-    if (model2 == null) {
+  static getDerivedStateFromProps(props, state) {
+    // Any time the current user changes,
+    // Reset any parts of state that are tied to that user.
+    if (props.email !== state.email) {
+      return {
+        email: props.email,
+      };
     }
-    else {
-
-    }
+    return null;
   }
   removeHighlight = (id, chapterNum, verseNum) => {
     var data = this.state.HightlightedVerseArray
     data.forEach((a, i) => {
       if (a.bookId == id && a.chapterNumber == chapterNum) {
         a.verseNumber.forEach(async (b, j) => {
-          if (b == verseNum) {
+          let regexMatch = /(\d+)\:([a-zA-Z]+)/;
+          let verse = b.match(regexMatch)
+          let matchedVerse = verseNum.match(regexMatch)
+          if (parseInt(verse[1]) == parseInt(matchedVerse[1])) {
             if (a.verseNumber.length == 1) {
-                database().ref("users/" + this.props.uid + "/highlights/" + this.props.sourceId + "/" + id + "/" + chapterNum).remove()
+              database().ref("users/" + this.props.uid + "/highlights/" + this.props.sourceId + "/" + id + "/" + chapterNum).remove()
               data.splice(i, 1)
             }
             else {
               a.verseNumber.splice(j, 1)
               var updates = {}
-              index = i
-              updates[chapterNum] = data[index].verseNumber
+              updates[chapterNum] = data[i].verseNumber
               database().ref("users/" + this.props.uid + "/highlights/" + this.props.sourceId + "/" + id).update(updates)
             }
           }
         })
-
       }
     })
     this.setState({ HightlightedVerseArray: data })
   }
+
   fetchHighlights() {
-    if (this.props.email) {
-      this.setState({ isLoading: true }, () => {
+    this.setState({ isLoading: true }, () => {
+      if (this.state.email) {
         database().ref("/users/" + this.props.uid + "/highlights/" + this.props.sourceId + "/").once('value', (snapshot) => {
           var highlights = snapshot.val()
           var array = []
@@ -68,35 +75,31 @@ class HighLights extends Component {
             for (var key in highlights) {
               for (var val in highlights[key]) {
                 if (highlights[key][val] != null) {
-                  let regexMatch = /(\d+)\:([a-zA-Z]+)/;
                   let value = highlights[key][val]
-                  let verseNumber = []
-                  for(var i=0;i<value.length;i++){
-                    if(value[i]){
-                      if(isNaN(value[i])){
-                        let match = value[i].match(regexMatch)
-                        if(match){
-                          verseNumber.push(parseInt(match[1]))
-                        }
-                      }else{
-                        verseNumber.push(parseInt(value[i]))
+                  if (value != undefined) {
+                    let verseNumber = []
+                    for (var i = 0; i < value.length; i++) {
+                      if (value[i]) {
+                        verseNumber.push(value[i])
                       }
                     }
+                    array.push({ bookId: key, chapterNumber: val, verseNumber: verseNumber })
                   }
-                  array.push({ bookId: key, chapterNumber: val, verseNumber:verseNumber })
+
                 }
               }
             }
             this.setState({ HightlightedVerseArray: array, isLoading: false })
           } else {
-            this.setState({ HightlightedVerseArray: [],message:'No highlights for '+this.props.languageName, isLoading: false })
+            this.setState({ HightlightedVerseArray: [], message: 'No highlights for ' + this.props.languageName, isLoading: false })
           }
         })
         this.setState({ isLoading: false })
-      })
-    }else{
-      this.setState({HightlightedVerseArray:[],message:'Please login'})
-    }
+      } else {
+        this.setState({ HightlightedVerseArray: [], isLoading: false, message: 'Please login' })
+      }
+    })
+
   }
   async componentDidMount() {
     this.fetchHighlights()
@@ -115,10 +118,10 @@ class HighLights extends Component {
     })
     this.props.navigation.navigate("Bible")
   }
-  emptyMessageNavigation=()=>{
-    if(this.props.email){
+  emptyMessageNavigation = () => {
+    if (this.state.email) {
       this.props.navigation.navigate("Bible")
-    }else{
+    } else {
       this.props.navigation.navigate("Login")
     }
   }
@@ -138,23 +141,27 @@ class HighLights extends Component {
     }
 
     let value = item.verseNumber &&
-      item.verseNumber.map(e =>
-        <TouchableOpacity style={this.styles.bookmarksView} onPress={() => { this.navigateToBible(item.bookId, bookName, item.chapterNumber, e) }} >
-          <Text style={this.styles.bookmarksText}>{this.props.languageName && this.props.languageName.charAt(0).toUpperCase() + this.props.languageName.slice(1)} {this.props.versionCode && this.props.versionCode.toUpperCase()} {bookName} {item.chapterNumber} {":"} {e}</Text>
+      item.verseNumber.map((e) => {
+        let regexMatch = /(\d+)\:([a-zA-Z]+)/;
+        let verse = e.match(regexMatch)
+        return (<TouchableOpacity style={this.styles.bookmarksView} onPress={() => { this.navigateToBible(item.bookId, bookName, item.chapterNumber, e) }} >
+          <Text style={this.styles.bookmarksText}>{this.props.languageName && this.props.languageName.charAt(0).toUpperCase() + this.props.languageName.slice(1)} {this.props.versionCode && this.props.versionCode.toUpperCase()} {bookName} {item.chapterNumber} {":"} {verse[1]}</Text>
           <Icon name='delete-forever' style={this.styles.iconCustom}
             onPress={() => { this.removeHighlight(item.bookId, item.chapterNumber, e) }}
           />
-        </TouchableOpacity>
+        </TouchableOpacity>)
+      }
       )
     return (
       <View>{bookName && value}</View>
     )
   }
   render() {
+    console.log("HIGHLIGHTS loader ", this.state.isLoading)
     return (
       <View style={this.styles.container}>
         {this.state.isLoading ?
-          <ActivityIndicator animate={true} style={{ justifyContent: 'center', alignSelf: 'center' }} /> :
+          <ActivityIndicator animate={true} size="small" color={Colors.Blue_Color} style={{ flex: 1, justifyContent: 'center', alignSelf: 'center' }} /> :
           <FlatList
             data={this.state.HightlightedVerseArray}
             contentContainerStyle={this.state.HightlightedVerseArray.length === 0 && this.styles.centerEmptySet}

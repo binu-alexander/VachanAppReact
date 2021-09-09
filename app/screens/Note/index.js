@@ -11,28 +11,39 @@ import { Card, CardItem } from 'native-base';
 import { connect } from 'react-redux'
 import database from '@react-native-firebase/database';
 import { noteStyle } from './styles.js';
+import Colors from '../../utils/colorConstants'
 
 class Note extends Component {
   constructor(props) {
     super(props)
     this.state = {
       verseNumber: this.props.route.params ? this.props.route.params.verseNumber : null,
-      chapterNumber:this.props.route.params ? this.props.route.params.chapterNumber : null,
-      bookId:this.props.route.params ? this.props.route.params.bookId : null,
+      chapterNumber: this.props.route.params ? this.props.route.params.chapterNumber : null,
+      bookId: this.props.route.params ? this.props.route.params.bookId : null,
 
       colorFile: this.props.colorFile,
       sizeFile: this.props.sizeFile,
       notesData: [],
       referenceList: [],
       isLoading: false,
-      message:''
+      message: '',
+      email:this.props.email
     }
     this.styles = noteStyle(props.colorFile, props.sizeFile);
 
     this.fetchNotes = this.fetchNotes.bind(this)
     this.onDelete = this.onDelete.bind(this)
   }
-
+  static getDerivedStateFromProps(props, state) {
+    // Any time the current user changes,
+    // Reset any parts of state that are tied to that user.
+    if (props.email !== state.email) {
+      return {
+        email: props.email,
+      };
+    }
+    return null;
+  }
   onDelete = (createdTime, body, k, l) => {
     var data = [...this.state.notesData]
     data.forEach((a, i) => {
@@ -59,12 +70,12 @@ class Note extends Component {
   }
 
   fetchNotes() {
-    if (this.props.email) {
-      this.setState({ isLoading: true }, () => {
+    this.setState({ isLoading: true }, () => {
+      if (this.state.email) {
         var firebaseRef = database().ref("users/" + this.props.uid + "/notes/" + this.props.sourceId)
         firebaseRef.once('value', (snapshot) => {
           if (snapshot.val() === null) {
-            this.setState({ notesData: [],message:'No Note for '+this.props.languageName, isLoading: false })
+            this.setState({ notesData: [], message: 'No Note for ' + this.props.languageName, isLoading: false })
           }
           else {
             var arr = []
@@ -101,16 +112,15 @@ class Note extends Component {
           }
         })
         this.setState({ isLoading: false })
-      })
-    }
-    else{
-      this.setState({
-        notesData:[],
-        message:'Please login'
-      })
-      
-    }
-
+      }
+      else {
+        this.setState({
+          notesData: [],
+          isLoading:false,
+          message: 'Please login'
+        })
+      }
+    })
   }
   componentDidMount() {
     this.fetchNotes()
@@ -127,10 +137,10 @@ class Note extends Component {
     var date = new Date(modifiedTime).toLocaleString()
     return date
   }
-  emptyMessageNavigation=()=>{
-    if(this.props.email){
+  emptyMessageNavigation = () => {
+    if (this.state.email) {
       this.props.navigation.navigate("Bible")
-    }else{
+    } else {
       this.props.navigation.navigate("Login")
     }
   }
@@ -188,7 +198,7 @@ class Note extends Component {
     return (
       <View style={this.styles.container}>
         {this.state.isLoading ?
-          <ActivityIndicator animate={true} style={{ justifyContent: 'center', alignSelf: 'center' }} /> :
+          <ActivityIndicator size="small" color={Colors.Blue_Color} animate={true} style={{ flex: 1, justifyContent: 'center', alignSelf: 'center' }} /> :
           <FlatList
             contentContainerStyle={this.state.notesData.length === 0
               ? this.styles.centerEmptySet : this.styles.noteFlatlistCustom}
