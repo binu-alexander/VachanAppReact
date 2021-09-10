@@ -8,7 +8,6 @@ import {
   FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import DbQueries from '../../utils/dbQueries'
 import { getBookChaptersFromMapping } from '../../utils/UtilFunctions';
 import { highlightstyle } from './styles'
 import { connect } from 'react-redux'
@@ -44,10 +43,9 @@ class HighLights extends Component {
     data.forEach((a, i) => {
       if (a.bookId == id && a.chapterNumber == chapterNum) {
         a.verseNumber.forEach(async (b, j) => {
-          let regexMatch = /(\d+)\:([a-zA-Z]+)/;
-          let verse = b.match(regexMatch)
-          let matchedVerse = verseNum.match(regexMatch)
-          if (parseInt(verse[1]) == parseInt(matchedVerse[1])) {
+          let verse = String(b).split(":", 1)
+          let matchedVerse = String(verseNum).split(":", 1)
+          if (parseInt(verse) == parseInt(matchedVerse)) {
             if (a.verseNumber.length == 1) {
               database().ref("users/" + this.props.uid + "/highlights/" + this.props.sourceId + "/" + id + "/" + chapterNum).remove()
               data.splice(i, 1)
@@ -140,12 +138,12 @@ class HighLights extends Component {
       return
     }
 
-    let value = item.verseNumber &&
+    let value = item.verseNumber && item.verseNumber !== 'undefined' &&
       item.verseNumber.map((e) => {
-        let regexMatch = /(\d+)\:([a-zA-Z]+)/;
-        let verse = e.match(regexMatch)
+        console.log( "e ",e)
+        let verse = String(e).split(":", 1)
         return (<TouchableOpacity style={this.styles.bookmarksView} onPress={() => { this.navigateToBible(item.bookId, bookName, item.chapterNumber, e) }} >
-          <Text style={this.styles.bookmarksText}>{this.props.languageName && this.props.languageName.charAt(0).toUpperCase() + this.props.languageName.slice(1)} {this.props.versionCode && this.props.versionCode.toUpperCase()} {bookName} {item.chapterNumber} {":"} {verse[1]}</Text>
+          <Text style={this.styles.bookmarksText}>{this.props.languageName && this.props.languageName.charAt(0).toUpperCase() + this.props.languageName.slice(1)} {this.props.versionCode && this.props.versionCode.toUpperCase()} {bookName} {item.chapterNumber} {":"} {verse}</Text>
           <Icon name='delete-forever' style={this.styles.iconCustom}
             onPress={() => { this.removeHighlight(item.bookId, item.chapterNumber, e) }}
           />

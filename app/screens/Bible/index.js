@@ -5,7 +5,6 @@ import {
   FlatList,
   Alert,
   Dimensions,
-  InteractionManager,
   StyleSheet,
   Platform,
   Share,
