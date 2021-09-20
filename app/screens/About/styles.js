@@ -48,7 +48,9 @@ export const aboutPage = (colorFile, sizeFile) => {
         },
         releaseNoteText:{
             paddingTop: 8,
-            lineHeight: sizeFile.lineHeight
+            lineHeight: sizeFile.lineHeight,
+            fontSize: sizeFile.titleText,
+            color: colorFile.textColor,
         }
     })
 

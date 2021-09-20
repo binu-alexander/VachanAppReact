@@ -128,10 +128,12 @@ class Note extends Component {
 
 
   bodyText(text) {
-    var jparse = text == '' ? '' : text
-    var strParse = jparse.replace(/<(?:.|\n)*?>/gm, '');
-    var strParse1 = strParse.replace('&nbsp', ' ')
-    return strParse1 == '' ? 'No additional text' : strParse1
+    console.log("TEXT ",text)
+    // var jparse = text == '' ? '' : text
+    // var strParse = jparse.replace(/<(?:.|\n)*?>/gm, '');
+    // var strParse1 = strParse.replace('&nbsp', ' ')
+    // return strParse1 == '' ? 'No additional text' : strParse1
+    return text
   }
   dateFormate(modifiedTime) {
     var date = new Date(modifiedTime).toLocaleString()

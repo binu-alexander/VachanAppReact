@@ -37,7 +37,7 @@ class About extends Component {
               <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Content and Technology Partners{'\n'}</Text>
               VachanGo is being made available under a collaborative arrangement of Friends of Agape, unfoldingWord, Wycliffe Associates, Crossway, Bridgeway Publications, Dusty Sandals, BibleProject, Visual Unit, and is brought to you by Bridge Connectivity Solutions Pvt. Ltd. (BCS) <Text style={this.styles.linkText} onPress={() => { Linking.openURL('https://www.bridgeconn.com') }}>(https://www.bridgeconn.com)</Text> who is the localization and technology partner.{'\n'}
 
-              <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Release Notes (09/09/2021) v1.3.1</Text>
+              <Text textBreakStrategy={'simple'} style={this.styles.TitleText}>{'\n'}Release Notes (14/09/2021) v1.3.1</Text>
               <Text textBreakStrategy={'simple'} style={this.styles.releaseNoteText}>{'\n'}Operations Update:{'\n'}</Text>
               <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>React version upgrade to 17.0.2{'\n'}
               <Text textBreakStrategy={'simple'} style={this.styles.bulletIcon}>{'\u2022' + " "}</Text>React-Native version upgrade to 0.64.2{'\n'}
