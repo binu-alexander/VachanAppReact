@@ -32,6 +32,7 @@ import {
   updateNetConnection,
   userInfo,
   updateVersionBook,
+  updateVerseNumber,
   updateFontSize,
   updateVersion,
   updateMetadata,
@@ -64,6 +65,8 @@ class Bible extends Component {
     super(props);
     const scrollAnim = new Animated.Value(0);
     const offsetAnim = new Animated.Value(0);
+    this.itemHeights = [];
+    this.arrLayout = [];
     this.state = {
       colorFile: this.props.colorFile,
       sizeFile: this.props.sizeFile,
@@ -95,6 +98,7 @@ class Bible extends Component {
       imageUrl: this.props.photo,
       unAvailableContent: null,
       userData: "",
+      scrollVerseInd: -1,
       scrollAnim,
       offsetAnim,
       clampedScroll: Animated.diffClamp(
@@ -205,11 +209,12 @@ class Bible extends Component {
       prevProps.sourceId != this.props.sourceId ||
       prevProps.baseAPI != this.props.baseAPI ||
       prevProps.bookId != this.props.bookId ||
-      // || prevProps.chapterNumber != this.props.chapterNumber
+      prevProps.chapterNumber != this.props.chapterNumber ||
       prevProps.books.length != this.props.books.length
     ) {
       this.queryBookFromAPI(null);
       this.audioComponentUpdate();
+      this.scrollToVerse();
       if (this.props.books.length == 0) {
         this.props.fetchVersionBooks({
           language: this.props.language,
@@ -263,6 +268,7 @@ class Bible extends Component {
   };
   // update book name and chapter number onback from referenceSelection page (callback function) also this function is usefull to update only few required values of redux
   getReference = async (item) => {
+    console.log(item, "ref");
     this.setState({
       selectedReferenceSet: [],
       showBottomBar: false,
@@ -285,6 +291,9 @@ class Bible extends Component {
         currentVisibleChapter: item.chapterNumber,
         bookId: item.bookId,
         bookName: item.bookName,
+      });
+      this.props.updateVerseNumber({
+        selectedVerse: item.selectedVerse,
       });
       this.props.updateVersionBook({
         bookId: item.bookId,
@@ -1138,6 +1147,7 @@ class Bible extends Component {
       bookName: this.props.bookName,
       chapterNumber: this.state.currentVisibleChapter,
       totalChapters: this.props.totalChapters,
+      selectedVerse: this.props.selectedVerse,
     });
   };
   navigateToVideo = () => {
@@ -1158,6 +1168,17 @@ class Bible extends Component {
     this.setState({ status: false });
     this.props.navigation.navigate("Settings");
   };
+  scrollToVerse() {
+    console.log("scrollToVerse");
+    if (this.arrLayout != undefined) {
+      console.log(this.state.scrollVerseInd, "scrollTo");
+      this.verseScroll.scrollToIndex({
+        animated: true,
+        index: this.state.scrollVerseInd,
+      });
+    }
+  }
+
   toggleParallelView(value) {
     this.setState({ status: false });
     this.props.selectContent({ visibleParallelView: value });
@@ -1170,6 +1191,23 @@ class Bible extends Component {
     clearTimeout(this._scrollEndTimer);
   };
 
+  getItemLayout = (data, index) => {
+    if (this.arrLayout[index] !== undefined) {
+      const length = this.arrLayout[index];
+      const offset = this.arrLayout.slice(0, index).reduce((a, c) => a + c, 0);
+      return { length, offset, index };
+    } else {
+      return { length: 60, offset: 60 * index, index };
+    }
+  };
+  onLayout = (event, index, verseNumber) => {
+    if (verseNumber == this.props.selectedVerse) {
+      this.setState({
+        scrollVerseInd: index,
+      });
+    }
+    this.arrLayout[index] = event.nativeEvent.layout.height;
+  };
   _onMomentumScrollEnd = () => {
     const toValue =
       this._scrollValue > NAVBAR_HEIGHT &&
@@ -1304,6 +1342,8 @@ class Bible extends Component {
               <AnimatedFlatlist
                 {...this.gestureResponder}
                 data={this.state.chapterContent}
+                getItemLayout={this.getItemLayout}
+                ref={(ref) => (this.verseScroll = ref)}
                 contentContainerStyle={
                   this.state.chapterContent.length === 0
                     ? this.styles.centerEmptySet
@@ -1322,7 +1362,10 @@ class Bible extends Component {
                   [
                     {
                       nativeEvent: {
-                        contentOffset: { y: this.state.scrollAnim },
+                        contentOffset: {
+                          x: this.state.scrollAnim,
+                          y: this.state.scrollAnim,
+                        },
                       },
                     },
                   ],
@@ -1337,6 +1380,7 @@ class Bible extends Component {
                     sectionHeading={getHeading(item.contents)}
                     chapterHeader={this.state.chapterHeader}
                     index={index}
+                    onLayout={this.onLayout}
                     styles={this.styles}
                     selectedReferences={this.state.selectedReferenceSet}
                     getSelection={(
@@ -1513,6 +1557,8 @@ const mapStateToProps = (state) => {
     sizeMode: state.updateStyling.sizeMode,
     colorMode: state.updateStyling.colorMode,
 
+    selectedVerse: state.updateVersion.selectedVerse,
+
     email: state.userInfo.email,
     userId: state.userInfo.uid,
 
@@ -1527,6 +1573,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     updateVersion: (payload) => dispatch(updateVersion(payload)),
+    updateVerseNumber: (payload) => dispatch(updateVerseNumber(payload)),
     updateVersionBook: (value) => dispatch(updateVersionBook(value)),
     userInfo: (payload) => dispatch(userInfo(payload)),
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),

@@ -3,6 +3,7 @@ import {
   UPDATE_CONTENT_TYPE,
   UPDATE_LANGUAGELIST,
   API_BASE_URL,
+  UPDATE_VERSE_NUMBER,
   AUDIO_URL,
   PARALLEL_METADATA,
   UPDATE_VERSION_BOOK,
@@ -12,6 +13,12 @@ import {
 export const updateVersion = (payload) => {
   return {
     type: UPDATE_VERSION,
+    payload,
+  };
+};
+export const updateVerseNumber = (payload) => {
+  return {
+    type: UPDATE_VERSE_NUMBER,
     payload,
   };
 };

@@ -144,12 +144,15 @@ class VerseView extends Component {
     let isSelect = this.has(this.props.selectedReferences, obj);
     let isHighlight = this.isHighlight();
     let isNoted = this.isNoted();
-
-    console.log(verseText, "verse");
-    console.log(this.props.sectionHeading, "heading");
     if (verseNumber == 1 && typeof verseNumber != "undefined") {
       return (
-        <Text style={this.props.styles.textStyle}>
+        <Text
+          style={this.props.styles.textStyle}
+          onLayout={(event) =>
+            this.props.onLayout(event, this.props.index, verseNumber)
+          }
+          // onLayout={(event) => console.log(event, "event verse")}
+        >
           {this.props.chapterHeader ? (
             <Text style={this.props.styles.sectionHeading}>
               {this.props.chapterHeader} {"\n"}
@@ -205,6 +208,9 @@ class VerseView extends Component {
           onPress={() => {
             this.onPress();
           }}
+          onLayout={(event) =>
+            this.props.onLayout(event, this.props.index, verseNumber)
+          }
         >
           <Text textBreakStrategy={"simple"}>
             <Text
@@ -264,6 +270,7 @@ const mapStateToProps = (state) => {
     colorFile: state.updateStyling.colorFile,
     visibleParallelView: state.selectContent.visibleParallelView,
     downloaded: state.updateVersion.downloaded,
+    selectedVerse: state.updateVersion.selectedVerse,
   };
 };
 const mapDispatchToProps = (dispatch) => {

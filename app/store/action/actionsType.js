@@ -15,6 +15,7 @@ export const HEADER_MARGIN = "header_margin";
 
 export const FETCH_VERSION_LANGUAGE = "fetch_version_language";
 export const VERSION_LANGUAGE_SUCCESS = "version_language_success";
+export const UPDATE_VERSE_NUMBER = "upadate_verse_number";
 export const VERSION_LANGUAGE_FAILURE = "version_language_failure";
 export const FETCH_VERSION_BOOKS = "fetch_version_books";
 export const VERSION_BOOKS_SUCCESS = "version_books_success";

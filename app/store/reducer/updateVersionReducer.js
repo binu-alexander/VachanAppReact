@@ -4,6 +4,7 @@ import {
   UPDATE_CONTENT_TYPE,
   UPDATE_LANGUAGELIST,
   UPDATE_MATA_DATA,
+  UPDATE_VERSE_NUMBER,
   API_BASE_URL,
   AUDIO_URL,
 } from "../action/actionsType";
@@ -19,6 +20,7 @@ const initialState = {
   bookName: "यूहन्ना",
   chapterNumber: 1,
   totalChapters: 21,
+  selectedVerse: "1",
   verseText: "",
 
   copyrightHolder: "Unfolding Word",
@@ -57,6 +59,11 @@ function updateVersionReducer(state = initialState, action) {
         bookName: action.payload.bookName,
         chapterNumber: action.payload.chapterNumber,
         totalChapters: action.payload.totalChapters,
+      };
+    case UPDATE_VERSE_NUMBER:
+      return {
+        ...state,
+        selectedVerse: action.payload.selectedVerse,
       };
     case UPDATE_CONTENT_TYPE:
       return {

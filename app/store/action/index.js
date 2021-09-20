@@ -1,5 +1,6 @@
 export {
   updateVersion,
+  updateVerseNumber,
   updateContentType,
   updateVersionBook,
   updateMetadata,

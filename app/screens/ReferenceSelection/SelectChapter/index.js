@@ -16,6 +16,9 @@ class ChapterSelection extends Component {
         ),
         (x, i) => i + 1
       ),
+      totalChapters: this.props.route.params
+        ? this.props.route.params.selectedBookId
+        : null,
       selectedBookId: this.props.route.params
         ? this.props.route.params.selectedBookId
         : null,
@@ -33,6 +36,9 @@ class ChapterSelection extends Component {
         ),
         (x, i) => i + 1
       ),
+      totalChapters: nextProps.route.params
+        ? nextProps.route.params.totalChapters
+        : null,
       selectedBookId: nextProps.route.params
         ? nextProps.route.params.selectedBookId
         : null,
@@ -43,14 +49,21 @@ class ChapterSelection extends Component {
   }
   onNumPress = (item, index) => {
     var chapterNum = item == null ? this.state.selectedChapterNumber : item;
+    let selectedChapter =
+      chapterNum > this.state.totalChapters ? "1" : chapterNum;
     if (this.props.route.params) {
-      this.props.route.params.getReference({
-        bookId: this.state.selectedBookId,
-        bookName: this.state.selectedBookName,
-        chapterNumber: chapterNum > this.state.totalChapters ? "1" : chapterNum,
+      // this.props.route.params.getReference({
+      //   bookId: this.state.selectedBookId,
+      //   bookName: this.state.selectedBookName,
+      //   chapterNumber: selectedChapter,
+      //   totalChapters: this.state.totalChapters,
+      // });
+      this.props.navigation.navigate("Verses", {
+        selectedBookId: this.state.selectedBookId,
+        selectedBookName: this.state.selectedBookName,
+        selectedChapterNumber: selectedChapter,
         totalChapters: this.state.totalChapters,
       });
-      this.props.navigation.navigate("Bible");
     }
   };
   render() {
