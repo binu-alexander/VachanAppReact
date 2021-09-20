@@ -21,15 +21,15 @@ class OBS extends Component {
       langCodeObj: {},
       obsData: null,
       obsLang: [],
-      defaultLanguage: '',
+      defaultLanguage: "",
       storyList: [],
-      bsIndex: '01',
-    }
+      bsIndex: "01",
+    };
     this.styles = OBSStyle(this.props.colorFile, this.props.sizeFile);
   }
 
   componentDidMount() {
-    this.fetchLangList()
+    this.fetchLangList();
   }
   async fetchGitData(url) {
     const data = await fetch(Github_URL + url)
@@ -65,7 +65,13 @@ class OBS extends Component {
       }).catch((error)=>{console.log("error")})
   }
   async mdFileFetch() {
-    fetch(Github_URL + this.state.langCode + '/content/' + this.state.bsIndex + '.md')
+    fetch(
+      Github_URL +
+        this.state.langCode +
+        "/content/" +
+        this.state.bsIndex +
+        ".md"
+    )
       .then((response) => response.text())
       .then((json) => { this.setState({ obsData: json }) })
       .catch((error) => {this.setState({ obsData: null })})
@@ -87,27 +93,27 @@ class OBS extends Component {
     for (var key in this.state.languagesList[0]) {
       if (this.state.languagesList[0][key] == lang) {
         this.setState({ langCode: key }, () => {
-          this.mdFileFetch()
-          this.bibleStoryList()
-          let selectedStoryIndex = this.state.bsIndex.replace(/^0+/, '')
-          this._dropdown_2.select(parseInt(selectedStoryIndex - 1))
-        })
+          this.mdFileFetch();
+          this.bibleStoryList();
+          let selectedStoryIndex = this.state.bsIndex.replace(/^0+/, "");
+          this._dropdown_2.select(parseInt(selectedStoryIndex - 1));
+        });
       }
     }
-  }
+  };
 
   onSelectStory = (index, val) => {
-    let num = index + 1
-    let bsIndex = ('0' + num).slice(-2)
+    let num = index + 1;
+    let bsIndex = ("0" + num).slice(-2);
     this.setState({ bsIndex }, () => {
-      this.mdFileFetch()
-    })
-  }
+      this.mdFileFetch();
+    });
+  };
 
   componentDidUpdate(prevState) {
     if (prevState.storyList != this.state.storyList) {
-      let selectedStoryIndex = this.state.bsIndex.replace(/^0+/, '')
-      this._dropdown_2.select(parseInt(selectedStoryIndex - 1))
+      let selectedStoryIndex = this.state.bsIndex.replace(/^0+/, "");
+      this._dropdown_2.select(parseInt(selectedStoryIndex - 1));
     }
   }
   render() {
@@ -127,20 +133,45 @@ class OBS extends Component {
               textStyle={{ fontSize: 18, fontWeight: '400', color: colorFile.textColor }} />
             <Icon name="arrow-drop-down" color={this.props.colorFile.iconColor} size={20} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => { this._dropdown_2 && this._dropdown_2.show(); }} style={{ padding: 10, margin: 10, borderRadius: 10, width: 150, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderColor: colorFile.iconColor, borderWidth: 0.5 }}>
+          <TouchableOpacity
+            onPress={() => {
+              this._dropdown_2 && this._dropdown_2.show();
+            }}
+            style={{
+              padding: 10,
+              margin: 10,
+              borderRadius: 10,
+              width: 150,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              borderColor: colorFile.iconColor,
+              borderWidth: 0.5,
+            }}
+          >
             <ModalDropdown
               ref={el => this._dropdown_2 = el} options={this.state.storyList} onSelect={this.onSelectStory}
               style={{ paddingRight: 20 }} defaultValue={this.state.storyList.length > 0 ? this.state.storyList[0] : ''}
               isFullWidth={true} dropdownStyle={{ width: "60%", height: height / 2 }}
               dropdownTextStyle={{ fontSize: 18 }}
-              textStyle={{ paddingHorizontal: 8, fontSize: 18, fontWeight: '400', color: colorFile.textColor }} />
-            <Icon name="arrow-drop-down" color={colorFile.iconColor} size={20} />
+              textStyle={{
+                paddingHorizontal: 8,
+                fontSize: 18,
+                fontWeight: "400",
+                color: colorFile.textColor,
+              }}
+            />
+            <Icon
+              name="arrow-drop-down"
+              color={colorFile.iconColor}
+              size={20}
+            />
           </TouchableOpacity>
         </View>
-          {this.state.obsData ?
-            <ScrollView
-              // contentInsetAdjustmentBehavior="automatic"
-              style={{ paddingHorizontal: 12, height: '100%' }}
+        {this.state.obsData ? 
+          <ScrollView
+            // contentInsetAdjustmentBehavior="automatic"
+            style={{ paddingHorizontal: 12, height: "100%" }}
             // contentContainerStyle={{paddingTop:20}}
             >
               <Markdown
@@ -152,15 +183,15 @@ class OBS extends Component {
       </View>
     );
   }
-};
+}
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     languageCode: state.updateVersion.languageCode,
     languageName: state.updateVersion.language,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-  }
-}
+  };
+};
 
-export default connect(mapStateToProps, null)(OBS)
+export default connect(mapStateToProps, null)(OBS);

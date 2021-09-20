@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   View,
   Text,
@@ -18,20 +18,22 @@ class Video extends Component {
     super(props);
     this.state = {
       bookId: this.props.route.params ? this.props.route.params.bookId : null,
-      bookName: this.props.route.params ? this.props.route.params.bookName : null,
+      bookName: this.props.route.params
+        ? this.props.route.params.bookName
+        : null,
       videos: [],
       isLoading: false,
-      duplicateValue: []
-    }
+      duplicateValue: [],
+    };
     this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
   }
 
   async fetchVideo() {
-    this.setState({ isLoading: true })
-    const videos = await vApi.get('videos?language=' + this.props.languageCode)
-    let videoBook = []
-    let videoAll = []
-    let found = false
+    this.setState({ isLoading: true });
+    const videos = await vApi.get("videos?language=" + this.props.languageCode);
+    let videoBook = [];
+    let videoAll = [];
+    let found = false;
     if (videos) {
       for (var key in videos[0].books) {
         if (this.state.bookId != null) {
@@ -41,26 +43,25 @@ class Video extends Component {
                 title: videos[0].books[key][i].title,
                 url: videos[0].books[key][i].url,
                 description: videos[0].books[key][i].description,
-                theme: videos[0].books[key][i].theme
-              })
-              found = true
+                theme: videos[0].books[key][i].theme,
+              });
+              found = true;
             }
           }
-
         } else {
           for (var i = 0; i < videos[0].books[key].length; i++) {
             videoAll.push({
               title: videos[0].books[key][i].title,
               url: videos[0].books[key][i].url,
               description: videos[0].books[key][i].description,
-              theme: videos[0].books[key][i].theme
-            })
+              theme: videos[0].books[key][i].theme,
+            });
           }
         }
       }
 
       if (found) {
-        this.setState({ videos: videoBook, isLoading: false })
+        this.setState({ videos: videoBook, isLoading: false });
       } else {
         if (this.state.bookId) {
           // ToastAndroid.showWithGravityAndOffset(
@@ -71,47 +72,59 @@ class Video extends Component {
           //   50
           // );
           Toast.show({
-            text: 'Video for ' + this.state.bookName + ' is unavailable. You can check other books',
+            text:
+              "Video for " +
+              this.state.bookName +
+              " is unavailable. You can check other books",
             duration: 8000,
             position: "top"
           })
          
         }
         var elements = videoAll.reduce(function (previous, current) {
-          var object = previous.filter(object => object.title === current.title);
+          var object = previous.filter(
+            (object) => object.title === current.title
+          );
           if (object.length == 0) {
             previous.push(current);
           }
           return previous;
         }, []);
-        this.setState({ videos: elements, isLoading: false })
+        this.setState({ videos: elements, isLoading: false });
       }
     }
   }
   playVideo(val) {
     const videoId = val.url.replace("https://youtu.be/", "");
-    this.props.navigation.navigate("PlayVideo", { url: videoId, title: val.title, description: val.description, theme: val.theme })
+    this.props.navigation.navigate("PlayVideo", {
+      url: videoId,
+      title: val.title,
+      description: val.description,
+      theme: val.theme,
+    });
   }
   componentDidMount() {
-    this.fetchVideo()
+    this.fetchVideo();
   }
   componentDidUpdate(prevProps) {
     if (prevProps.books.length != this.props.books.length) {
-      this.fetchVideo()
+      this.fetchVideo();
     }
   }
   renderItem = ({ item }) => {
     return (
       <Card>
         <CardItem style={this.styles.cardItemStyle}>
-          <TouchableOpacity style={this.styles.videoView} onPress={() => this.playVideo(item)}>
+          <TouchableOpacity
+            style={this.styles.videoView}
+            onPress={() => this.playVideo(item)}
+          >
             <Text style={this.styles.videoText}>{item.title}</Text>
           </TouchableOpacity>
         </CardItem>
       </Card>
-    )
-
-  }
+    );
+  };
   render() {
     return (
       <View style={this.styles.container}>
@@ -134,21 +147,18 @@ class Video extends Component {
             />
         }
       </View>
-    )
+    );
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     languageCode: state.updateVersion.languageCode,
     languageName: state.updateVersion.language,
     books: state.versionFetch.versionBooks,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-  }
-}
+  };
+};
 
-
-export default connect(mapStateToProps, null)(Video)
-
-
+export default connect(mapStateToProps, null)(Video);

@@ -12,7 +12,6 @@ import Colors from '../../../utils/colorConstants'
 var moment = require('moment');
 
 class BRP extends Component {
- 
   constructor(props) {
     super(props);
     this.state = {
@@ -23,31 +22,31 @@ class BRP extends Component {
       monthItems: [],
       manifestData: [],
       readingPlan: [],
-      calendarOpened: false
-    }
+      calendarOpened: false,
+    };
     this.styles = OBSStyle(this.props.colorFile, this.props.sizeFile);
-    this._dropdown_1 = null
+    this._dropdown_1 = null;
   }
   laodMonthItem(day) {
     if (Object.keys(this.state.items).length > 0) {
       for (var key in this.state.items) {
-        if (day.dateString != 'undefined' && day.dateString == key) {
-          let val = this.state.items
-          val.key = val[key]
-          this.setState({ monthItems: val })
+        if (day.dateString != "undefined" && day.dateString == key) {
+          let val = this.state.items;
+          val.key = val[key];
+          this.setState({ monthItems: val });
         }
       }
     }
   }
   loadItems() {
     var currentYear = new Date().getFullYear();
-    this.state.items = {}
-    var readingPlan = this.state.readingPlan
+    this.state.items = {};
+    var readingPlan = this.state.readingPlan;
     if (readingPlan) {
       for (var i = 0; i < readingPlan.length; i++) {
-        let planDate = currentYear + '-' + readingPlan[i].date
+        let planDate = currentYear + "-" + readingPlan[i].date;
         if (!this.state.items[planDate]) {
-          this.state.items[planDate] = []
+          this.state.items[planDate] = [];
           // readingPlan[i].reading.forEach((val) => {
           //   var words = val.ref.split(" ")
           //   var regmatch = val.text.split(" ")
@@ -62,33 +61,33 @@ class BRP extends Component {
           // })
           this.state.items[planDate].push({
             reading: readingPlan[i].reading,
-            height: Math.max(50, Math.floor(Math.random() * 80))
+            height: Math.max(50, Math.floor(Math.random() * 80)),
           });
         }
       }
     }
     const newItems = {};
     if (Object.keys(this.state.items).length > 0) {
-      Object.keys(this.state.items).forEach(key => {
+      Object.keys(this.state.items).forEach((key) => {
         newItems[key] = this.state.items[key];
       });
       this.setState({
-        items: newItems
-      })
+        items: newItems,
+      });
     }
   }
   navigateTo(item) {
     var words = item.split(" ");
-    let bookId = words[0]
-    let chapterNumber = words[1].match(/\d+/g)
-    let bookName = null
-    let bookNumber = null
+    let bookId = words[0];
+    let chapterNumber = words[1].match(/\d+/g);
+    let bookName = null;
+    let bookNumber = null;
     if (this.props.books) {
       if (this.props.books.length > 0) {
         for (var i = 0; i < this.props.books.length; i++) {
           if (this.props.books[i].bookId == bookId) {
-            bookName = this.props.books[i].bookName
-            bookNumber = this.props.books[i].bookNumber
+            bookName = this.props.books[i].bookName;
+            bookNumber = this.props.books[i].bookNumber;
           }
         }
       }
@@ -98,12 +97,15 @@ class BRP extends Component {
         bookId: bookId,
         bookName: bookName,
         chapterNumber: chapterNumber[0],
-        totalChapters: getBookChaptersFromMapping(bookId)
-      })
-      this.props.navigation.navigate('Bible')
+        totalChapters: getBookChaptersFromMapping(bookId),
+      });
+      this.props.navigation.navigate("Bible");
     } else {
-      let language = this.props.languageName && this.props.languageName.charAt(0).toUpperCase() + this.props.languageName.slice(1)
-      Alert.alert("", "Book is unvailable in " + language)
+      let language =
+        this.props.languageName &&
+        this.props.languageName.charAt(0).toUpperCase() +
+          this.props.languageName.slice(1);
+      Alert.alert("", "Book is unvailable in " + language);
     }
   }
   renderItem(item) {
@@ -115,29 +117,39 @@ class BRP extends Component {
         >
           <Text style={this.styles.textStyle}>{val.text} </Text>
         </TouchableOpacity>
-      )
+      );
     });
-
   }
   rowHasChanged(r1, r2) {
     r1.reading.filter((val1) => {
       r2.reading.filter((val2) => {
-        return val1.ref !== val2.ref
-      })
-    })
+        return val1.ref !== val2.ref;
+      });
+    });
   }
 
   componentDidMount() {
  
     var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var dd = String(today.getDate()).padStart(2, "0");
+    var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
     var yyyy = today.getFullYear();
-    let selectedDate = yyyy + "-" + mm + '-' + dd
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
+    let selectedDate = yyyy + "-" + mm + "-" + dd;
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
     ];
-    let currentMonth = monthNames[mm - 1] + ' ' + yyyy
+    let currentMonth = monthNames[mm - 1] + " " + yyyy;
     this.setState({ selectedDate, currentMonth }, () => {
       this.fetchPlan()
     })
@@ -146,12 +158,12 @@ class BRP extends Component {
 
   fetchPlan() {
     try {
-      fetch(GIT_BASE_API + 'bible_reading_plans/manifest.json',)
+      fetch(GIT_BASE_API + "bible_reading_plans/manifest.json")
         .then((response) => response.json())
         .then((json) => {
-          let planList = []
+          let planList = [];
           for (var i = 0; i < json.length; i++) {
-            planList.push(json[i].name)
+            planList.push(json[i].name);
           }
           this.setState({ planList, manifestData: json },()=>{
             this.props.navigation.setOptions({
@@ -176,63 +188,86 @@ class BRP extends Component {
             .then((response) => response.json())
             .then((json) => {
               this.setState({ readingPlan: json }, () => {
-                this.loadItems()
-                this.laodMonthItem({ dateString: this.state.selectedDate })
-              })
-            })
-        })
-    } catch (error) {
-    }
-
+                this.loadItems();
+                this.laodMonthItem({ dateString: this.state.selectedDate });
+              });
+            });
+        });
+    } catch (error) {}
   }
   onSelect = (value) => {
     try {
-      let val = this.state.manifestData[value].file
-      fetch(GIT_BASE_API + 'bible_reading_plans/' + val)
+      let val = this.state.manifestData[value].file;
+      fetch(GIT_BASE_API + "bible_reading_plans/" + val)
         .then((response) => response.json())
         .then((json) => {
-          this.setState({ planSelected: (String(this.state.planList[value])), readingPlan: json }, () => {
-            this.loadItems()
-          })
-        })
-    } catch (error) {
-    }
-  }
+          this.setState(
+            {
+              planSelected: String(this.state.planList[value]),
+              readingPlan: json,
+            },
+            () => {
+              this.loadItems();
+            }
+          );
+        });
+    } catch (error) {}
+  };
 
   onUpdateSelectedDate = (date) => {
-    if (this.state.currentMonth == `${moment(date.dateString).format('MMMM')}` + ' ' + date.year) {
-      return
+    if (
+      this.state.currentMonth ==
+      `${moment(date.dateString).format("MMMM")}` + " " + date.year
+    ) {
+      return;
     } else {
-      this.setState({ currentMonth: `${moment(date.dateString).format('MMMM')}` + ' ' + date.year })
+      this.setState({
+        currentMonth:
+          `${moment(date.dateString).format("MMMM")}` + " " + date.year,
+      });
     }
-  }
+  };
 
   componentDidUpdate(prevProps, prevState) {
-   
-    if (prevProps.books.length != this.props.books.length || Object.keys(prevState.items).length != Object.keys(this.state.items).length) {
+    if (
+      prevProps.books.length != this.props.books.length ||
+      Object.keys(prevState.items).length !=
+        Object.keys(this.state.items).length
+    ) {
       this.props.fetchVersionBooks({
         language: this.props.languageName,
         versionCode: this.props.versionCode,
         downloaded: this.props.downloaded,
-        sourceId: this.props.sourceId
-      })
-      this.fetchPlan()
+        sourceId: this.props.sourceId,
+      });
+      this.fetchPlan();
     }
-
   }
-
 
   renderKnob = () => {
     return (
-      <Icon name='keyboard-arrow-down' size={24} color={this.props.colorFile.blueText} />
-    )
-  }
+      <Icon
+        name="keyboard-arrow-down"
+        size={24}
+        color={this.props.colorFile.blueText}
+      />
+    );
+  };
   renderEmptyData() {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 20, color: '#3E4095' }}>Plan is available only for current year{'\n'}</Text>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text
+          style={{
+            textAlign: "center",
+            fontWeight: "bold",
+            fontSize: 20,
+            color: "#3E4095",
+          }}
+        >
+          Plan is available only for current year{"\n"}
+        </Text>
       </View>
-    )
+    );
   }
   render() {
     console.log(" brp ",this.state.planList[0])
@@ -251,16 +286,27 @@ class BRP extends Component {
       dayTextColor: this.props.colorFile.textColor, // calendar day
       dotColor: this.props.colorFile.blueText, // dots
       textDisabledColor: this.props.colorFile.textColor,
-    }
+    };
     return (
       <View style={this.styles.container}>
-        {Object.keys(this.state.items).length > 0 ?
+        {Object.keys(this.state.items).length > 0 ? (
           <View style={{ flex: 1 }}>
-            <Text style={[this.styles.agendaDate, { color: this.state.calendarOpened ? this.props.colorFile.backgroundColor : this.props.colorFile.textColor }]}>{this.state.currentMonth}</Text>
+            <Text
+              style={[
+                this.styles.agendaDate,
+                {
+                  color: this.state.calendarOpened
+                    ? this.props.colorFile.backgroundColor
+                    : this.props.colorFile.textColor,
+                },
+              ]}
+            >
+              {this.state.currentMonth}
+            </Text>
             <Agenda
               style={[this.styles.agendaBackgroundColor]}
               items={this.state.monthItems}
-              ref={ref => {
+              ref={(ref) => {
                 this.agenda = ref;
               }}
               renderEmptyData={this.renderEmptyData.bind(this)}
@@ -273,7 +319,9 @@ class BRP extends Component {
               pastScrollRange={new Date().getMonth()}
               futureScrollRange={12 - parseInt(new Date().getMonth() + 1)}
               renderKnob={this.renderKnob}
-              onCalendarToggled={(calendarOpened) => { this.setState({ calendarOpened }) }}
+              onCalendarToggled={(calendarOpened) => {
+                this.setState({ calendarOpened });
+              }}
               theme={themeStyle}
             />
           </View>
@@ -281,10 +329,9 @@ class BRP extends Component {
       </View>
     );
   }
+}
 
-};
-
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     books: state.versionFetch.versionBooks,
     languageCode: state.updateVersion.languageCode,
@@ -294,12 +341,12 @@ const mapStateToProps = state => {
     downloaded: state.updateVersion.downloaded,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-  }
-}
-const mapDispatchToProps = dispatch => {
+  };
+};
+const mapDispatchToProps = (dispatch) => {
   return {
     updateVersionBook: (value) => dispatch(updateVersionBook(value)),
-    fetchVersionBooks: (value) => dispatch(fetchVersionBooks(value))
-  }
-}
-export default connect(mapStateToProps, mapDispatchToProps)(BRP)
+    fetchVersionBooks: (value) => dispatch(fetchVersionBooks(value)),
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(BRP);

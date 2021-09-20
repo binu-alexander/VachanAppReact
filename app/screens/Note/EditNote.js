@@ -19,11 +19,6 @@ import Color from '../../utils/colorConstants';
 import { getBookChaptersFromMapping } from '../../utils/UtilFunctions';
 import { updateVersionBook } from '../../store/action/';
 import QuillEditor, { QuillToolbar } from 'react-native-cn-quill';
-import {
-  SelectionChangeData,
-  TextChangeData,
-} from 'react-native-cn-quill';
-const clockIcon = require('../../assets/clock.png');
 
 class EditNote extends Component {
   constructor(props) {
@@ -170,45 +165,9 @@ class EditNote extends Component {
     });
   };
 
-  // handleSelectionChange = async (data: SelectionChangeData) => {
-  //   const { range } = data;
-  //   if (range) {
-  //     if (range.length === 0) {
-  //       console.log('User cursor is on', range.index);
-  //     } else {
-  //       var text = await this._editor.current?.getText(
-  //         range.index,
-  //         range.length
-  //       );
-  //       console.log('User has highlighted', text);
-  //     }
-  //   } else {
-  //     console.log('Cursor not in the editor');
-  //   }
-  // }
   onHtmlChange = (html) => {
-    console.log("HTML TEXT ", html)
     this.setState({contentBody:html.html})
   }
-  // handleTextChange = (data: TextChangeData) => {
-  //  console.log("DATA HANDLE TEXT CHANGE ",data)
-  // };
-  // customHandler = (name: string, value: any) => {
-  //   if (name === 'image') {
-  //     this._editor.current?.insertEmbed(
-  //       0,
-  //       'image',
-  //       'https://picsum.photos/200/300'
-  //     );
-  //   } else if (name === 'clock') {
-  //     this._editor.current?.insertText(0, `Today is ${this.getCurrentDate()}`, {
-  //       bold: true,
-  //       color: 'red',
-  //     });
-  //   } else {
-  //     console.log(`${name} clicked with value: ${value}`);
-  //   }
-  // }
   render() {
     return (
       <View style={{ flex: 1 }}>
@@ -248,8 +207,6 @@ class EditNote extends Component {
             },
             theme: 'bubble', // this is default value
           }}
-          // defaultFontFamily={customFonts[0].name}
-          // customFonts={customFonts}
           import3rdParties="cdn" // default value is 'local'
           initialHtml={this.state.contentBody}
         />
@@ -265,13 +222,7 @@ class EditNote extends Component {
               { background: [] },
             ]
           ]}
-          // custom={{
-          //   handler: this.customHandler,
-          //   actions: ['image', 'clock'],
-          //   icons: {
-          //     clock: clockIcon,
-          //   },
-          // }}
+         
         />
       </View>
     )
