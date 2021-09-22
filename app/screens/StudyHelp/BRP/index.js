@@ -289,7 +289,7 @@ class BRP extends Component {
     };
     return (
       <View style={this.styles.container}>
-        {Object.keys(this.state.items).length > 0 ? (
+        {Object.keys(this.state.items).length > 0 ? 
           <View style={{ flex: 1 }}>
             <Text
               style={[

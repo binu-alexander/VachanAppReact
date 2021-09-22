@@ -29,14 +29,7 @@ class SelectVerse extends Component {
 
   async fectchVerses() {
     let versesArray = [];
-    const url =
-      "bibles/" +
-      this.props.sourceId +
-      "/books/" +
-      this.props.route.params.selectedBookId +
-      "/chapters/" +
-      this.props.route.params.selectedChapterNumber +
-      "/verses";
+    const url = "bibles/" + this.props.sourceId + "/books/" + this.state.selectedBookId + "/chapters/" + this.state.selectedChapterNumber + "/verses";
     let verses = await vApi.get(url);
     if (verses) {
       verses.map((item) => versesArray.push(item.verse.number));
@@ -62,7 +55,11 @@ class SelectVerse extends Component {
         : null,
     };
   }
-
+componentDidUpdate(prevProps,prevState){
+if(prevState.versesData != this.state.versesData){
+  this.fectchVerses()
+}
+}
   onNumPress = (item, index) => {
     if (this.props.route.params) {
       this.props.route.params.getReference({
@@ -70,17 +67,13 @@ class SelectVerse extends Component {
         bookName: this.state.selectedBookName,
         chapterNumber: this.state.selectedChapterNumber,
         totalChapters: this.state.totalChapters,
-        selectedVerse: item ? item : 0,
+        selectedVerse: item ? item : 1,
       });
       this.props.navigation.navigate("Bible");
     }
   };
   render() {
-    console.log(
-      this.props.route.params.selectedBookName,
-      this.state.selectedChapterNumber,
-      "number"
-    );
+   
     return (
       <View style={{ flex: 1 }}>
         <SelectionGrid
@@ -89,7 +82,7 @@ class SelectVerse extends Component {
             this.onNumPress(item, index);
           }}
           numbers={this.state.versesData}
-          selectedChapterNumber={this.props.route.params.selectedChapterNumber}
+          selectedNumber={this.props.route.params.selectedVerse}
           blueText={this.props.colorFile.blueText}
           textColor={this.props.colorFile.textColor}
         />

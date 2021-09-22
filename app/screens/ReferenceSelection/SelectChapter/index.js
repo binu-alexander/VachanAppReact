@@ -52,12 +52,7 @@ class ChapterSelection extends Component {
     let selectedChapter =
       chapterNum > this.state.totalChapters ? "1" : chapterNum;
     if (this.props.route.params) {
-      // this.props.route.params.getReference({
-      //   bookId: this.state.selectedBookId,
-      //   bookName: this.state.selectedBookName,
-      //   chapterNumber: selectedChapter,
-      //   totalChapters: this.state.totalChapters,
-      // });
+      
       this.props.navigation.navigate("Verses", {
         selectedBookId: this.state.selectedBookId,
         selectedBookName: this.state.selectedBookName,
@@ -75,7 +70,7 @@ class ChapterSelection extends Component {
             this.onNumPress(item, index);
           }}
           numbers={this.state.chapterData}
-          selectedChapterNumber={this.props.route.params.selectedChapterNumber}
+          selectedNumber={this.props.route.params.selectedChapterNumber}
           blueText={this.props.colorFile.blueText}
           textColor={this.props.colorFile.textColor}
         />

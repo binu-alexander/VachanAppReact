@@ -36,9 +36,7 @@ class EditNote extends Component {
   }
   saveNote = async () => {
     var time = Date.now()
-
     var firebaseRef = database().ref("users/" + this.props.uid + "/notes/" + this.props.sourceId + "/" + this.state.bcvRef.bookId)
-
     if (this.state.contentBody == '') {
       alert(" Note should not be empty")
     }
@@ -76,7 +74,7 @@ class EditNote extends Component {
       'Do you want to save the note ',
       [
         { text: 'Cancel', onPress: () => { return } },
-        { text: 'No', onPress: () => { this.props.navigation.dispatch(NavigationActions.back()) } },
+        { text: 'No', onPress: () => {this.props.navigation.dispatch(CommonActions.goBack()) } },
         { text: 'Yes', onPress: () => this.saveNote() },
       ],
     )
@@ -144,21 +142,7 @@ class EditNote extends Component {
     })
     this.props.navigation.navigate('Bible')
   }
-  setRichEditorApi(api) {
-    console.log("API ", api)
-    this.setState({ richEditorApi: api })
-  }
-  getCurrentDate() {
-    let d = new Date(),
-      month = '' + (d.getMonth() + 1),
-      day = '' + d.getDate(),
-      year = d.getFullYear();
 
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
-
-    return [year, month, day].join('-');
-  }
   handleGetHtml = () => {
     this._editor.current?.getHtml().then((res) => {
       console.log('Html :', res);

@@ -9,7 +9,7 @@ const SelectionGrid = ({
   onNumPress,
   numbers,
   loader,
-  selectedChapterNumber,
+  selectedNumber,
   blueText,
   textColor,
 }) => (
@@ -30,8 +30,8 @@ const SelectionGrid = ({
               style={[
                 styles.chapterNum,
                 {
-                  fontWeight: item == selectedChapterNumber ? "bold" : "normal",
-                  color: item == selectedChapterNumber ? blueText : textColor,
+                  fontWeight: item == selectedNumber ? "bold" : "normal",
+                  color: item == selectedNumber ? blueText : textColor,
                 },
               ]}
             >

@@ -72,7 +72,6 @@ export default class SelectionTab extends Component {
             selectedChapterIndex: this.state.selectedChapterIndex,
             selectedChapterNumber: this.state.selectedChapterNumber,
             totalChapters: this.state.totalChapters,
-            getReference: this.props.params.getReference,
           }}
         />
         <Tab.Screen
@@ -85,7 +84,7 @@ export default class SelectionTab extends Component {
             selectedBookId: this.state.selectedBookId,
             selectedVerse: this.state.selectedVerse,
             selectedBookName: this.state.selectedBookName,
-            getReference: this.props.params.getReference,
+            getReference: this.props.params && this.props.params.getReference,
           }}
         />
       </Tab.Navigator>
