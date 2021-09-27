@@ -6,7 +6,6 @@ import {
   Alert,
   Dimensions,
   StyleSheet,
-  Platform,
   Share,
   AppState,
   Animated,
@@ -53,7 +52,7 @@ import database from "@react-native-firebase/database";
 import vApi from "../../utils/APIFetch";
 import HighlightColorGrid from "../../components/Bible/HighlightColorGrid";
 import { getHeading } from "../../utils/UtilFunctions";
-
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
 const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
 const width = Dimensions.get("window").width;
 const NAVBAR_HEIGHT = 64;
@@ -177,7 +176,7 @@ class Bible extends Component {
       console.log("COMPONENT UPDATE on VALUE CHANGE")
       this.queryBookFromAPI(null);
       this.audioComponentUpdate();
-      // this.scrollToVerse()
+      this.scrollToVerse(this.props.selectedVerse)
       if (this.props.books.length == 0) {
         this.props.fetchVersionBooks({ language: this.props.language, versionCode: this.props.versionCode, downloaded: this.props.downloaded, sourceId: this.props.sourceId, });
       }
@@ -226,7 +225,7 @@ class Bible extends Component {
       });
       this.props.updateVerseNumber({ selectedVerse: item.selectedVerse, });
       this.props.updateVersionBook({ bookId: item.bookId, bookName: item.bookName, chapterNumber: parseInt(item.chapterNumber), totalChapters: item.totalChapters, });
-      this.scrollToVerse(item.selectedVerse)
+      // this.scrollToVerse(item.selectedVerse)
     } else {
       return;
     }
@@ -859,7 +858,61 @@ class Bible extends Component {
       duration: 350,
       useNativeDriver: true,
     }).start();
-  };
+  }
+  // createPDF_File=()=> {
+  //   var that = this;
+  //   async function externalStoragePermission() {
+  //   try {
+  //     const granted = await PermissionsAndroid.request(
+  //       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+  //       {
+  //         title: 'External Storage Write Permission',
+  //         message:'App needs access to Storage data.',
+  //       }
+  //     );
+  //     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+  //       that.createPdf();
+  //     } else {
+  //       alert('WRITE_EXTERNAL_STORAGE permission denied');
+  //     }
+  //   } catch (err) {
+  //     // Alert.alert('Write permission err', err);
+  //     console.log(err);
+  //   }
+  //  }
+ 
+  //   if (Platform.OS === 'android') {
+  //     externalStoragePermission();
+  //   } else {
+  //     this.createPdf();
+  //   }
+  // }
+  async downloadPDF(){
+    var texttohtml = ''
+    this.state.chapterContent.forEach((val) => {
+      if (val.verseNumber != undefined && val.verseText != undefined) {
+        texttohtml += `<p>${val.verseNumber} : ${val.verseText}</p>`
+      }
+    })
+    let options = {
+      html:`<p>${texttohtml}</p>`,
+      fileName: `${'VachanGo_'+this.props.language+'_'+this.props.bookId+'_'+this.state.currentVisibleChapter}`,
+      directory: 'Downloads',
+    };
+    await RNHTMLtoPDF.convert(options);
+    Toast.show({ text: "Pdf downloaded.", type: "success", duration: 5000, });
+  }
+  createPDF_File = async () => {
+    Alert.alert(
+      '',
+      'Do you want to download the pdf for current chapter',
+      [
+        { text: 'No', onPress: () => {return} },
+        { text: 'Yes', onPress: () => this.downloadPDF() },
+      ],
+    )
+   
+  }
   renderFooter = () => {
     if (this.state.chapterContent.length === 0) {
       return null;
@@ -945,6 +998,7 @@ class Bible extends Component {
             isBookmark={this.state.isBookmark}
             navigateToSelectionTab={this.navigateToSelectionTab}
             navigateToLanguage={this.navigateToLanguage}
+            createPDF={this.createPDF_File}
           />
         )}
         {this.state.isLoading && (<Spinner visible={true} textContent={"Loading..."} />)}
@@ -1169,7 +1223,7 @@ const mapStateToProps = (state) => {
     books: state.versionFetch.versionBooks,
     parallelContentType: state.updateVersion.parallelContentType,
     visibleParallelView: state.selectContent.visibleParallelView,
-    selectedVerse:state.updateVersion.selectedVerse,
+    selectedVerse: state.updateVersion.selectedVerse,
     audio: state.audio.audio,
     status: state.audio.status,
   };

@@ -56,7 +56,7 @@ export default class SelectionTab extends Component {
         <Tab.Screen
           name="Books"
           component={SelectBook}
-          options={{ tabBarLabel: "Select Book" }}
+          options={{ tabBarLabel: "Book" }}
           initialParams={{
             selectedBookId: this.state.selectedBookId,
             selectedBookName: this.state.selectedBookName,
@@ -65,7 +65,7 @@ export default class SelectionTab extends Component {
         <Tab.Screen
           name="Chapters"
           component={SelectChapter}
-          options={{ tabBarLabel: "Select Chapter" }}
+          options={{ tabBarLabel: "Chapter" }}
           initialParams={{
             selectedBookId: this.state.selectedBookId,
             selectedBookName: this.state.selectedBookName,
@@ -77,7 +77,7 @@ export default class SelectionTab extends Component {
         <Tab.Screen
           name="Verses"
           component={SelectVerse}
-          options={{ tabBarLabel: "Select Verse" }}
+          options={{ tabBarLabel: "Verse" }}
           initialParams={{
             selectedChapterNumber: this.state.selectedChapterNumber,
             totalChapters: this.state.totalChapters,

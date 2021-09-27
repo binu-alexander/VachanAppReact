@@ -131,6 +131,12 @@ export default class CustomHeader extends Component {
             </Text>
             <Icon name="arrow-drop-down" color={Color.White} size={20} />
           </TouchableOpacity>
+          <TouchableOpacity
+            style={{position:'absolute',right:0,paddingRight:8}}
+            onPress={this.props.createPDF}
+          >
+            <Icon name="print" color={Color.White} size={28} />
+          </TouchableOpacity>
         </Animated.View>
       </Animated.View>
     );
@@ -190,6 +196,9 @@ const navStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  rightdownload:{
+    alignSelf:'flex-end'
   },
   touchableStyleLeft: {
     flexDirection: "row",

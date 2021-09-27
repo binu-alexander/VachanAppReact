@@ -10,6 +10,9 @@ class Audio extends Component {
   constructor(props) {
     super(props);
     this.styles = AudioListStyle(this.props.colorFile, this.props.sizeFile);
+    this.state = {
+      allAudioBooks:[]
+    }
   }
   navigateToBible = (bId, bookName, chapterNum) => {
     this.props.updateVersionBook({
@@ -20,9 +23,8 @@ class Audio extends Component {
     this.props.ToggleAudio({ audio: true, status: true });
     this.props.navigation.navigate("Bible");
   };
-
-  render() {
-    const books = this.props.books;
+componentDidMount(){
+  const books = this.props.books;
     const audioBooks = this.props.audioList && this.props.audioList[0].books;
     const arrayBooks = audioBooks && Object.keys(audioBooks);
     const allBooks = books.map((code) => code);
@@ -32,23 +34,15 @@ class Audio extends Component {
         let temp = allBooks.find((item) => item.bookId === arrayBooks[i]);
         allAudioBooks.push(temp);
       }
-    } else {
-      return (
-        <View style={this.styles.messagContainer}>
-          <Icon
-            name="volume-off"
-            size={24}
-            style={this.styles.emptyMessageIcon}
-          />
-          <Text style={this.styles.audioText}>No Audio Available !!!!</Text>
-        </View>
-      );
+      this.setState({allAudioBooks})
     }
-
+}
+  render() {
     return (
       <View style={this.styles.container}>
         <FlatList
-          data={allAudioBooks}
+          data={this.state.allAudioBooks}
+          contentContainerStyle={this.state.allAudioBooks.length === 0 && this.styles.centerEmptySet}
           keyExtractor={(item) => item && item.bookNumber.toString()}
           renderItem={({ item }) => (
             <Card>
@@ -70,6 +64,15 @@ class Audio extends Component {
               </CardItem>
             </Card>
           )}
+          ListEmptyComponent={
+            <View style={this.styles.emptyMessageContainer}>
+              <Icon name="volume-up" style={this.styles.emptyMessageIcon}/>
+              <Text
+                style={this.styles.messageEmpty}>
+                Audio for {this.props.language} not available
+              </Text>
+            </View>
+          }
         />
       </View>
     );
