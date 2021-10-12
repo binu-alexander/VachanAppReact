@@ -26,20 +26,16 @@ class ChapterSelection extends Component {
       selectedBookName: this.props.route.params
         ? this.props.route.params.selectedBookName
         : null,
-      prevSelectedBookId: this.props.route.params
-        ? this.props.route.params.selectedBookId
+      selectedChap: this.props.route.params
+        ? this.props.route.params.selectedChapterNumber
         : null,
-      prevSelectedBookName: this.props.route.params
-        ? this.props.route.params.selectedBookName
-        : null,
-      prevTotalChapters: this.props.route.params
-        ? this.props.route.params.totalChapters
+      prevSelectChap: this.props.route.params
+        ? this.props.route.params.selectedChapterNumber
         : null,
     };
     this.styles = numberSelection(this.props.colorFile, this.props.sizeFile);
   }
   static getDerivedStateFromProps(nextProps, prevState) {
-    console.log(prevState.selectedBookId, "pre");
     return {
       chapterData: Array.from(
         new Array(
@@ -49,16 +45,17 @@ class ChapterSelection extends Component {
       ),
       totalChapters: nextProps.route.params
         ? nextProps.route.params.totalChapters
-        : prevState.totalChapters,
+        : null,
       selectedBookId: nextProps.route.params
         ? nextProps.route.params.selectedBookId
-        : prevState.selectedBookId,
+        : null,
       selectedBookName: nextProps.route.params
         ? nextProps.route.params.selectedBookName
-        : prevState.selectedBookName,
-      prevSelectedBookId: prevState.selectedBookId,
-      prevSelectedBookName: prevState.selectedBookName,
-      prevStateTotalChapters: prevState.totalChapters,
+        : null,
+      selectedChapterNumber: nextProps.route.params
+        ? nextProps.route.params.selectedChapterNumber
+        : null,
+      prevSelectChap: prevState.selectedChapterNumber,
     };
   }
   onNumPress = (item, index) => {
@@ -66,7 +63,6 @@ class ChapterSelection extends Component {
     let selectedChapter =
       chapterNum > this.state.totalChapters ? "1" : chapterNum;
     if (this.props.route.params) {
-      console.log(this.props.route.params.selectedBookId, "onNum");
       this.props.navigation.navigate("Verses", {
         selectedBookId: this.state.selectedBookId,
         selectedBookName: this.state.selectedBookName,
@@ -76,20 +72,20 @@ class ChapterSelection extends Component {
     }
   };
   onBack = () => {
-    // this.props.updateVersionBook({
-    //   bookId: this.state.prevSelectedBookId,
-    //   bookName: this.state.prevSelectedBookName,
-    //   chapterNumber: this.props.route.params.selectedChapterNumber,
-    //   totalChapters: this.state.prevStateTotalChapters,
-    // });
-    this.props.navigation.navigate("Bible");
+    if (this.props.route.params) {
+      this.props.updateVersionBook({
+        bookId: this.props.route.params.selectedBookId,
+        bookName: this.props.route.params.selectedBookName,
+        chapterNumber: this.state.prevSelectChap,
+      });
+      this.props.navigation.navigate("Bible");
+    }
   };
   render() {
     console.log(
-      this.state.prevSelectedBookId,
-      this.state.prevSelectedBookName,
-      this.props.route.params.selectedChapterNumber,
-      "prevselectedid"
+      this.state.selectedChapterNumber,
+      this.state.prevSelectChap,
+      "chap"
     );
     return (
       <View style={{ flex: 1 }}>

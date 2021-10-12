@@ -72,6 +72,7 @@ export default class SelectionTab extends Component {
             selectedChapterIndex: this.state.selectedChapterIndex,
             selectedChapterNumber: this.state.selectedChapterNumber,
             totalChapters: this.state.totalChapters,
+            getReference: this.props.params && this.props.params.getReference,
           }}
         />
         <Tab.Screen
