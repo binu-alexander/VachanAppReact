@@ -29,7 +29,14 @@ class SelectVerse extends Component {
 
   async fectchVerses() {
     let versesArray = [];
-    const url = "bibles/" + this.props.sourceId + "/books/" + this.state.selectedBookId + "/chapters/" + this.state.selectedChapterNumber + "/verses";
+    const url =
+      "bibles/" +
+      this.props.sourceId +
+      "/books/" +
+      this.state.selectedBookId +
+      "/chapters/" +
+      this.state.selectedChapterNumber +
+      "/verses";
     let verses = await vApi.get(url);
     if (verses) {
       verses.map((item) => versesArray.push(item.verse.number));
@@ -55,11 +62,11 @@ class SelectVerse extends Component {
         : null,
     };
   }
-componentDidUpdate(prevProps,prevState){
-if(prevState.versesData != this.state.versesData){
-  this.fectchVerses()
-}
-}
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.versesData != this.state.versesData) {
+      this.fectchVerses();
+    }
+  }
   onNumPress = (item, index) => {
     if (this.props.route.params) {
       this.props.route.params.getReference({
@@ -73,7 +80,6 @@ if(prevState.versesData != this.state.versesData){
     }
   };
   render() {
-   
     return (
       <View style={{ flex: 1 }}>
         <SelectionGrid
