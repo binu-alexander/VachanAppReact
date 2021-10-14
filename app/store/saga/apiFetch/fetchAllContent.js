@@ -16,8 +16,8 @@ function* fetchAllContent() {
       call(fetchApi, bibleAPI),
       call(fetchApi, commentaryAPI),
     ])
-    const bible = []
-    const commentary = []
+    var bible = []
+    var commentary = []
     for (var i = 0; i < bibleLanguage.length; i++) {
       var versions = []
       const language = bibleLanguage[i].language.charAt(0).toUpperCase() + bibleLanguage[i].language.slice(1)

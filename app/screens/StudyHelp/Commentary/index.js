@@ -42,6 +42,7 @@ class Commentary extends Component {
   componentDidMount(){
     if(this.props.parallelLanguage){
       let url = "commentaries/"+this.props.parallelLanguage.sourceId + "/" + this.props.bookId + "/" + this.props.currentVisibleChapter + commentaryKey
+      console.log("URL UPDATE ", url)
       this.props.vachanAPIFetch(url)
       this.fetchBookName()
     }
@@ -49,6 +50,7 @@ class Commentary extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (this.props.bookId != prevProps.bookId || prevProps.currentVisibleChapter != this.props.currentVisibleChapter) {
       if(this.props.parallelLanguage){
+      console.log(" this.props.parallelLanguage ",this.props.parallelLanguage)
       const url = "commentaries/"+this.props.parallelLanguage.sourceId + "/" + this.props.bookId + "/" + this.props.currentVisibleChapter + commentaryKey
       this.props.vachanAPIFetch(url)
       this.fetchBookName()
@@ -101,6 +103,37 @@ class Commentary extends Component {
     )
 
   }
+  renderFooter = () => {
+    return (
+      <View style={{paddingVertical:20}}>
+        {
+          this.props.commentaryContent && this.props.commentaryContent.commentaries &&
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            {this.props.parallelMetaData?.revision !== null && this.props.parallelMetaData?.revision !== "" && (
+              <Text textBreakStrategy={"simple"} style={{textAlign:'center'}}> 
+                <Text>Copyright:</Text>{" "}
+                {this.props.parallelMetaData?.revision}
+              </Text>
+            )}
+            {this.props.parallelMetaData?.copyrightHolder !== null && this.props.parallelMetaData?.copyrightHolder !== "" && (
+              <Text textBreakStrategy={"simple"} style={{textAlign:'center'}}>
+                <Text>License:</Text>{" "}
+                {this.props.parallelMetaData?.copyrightHolder}
+              </Text>
+            )}
+            {this.props.parallelMetaData?.license !== null && this.props.parallelMetaData?.license !== "" && (
+              <Text textBreakStrategy={"simple"} style={{textAlign:'center'}}>
+                <Text>
+                  Technology partner:
+                </Text>{" "}
+                {this.props.parallelMetaData?.license}
+              </Text>
+            )}
+          </View>
+        }
+      </View>
+    );
+  };
   render() {
     var bookName = null
     if (this.state.bookNameList) {
@@ -126,7 +159,7 @@ class Commentary extends Component {
             <Title style={{ fontSize: 16 }}>{this.props.parallelLanguage && this.props.parallelLanguage.versionCode}</Title>
           </Body>
           <Right>
-            <Button transparent onPress={() => this.props.toggleParallelView(false)}>
+            <Button transparent onPress={() => this.props.closeParallelView(false)}>
               <Icon name='cancel' color={Color.White} size={20} />
             </Button>
           </Right>
@@ -151,6 +184,7 @@ class Commentary extends Component {
                 renderItem={this.renderItem}
                 ListFooterComponent={<View style={{ height: 40, marginBottom: 40 }}></View>}
                 ListHeaderComponent={this.ListHeaderComponent}
+                ListFooterComponent={this.renderFooter}
               />
             </View>
         }
@@ -176,6 +210,7 @@ const mapStateToProps = state => {
     error: state.vachanAPIFetch.error,
     baseAPI: state.updateVersion.baseAPI,
     parallelLanguage: state.selectContent.parallelLanguage,
+    parallelMetaData: state.selectContent.parallelMetaData,
   }
 
 }

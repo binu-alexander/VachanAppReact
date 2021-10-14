@@ -1,13 +1,13 @@
 
 
 import React from 'react';
-import { View, Text, FlatList, TouchableOpacity ,ActivityIndicator} from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Card, CardItem } from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux'
 import { styles } from './styles.js'
 import vApi from '../../../utils/APIFetch';
-import  Colors  from '../../../utils/colorConstants';
+import Colors from '../../../utils/colorConstants';
 
 class Infographics extends React.Component {
 
@@ -21,19 +21,20 @@ class Infographics extends React.Component {
 
   }
   componentDidMount() {
+
     this.setState({
       isLoading: true
-    },async()=>{
-      try{
+    }, async () => {
+      try {
         const apiData = await vApi.get("dictionaries")
-        if (apiData){
+        if (apiData) {
           for (var i = 0; i < apiData.length; i++) {
             if (apiData[i].language.toLowerCase() === this.props.languageName.toLowerCase()) {
-                this.setState({dictionaries:apiData[i].dictionaries})
+              this.setState({ dictionaries: apiData[i].dictionaries })
             }
           }
         }
-      }catch(error){
+      } catch (error) {
       }
       this.setState({
         isLoading: false
@@ -41,28 +42,28 @@ class Infographics extends React.Component {
     })
   }
   gotoDicionary = (sourceId) => {
-    this.props.navigation.navigate("DictionaryWords",{dictionarySourceId:sourceId} )
+    this.props.navigation.navigate("DictionaryWords", { dictionarySourceId: sourceId, metadata: this.state.dictionaries })
   }
   renderItem = ({ item }) => {
     return (
       <View>
-        <Card>
-        <CardItem style={this.styles.cardItemStyle}>
-          <TouchableOpacity style={this.styles.infoView} onPress={() => this.gotoDicionary(item.sourceId)}>
-            <Text style={this.styles.dictionaryText}>{item.name}</Text>
-          </TouchableOpacity>
-        </CardItem>
-      </Card>
+        <TouchableOpacity style={this.styles.infoView} onPress={() => this.gotoDicionary(item.sourceId)}>
+          <Card>
+            <CardItem style={this.styles.cardItemStyle}>
+              <Text style={this.styles.dictionaryText}>{item.name}</Text>
+            </CardItem>
+          </Card>
+        </TouchableOpacity>
       </View>
     )
   }
   render() {
-    ("dictionaries ",this.state.dictionaries)
+    ("dictionaries ", this.state.dictionaries)
     return (
-      <View style={[this.styles.container,{padding:8}]}>
+      <View style={[this.styles.container, { padding: 8 }]}>
         {
           this.state.isLoading ?
-            <ActivityIndicator size="small" color={Colors.Blue_Color} animate={true} style={{ flex:1,justifyContent: 'center', alignItems: 'center' }} /> :
+            <ActivityIndicator size="small" color={Colors.Blue_Color} animate={true} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} /> :
             <FlatList
               data={this.state.dictionaries}
               contentContainerStyle={this.state.dictionaries.length === 0 && this.styles.centerEmptySet}

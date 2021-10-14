@@ -257,7 +257,7 @@ class BibleChapter extends Component {
           <Right style={{ position: "absolute", right: 4 }}>
             <Button
               transparent
-              onPress={() => this.props.toggleParallelView(false)}
+              onPress={() => this.props.closeParallelView(false)}
             >
               <Icon name="cancel" color={Color.White} size={20} />
             </Button>

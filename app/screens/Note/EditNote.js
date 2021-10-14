@@ -150,14 +150,14 @@ class EditNote extends Component {
   };
 
   onHtmlChange = (html) => {
+    console.log("html ",html)
     this.setState({contentBody:html.html})
   }
+  
   render() {
     return (
-      <View style={{ flex: 1 }}>
-        {/* <ScrollView style={this.styles.containerEditNote}> */}
+      <View style={this.styles.containerEditNote}>
           <View style={this.styles.subContainer}>
-
             {this.state.bcvRef
               &&
               <FlowLayout style={this.styles.tapButton}
@@ -167,31 +167,23 @@ class EditNote extends Component {
               />
             }
           </View>
-          {/* <TextInput
-            style={this.styles.inputStyle}
-            placeholder='Enter your note here'
-            placeholderTextColor={this.styles.placeholderColor.color}
-            value={this.state.contentBody}
-            onChangeText={(text) => this.setState({ contentBody: text })}
-            multiline={true}
-          /> */}
-        {/* </ScrollView> */}
         <QuillEditor
           // container={CustomContainer} // not required just to show how to pass cusom container
-          style={[styles.input, styles.editor]}
+          style={this.styles.editorInput}
           ref={this._editor}
           onSelectionChange={this.handleSelectionChange}
           onTextChange={this.handleTextChange}
           onHtmlChange={this.onHtmlChange}
           quill={{
-            // not required just for to show how to pass this props
             placeholder: 'Enter your note here',
             modules: {
-              toolbar: false, // this is default value
+              toolbar: false, 
             },
-            theme: 'bubble', // this is default value
+            theme: 'bubble', 
           }}
-          import3rdParties="cdn" // default value is 'local'
+          theme={{background:this.props.colorFile.fedBackgroundColor,
+            color: this.props.colorFile.textColor}}
+          import3rdParties="cdn" 
           initialHtml={this.state.contentBody}
         />
         <QuillToolbar
@@ -199,14 +191,15 @@ class EditNote extends Component {
           theme="light"
           options={[
             ['bold', 'italic', 'underline'],
-            [{ header: 1 }, { header: 2 }],
-            [{ align: [] }],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            [{ 'align': [] }],
+            [{ 'size': ['small', false, 'large', 'huge'] }], 
             [
               { color: ['#000000', '#e60000', '#ff9900', 'yellow'] },
               { background: [] },
             ]
           ]}
-         
+          
         />
       </View>
     )

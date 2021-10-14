@@ -1,17 +1,13 @@
+
 import React, { Component } from 'react';
 import { Modal, Text, TouchableOpacity, View, Alert, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-
-
-
 import { Card, Accordion } from 'native-base'
-import { updateContentType, fetchAllContent, fetchVersionBooks, parallelMetadta,selectContent } from '../../store/action/'
+import { updateContentType, parallelVisibleView, fetchAllContent, fetchVersionBooks, parallelMetadta, selectContent } from '../../store/action/'
 import { styles } from '../../screens/LanguageList/styles'
 import { connect } from 'react-redux'
 import Color from '../../utils/colorConstants'
-
-
 
 var contentType = ''
 class SelectContent extends Component {
@@ -19,7 +15,7 @@ class SelectContent extends Component {
     super(props)
     this.state = {
       isExpanded: false,
-      modalVisible:false
+      modalVisible: false
     }
     this.alertPresent = false
     this.styles = styles(this.props.colorFile, this.props.sizeFile)
@@ -32,45 +28,105 @@ class SelectContent extends Component {
       contentType = value
     }
     return (
-      <View style={this.styles.accordionHeader}>
-        <Text style={this.styles.accordionHeaderText} >
-          {" "}{item.contentType.charAt(0).toUpperCase() + item.contentType.slice(1)}
-
-        </Text>
-        <Icon style={this.styles.iconStyleSelection} name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up"} size={24} />
+      <View >
+        {this.props.displayContent == 'commentary' ?
+          ((item.contentType == this.props.displayContent) &&
+            <View style={this.styles.accordionHeader}>
+              <Text style={this.styles.accordionHeaderText}>
+                {" "}{(item.contentType == this.props.displayContent) && item.contentType.charAt(0).toUpperCase() + item.contentType.slice(1)}
+              </Text>
+              <Icon style={this.styles.iconStyleSelection} name="keyboard-arrow-down" size={24} />
+            </View>
+          )
+          : <View style={this.styles.accordionHeader}>
+            <Text style={this.styles.accordionHeaderText}>
+              {" "}{item.contentType.charAt(0).toUpperCase() + item.contentType.slice(1)}
+            </Text>
+            <Icon style={this.styles.iconStyleSelection} name="keyboard-arrow-down" size={24} />
+          </View>
+        }
       </View>
     )
   }
   _renderHeaderInner = (item, expanded) => {
     return (
-      <View style={this.styles.headerInner} >
-        <Text style={this.styles.selectionHeaderModal}>
-          {" "}{item.languageName}
-        </Text>
-        <Icon style={this.styles.iconStyleSelection} name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up"} size={24} />
+      <View>
+        {this.props.displayContent == 'commentary' ?
+          ((contentType == this.props.displayContent) &&
+            <View style={this.styles.headerInner} >
+              <Text style={this.styles.selectionHeaderModal}>
+                {" "}{item.languageName}
+              </Text>
+              <Icon style={this.styles.iconStyleSelection} name="keyboard-arrow-down" size={24} />
+            </View>
+          )
+          :
+          <View style={this.styles.headerInner} >
+            <Text style={this.styles.selectionHeaderModal}>
+              {" "}{item.languageName}
+            </Text>
+            <Icon style={this.styles.iconStyleSelection} name="keyboard-arrow-down" size={24} />
+          </View>
+        }
       </View>
+
     )
   }
 
   _renderContentInner = (item) => {
     return (
       item.versionModels.map(v =>
-        <TouchableOpacity
-          style={this.styles.selectionInnerContent}
-          onPress={() => {
-            this.setState({modalVisible:false})
-            this.props.selectContent({ visibleParallelView: true,
-              parallelLanguage:{languageName:item.languageName,versionCode:v.versionCode,
-              sourceId:v.sourceId},parallelMetaData:v.metaData[0]})
-            this.props.updateContentType({
-              parallelContentType: contentType
-            })
-          }}
+        this.props.displayContent == 'commentary' ?
+          ((contentType == this.props.displayContent) &&
+            <TouchableOpacity
+              style={this.styles.selectionInnerContent}
+              onPress={() => {
+                this.setState({ modalVisible: false })
+                this.props.parallelVisibleView({
+                  modalVisible: false,
+                  visibleParallelView: false,
+                })
+                this.props.selectContent({
+                  parallelLanguage: {
+                    languageName: item.languageName, versionCode: v.versionCode,
+                    sourceId: v.sourceId
+                  },
+                  parallelMetaData: v.metaData[0],
+                })
+                this.props.updateContentType({
+                  parallelContentType: contentType
+                })
+              }}
+            >
+              <Text style={this.styles.selectionHeaderModal}>{v.versionName}</Text>
+              <Text style={this.styles.selectionHeaderModal}>{v.versionCode}</Text>
+            </TouchableOpacity>
+          ) :
+          <TouchableOpacity
+            style={this.styles.selectionInnerContent}
+            onPress={() => {
+              this.setState({ modalVisible: false })
+              this.props.parallelVisibleView({
+                modalVisible: false,
+                visibleParallelView: true,
+              })
+                this.props.selectContent({
+                  parallelLanguage: {
+                    languageName: item.languageName, versionCode: v.versionCode,
+                    sourceId: v.sourceId
+                  },
+                  parallelMetaData: v.metaData[0]
+                })
+                this.props.updateContentType({
+                  parallelContentType: contentType
+                })
+            }}
+          >
+            <Text style={this.styles.selectionHeaderModal}>{v.versionName}</Text>
+            <Text style={this.styles.selectionHeaderModal}>{v.versionCode}</Text>
+          </TouchableOpacity>
 
-        >
-          <Text style={this.styles.selectionHeaderModal}>{v.versionName}</Text>
-          <Text style={this.styles.selectionHeaderModal}>{v.versionCode}</Text>
-        </TouchableOpacity>)
+      )
     )
   }
 
@@ -88,20 +144,20 @@ class SelectContent extends Component {
 
   errorMessage() {
     // if(this.props.netConnection){
-      if (!this.alertPresent) {
-        this.alertPresent = true;
-        if (this.props.error ||
-          this.props.availableContents.length == 0 ||
-          this.props.availableContents.length == 0 
-        ) {
-          this.setState({ modalVisible: false})
-          Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
-          this.props.fetchAllContent()
-        } else {
-          this.setState({ modalVisible: !this.state.modalVisible})
-          this.alertPresent = false;
-        }
+    if (!this.alertPresent) {
+      this.alertPresent = true;
+      if (this.props.error ||
+        this.props.availableContents.length == 0 ||
+        this.props.availableContents.length == 0
+      ) {
+        this.setState({ modalVisible: false })
+        Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
+        this.props.fetchAllContent()
+      } else {
+        this.setState({ modalVisible: !this.state.modalVisible })
+        this.alertPresent = false;
       }
+    }
     // }else{
     //   Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
     // }
@@ -111,6 +167,7 @@ class SelectContent extends Component {
     this.errorMessage()
   }
   render() {
+    console.log(" PROPS ", this.props.availableContents)
     this.styles = styles(this.props.colorFile, this.props.sizeFile)
     return (
       <View >
@@ -118,23 +175,23 @@ class SelectContent extends Component {
           animationType="fade"
           transparent={true}
           visible={this.state.modalVisible}
-          onPress={() => { this.setState({modalVisible:!this.state.modalVisible}) }}
+          onPress={() => { this.setState({ modalVisible: !this.state.modalVisible }) }}
         >
           <View>
             <TouchableWithoutFeedback
               style={this.styles.modalContainer}
-              onPressOut={() => {this.setState({ modalVisible: false }) }}
+              onPressOut={() => { this.setState({ modalVisible: false }) }}
             >
               <View style={{ height: '80%', width: '70%', alignSelf: 'flex-end' }}>
                 <Card style={{ marginTop: 40 }}>
-                {this.props.availableContents.length > 0 &&
-                  <Accordion
-                    dataArray={this.props.availableContents}
-                    animation={true}
-                    expanded={[0]}
-                    renderHeader={this._renderHeader}
-                    renderContent={this._renderContent}
-                  />}
+                  {this.props.availableContents.length > 0 &&
+                    <Accordion
+                      dataArray={this.props.availableContents}
+                      animation={true}
+                      expanded={[0]}
+                      renderHeader={this._renderHeader}
+                      renderContent={this._renderContent}
+                    />}
                 </Card>
               </View>
             </TouchableWithoutFeedback>
@@ -161,8 +218,8 @@ const mapStateToProps = state => {
     baseAPI: state.updateVersion.baseAPI,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-    netConnection:state.updateStyling.netConnection,
-    modalVisible:state.selectContent.modalVisible,
+    netConnection: state.updateStyling.netConnection,
+    modalVisible: state.selectContent.modalVisible,
   }
 }
 const mapDispatchToProps = dispatch => {
@@ -171,7 +228,8 @@ const mapDispatchToProps = dispatch => {
     fetchAllContent: (value) => dispatch(fetchAllContent(value)),
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
     parallelMetadta: (payload) => dispatch(parallelMetadta(payload)),
-    selectContent:(payload)=>dispatch(selectContent(payload)),
+    selectContent: (payload) => dispatch(selectContent(payload)),
+    parallelVisibleView: (payload) => dispatch(parallelVisibleView(payload)),
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(SelectContent)

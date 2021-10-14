@@ -58,5 +58,6 @@ export const USER_INFO = "user_info";
 export const USER_LOGED_IN = "user_loged_in";
 
 export const SELECT_CONTENT = "select_content";
+export const PARALLEL_VISIBLE_VIEW = "parallel_visible_view";
 export const UPDATE_LANGUAGELIST = "update_languageList";
 export const TOGGLE_AUDIO = "toggle_audio";
