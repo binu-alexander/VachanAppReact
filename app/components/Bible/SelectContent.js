@@ -12,7 +12,7 @@ import Color from '../../utils/colorConstants'
 var contentType = ''
 class SelectContent extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       isExpanded: false,
       modalVisible: false
@@ -23,9 +23,9 @@ class SelectContent extends Component {
   }
 
   _renderHeader = (item, expanded) => {
-    var value = expanded && item.contentType
+    var value = expanded && item.contentType;
     if (value) {
-      contentType = value
+      contentType = value;
     }
     return (
       <View >
@@ -46,8 +46,8 @@ class SelectContent extends Component {
           </View>
         }
       </View>
-    )
-  }
+    );
+  };
   _renderHeaderInner = (item, expanded) => {
     return (
       <View>
@@ -139,8 +139,8 @@ class SelectContent extends Component {
         renderHeader={this._renderHeaderInner}
         renderContent={this._renderContentInner}
       />
-    )
-  }
+    );
+  };
 
   errorMessage() {
     // if(this.props.netConnection){
@@ -161,16 +161,15 @@ class SelectContent extends Component {
     // }else{
     //   Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
     // }
-
   }
   onPressModal = () => {
-    this.errorMessage()
-  }
+    this.errorMessage();
+  };
   render() {
     console.log(" PROPS ", this.props.availableContents)
     this.styles = styles(this.props.colorFile, this.props.sizeFile)
     return (
-      <View >
+      <View>
         <Modal
           animationType="fade"
           transparent={true}
@@ -182,7 +181,9 @@ class SelectContent extends Component {
               style={this.styles.modalContainer}
               onPressOut={() => { this.setState({ modalVisible: false }) }}
             >
-              <View style={{ height: '80%', width: '70%', alignSelf: 'flex-end' }}>
+              <View
+                style={{ height: "80%", width: "70%", alignSelf: "flex-end" }}
+              >
                 <Card style={{ marginTop: 40 }}>
                   {this.props.availableContents.length > 0 &&
                     <Accordion
@@ -197,7 +198,10 @@ class SelectContent extends Component {
             </TouchableWithoutFeedback>
           </View>
         </Modal>
-        <TouchableOpacity onPress={this.onPressModal} style={this.props.navStyles.touchableStyleRight}>
+        <TouchableOpacity
+          onPress={this.onPressModal}
+          style={this.props.navStyles.touchableStyleRight}
+        >
           <MaterialCommunityIcons
             name={"book-open-variant"}
             color={Color.White}
@@ -205,12 +209,11 @@ class SelectContent extends Component {
           />
         </TouchableOpacity>
       </View>
-
-    )
+    );
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     availableContents: state.contents.contentLanguages,
     error: state.contents.error,
