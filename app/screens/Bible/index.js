@@ -357,10 +357,6 @@ class Bible extends Component {
   toggleAudio = () => {
     if (this.state.audio) {
       this.setState({ status: !this.state.status });
-      // this.props.ToggleAudio({
-      //   audio: this.state.audio,
-      //   status: !this.state.status,
-      // });
     } else {
       Toast.show({
         text: "No audio for " + this.props.language + " " + this.props.bookName,
@@ -582,6 +578,7 @@ class Bible extends Component {
     this.setState({ selectedReferenceSet: [], showBottomBar: false, showColorGrid: false, });
   };
   onbackNote = () => { };
+  
   setHighlightColor = (color) => {
     let value = Color.highlightColorA.const;
     switch (color) {
@@ -882,13 +879,13 @@ class Bible extends Component {
         fileName: `${'VachanGo_' + this.props.language + '_' + this.props.bookId + '_' + this.state.currentVisibleChapter}`,
         directory: 'Download' ? 'Download' : 'Downloads',
       };
-      await RNHTMLtoPDF.convert(options);
       this.setState({ isLoading: false })
+      await RNHTMLtoPDF.convert(options);
     })
     Toast.show({ text: "Pdf downloaded.", type: "success", duration: 5000, });
   }
   createPDF_File = async () => {
-    this.setState({ isLoading: true }, async () => {
+    // this.setState({ isLoading: true }, async () => {
       let permissionGranted = await AndroidPermission(Permission.PermissionTypes.WRITE_EXTERNAL_STORAGE)
       console.log("permission ", permissionGranted)
       if (permissionGranted) {
@@ -896,14 +893,14 @@ class Bible extends Component {
           '',
           'Do you want to download the pdf for current chapter',
           [
-            { text: 'No', onPress: () => { return } },
+            { text: 'No', onPress: () => {return } },
             { text: 'Yes', onPress: () => this.downloadPDF() },
           ],
         )
       } else {
         return
       }
-    })
+    // })
 
   }
 

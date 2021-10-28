@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { Modal, Text, TouchableOpacity, View, Alert, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialIcons'
 import { Card, Accordion } from 'native-base'
 import { updateContentType, parallelVisibleView, fetchAllContent, fetchVersionBooks, parallelMetadta, selectContent } from '../../store/action/'
 import { styles } from '../../screens/LanguageList/styles'
@@ -110,16 +110,16 @@ class SelectContent extends Component {
                 modalVisible: false,
                 visibleParallelView: true,
               })
-                this.props.selectContent({
-                  parallelLanguage: {
-                    languageName: item.languageName, versionCode: v.versionCode,
-                    sourceId: v.sourceId
-                  },
-                  parallelMetaData: v.metaData[0]
-                })
-                this.props.updateContentType({
-                  parallelContentType: contentType
-                })
+              this.props.selectContent({
+                parallelLanguage: {
+                  languageName: item.languageName, versionCode: v.versionCode,
+                  sourceId: v.sourceId
+                },
+                parallelMetaData: v.metaData[0]
+              })
+              this.props.updateContentType({
+                parallelContentType: contentType
+              })
             }}
           >
             <Text style={this.styles.selectionHeaderModal}>{v.versionName}</Text>
@@ -200,13 +200,20 @@ class SelectContent extends Component {
         </Modal>
         <TouchableOpacity
           onPress={this.onPressModal}
-          style={this.props.navStyles.touchableStyleRight}
-        >
-          <MaterialCommunityIcons
-            name={"book-open-variant"}
-            color={Color.White}
-            size={26}
-          />
+          style={this.props.navStyles.touchableStyleRight}>
+          <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+            {this.props.title ? <Text style={{ color: Color.White,fontSize:18,fontWeight:'normal' }}>{this.props.title}</Text> : null}
+            {
+              this.props.iconName ?
+                <MaterialCommunityIcons
+                  name={this.props.iconName}
+                  color={Color.White}
+                  size={26}
+                /> : null
+            }
+
+          </View>
+
         </TouchableOpacity>
       </View>
     );

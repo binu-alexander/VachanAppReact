@@ -295,7 +295,7 @@ class LanguageList extends Component {
         >
           {item.languageName}
         </Text>
-        <Icon style={this.styles.iconStyle} name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up"} size={24} />
+        <Icon style={this.styles.iconStyle} name={"keyboard-arrow-down"} size={24} />
       </View>
     )
   }

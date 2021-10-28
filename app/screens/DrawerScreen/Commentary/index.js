@@ -4,11 +4,12 @@ import {
   Alert,
   Text,
   View,
-  StyleSheet
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions
 } from 'react-native';
 import { connect } from 'react-redux';
-import { Body, Header, Right, Title, Button, Left } from 'native-base';
-import { vachanAPIFetch, fetchVersionBooks } from '../../../store/action/index';
+import { vachanAPIFetch, fetchVersionBooks, selectContent } from '../../../store/action/index';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { styles } from './styles';
 import Color from '../../../utils/colorConstants';
@@ -18,58 +19,201 @@ import vApi from '../../../utils/APIFetch';
 import securityVaraibles from '../../../../securityVaraibles';
 import SelectContent from "../../../components/Bible/SelectContent";
 import constants from '../../../utils/constants';
+import ModalDropdown from 'react-native-modal-dropdown';
+import { getBookChaptersFromMapping } from '../../../utils/UtilFunctions'
+
+const height = Dimensions.get('window').height
 
 const commentaryKey = securityVaraibles.COMMENTARY_KEY ? '?key=' + securityVaraibles.COMMENTARY_KEY : ''
 
 class DrawerCommentary extends Component {
+
   constructor(props) {
     super(props)
     this.state = {
       commentary: [],
+      totalChapters: Array.from(
+        new Array(
+          getBookChaptersFromMapping(this.props.bookId)
+        ),
+        (x, i) => (i + 1).toString()
+      ),
+      chapterNumber: this.props.chapterNumber,
       error: null,
       bookName: this.props.bookName,
-      bookNameList: []
+      bookId:this.props.bookId,
+      bookNameList: [],
+      dropDownList: [],
+      bookResponse: [],
+      bookId: this.props.bookId,
+      parallelMetaData: this.props.parallelMetaData,
+      parallelLanguage: this.props.parallelLanguage,
+      selectedBookIndex: -1,
+      selectedBook: this.props.bookName
     }
     this.styles = styles(this.props.colorFile, this.props.sizeFile)
     this.alertPresent = false
   }
-  // fetch bookname in perticular language of commenatry
+
   async fetchBookName() {
     try {
       let response = await vApi.get('booknames')
-      this.setState({ bookNameList: response })
+      this.setState({ bookResponse: response }, () => {
+        this.updateBookName()
+      })
     } catch (error) {
-      this.setState({ error: error, bookNameList: [] });
+      this.setState({ error: error, bookNameList: [], bookResponse: [] });
+    }
+  }
+  updateBookName() {
+    let res = this.state.bookResponse
+    if (res.length > 0) {
+      var bookNameList = []
+      var dropDownList = []
+      if (res) {
+        for (var i = 0; i <= res.length - 1; i++) {
+          let parallelLanguage = this.state.parallelLanguage.languageName.toLowerCase()
+          if (res[i].language.name === parallelLanguage) {
+            var bookList = res[i].bookNames.sort(function (a, b) { return a.book_id - b.book_id })
+            for (var j = 0; j <= bookList.length - 1; j++) {
+              let bId = bookList[j].book_code
+              let bName = bookList[j].short
+              let bNumber = bookList[j].book_id
+              if(bId == this.state.bookId){
+                this.setState({bookName: bName,bookId:bId})
+              }
+              bookNameList.push({ bookName: bName, bookId: bId, bookNumber: bNumber })
+              dropDownList.push(bName)
+            }
+          }
+        }
+        this.setState({ bookNameList, dropDownList })
+      } else {
+        return
+      }
     }
   }
 
-  fetchCommentary() {
-    let sourceId = this.props.parallelContentType == 'bible' ? constants.defaultCommentary.sourceId : this.props.parallelLanguage.sourceId
-    let url = "commentaries/" + sourceId + "/" + this.props.bookId + "/" + this.props.chapterNumber + commentaryKey
+  onSelectBook = (index, val) => {
+    var bookId = null
+    this.state.bookNameList.forEach((item) => {
+      if (item.bookName == val) {
+        bookId = item.bookId
+      }
+    })
+    this.setState({
+      bookId,
+      totalChapters: Array.from(new Array(getBookChaptersFromMapping(bookId)),
+        (x, i) => (i + 1).toString()
+      )
+    }, () => {
+      let selectedNumber = this.state.totalChapters.length < this.state.chapterNumber ? '1' : this.state.chapterNumber
+      this._dropdown_2.select(parseInt(selectedNumber) - 1)
+      this.setState({ chapterNumber: selectedNumber, selectedBookIndex: index, selectedBook: val, bookName: val }, () => {
+        this.commentaryUpdate()
+      })
+    })
+  };
+
+  onSelectChapter = (index, value) => {
+    this.setState({ chapterNumber: parseInt(value) }, () => {
+      this.commentaryUpdate()
+    })
+  }
+  commentaryUpdate() {
+    let url = "commentaries/" + this.state.parallelLanguage.sourceId + "/" + this.state.bookId + "/" + this.state.chapterNumber + commentaryKey
     this.props.vachanAPIFetch(url)
-    this.fetchBookName()
+  }
+  fetchCommentary() {
+    let commentary = []
+    this.props.availableContents.forEach((element) => {
+      if (element.contentType == "commentary") {
+        element.content.forEach((lang) => {
+          if (lang.languageName == this.props.language) {
+            commentary = lang
+          }
+        })
+      }
+    })
+    if (Object.keys(commentary).length > 0) {
+      this.setState({
+        parallelMetaData: commentary.versionModels[0].metaData[0],
+        parallelLanguage: { languageName: commentary.languageName, versionCode: commentary.versionModels[0].versionCode, sourceId: commentary.versionModels[0].sourceId }
+      }, () => {
+        this.commentaryUpdate()
+        this.props.selectContent({
+          parallelLanguage: this.state.parallelLanguage,
+          parallelMetaData: this.state.parallelMetaData
+        })
+      })
+    } else {
+      this.setState({
+        parallelMetaData: constants.defaultCommentaryMd,
+        parallelLanguage: constants.defaultCommentary
+      }, () => {
+        this.commentaryUpdate()
+        this.props.selectContent({
+          parallelLanguage: constants.defaultCommentary,
+          parallelMetaData: constants.defaultCommentaryMd
+        })
+      })
+    }
   }
 
   componentDidMount() {
     this.props.navigation.setOptions({
-      headerTitle: () => <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff' }}>{this.props.parallelLanguage && (this.props.parallelContentType == 'bible' ? constants.defaultCommentary.versionCode : this.props.parallelLanguage.versionCode)}</Text>,
+      headerTitle: () => <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff' }}>Commentary</Text>,
       headerRight: () =>
-        <View style={{paddingHorizontal:10}}>
+        <View style={{ paddingHorizontal: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
           <SelectContent
             navigation={this.props.navigation}
             navStyles={navStyles}
+            iconName={"arrow-drop-down"}
+            title={this.state.parallelLanguage.languageName}
             displayContent="commentary"
           />
         </View>
-
     })
+    this.fetchBookName()
     this.fetchCommentary()
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log(" ", prevProps.parallelLanguage)
-    if (prevProps.parallelLanguage.sourceId != this.props.parallelLanguage.sourceId) {
-      this.fetchCommentary()
+    if (prevProps.parallelLanguage.sourceId !== this.props.parallelLanguage.sourceId) {
+      this.setState({
+        parallelLanguage: this.props.parallelLanguage,
+        parallelMetaData: this.props.parallelMetaData
+      }, async () => {
+        this.props.navigation.setOptions({
+          headerRight: () =>
+            <View style={{ paddingHorizontal: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+              <SelectContent
+                navigation={this.props.navigation}
+                navStyles={navStyles}
+                iconName={"arrow-drop-down"}
+                title={this.state.parallelLanguage.languageName}
+                displayContent="commentary"
+              />
+            </View>
+        })
+        this.commentaryUpdate()
+        this.updateBookName()
+      })
+    }
+    console.log("prev state ,", prevState.dropDownList[0], this.state.dropDownList[0])
+    if (prevState.dropDownList[0] != this.state.dropDownList[0]) {
+    console.log("not ,")
+      if (this.state.selectedBookIndex == -1) {
+        this.state.dropDownList.forEach((b, index) => {
+          if (this.state.bookName == b) {
+            console.log("BOOK NAME ",b)
+            this.onSelectBook(index,b)
+            // this._dropdown_1.select(index)
+          }
+        })
+      } else {
+        this._dropdown_1.select(this.state.selectedBookIndex)
+      }
     }
   }
 
@@ -79,9 +223,7 @@ class DrawerCommentary extends Component {
       if (this.props.error || this.state.error) {
         Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
         if (this.props.parallelLanguage) {
-          this.fetchCommentary()
-          // const url = "commentaries/" + this.props.parallelLanguage.sourceId + "/" + this.props.bookId + "/" + this.props.chapterNumber + commentaryKey
-          // this.props.vachanAPIFetch(url)
+          this.commentaryUpdate()
         }
       } else {
         this.alertPresent = false;
@@ -91,6 +233,7 @@ class DrawerCommentary extends Component {
   updateData = () => {
     this.errorMessage()
   }
+
   renderItem = ({ item }) => {
     return (
       <View style={{ padding: 10 }}>
@@ -120,7 +263,8 @@ class DrawerCommentary extends Component {
 
   }
   renderFooter = () => {
-    var metadata = this.props.parallelContentType == 'bible' ? constants.defaultCommentaryMd : this.props.parallelMetaData
+    var metadata = this.state.parallelMetaData
+    console.log("FOOTER ",this.state.parallelMetaData)
     return (
       <View style={{ paddingVertical: 20 }}>
         {
@@ -140,7 +284,7 @@ class DrawerCommentary extends Component {
             )}
             {metadata?.license !== null && metadata?.license !== "" && (
               <Text textBreakStrategy={"simple"} style={{ textAlign: 'center' }}>
-                <Text >
+                <Text>
                   Technology partner:
                 </Text >{" "}
                 {metadata?.license}
@@ -151,34 +295,11 @@ class DrawerCommentary extends Component {
       </View>
     );
   };
-  render() {
-    var bookName = null
-    if (this.state.bookNameList) {
 
-      for (var i = 0; i <= this.state.bookNameList.length - 1; i++) {
-        let parallelLanguage = this.props.parallelLanguage && (this.props.parallelContentType == 'bible' ? constants.defaultCommentary.languageName.toLocaleLowerCase() : this.props.parallelLanguage.languageName.toLowerCase())
-        if (this.state.bookNameList[i].language.name === parallelLanguage) {
-          for (var j = 0; j <= this.state.bookNameList[i].bookNames.length - 1; j++) {
-            var bId = this.state.bookNameList[i].bookNames[j].book_code
-            if (bId == this.props.bookId) {
-              bookName = this.state.bookNameList[i].bookNames[j].short
-            }
-          }
-        }
-      }
-    } else {
-      return
-    }
+  render() {
+    console.log("parallel meta data ",this.state.parallelMetaData)
     return (
       <View style={this.styles.container}>
-        {/* <Header style={{ backgroundColor: Color.Blue_Color, height: 40, borderLeftWidth: 0.5, borderLeftColor: Color.White }} >
-          <Body>
-            <Title style={{ fontSize: 16 }}>{this.props.parallelLanguage && ( this.props.parallelContentType == 'bible' ?  constants.defaultCommentary.versionCode : this.props.parallelLanguage.versionCode)}</Title>
-          </Body>
-          <Right>
-           
-          </Right>
-        </Header> */}
         {
           (this.props.error) ?
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -190,7 +311,51 @@ class DrawerCommentary extends Component {
             </View>
             : (this.props.parallelLanguage == undefined ? null :
               <View style={{ flex: 1 }}>
-                <Text style={[this.styles.commentaryHeading, { margin: 10 }]}>{bookName != null && bookName} { } {this.props.commentaryContent && this.props.commentaryContent.chapter}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      this._dropdown_1 && this._dropdown_1.show();
+                    }}
+                    style={{
+                      padding: 10,
+                      margin: 10,
+                      borderRadius: 10,
+                      width: 150,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderColor: this.props.colorFile.iconColor,
+                      borderWidth: 0.5,
+                    }}
+                  >
+                    <ModalDropdown
+                      ref={el => this._dropdown_1 = el} options={this.state.dropDownList} onSelect={this.onSelectBook}
+                      style={{ paddingRight: 20 }} defaultValue={this.state.bookName}
+                      isFullWidth={true} dropdownStyle={{ width: "60%", height: height / 2 }}
+                      dropdownTextStyle={{ fontSize: 18 }}
+                      textStyle={{
+                        paddingHorizontal: 8,
+                        fontSize: 18,
+                        fontWeight: "400",
+                        color: this.props.colorFile.textColor,
+                      }}
+                    />
+                    <Icon
+                      name="arrow-drop-down"
+                      color={this.props.colorFile.iconColor}
+                      size={20}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => { this._dropdown_2 && this._dropdown_2.show(); }} style={{ padding: 10, margin: 10, borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderColor: this.props.colorFile.iconColor, borderWidth: 0.5 }}>
+                    <ModalDropdown
+                      ref={el => this._dropdown_2 = el}
+                      options={this.state.totalChapters} onSelect={this.onSelectChapter}
+                      defaultValue={this.state.chapterNumber} isFullWidth={true}
+                      dropdownStyle={{ width: "60%", height: height / 2 }} dropdownTextStyle={{ fontSize: 18 }}
+                      textStyle={{ fontSize: 18, fontWeight: '400', color: this.props.colorFile.textColor }} />
+                    <Icon name="arrow-drop-down" color={this.props.colorFile.iconColor} size={20} />
+                  </TouchableOpacity>
+                </View>
                 <FlatList
                   data={this.props.commentaryContent && this.props.commentaryContent.commentaries}
                   showsVerticalScrollIndicator={false}
@@ -211,6 +376,7 @@ class DrawerCommentary extends Component {
 const mapStateToProps = state => {
   return {
     language: state.updateVersion.language,
+    availableContents: state.contents.contentLanguages,
     versionCode: state.updateVersion.versionCode,
     sourceId: state.updateVersion.sourceId,
     downloaded: state.updateVersion.downloaded,
@@ -234,6 +400,7 @@ const mapDispatchToProps = dispatch => {
   return {
     vachanAPIFetch: (payload) => dispatch(vachanAPIFetch(payload)),
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
+    selectContent: (payload) => dispatch(selectContent(payload)),
   }
 }
 

@@ -45,10 +45,10 @@ module.exports = {
         MARKER_FOOT_NOTES_TEXT: 'ft',
         MARKER_FOOT_NOTES_QUOTATION: 'fq'
     },
-    PermissionTypes:{
-        WRITE_EXTERNAL_STORAGE:'WRITE_EXTERNAL_STORAGE',
-        READ_EXTERNAL_STORAGE:'READ_EXTERNAL_STORAGE',
-        CAMERA:'CAMERA'
+    PermissionTypes: {
+        WRITE_EXTERNAL_STORAGE: 'WRITE_EXTERNAL_STORAGE',
+        READ_EXTERNAL_STORAGE: 'READ_EXTERNAL_STORAGE',
+        CAMERA: 'CAMERA'
     },
     defaultCommentary: {
         languageName: 'Hindi',
@@ -56,23 +56,18 @@ module.exports = {
         sourceId: 24
     },
     defaultCommentaryMd: {
-        abbreviation: 'Hindi IRVn',
-        contact: 'info@bridgeconn.com',
-        contentType: 'Commentary',
-        copyrightHolder: 'Bridge Connectivity Solutions',
-        description: '',
-        languageCode: '',
-        languageName: '',
-        license: 'Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)',
-        licenseURL: '',
-        NTURL: '',
-        OTURL: '',
-        publicDomain: 'No',
-        revision: '',
-        source: 'Compiled',
-        technologyPartner: 'Bridge Connectivity Solutions',
-        versionName: 'Hindi IRV Notes',
-        versionNameGL: ''
+        "NTURL": "",
+        "OTURL": "",
+        "abbreviation": "Hindi IRVn",
+        "contact": "info@bridgeconn.com",
+        "contentType": "Commentary",
+        "copyrightHolder": "Bridge Connectivity Solutions",
+        "description": "", "languageCode": "", "languageName": "",
+        "license": "Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
+        "licenseURL": "", "publicDomain": "No", "revision": "",
+        "source": "Compiled", "technologyPartner": "Bridge Connectivity Solutions",
+        "versionName": "Hindi IRV Notes",
+        "versionNameGL": ""
     }
 
 }
