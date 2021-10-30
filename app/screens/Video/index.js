@@ -5,14 +5,14 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
-} from 'react-native';
-import { connect } from 'react-redux'
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import { bookStyle } from './styles.js'
-import { Card, CardItem } from 'native-base'
-import { Toast } from 'native-base'
-import vApi from '../../utils/APIFetch';
-import Colors from '../../utils/colorConstants'
+} from "react-native";
+import { connect } from "react-redux";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import { bookStyle } from "./styles.js";
+import { Card, CardItem } from "native-base";
+import { Toast } from "native-base";
+import vApi from "../../utils/APIFetch";
+import Colors from "../../utils/colorConstants";
 class Video extends Component {
   constructor(props) {
     super(props);
@@ -77,9 +77,8 @@ class Video extends Component {
               this.state.bookName +
               " is unavailable. You can check other books",
             duration: 8000,
-            position: "top"
-          })
-         
+            position: "top",
+          });
         }
         var elements = videoAll.reduce(function (previous, current) {
           var object = previous.filter(
@@ -111,41 +110,58 @@ class Video extends Component {
       this.fetchVideo();
     }
   }
-  renderItem = ({ item }) => {
-    return (
-      <Card>
-        <CardItem style={this.styles.cardItemStyle}>
-          <TouchableOpacity
-            style={this.styles.videoView}
-            onPress={() => this.playVideo(item)}
-          >
-            <Text style={this.styles.videoText}>{item.title}</Text>
-          </TouchableOpacity>
-        </CardItem>
-      </Card>
-    );
-  };
+  // renderItem = ({ item }) => {
+  //   return (
+  //     <Card>
+  //       <CardItem style={this.styles.cardItemStyle}>
+  //         <TouchableOpacity
+  //           style={this.styles.videoView}
+  //           onPress={() => this.playVideo(item)}
+  //         >
+  //           <Text style={this.styles.videoText}>{item.title}</Text>
+  //         </TouchableOpacity>
+  //       </CardItem>
+  //     </Card>
+  //   );
+  // };
   render() {
     return (
       <View style={this.styles.container}>
-        {
-          this.state.isLoading ?
-            <ActivityIndicator size="small" color={Colors.Blue_Color} animate={true} style={{flex:1 ,justifyContent: 'center', alignSelf: 'center' }} /> :
-            <FlatList
-              data={this.state.videos}
-              contentContainerStyle={this.state.videos.length === 0 && this.styles.centerEmptySet}
-              renderItem={this.renderItem}
-              extraData={this.state}
-              ListEmptyComponent={
-                <View style={this.styles.emptyMessageContainer}>
-                  <Icon name="video-library" style={this.styles.emptyMessageIcon}/>
-                  <Text style={this.styles.messageEmpty}>
-                    No Video for {this.props.languageName}
-                  </Text>
-                </View>
-              }
-            />
-        }
+        {/* {this.state.isLoading ? (
+          <ActivityIndicator
+            size="small"
+            color={Colors.Blue_Color}
+            animate={true}
+            style={{ flex: 1, justifyContent: "center", alignSelf: "center" }}
+          />
+        ) : ( */}
+        <FlatList
+          data={this.state.videos}
+          contentContainerStyle={
+            this.state.videos.length === 0 && this.styles.centerEmptySet
+          }
+          renderItem={({ item }) => (
+            <Card>
+              <CardItem style={this.styles.cardItemStyle}>
+                <TouchableOpacity
+                  style={this.styles.videoView}
+                  onPress={() => this.playVideo(item)}
+                >
+                  <Text style={this.styles.videoText}>{item.title}</Text>
+                </TouchableOpacity>
+              </CardItem>
+            </Card>
+          )}
+          extraData={this.state}
+          ListEmptyComponent={
+            <View style={this.styles.emptyMessageContainer}>
+              <Icon name="video-library" style={this.styles.emptyMessageIcon} />
+              <Text style={this.styles.messageEmpty}>
+                No Video for {this.props.languageName}
+              </Text>
+            </View>
+          }
+        />
       </View>
     );
   }
