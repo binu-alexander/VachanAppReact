@@ -1,173 +1,229 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   Text,
   View,
-  TextInput,
   TouchableOpacity,
   Alert,
-  ScrollView,
   StyleSheet,
-  StatusBar
-} from 'react-native';
-import FlowLayout from '../../components/FlowLayout';
-import { CommonActions } from '@react-navigation/native';
-import { HeaderBackButton } from '@react-navigation/stack';
-import { noteStyle } from './styles.js';
-import { connect } from 'react-redux';
-import database from '@react-native-firebase/database';
-import Color from '../../utils/colorConstants';
-import { getBookChaptersFromMapping } from '../../utils/UtilFunctions';
-import { updateVersionBook } from '../../store/action/';
-import QuillEditor, { QuillToolbar } from 'react-native-cn-quill';
+  StatusBar,
+} from "react-native";
+import FlowLayout from "../../components/FlowLayout";
+import { CommonActions } from "@react-navigation/native";
+import { HeaderBackButton } from "@react-navigation/stack";
+import { noteStyle } from "./styles.js";
+import { connect } from "react-redux";
+import database from "@react-native-firebase/database";
+import Color from "../../utils/colorConstants";
+import { getBookChaptersFromMapping } from "../../utils/UtilFunctions";
+import { updateVersionBook } from "../../store/action/";
+import QuillEditor, { QuillToolbar } from "react-native-cn-quill";
 
 class EditNote extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      noteIndex: this.props.route.params ? this.props.route.params.noteIndex : null,
-      noteObject: this.props.route.params ? this.props.route.params.notesList : null,
+      noteIndex: this.props.route.params
+        ? this.props.route.params.noteIndex
+        : null,
+      noteObject: this.props.route.params
+        ? this.props.route.params.notesList
+        : null,
       bcvRef: this.props.route.params ? this.props.route.params.bcvRef : null,
       isLoading: false,
-      contentBody: this.props.route.params ? this.props.route.params.contentBody : null,
+      contentBody: this.props.route.params
+        ? this.props.route.params.contentBody
+        : null,
       modalVisible: false,
-    }
+    };
     this._editor = React.createRef();
     this.styles = noteStyle(props.colorFile, props.sizeFile);
   }
   saveNote = async () => {
-    var time = Date.now()
-    var firebaseRef = database().ref("users/" + this.props.uid + "/notes/" + this.props.sourceId + "/" + this.state.bcvRef.bookId)
-    if (this.state.contentBody == '') {
-      alert(" Note should not be empty")
-    }
-    else {
-      var edit = database().ref("users/" + this.props.uid + "/notes/" + this.props.sourceId + "/" + this.state.bcvRef.bookId + "/" + this.state.bcvRef.chapterNumber)
+    var time = Date.now();
+    var firebaseRef = database().ref(
+      "users/" +
+        this.props.uid +
+        "/notes/" +
+        this.props.sourceId +
+        "/" +
+        this.state.bcvRef.bookId
+    );
+    if (this.state.contentBody == "") {
+      alert(" Note should not be empty");
+    } else {
+      var edit = database().ref(
+        "users/" +
+          this.props.uid +
+          "/notes/" +
+          this.props.sourceId +
+          "/" +
+          this.state.bcvRef.bookId +
+          "/" +
+          this.state.bcvRef.chapterNumber
+      );
       if (this.state.noteIndex != -1) {
-        var updates = {}
+        let updates = {};
         updates["/" + this.state.noteIndex] = {
           createdTime: time,
           modifiedTime: time,
           body: this.state.contentBody,
-          verses: this.state.bcvRef.verses
-        }
-        edit.update(updates)
-      }
-      else {
+          verses: this.state.bcvRef.verses,
+        };
+        edit.update(updates);
+      } else {
         var notesArray = this.state.noteObject.concat({
           createdTime: time,
           modifiedTime: time,
           body: this.state.contentBody,
-          verses: this.state.bcvRef.verses
-        })
-        var updates = {}
-        updates[this.state.bcvRef.chapterNumber] = notesArray
-        firebaseRef.update(updates)
+          verses: this.state.bcvRef.verses,
+        });
+        let updates = {};
+        updates[this.state.bcvRef.chapterNumber] = notesArray;
+        firebaseRef.update(updates);
       }
-      this.props.route.params.onbackNote()
-      this.props.navigation.pop()
+      this.props.route.params.onbackNote();
+      this.props.navigation.pop();
     }
-  }
+  };
 
   showAlert() {
-    Alert.alert(
-      'Save Changes ? ',
-      'Do you want to save the note ',
-      [
-        { text: 'Cancel', onPress: () => { return } },
-        { text: 'No', onPress: () => {this.props.navigation.dispatch(CommonActions.goBack()) } },
-        { text: 'Yes', onPress: () => this.saveNote() },
-      ],
-    )
+    Alert.alert("Save Changes ? ", "Do you want to save the note ", [
+      {
+        text: "Cancel",
+        onPress: () => {
+          return;
+        },
+      },
+      {
+        text: "No",
+        onPress: () => {
+          this.props.navigation.dispatch(CommonActions.goBack());
+        },
+      },
+      { text: "Yes", onPress: () => this.saveNote() },
+    ]);
   }
 
   onBack = async () => {
     if (this.state.noteIndex == -1) {
-      if (this.state.contentBody == '') {
+      if (this.state.contentBody == "") {
+        return;
       }
       this.showAlert();
-      return
-    }
-    else {
-      if (this.state.contentBody !== this.props.route.params.contentBody
-        || this.state.bcvRef.verses.length !== this.props.route.params.bcvRef.verses.length
+      return;
+    } else {
+      if (
+        this.state.contentBody !== this.props.route.params.contentBody ||
+        this.state.bcvRef.verses.length !==
+          this.props.route.params.bcvRef.verses.length
       ) {
         this.showAlert();
-        return
+        return;
       }
       this.props.navigation.dispatch(CommonActions.goBack());
     }
-
-  }
+  };
   componentDidMount() {
     this.props.navigation.setOptions({
-      headerTitle: () => <Text style={{ fontSize: 16, color: Color.White, fontWeight: '700', marginRight: 12 }}>Note</Text>,
-      headerLeft: () => <HeaderBackButton tintColor={Color.White} onPress={() => this.onBack()} />,
-      headerRight: () =>
+      headerTitle: () => (
+        <Text
+          style={{
+            fontSize: 16,
+            color: Color.White,
+            fontWeight: "700",
+            marginRight: 12,
+          }}
+        >
+          Note
+        </Text>
+      ),
+      headerLeft: () => (
+        <HeaderBackButton
+          tintColor={Color.White}
+          onPress={() => this.onBack()}
+        />
+      ),
+      headerRight: () => (
         <TouchableOpacity style={{ margin: 8 }} onPress={() => this.saveNote()}>
-          <Text style={{ fontSize: 16, color: Color.White, fontWeight: '700', marginRight: 12 }}>Save</Text>
-        </TouchableOpacity>,
-    })
+          <Text
+            style={{
+              fontSize: 16,
+              color: Color.White,
+              fontWeight: "700",
+              marginRight: 12,
+            }}
+          >
+            Save
+          </Text>
+        </TouchableOpacity>
+      ),
+    });
   }
 
-  openReference = (index, value) => {
-    if (this.state.contentBody !== this.props.route.params.contentBody
-      || this.state.bcvRef.verses.length !== this.props.route.params.bcvRef.verses.length
+  openReference = () => {
+    if (
+      this.state.contentBody !== this.props.route.params.contentBody ||
+      this.state.bcvRef.verses.length !==
+        this.props.route.params.bcvRef.verses.length
     ) {
-      Alert.alert(
-        'Save Changes ? ',
-        'Do you want to save the note ',
-        [
-          { text: 'Cancel', onPress: () => { return } },
-          {
-            text: 'No', onPress: () => {
-              this.props.updateVersionBook({
-                bookId: this.state.bcvRef.bookId,
-                bookName: this.state.bcvRef.bookName,
-                chapterNumber: this.state.bcvRef.chapterNumber,
-                totalChapters: getBookChaptersFromMapping(this.state.bcvRef.bookId),
-              })
-              this.props.navigation.navigate("Bible")
-            }
+      Alert.alert("Save Changes ? ", "Do you want to save the note ", [
+        {
+          text: "Cancel",
+          onPress: () => {
+            return;
           },
-          { text: 'Yes', onPress: () => this.saveNote() },
-        ],
-      )
-      return
+        },
+        {
+          text: "No",
+          onPress: () => {
+            this.props.updateVersionBook({
+              bookId: this.state.bcvRef.bookId,
+              bookName: this.state.bcvRef.bookName,
+              chapterNumber: this.state.bcvRef.chapterNumber,
+              totalChapters: getBookChaptersFromMapping(
+                this.state.bcvRef.bookId
+              ),
+            });
+            this.props.navigation.navigate("Bible");
+          },
+        },
+        { text: "Yes", onPress: () => this.saveNote() },
+      ]);
+      return;
     }
     this.props.updateVersionBook({
       bookId: this.state.bcvRef.bookId,
       bookName: this.state.bcvRef.bookName,
       chapterNumber: this.state.bcvRef.chapterNumber,
       totalChapters: getBookChaptersFromMapping(this.state.bcvRef.bookId),
-    })
-    this.props.navigation.navigate('Bible')
-  }
+    });
+    this.props.navigation.navigate("Bible");
+  };
 
   handleGetHtml = () => {
     this._editor.current?.getHtml().then((res) => {
-      console.log('Html :', res);
+      console.log("Html :", res);
     });
   };
 
   onHtmlChange = (html) => {
-    this.setState({contentBody:html.html})
-  }
+    this.setState({ contentBody: html.html });
+  };
   render() {
     return (
       <View style={{ flex: 1 }}>
         {/* <ScrollView style={this.styles.containerEditNote}> */}
-          <View style={this.styles.subContainer}>
-
-            {this.state.bcvRef
-              &&
-              <FlowLayout style={this.styles.tapButton}
-                dataValue={this.state.bcvRef}
-                openReference={(index) => this.openReference(index)}
-                styles={this.styles}
-              />
-            }
-          </View>
-          {/* <TextInput
+        <View style={this.styles.subContainer}>
+          {this.state.bcvRef && (
+            <FlowLayout
+              style={this.styles.tapButton}
+              dataValue={this.state.bcvRef}
+              openReference={(index) => this.openReference(index)}
+              styles={this.styles}
+            />
+          )}
+        </View>
+        {/* <TextInput
             style={this.styles.inputStyle}
             placeholder='Enter your note here'
             placeholderTextColor={this.styles.placeholderColor.color}
@@ -185,11 +241,11 @@ class EditNote extends Component {
           onHtmlChange={this.onHtmlChange}
           quill={{
             // not required just for to show how to pass this props
-            placeholder: 'Enter your note here',
+            placeholder: "Enter your note here",
             modules: {
               toolbar: false, // this is default value
             },
-            theme: 'bubble', // this is default value
+            theme: "bubble", // this is default value
           }}
           import3rdParties="cdn" // default value is 'local'
           initialHtml={this.state.contentBody}
@@ -198,22 +254,21 @@ class EditNote extends Component {
           editor={this._editor}
           theme="light"
           options={[
-            ['bold', 'italic', 'underline'],
+            ["bold", "italic", "underline"],
             [{ header: 1 }, { header: 2 }],
             [{ align: [] }],
             [
-              { color: ['#000000', '#e60000', '#ff9900', 'yellow'] },
+              { color: ["#000000", "#e60000", "#ff9900", "yellow"] },
               { background: [] },
-            ]
+            ],
           ]}
-         
         />
       </View>
-    )
+    );
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     language: state.updateVersion.language,
     versionCode: state.updateVersion.versionCode,
@@ -228,29 +283,28 @@ const mapStateToProps = state => {
     downloaded: state.updateVersion.downloaded,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-  }
-}
-const mapDispatchToProps = dispatch => {
+  };
+};
+const mapDispatchToProps = (dispatch) => {
   return {
-    updateVersionBook: (value) => dispatch(updateVersionBook(value))
-  }
-}
+    updateVersionBook: (value) => dispatch(updateVersionBook(value)),
+  };
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditNote)
-
+export default connect(mapStateToProps, mapDispatchToProps)(EditNote);
 
 var styles = StyleSheet.create({
   root: {
     flex: 1,
     marginTop: StatusBar.currentHeight || 0,
-    backgroundColor: '#eaeaea',
+    backgroundColor: "#eaeaea",
   },
   input: {
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
     marginHorizontal: 30,
     marginVertical: 5,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   textbox: {
     height: 40,
@@ -261,13 +315,13 @@ var styles = StyleSheet.create({
     padding: 0,
   },
   buttons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   btn: {
-    alignItems: 'center',
-    backgroundColor: '#ddd',
+    alignItems: "center",
+    backgroundColor: "#ddd",
     padding: 10,
     margin: 3,
   },

@@ -58,7 +58,7 @@ class ChapterSelection extends Component {
       prevSelectChap: prevState.selectedChapterNumber,
     };
   }
-  onNumPress = (item, index) => {
+  onNumPress = (item) => {
     var chapterNum = item == null ? this.state.selectedChapterNumber : item;
     let selectedChapter =
       chapterNum > this.state.totalChapters ? "1" : chapterNum;
