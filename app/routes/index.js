@@ -12,6 +12,9 @@ import Highlights from "../screens/Highlights/";
 import History from "../screens/History/";
 
 import Commentary from "../screens/StudyHelp/Commentary/";
+import DrawerCommentary from "../screens/DrawerScreen/Commentary/";
+
+
 import Dictionary from "../screens/StudyHelp/Dictionary/";
 import DictionaryWords from "../screens/StudyHelp/Dictionary/DictionaryWords";
 import Infographics from "../screens/StudyHelp/InfoGraphics/";
@@ -230,6 +233,14 @@ function NavStackScreen() {
           headerTitle: "Reading Plans",
         }}
       />
+      <DrawerStack.Screen
+        name="DrawerCommentary"
+        component={DrawerCommentary}
+        options={{
+          headerTitle: "Commentary",
+        }}
+      />
+      
       <NavStack.Screen
         name="OBS"
         component={OBS}

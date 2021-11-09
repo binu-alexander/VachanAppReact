@@ -12,7 +12,7 @@ import {
 import Spinner from 'react-native-loading-spinner-overlay';
 import { connect } from 'react-redux'
 import { Accordion } from 'native-base'
-import {vachanAPIFetch } from '../../../store/action/index'
+import { vachanAPIFetch } from '../../../store/action/index'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { styles } from './styles'
 import Color from '../../../utils/colorConstants'
@@ -25,15 +25,24 @@ class DictionaryWords extends Component {
     super(props)
     this.state = {
       modalVisibleDictionary: false,
-      dictionarySourceId:this.props.route.params ? this.props.route.params.dictionarySourceId : null,
+      dictionarySourceId: this.props.route.params ? this.props.route.params.dictionarySourceId : null,
+      dicMetaData: this.props.route.params ? this.props.route.params.metadata[0].metadata : null,
       wordDescription: [],
+      metadataVisible: false,
     }
     this.styles = styles(this.props.colorFile, this.props.sizeFile)
     this.alertPresent = false
 
   }
+
   componentDidMount() {
-    this.props.vachanAPIFetch("dictionaries/"+this.state.dictionarySourceId)
+    this.props.navigation.setOptions({
+      headerRight: () =>
+        <TouchableOpacity style={{ margin: 8 }} onPress={() => this.setState({ metadataVisible: !this.state.metadataVisible })}>
+          <Icon name="info" size={20} color="#fff" />
+        </TouchableOpacity>
+    })
+    this.props.vachanAPIFetch("dictionaries/" + this.state.dictionarySourceId)
   }
   fetchWord = async (word) => {
     try {
@@ -81,24 +90,25 @@ class DictionaryWords extends Component {
       this.alertPresent = true;
       if (this.props.dictionaryContent.length === 0) {
         Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
-        
-        this.props.vachanAPIFetch("dictionaries/"+this.props.dictionarySourceId)
+
+        this.props.vachanAPIFetch("dictionaries/" + this.props.dictionarySourceId)
       } else {
         this.alertPresent = false;
       }
     }
   }
   updateData = () => {
-    if(this.props.error){
-    this.errorMessage()
+    if (this.props.error) {
+      this.errorMessage()
     }
-    else{
+    else {
       return
     }
   }
 
 
   render() {
+    console.log("AVAILABLE CONTENT ", this.state.dicMetaData)
     return (
       <View style={this.styles.container}>
         {this.state.isLoading &&
@@ -129,7 +139,7 @@ class DictionaryWords extends Component {
                 transparent={true}
                 visible={this.state.modalVisibleDictionary}>
                 <View style={this.styles.dictionaryModalView}>
-                  <View style={{ width: '70%', height: '70%', position: 'absolute', zIndex: 0, }}>
+                  <View style={{ width: '80%', height: '70%', position: 'absolute', zIndex: 0, }}>
                     <Icon
                       name='cancel' onPress={() => this.setState({ modalVisibleDictionary: false })}
                       size={28} color={Color.Blue_Color} style={{ position: 'absolute', right: 0, zIndex: 1 }}
@@ -138,6 +148,53 @@ class DictionaryWords extends Component {
                       <Text style={this.styles.textString}>Description: {this.state.wordDescription.definition}</Text>
                       <Text style={this.styles.textString}>Keyword: {this.state.wordDescription.keyword}</Text>
                       {this.state.wordDescription.seeAlso != '' && <Text style={this.styles.textString}>See Also: {this.state.wordDescription.seeAlso}</Text>}
+                      <View style={{ marginBottom: 8 }} />
+                    </ScrollView>
+                  </View>
+                </View>
+              </Modal>
+              <Modal
+                animated={true}
+                transparent={true}
+                visible={this.state.metadataVisible}>
+                <View style={[this.styles.dictionaryModalView, { backgroundColor: 'rgba(250,250,250,0.3)' }]}>
+                  <View style={{ width: '80%', position: 'absolute', zIndex: 0}}>
+                    <Icon
+                      name='cancel' onPress={() => this.setState({ metadataVisible: false })}
+                      size={28} style={{ position: 'absolute', right: 0, zIndex: 1 }}
+                    />
+                    <ScrollView style={this.styles.dictionScrollModal}>
+                      <Text style={this.styles.textString}>{this.state.dicMetaData.hasOwnProperty("Description\u00a0") ? <Text style={{ fontWeight: '900' }}>Description :</Text> + this.state.dicMetaData["Description\u00a0"] : null}</Text>
+                      <Text style={this.styles.textString}>
+                        {this.state.dicMetaData.hasOwnProperty("Technology Partner") ?
+                          <Text>
+                            <Text style={{ fontWeight: 'bold' }}> Technology Partner:</Text>
+                            <Text>{this.state.dicMetaData["Technology Partner"]}</Text>
+                          </Text>
+                          : null}
+                      </Text>
+                      <Text style={this.styles.textString}>
+                        {this.state.dicMetaData.hasOwnProperty("License") ?
+                          <Text>
+                            <Text style={{ fontWeight: 'bold' }}>License:</Text>
+                            <Text>{this.state.dicMetaData["License"]}</Text>
+                          </Text>
+                          : null}
+                      </Text>
+                      <Text style={this.styles.textString}>
+                        {this.state.dicMetaData.hasOwnProperty("Revision (Name & Year)") ?
+                          <Text>
+                            <Text style={{ fontWeight: 'bold' }}>Revision:</Text>
+                            <Text>{this.state.dicMetaData["License"]}</Text>
+                          </Text>
+                          : null}</Text>
+                      <Text style={this.styles.textString}>
+                        {this.state.dicMetaData.hasOwnProperty("Copyright Holder") ?
+                          <Text>
+                            <Text style={{ fontWeight: 'bold' }}>Copyright Holder:</Text>
+                            <Text>{this.state.dicMetaData["Copyright Holder"]}</Text>
+                          </Text>
+                          : null}</Text>
                       <View style={{ marginBottom: 8 }} />
                     </ScrollView>
                   </View>
@@ -160,6 +217,7 @@ const mapStateToProps = state => {
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
     dictionaryContent: state.vachanAPIFetch.apiData,
+    contentLanguages: state.contents.contentLanguages,
     error: state.vachanAPIFetch.error,
   }
 

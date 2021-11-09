@@ -46,16 +46,21 @@ class Commentary extends Component {
         "/" +
         this.props.currentVisibleChapter +
         commentaryKey;
+      console.log("URL UPDATE ", url);
       this.props.vachanAPIFetch(url);
       this.fetchBookName();
     }
   }
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     if (
       this.props.bookId != prevProps.bookId ||
       prevProps.currentVisibleChapter != this.props.currentVisibleChapter
     ) {
       if (this.props.parallelLanguage) {
+        console.log(
+          " this.props.parallelLanguage ",
+          this.props.parallelLanguage
+        );
         const url =
           "commentaries/" +
           this.props.parallelLanguage.sourceId +
@@ -145,6 +150,47 @@ class Commentary extends Component {
       </View>
     );
   };
+  renderFooter = () => {
+    return (
+      <View style={{ paddingVertical: 20 }}>
+        {this.props.commentaryContent &&
+          this.props.commentaryContent.commentaries && (
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              {this.props.parallelMetaData?.revision !== null &&
+                this.props.parallelMetaData?.revision !== "" && (
+                  <Text
+                    textBreakStrategy={"simple"}
+                    style={{ textAlign: "center" }}
+                  >
+                    <Text>Copyright:</Text>{" "}
+                    {this.props.parallelMetaData?.revision}
+                  </Text>
+                )}
+              {this.props.parallelMetaData?.copyrightHolder !== null &&
+                this.props.parallelMetaData?.copyrightHolder !== "" && (
+                  <Text
+                    textBreakStrategy={"simple"}
+                    style={{ textAlign: "center" }}
+                  >
+                    <Text>License:</Text>{" "}
+                    {this.props.parallelMetaData?.copyrightHolder}
+                  </Text>
+                )}
+              {this.props.parallelMetaData?.license !== null &&
+                this.props.parallelMetaData?.license !== "" && (
+                  <Text
+                    textBreakStrategy={"simple"}
+                    style={{ textAlign: "center" }}
+                  >
+                    <Text>Technology partner:</Text>{" "}
+                    {this.props.parallelMetaData?.license}
+                  </Text>
+                )}
+            </View>
+          )}
+      </View>
+    );
+  };
   render() {
     var bookName = null;
     if (this.state.bookNameList) {
@@ -188,7 +234,7 @@ class Commentary extends Component {
           <Right>
             <Button
               transparent
-              onPress={() => this.props.toggleParallelView(false)}
+              onPress={() => this.props.closeParallelView(false)}
             >
               <Icon name="cancel" color={Color.White} size={20} />
             </Button>
@@ -224,6 +270,8 @@ class Commentary extends Component {
                 <View style={{ height: 40, marginBottom: 40 }}></View>
               }
               ListHeaderComponent={this.ListHeaderComponent}
+              // eslint-disable-next-line react/jsx-no-duplicate-props
+              ListFooterComponent={this.renderFooter}
             />
           </View>
         )}
@@ -248,6 +296,7 @@ const mapStateToProps = (state) => {
     error: state.vachanAPIFetch.error,
     baseAPI: state.updateVersion.baseAPI,
     parallelLanguage: state.selectContent.parallelLanguage,
+    parallelMetaData: state.selectContent.parallelMetaData,
   };
 };
 const mapDispatchToProps = (dispatch) => {

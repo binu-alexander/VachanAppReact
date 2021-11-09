@@ -207,12 +207,13 @@ class EditNote extends Component {
   };
 
   onHtmlChange = (html) => {
+    console.log("html ", html);
     this.setState({ contentBody: html.html });
   };
+
   render() {
     return (
-      <View style={{ flex: 1 }}>
-        {/* <ScrollView style={this.styles.containerEditNote}> */}
+      <View style={this.styles.containerEditNote}>
         <View style={this.styles.subContainer}>
           {this.state.bcvRef && (
             <FlowLayout
@@ -223,31 +224,25 @@ class EditNote extends Component {
             />
           )}
         </View>
-        {/* <TextInput
-            style={this.styles.inputStyle}
-            placeholder='Enter your note here'
-            placeholderTextColor={this.styles.placeholderColor.color}
-            value={this.state.contentBody}
-            onChangeText={(text) => this.setState({ contentBody: text })}
-            multiline={true}
-          /> */}
-        {/* </ScrollView> */}
         <QuillEditor
           // container={CustomContainer} // not required just to show how to pass cusom container
-          style={[styles.input, styles.editor]}
+          style={this.styles.editorInput}
           ref={this._editor}
           onSelectionChange={this.handleSelectionChange}
           onTextChange={this.handleTextChange}
           onHtmlChange={this.onHtmlChange}
           quill={{
-            // not required just for to show how to pass this props
             placeholder: "Enter your note here",
             modules: {
-              toolbar: false, // this is default value
+              toolbar: false,
             },
-            theme: "bubble", // this is default value
+            theme: "bubble",
           }}
-          import3rdParties="cdn" // default value is 'local'
+          theme={{
+            background: this.props.colorFile.fedBackgroundColor,
+            color: this.props.colorFile.textColor,
+          }}
+          import3rdParties="cdn"
           initialHtml={this.state.contentBody}
         />
         <QuillToolbar
@@ -255,8 +250,9 @@ class EditNote extends Component {
           theme="light"
           options={[
             ["bold", "italic", "underline"],
-            [{ header: 1 }, { header: 2 }],
+            [{ list: "ordered" }, { list: "bullet" }],
             [{ align: [] }],
+            [{ size: ["small", false, "large", "huge"] }],
             [
               { color: ["#000000", "#e60000", "#ff9900", "yellow"] },
               { background: [] },
@@ -293,36 +289,36 @@ const mapDispatchToProps = (dispatch) => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditNote);
 
-var styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
-    backgroundColor: "#eaeaea",
-  },
-  input: {
-    borderColor: "gray",
-    borderWidth: 1,
-    marginHorizontal: 30,
-    marginVertical: 5,
-    backgroundColor: "white",
-  },
-  textbox: {
-    height: 40,
-    paddingHorizontal: 20,
-  },
-  editor: {
-    flex: 1,
-    padding: 0,
-  },
-  buttons: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  btn: {
-    alignItems: "center",
-    backgroundColor: "#ddd",
-    padding: 10,
-    margin: 3,
-  },
-});
+// var styles = StyleSheet.create({
+//   root: {
+//     flex: 1,
+//     marginTop: StatusBar.currentHeight || 0,
+//     backgroundColor: "#eaeaea",
+//   },
+//   input: {
+//     borderColor: "gray",
+//     borderWidth: 1,
+//     marginHorizontal: 30,
+//     marginVertical: 5,
+//     backgroundColor: "white",
+//   },
+//   textbox: {
+//     height: 40,
+//     paddingHorizontal: 20,
+//   },
+//   editor: {
+//     flex: 1,
+//     padding: 0,
+//   },
+//   buttons: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     justifyContent: "center",
+//   },
+//   btn: {
+//     alignItems: "center",
+//     backgroundColor: "#ddd",
+//     padding: 10,
+//     margin: 3,
+//   },
+// });

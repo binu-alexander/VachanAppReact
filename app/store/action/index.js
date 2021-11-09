@@ -21,7 +21,7 @@ export {
   vachanAPISuccess,
   vachanAPIFailure,
 } from "./apiFetch/vachanAPIFetch";
-export { selectContent } from "./selectContent";
+export { selectContent,parallelVisibleView } from "./selectContent";
 export {
   fetchVersionLanguage,
   versionLanguageSuccess,

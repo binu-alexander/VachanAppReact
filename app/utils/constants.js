@@ -1,9 +1,6 @@
 // info such as our server URL
-export const UserEmail = "email";
-export const UserToken = "token";
 
 module.exports = {
-    BASE_URL: 'http://someurl.com',
     MarkerConstants: {
         MARKER_BOOK_NAME: "\\id",
         MARKER_CHAPTER_NUMBER: "\\c",
@@ -47,5 +44,32 @@ module.exports = {
         VERSE: "v",
         MARKER_FOOT_NOTES_TEXT: 'ft',
         MARKER_FOOT_NOTES_QUOTATION: 'fq'
+    },
+    PermissionTypes: {
+        WRITE_EXTERNAL_STORAGE: 'WRITE_EXTERNAL_STORAGE',
+        READ_EXTERNAL_STORAGE: 'READ_EXTERNAL_STORAGE',
+        CAMERA: 'CAMERA'
+    },
+    defaultCommentary: {
+        languageName: 'Hindi',
+        versionCode: 'HindiIRVn',
+        sourceId: 24
+    },
+    defaultCommentaryMd: {
+        "NTURL": "",
+        "OTURL": "",
+        "abbreviation": "Hindi IRVn",
+        "contact": "info@bridgeconn.com",
+        "contentType": "Commentary",
+        "copyrightHolder": "Bridge Connectivity Solutions",
+        "description": "", "languageCode": "", "languageName": "",
+        "license": "Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
+        "licenseURL": "", "publicDomain": "No", "revision": "",
+        "source": "Compiled", "technologyPartner": "Bridge Connectivity Solutions",
+        "versionName": "Hindi IRV Notes",
+        "versionNameGL": ""
     }
-};
+
+}
+
+// export default constants

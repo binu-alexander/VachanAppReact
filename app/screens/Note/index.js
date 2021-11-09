@@ -252,8 +252,7 @@ class Note extends Component {
                 <Icon name="note" style={this.styles.emptyMessageIcon} />
                 <Text
                   style={this.styles.messageEmpty}
-                  onPress={this.emptyMessageNavigation}
-                >
+                  onPress={this.emptyMessageNavigation}>
                   {this.state.message}
                 </Text>
               </View>

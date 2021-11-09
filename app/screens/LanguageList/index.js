@@ -343,7 +343,7 @@ class LanguageList extends Component {
     this.fetchLanguages();
   }
 
-  _renderHeader = (item, expanded) => {
+  _renderHeader = (item) => {
     return (
       <View
         style={{
@@ -356,7 +356,7 @@ class LanguageList extends Component {
         <Text style={this.styles.headerText}>{item.languageName}</Text>
         <Icon
           style={this.styles.iconStyle}
-          name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up"}
+          name={"keyboard-arrow-down"}
           size={24}
         />
       </View>

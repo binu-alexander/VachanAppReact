@@ -36,8 +36,8 @@ export const styles =(colorFile, sizeFile) =>{
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-
         },
+       
         cardStyle:{
             backgroundColor:colorFile.backgroundColor
         },
@@ -56,6 +56,14 @@ export const styles =(colorFile, sizeFile) =>{
             padding:12,
             flex:1,
             borderColor:Color.Blue_Color,
+            borderWidth:1,
+            backgroundColor:colorFile.backgroundColor,
+            
+        },
+        dictionScrollModal:{
+            margin:12,
+            padding:12,
+            flex:1,
             borderWidth:1,
             backgroundColor:colorFile.backgroundColor
         },

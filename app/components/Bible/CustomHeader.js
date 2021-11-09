@@ -94,6 +94,7 @@ export default class CustomHeader extends Component {
           <SelectContent
             navigation={this.props.navigation}
             navStyles={navStyles}
+            iconName={"auto-stories"}
           />
           <TouchableOpacity style={navStyles.touchableStyleRight}>
             <Icon

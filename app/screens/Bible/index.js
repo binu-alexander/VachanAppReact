@@ -14,6 +14,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import { createResponder } from "react-native-gesture-responder";
 import DbQueries from "../../utils/dbQueries";
 import VerseView from "./VerseView";
+// var RNFS = require("react-native-fs");
 import {
   extraSmallFont,
   smallFont,
@@ -26,6 +27,7 @@ import {
   ToggleAudio,
   fetchVersionBooks,
   selectContent,
+  parallelVisibleView,
   updateNetConnection,
   userInfo,
   updateVersionBook,
@@ -33,6 +35,7 @@ import {
   updateFontSize,
   updateVersion,
   updateMetadata,
+  // allBooksSuccess,
 } from "../../store/action/";
 import { getBookChaptersFromMapping } from "../../utils/UtilFunctions";
 import CustomHeader from "../../components/Bible/CustomHeader";
@@ -50,8 +53,9 @@ import auth from "@react-native-firebase/auth";
 import database from "@react-native-firebase/database";
 import vApi from "../../utils/APIFetch";
 import HighlightColorGrid from "../../components/Bible/HighlightColorGrid";
-import { getHeading } from "../../utils/UtilFunctions";
+import { getHeading, AndroidPermission } from "../../utils/UtilFunctions";
 import RNHTMLtoPDF from "react-native-html-to-pdf";
+import Permission from "../../utils/constants";
 const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
 const width = Dimensions.get("window").width;
 const NAVBAR_HEIGHT = 64;
@@ -201,20 +205,16 @@ class Bible extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log("COMPONENT UPDATE ");
     if (
       prevProps.language != this.props.language ||
       prevProps.sourceId != this.props.sourceId ||
       prevProps.baseAPI != this.props.baseAPI ||
       prevProps.bookId != this.props.bookId ||
       prevProps.chapterNumber != this.props.chapterNumber ||
-      prevProps.books.length != this.props.books.length ||
-      prevProps.selectedVerse != this.props.selectedVerse
+      prevProps.books.length != this.props.books.length
     ) {
-      console.log("COMPONENT UPDATE on VALUE CHANGE");
       this.queryBookFromAPI(null);
       this.audioComponentUpdate();
-      this.scrollToVerse(this.props.selectedVerse);
       if (this.props.books.length == 0) {
         this.props.fetchVersionBooks({
           language: this.props.language,
@@ -223,6 +223,9 @@ class Bible extends Component {
           sourceId: this.props.sourceId,
         });
       }
+    }
+    if (prevProps.selectedVerse != this.props.selectedVerse) {
+      this.scrollToVerse(this.props.selectedVerse);
     }
   }
   // check internet connection to fetch api's accordingly
@@ -583,10 +586,6 @@ class Bible extends Component {
   toggleAudio = () => {
     if (this.state.audio) {
       this.setState({ status: !this.state.status });
-      // this.props.ToggleAudio({
-      //   audio: this.state.audio,
-      //   status: !this.state.status,
-      // });
     } else {
       Toast.show({
         text: "No audio for " + this.props.language + " " + this.props.bookName,
@@ -883,6 +882,7 @@ class Bible extends Component {
     });
   };
   onbackNote = () => {};
+
   setHighlightColor = (color) => {
     let value = Color.highlightColorA.const;
     switch (color) {
@@ -1190,10 +1190,14 @@ class Bible extends Component {
     }
   }
 
-  toggleParallelView(value) {
+  closeParallelView(value) {
     this.setState({ status: false });
-    this.props.selectContent({ visibleParallelView: value });
+    this.props.parallelVisibleView({
+      modalVisible: false,
+      visibleParallelView: value,
+    });
   }
+
   _onScrollEndDrag = () => {
     this._scrollEndTimer = setTimeout(this._onMomentumScrollEnd, 250);
   };
@@ -1223,39 +1227,61 @@ class Bible extends Component {
       useNativeDriver: true,
     }).start();
   };
-  async downloadPDF() {
-    var texttohtml = "";
-    this.state.chapterContent.forEach((val) => {
-      if (val.verseNumber != undefined && val.verseText != undefined) {
-        texttohtml += `<p>${val.verseNumber} : ${val.verseText}</p>`;
-      }
+
+  downloadPDF() {
+    this.setState({ isLoading: true }, async () => {
+      var texttohtml = "";
+      this.state.chapterContent.forEach((val) => {
+        if (val.verseNumber != undefined && val.verseText != undefined) {
+          texttohtml += `<p>${val.verseNumber} : ${val.verseText}</p>`;
+        }
+      });
+      let header1 = `<h1>${
+        this.props.language + " " + this.props.versionCode
+      }</h1>`;
+      let header3 = `<h3>${
+        this.props.bookName + " " + this.state.currentVisibleChapter
+      }</h3>`;
+      let options = {
+        html: `${header1}${header3}<p>${texttohtml}</p>`,
+        fileName: `${
+          "VachanGo_" +
+          this.props.language +
+          "_" +
+          this.props.bookId +
+          "_" +
+          this.state.currentVisibleChapter
+        }`,
+        // eslint-disable-next-line no-constant-condition
+        directory: "Download" ? "Download" : "Downloads",
+      };
+      this.setState({ isLoading: false });
+      await RNHTMLtoPDF.convert(options);
     });
-    let options = {
-      html: `<p>${texttohtml}</p>`,
-      fileName: `${
-        "VachanGo_" +
-        this.props.language +
-        "_" +
-        this.props.bookId +
-        "_" +
-        this.state.currentVisibleChapter
-      }`,
-      directory: "Downloads",
-    };
-    await RNHTMLtoPDF.convert(options);
     Toast.show({ text: "Pdf downloaded.", type: "success", duration: 5000 });
   }
   createPDF_File = async () => {
-    Alert.alert("", "Do you want to download the pdf for current chapter", [
-      {
-        text: "No",
-        onPress: () => {
-          return;
+    // this.setState({ isLoading: true }, async () => {
+    let permissionGranted = await AndroidPermission(
+      Permission.PermissionTypes.WRITE_EXTERNAL_STORAGE
+    );
+    console.log("permission ", permissionGranted);
+    if (permissionGranted) {
+      Alert.alert("", "Do you want to download the pdf for current chapter", [
+        {
+          text: "No",
+          onPress: () => {
+            return;
+          },
         },
-      },
-      { text: "Yes", onPress: () => this.downloadPDF() },
-    ]);
+        { text: "Yes", onPress: () => this.downloadPDF() },
+      ]);
+    } else {
+      return;
+    }
+    // })
   };
+
   renderFooter = () => {
     if (this.state.chapterContent.length === 0) {
       return null;
@@ -1509,7 +1535,7 @@ class Bible extends Component {
                   currentChapter={this.state.currentVisibleChapter}
                   id={this.props.bookId}
                   bookName={this.props.bookName}
-                  toggleParallelView={(value) => this.toggleParallelView(value)}
+                  closeParallelView={(value) => this.closeParallelView(value)}
                   totalChapters={this.props.totalChapters}
                   navigation={this.props.navigation}
                 />
@@ -1518,7 +1544,7 @@ class Bible extends Component {
                 <Commentary
                   id={this.props.bookId}
                   bookName={this.props.bookName}
-                  toggleParallelView={(value) => this.toggleParallelView(value)}
+                  closeParallelView={(value) => this.closeParallelView(value)}
                   currentVisibleChapter={this.state.currentVisibleChapter}
                 />
               )}
@@ -1610,6 +1636,8 @@ const mapStateToProps = (state) => {
     parallelContentType: state.updateVersion.parallelContentType,
     visibleParallelView: state.selectContent.visibleParallelView,
     selectedVerse: state.updateVersion.selectedVerse,
+    parallelLanguage: state.selectContent.parallelLanguage,
+    parallelMetaData: state.selectContent.parallelMetaData,
     audio: state.audio.audio,
     status: state.audio.status,
   };
@@ -1626,6 +1654,7 @@ const mapDispatchToProps = (dispatch) => {
     APIAudioURL: (payload) => dispatch(APIAudioURL(payload)),
     ToggleAudio: (payload) => dispatch(ToggleAudio(payload)),
     selectContent: (payload) => dispatch(selectContent(payload)),
+    parallelVisibleView: (payload) => dispatch(parallelVisibleView(payload)),
     updateFontSize: (payload) => dispatch(updateFontSize(payload)),
   };
 };

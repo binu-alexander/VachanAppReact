@@ -102,12 +102,6 @@ class ChapterSelection extends Component {
         <Icon
           type="AntDesign"
           name="back"
-          // onPress={() =>
-          //   this.props.route.params.updateSelectedChapter(
-          //     this.props.route.params.selectedChapterNumber,
-          //     this.props.route.params.selectedChapterIndex
-          //   )
-          // }
           onPress={this.onBack}
           size={64}
           style={{
