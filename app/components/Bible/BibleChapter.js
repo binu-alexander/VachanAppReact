@@ -287,7 +287,7 @@ class BibleChapter extends Component {
             >
               {this.state.parallelBible &&
                 this.state.parallelBible.map((verse, index) => (
-                  <View style={{ marginHorizontal: 16 }}>
+                  <View style={{ marginHorizontal: 16 }} key={index}>
                     {(verse.verseNumber == 1 &&
                       typeof verse.verseNumber != "undefined") == 1 ? (
                       <Text
@@ -367,7 +367,7 @@ class BibleChapter extends Component {
                         )}
                       {this.props.parallelMetaData.technologyPartner !== null &&
                         this.props.parallelMetaData.technologyPartner !==
-                        "" && (
+                          "" && (
                           <Text style={this.styles.textListFooter}>
                             <Text style={this.styles.footerText}>
                               Technology partner:
@@ -384,8 +384,8 @@ class BibleChapter extends Component {
               style={{
                 justifyContent:
                   this.state.currentParallelViewChapter != 1 &&
-                    (this.state.currentParallelViewChapter ==
-                      this.state.currentParallelViewChapter) !=
+                  (this.state.currentParallelViewChapter ==
+                    this.state.currentParallelViewChapter) !=
                     this.state.totalChapters
                     ? "center"
                     : "space-around",
@@ -393,8 +393,8 @@ class BibleChapter extends Component {
               }}
             >
               {this.state.PpeviousContent &&
-                Object.keys(this.state.PpeviousContent).length > 0 &&
-                this.state.PpeviousContent.constructor === Object ? (
+              Object.keys(this.state.PpeviousContent).length > 0 &&
+              this.state.PpeviousContent.constructor === Object ? (
                 <View style={this.styles.bottomBarParallelPrevView}>
                   <Icon
                     name={"chevron-left"}
@@ -411,8 +411,8 @@ class BibleChapter extends Component {
                 </View>
               ) : null}
               {this.state.pNextContent &&
-                Object.keys(this.state.pNextContent).length > 0 &&
-                this.state.pNextContent.constructor === Object ? (
+              Object.keys(this.state.pNextContent).length > 0 &&
+              this.state.pNextContent.constructor === Object ? (
                 <View style={this.styles.bottomBarNextParallelView}>
                   <Icon
                     name={"chevron-right"}
