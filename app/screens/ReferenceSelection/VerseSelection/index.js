@@ -1,4 +1,4 @@
-import { Text, View } from "native-base";
+import { View } from "native-base";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import SelectionGrid from "../../../components/SelectionGrid";
@@ -46,7 +46,7 @@ class SelectVerse extends Component {
   componentDidMount() {
     this.fectchVerses();
   }
-  static getDerivedStateFromProps(nextProps, prevState) {
+  static getDerivedStateFromProps(nextProps) {
     return {
       selectedChapterNumber: nextProps.route.params
         ? nextProps.route.params.selectedChapterNumber
@@ -67,7 +67,7 @@ class SelectVerse extends Component {
       this.fectchVerses();
     }
   }
-  onNumPress = (item, index) => {
+  onNumPress = (item) => {
     if (this.props.route.params) {
       this.props.route.params.getReference({
         bookId: this.state.selectedBookId,

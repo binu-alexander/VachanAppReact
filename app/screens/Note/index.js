@@ -180,6 +180,7 @@ class Note extends Component {
       item.notes &&
       item.notes.map((val, j) => (
         <TouchableOpacity
+          key={j}
           style={this.styles.noteContent}
           onPress={() => {
             this.props.navigation.navigate("EditNote", {
