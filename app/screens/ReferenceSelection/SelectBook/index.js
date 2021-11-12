@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Segment, Button } from "native-base";
-import { SelectBookPageStyle } from "./styles.js";
+import { styles } from "./styles.js";
 import { connect } from "react-redux";
 import Spinner from "react-native-loading-spinner-overlay";
 import Color from "../../../utils/colorConstants";
@@ -25,10 +25,6 @@ class SelectBook extends Component {
       OTSize: 0,
       isLoading: false,
     };
-    this.styles = SelectBookPageStyle(
-      this.props.colorFile,
-      this.props.sizeFile
-    );
     this.navigateTo = this.navigateTo.bind(this);
     this.viewabilityConfig = {
       itemVisiblePercentThreshold: 100,
@@ -143,13 +139,13 @@ class SelectBook extends Component {
       this.selectTab();
     }
   }
-  renderItem = ({ item }) => {
+  renderItem = ({ item, index }) => {
     return (
       <TouchableOpacity onPress={() => this.navigateTo(item)}>
-        <View style={this.styles.bookList}>
+        <View style={styles.bookList}>
           <Text
             style={[
-              this.styles.textStyle,
+              styles.textStyle,
               {
                 fontWeight:
                   item.bookId == this.props.route.params.selectedBookId
@@ -167,14 +163,14 @@ class SelectBook extends Component {
           <Icon
             name="chevron-right"
             color={Color.Gray}
-            style={this.styles.iconCustom}
+            style={styles.iconCustom}
           />
         </View>
       </TouchableOpacity>
     );
   };
 
-  onViewableItemsChanged = ({ viewableItems }) => {
+  onViewableItemsChanged = ({ viewableItems, changed }) => {
     if (viewableItems.length > 0) {
       if (viewableItems[0].index < this.state.OTSize) {
         // toggel to OT
@@ -188,11 +184,11 @@ class SelectBook extends Component {
 
   render() {
     return (
-      <View style={this.styles.container}>
+      <View style={styles.container}>
         {this.props.isLoading ? (
           <Spinner visible={true} textContent={"Loading..."} />
         ) : (
-          <View style={this.styles.bookNameContainer}>
+          <View style={styles.bookNameContainer}>
             <Segment>
               {this.state.OTSize > 0 ? (
                 <Button
@@ -202,17 +198,17 @@ class SelectBook extends Component {
                       width: this.state.NTSize == 0 ? width : (width * 1) / 2,
                     },
                     this.state.activeTab
-                      ? this.styles.activeBgColor
-                      : this.styles.inactiveBgColor,
-                    this.styles.segmentButton,
+                      ? styles.activeBgColor
+                      : styles.inactiveBgColor,
+                    styles.segmentButton,
                   ]}
                   onPress={this.toggleButton.bind(this, true)}
                 >
                   <Text
                     style={
                       this.state.activeTab
-                        ? this.styles.inactivetabText
-                        : this.styles.activetabText
+                        ? styles.inactivetabText
+                        : styles.activetabText
                     }
                   >
                     Old Testament
@@ -227,9 +223,9 @@ class SelectBook extends Component {
                       width: this.state.OTSize == 0 ? width : (width * 1) / 2,
                     },
                     !this.state.activeTab
-                      ? this.styles.activeBgColor
-                      : this.styles.inactiveBgColor,
-                    this.styles.segmentButton,
+                      ? styles.activeBgColor
+                      : styles.inactiveBgColor,
+                    styles.segmentButton,
                   ]}
                   onPress={this.toggleButton.bind(this, false)}
                 >
@@ -237,9 +233,9 @@ class SelectBook extends Component {
                     active={!this.state.activeTab}
                     style={[
                       !this.state.activeTab
-                        ? this.styles.inactivetabText
-                        : this.styles.activetabText,
-                      this.styles.buttonText,
+                        ? styles.inactivetabText
+                        : styles.activetabText,
+                      styles.buttonText,
                     ]}
                   >
                     New Testament
@@ -253,7 +249,7 @@ class SelectBook extends Component {
               getItemLayout={this.getItemLayout}
               onScroll={this.handleScroll}
               renderItem={this.renderItem}
-              extraData={this.styles}
+              extraData={styles}
               keyExtractor={(item) => item.bookNumber}
               onViewableItemsChanged={this.onViewableItemsChanged}
               viewabilityConfig={this.viewabilityConfig}

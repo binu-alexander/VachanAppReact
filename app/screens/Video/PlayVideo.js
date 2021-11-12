@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import YoutubePlayer from 'react-native-youtube-iframe';
-import { bookStyle } from './styles.js'
+import { styles } from './styles.js'
 import {
     View,
     Text,
@@ -20,7 +20,6 @@ class PlayVideo extends Component {
             playing: false,
             isLoading: false
         }
-        this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
 
     }
     componentDidMount() {
@@ -62,8 +61,8 @@ class PlayVideo extends Component {
 
     render() {
         return (
-            <View style={this.styles.container}>
-                <Text style={this.styles.title}>
+            <View style={styles.container}>
+                <Text style={styles.title}>
                     {this.state.title}
                 </Text>
                 {this.state.isLoading ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator animate={true} size={32} /></View> : null}
@@ -79,7 +78,7 @@ class PlayVideo extends Component {
                     volume={50}
                     playbackRate={1}
                 />
-                <Text style={this.styles.description}>
+                <Text style={styles.description}>
                     {this.state.description}
                 </Text>
             </View>

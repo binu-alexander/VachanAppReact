@@ -1,20 +1,19 @@
 import {StyleSheet,Dimensions} from 'react-native'
 const height = Dimensions.get('window').height
-
-export const bookStyle=(colorFile, sizeFile) =>{
-    return StyleSheet.create({
+import { colorStyle ,sizeStyle  } from '../../utils/dynamicStyle'
+export const styles = StyleSheet.create({
     container:{
         flex:1,
-        backgroundColor:colorFile.backgroundColor,
+        backgroundColor:colorStyle.backgroundColor,
         padding:8
     },
     videoView:{
         width:'100%',
-        fontSize:sizeFile.fontSize,
+        fontSize:sizeStyle.fontSize,
     },
     videoText:{
-        fontSize:sizeFile.titleText,
-        color:colorFile.iconColor
+        fontSize:sizeStyle.titleText,
+        color:colorStyle.iconColor
     },
 
     emptyMessageContainer:{
@@ -24,13 +23,13 @@ export const bookStyle=(colorFile, sizeFile) =>{
         justifyContent:'center'
     },
     messageEmpty:{
-        fontSize:sizeFile.titleText,
-        color:colorFile.textColor,
+        fontSize:sizeStyle.titleText,
+        color:colorStyle.textColor,
     },
     emptyMessageIcon:{
-        fontSize:sizeFile.emptyIconSize,
+        fontSize:sizeStyle.emptyIconSize,
         margin:16,
-        color:colorFile.iconColor,
+        color:colorStyle.iconColor,
     },
     centerEmptySet: { 
         justifyContent: 'center', 
@@ -44,19 +43,18 @@ export const bookStyle=(colorFile, sizeFile) =>{
     },
     description:{
         marginHorizontal:8,
-        fontSize:sizeFile.contentText,
-        color:colorFile.textColor
+        fontSize:sizeStyle.textSize,
+        color:colorStyle.textColor
     },
     title:{
         margin:16,
-        fontSize:sizeFile.titleText,
-        color:colorFile.textColor
+        fontSize:sizeStyle.titleText,
+        color:colorStyle.textColor
     },
     cardItemStyle:{
         paddingTop:16,
         paddingBottom:16,
-        backgroundColor:colorFile.backgroundColor
+        backgroundColor:colorStyle.backgroundColor
      },
 
     })
-}

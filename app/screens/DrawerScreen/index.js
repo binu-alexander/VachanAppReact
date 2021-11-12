@@ -22,7 +22,6 @@ class DrawerScreen extends Component {
       user: "",
       currentVersion: "1.0.0",
     };
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
 
   async componentDidMount() {
@@ -60,24 +59,23 @@ class DrawerScreen extends Component {
       { icon: "info", pressIcon: "About", text: "About Us" },
       { icon: "help", pressIcon: "Help", text: "Help" },
     ];
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
     return (
-      <View style={this.styles.container}>
-        <ScrollView style={this.styles.container}>
-          <View style={this.styles.headerContainer}>
+      <View style={styles.container}>
+        <ScrollView style={styles.container}>
+          <View style={styles.headerContainer}>
             <ImageBackground
               source={require("../../assets/headerbook.jpg")}
-              style={{ flex: 1, width: 280 }}
+              style={styles.headerImage}
             >
-              <View style={{ position: "absolute", bottom: 0, margin: 8 }}>
+              <View style={styles.bcsImage}>
                 <Image
-                  style={this.styles.imageStyle}
+                  style={styles.imageStyle}
                   source={require("../../assets/bcs_old_favicon.png")}
                 />
-                <View style={this.styles.goToLogin}>
+                <View style={styles.goToLogin}>
                   <Image
                     source={require("../../assets/logo.png")}
-                    style={{ padding: 4, width: 136, height: 30 }}
+                    style={styles.logoIcon}
                   />
                 </View>
               </View>
@@ -85,11 +83,10 @@ class DrawerScreen extends Component {
           </View>
           {iconName.map((iconName, index) => (
             <TouchableOpacity
-              key={index}
               onPress={() => {
                 this.props.navigation.navigate(iconName.pressIcon);
               }}
-              style={this.styles.drawerItem}
+              style={styles.drawerItem}
             >
               <View
                 style={{
@@ -99,12 +96,12 @@ class DrawerScreen extends Component {
                 <Icon
                   name={iconName.icon}
                   size={20}
-                  style={this.styles.iconStyleDrawer}
+                  style={styles.iconStyleDrawer}
                 />
-                <Text style={this.styles.textStyle}>{iconName.text}</Text>
+                <Text style={styles.textStyle}>{iconName.text}</Text>
                 {/* <DrawerItem
                       label={iconName.text}
-                      labelStyle={this.styles.textStyle}
+                      labelStyle={styles.textStyle}
                       onPress={() => {
                         this.props.navigation.navigate(iconName.pressIcon)
                       }}
@@ -113,14 +110,14 @@ class DrawerScreen extends Component {
               <Icon
                 name="chevron-right"
                 size={20}
-                style={this.styles.iconStyleDrawer}
+                style={styles.iconStyleDrawer}
               />
             </TouchableOpacity>
           ))}
           {/*for appstore app*/}
-          <Text style={this.styles.versionText}>APP VERSION {this.state.currentVersion}</Text>
+          <Text style={styles.versionText}>APP VERSION {this.state.currentVersion}</Text>
           {/*//for tesing */}
-          {/* <Text style={this.styles.versionText}>APP VERSION 1.3.2-alpha.5</Text> */}
+          {/* <Text style={styles.versionText}>APP VERSION 1.3.2-alpha.5</Text> */}
         </ScrollView>
       </View>
     );

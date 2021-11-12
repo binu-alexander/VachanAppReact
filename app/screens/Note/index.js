@@ -10,7 +10,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import { Card, CardItem } from "native-base";
 import { connect } from "react-redux";
 import database from "@react-native-firebase/database";
-import { noteStyle } from "./styles.js";
+import { styles } from "./styles.js";
 import Colors from "../../utils/colorConstants";
 
 class Note extends Component {
@@ -33,7 +33,6 @@ class Note extends Component {
       message: "",
       email: this.props.email,
     };
-    this.styles = noteStyle(props.colorFile, props.sizeFile);
 
     this.fetchNotes = this.fetchNotes.bind(this);
     this.onDelete = this.onDelete.bind(this);
@@ -180,8 +179,7 @@ class Note extends Component {
       item.notes &&
       item.notes.map((val, j) => (
         <TouchableOpacity
-          key={j}
-          style={this.styles.noteContent}
+          style={styles.noteContent}
           onPress={() => {
             this.props.navigation.navigate("EditNote", {
               bcvRef: {
@@ -198,9 +196,9 @@ class Note extends Component {
           }}
         >
           <Card>
-            <CardItem style={this.styles.cardItemStyle}>
-              <View style={this.styles.notesContentView}>
-                <Text style={this.styles.noteText}>
+            <CardItem style={styles.cardItemStyle}>
+              <View style={styles.notesContentView}>
+                <Text style={styles.noteText}>
                   {this.props.languageName &&
                     this.props.languageName.charAt(0).toUpperCase() +
                       this.props.languageName.slice(1)}{" "}
@@ -208,13 +206,13 @@ class Note extends Component {
                     this.props.versionCode.toUpperCase()}{" "}
                   {bookName} {item.chapterNumber} {":"} {val.verses.join()}
                 </Text>
-                <View style={this.styles.noteCardItem}>
-                  <Text style={this.styles.noteFontCustom}>
+                <View style={styles.noteCardItem}>
+                  <Text style={styles.noteFontCustom}>
                     {this.dateFormate(val.modifiedTime)}
                   </Text>
                   <Icon
                     name="delete-forever"
-                    style={this.styles.deleteIon}
+                    style={styles.deleteIon}
                     onPress={() =>
                       this.onDelete(val.createdTime, val.body, index, j)
                     }
@@ -230,7 +228,7 @@ class Note extends Component {
 
   render() {
     return (
-      <View style={this.styles.container}>
+      <View style={styles.container}>
         {this.state.isLoading ? (
           <ActivityIndicator
             size="small"
@@ -242,16 +240,16 @@ class Note extends Component {
           <FlatList
             contentContainerStyle={
               this.state.notesData.length === 0
-                ? this.styles.centerEmptySet
-                : this.styles.noteFlatlistCustom
+                ? styles.centerEmptySet
+                : styles.noteFlatlistCustom
             }
             data={this.state.notesData}
             renderItem={this.renderItem}
             ListEmptyComponent={
-              <View style={this.styles.emptyMessageContainer}>
-                <Icon name="note" style={this.styles.emptyMessageIcon} />
+              <View style={styles.emptyMessageContainer}>
+                <Icon name="note" style={styles.emptyMessageIcon} />
                 <Text
-                  style={this.styles.messageEmpty}
+                  style={styles.messageEmpty}
                   onPress={this.emptyMessageNavigation}>
                   {this.state.message}
                 </Text>

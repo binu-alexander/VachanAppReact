@@ -7,7 +7,7 @@ import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { Card, CardItem } from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux'
-import { bookStyle } from './styles.js'
+import { styles } from './styles.js'
 import { Toast } from 'native-base'
 import vApi from '../../../utils/APIFetch';
 
@@ -21,7 +21,6 @@ class Infographics extends React.Component {
       url: null,
       isLoading: false
     }
-    this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
 
   }
   async fetchInfographics() {
@@ -77,9 +76,9 @@ class Infographics extends React.Component {
     }
     var value = item.infographics.map(e =>
       <Card>
-        <CardItem style={this.styles.cardItemStyle} >
-          <TouchableOpacity style={this.styles.infoView} onPress={() => this.gotoImage(e)}>
-            <Text style={this.styles.infoText}>{bookName}: {e.title}</Text>
+        <CardItem style={styles.cardItemStyle} >
+          <TouchableOpacity style={styles.infoView} onPress={() => this.gotoImage(e)}>
+            <Text style={styles.infoText}>{bookName}: {e.title}</Text>
           </TouchableOpacity>
         </CardItem>
       </Card>
@@ -92,18 +91,18 @@ class Infographics extends React.Component {
   }
   render() {
     return (
-      <View style={this.styles.container}>
+      <View style={styles.container}>
         {
           this.state.isLoading ?
-            <ActivityIndicator animate={true} style={{ justifyContent: 'center', alignSelf: 'center' }} /> :
+            <ActivityIndicator animate={true} style={styles.activityIndicator} /> :
             <FlatList
               data={this.state.infographics}
-              contentContainerStyle={this.state.infographics.length === 0 && this.styles.centerEmptySet}
+              contentContainerStyle={this.state.infographics.length === 0 && styles.centerEmptySet}
               renderItem={this.renderItem}
               ListEmptyComponent={
-                <View style={this.styles.emptyMessageContainer}>
-                  <Icon name="image" style={this.styles.emptyMessageIcon} />
-                  <Text style={this.styles.messageEmpty}>
+                <View style={styles.emptyMessageContainer}>
+                  <Icon name="image" style={styles.emptyMessageIcon} />
+                  <Text style={styles.messageEmpty}>
                     No Infographics for {this.props.languageName}
                   </Text>
                 </View>

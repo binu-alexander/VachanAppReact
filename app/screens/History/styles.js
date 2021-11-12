@@ -1,44 +1,45 @@
-import { StyleSheet } from "react-native";
+import {StyleSheet} from 'react-native'
+import {colorStyle,sizeStyle} from '../../utils/dynamicStyle'
 
-export const historyStyle = (colorFile, sizeFile) => {
-  return StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colorFile.backgroundColor,
+export const styles = StyleSheet.create({
+    container:{
+        flex:1,
+        backgroundColor:colorStyle.backgroundColor,
     },
-    historyHeader: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      margin: 8,
+    historyHeader:{
+        flexDirection:"row",
+        justifyContent:"space-between",
+        margin:8
     },
-    accordionHeaderText: {
-      fontSize: sizeFile.titleText,
-      color: colorFile.textColor,
+    accordionHeaderText:{
+        fontSize:sizeStyle.titleText,
+        color:colorStyle.textColor
     },
-    contentText: {
-      marginHorizontal: 16,
-      marginVertical: 4,
-      fontSize: sizeFile.contentText,
-      color: colorFile.textColor,
+    contentText:{
+        marginHorizontal:16,
+        marginVertical:4,
+        fontSize:sizeStyle.textSize,
+        color:colorStyle.textColor
     },
-    emptyMessageContainer: {
-      flex: 1,
-      alignItems: "center",
-      flexDirection: "column",
-      justifyContent: "center",
+    emptyMessageContainer:{
+        flex:1,
+        alignItems:'center',
+        flexDirection:'column',
+        justifyContent:'center'
     },
-    messageEmpty: {
-      fontSize: sizeFile.titleText,
-      color: colorFile.textColor,
+    messageEmpty:{
+        fontSize:sizeStyle.titleText,
+        color:colorStyle.textColor,
     },
-    emptyMessageIcon: {
-      fontSize: sizeFile.emptyIconSize,
-      margin: 16,
-      color: colorFile.iconColor,
+    emptyMessageIcon:{
+        fontSize:sizeStyle.emptyIconSize,
+        margin:16,
+        color:colorStyle.iconColor,
     },
-    iconCustom: {
-      fontSize: sizeFile.iconSize,
-      color: colorFile.iconColor,
-    },
-  });
-};
+    iconCustom:{
+        fontSize:sizeStyle.iconSize,
+        color:colorStyle.iconColor
+    }
+
+    })
+

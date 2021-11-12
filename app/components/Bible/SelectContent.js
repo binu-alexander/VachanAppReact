@@ -18,7 +18,6 @@ class SelectContent extends Component {
       modalVisible: false
     }
     this.alertPresent = false
-    this.styles = styles(this.props.colorFile, this.props.sizeFile)
     this.alertPresent = false
   }
 
@@ -31,18 +30,18 @@ class SelectContent extends Component {
       <View >
         {this.props.displayContent == 'commentary' ?
           ((item.contentType == this.props.displayContent) &&
-            <View style={this.styles.accordionHeader}>
-              <Text style={this.styles.accordionHeaderText}>
+            <View style={styles.accordionHeader}>
+              <Text style={styles.accordionHeaderText}>
                 {" "}{(item.contentType == this.props.displayContent) && item.contentType.charAt(0).toUpperCase() + item.contentType.slice(1)}
               </Text>
-              <Icon style={this.styles.iconStyleSelection} name="keyboard-arrow-down" size={24} />
+              <Icon style={styles.iconStyleSelection} name="keyboard-arrow-down" size={24} />
             </View>
           )
-          : <View style={this.styles.accordionHeader}>
-            <Text style={this.styles.accordionHeaderText}>
+          : <View style={styles.accordionHeader}>
+            <Text style={styles.accordionHeaderText}>
               {" "}{item.contentType.charAt(0).toUpperCase() + item.contentType.slice(1)}
             </Text>
-            <Icon style={this.styles.iconStyleSelection} name="keyboard-arrow-down" size={24} />
+            <Icon style={styles.iconStyleSelection} name="keyboard-arrow-down" size={24} />
           </View>
         }
       </View>
@@ -53,19 +52,19 @@ class SelectContent extends Component {
       <View>
         {this.props.displayContent == 'commentary' ?
           ((contentType == this.props.displayContent) &&
-            <View style={this.styles.headerInner} >
-              <Text style={this.styles.selectionHeaderModal}>
+            <View style={styles.headerInner} >
+              <Text style={styles.selectionHeaderModal}>
                 {" "}{item.languageName}
               </Text>
-              <Icon style={this.styles.iconStyleSelection} name="keyboard-arrow-down" size={24} />
+              <Icon style={styles.iconStyleSelection} name="keyboard-arrow-down" size={24} />
             </View>
           )
           :
-          <View style={this.styles.headerInner} >
-            <Text style={this.styles.selectionHeaderModal}>
+          <View style={styles.headerInner} >
+            <Text style={styles.selectionHeaderModal}>
               {" "}{item.languageName}
             </Text>
-            <Icon style={this.styles.iconStyleSelection} name="keyboard-arrow-down" size={24} />
+            <Icon style={styles.iconStyleSelection} name="keyboard-arrow-down" size={24} />
           </View>
         }
       </View>
@@ -79,7 +78,7 @@ class SelectContent extends Component {
         this.props.displayContent == 'commentary' ?
           ((contentType == this.props.displayContent) &&
             <TouchableOpacity
-              style={this.styles.selectionInnerContent}
+              style={styles.selectionInnerContent}
               onPress={() => {
                 this.setState({ modalVisible: false })
                 this.props.parallelVisibleView({
@@ -98,12 +97,12 @@ class SelectContent extends Component {
                 })
               }}
             >
-              <Text style={this.styles.selectionHeaderModal}>{v.versionName}</Text>
-              <Text style={this.styles.selectionHeaderModal}>{v.versionCode}</Text>
+              <Text style={styles.selectionHeaderModal}>{v.versionName}</Text>
+              <Text style={styles.selectionHeaderModal}>{v.versionCode}</Text>
             </TouchableOpacity>
           ) :
           <TouchableOpacity
-            style={this.styles.selectionInnerContent}
+            style={styles.selectionInnerContent}
             onPress={() => {
               this.setState({ modalVisible: false })
               this.props.parallelVisibleView({
@@ -122,8 +121,8 @@ class SelectContent extends Component {
               })
             }}
           >
-            <Text style={this.styles.selectionHeaderModal}>{v.versionName}</Text>
-            <Text style={this.styles.selectionHeaderModal}>{v.versionCode}</Text>
+            <Text style={styles.selectionHeaderModal}>{v.versionName}</Text>
+            <Text style={styles.selectionHeaderModal}>{v.versionCode}</Text>
           </TouchableOpacity>
 
       )
@@ -167,7 +166,6 @@ class SelectContent extends Component {
   };
   render() {
     console.log(" PROPS ", this.props.availableContents)
-    this.styles = styles(this.props.colorFile, this.props.sizeFile)
     return (
       <View>
         <Modal
@@ -178,7 +176,7 @@ class SelectContent extends Component {
         >
           <View>
             <TouchableWithoutFeedback
-              style={this.styles.modalContainer}
+              style={styles.modalContainer}
               onPressOut={() => { this.setState({ modalVisible: false }) }}
             >
               <View

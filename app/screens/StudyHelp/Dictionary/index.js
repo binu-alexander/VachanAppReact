@@ -17,8 +17,6 @@ class Infographics extends React.Component {
       dictionaries: [],
       isLoading: false
     }
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
-
   }
   componentDidMount() {
 
@@ -47,10 +45,10 @@ class Infographics extends React.Component {
   renderItem = ({ item }) => {
     return (
       <View>
-        <TouchableOpacity style={this.styles.infoView} onPress={() => this.gotoDicionary(item.sourceId)}>
+        <TouchableOpacity style={styles.infoView} onPress={() => this.gotoDicionary(item.sourceId)}>
           <Card>
-            <CardItem style={this.styles.cardItemStyle}>
-              <Text style={this.styles.dictionaryText}>{item.name}</Text>
+            <CardItem style={styles.cardItemStyle}>
+              <Text style={styles.dictionaryText}>{item.name}</Text>
             </CardItem>
           </Card>
         </TouchableOpacity>
@@ -60,18 +58,18 @@ class Infographics extends React.Component {
   render() {
     ("dictionaries ", this.state.dictionaries)
     return (
-      <View style={[this.styles.container, { padding: 8 }]}>
+      <View style={[styles.container, { padding: 8 }]}>
         {
           this.state.isLoading ?
             <ActivityIndicator size="small" color={Colors.Blue_Color} animate={true} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} /> :
             <FlatList
               data={this.state.dictionaries}
-              contentContainerStyle={this.state.dictionaries.length === 0 && this.styles.centerEmptySet}
+              contentContainerStyle={this.state.dictionaries.length === 0 && styles.centerEmptySet}
               renderItem={this.renderItem}
               ListEmptyComponent={
-                <View style={this.styles.emptyMessageContainer}>
-                  <Icon name="book" style={this.styles.emptyMessageIcon} />
-                  <Text style={this.styles.messageEmpty}>
+                <View style={styles.emptyMessageContainer}>
+                  <Icon name="book" style={styles.emptyMessageIcon} />
+                  <Text style={styles.messageEmpty}>
                     No Dictionary for {this.props.languageName}
                   </Text>
                 </View>

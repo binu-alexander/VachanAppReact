@@ -8,6 +8,7 @@ import {
   Text,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { styles } from './styles'
 import Color from "../../utils/colorConstants";
 import SelectContent from "./SelectContent";
 
@@ -111,7 +112,7 @@ export default class CustomHeader extends Component {
             onPress={this.props.navigateToSelectionTab}
           >
             {bookName && this.props.chapterNumber ? (
-              <Text style={{ fontSize: 18, color: "#fff" }}>
+              <Text style={styles.headerText}>
                 {bookName.length > 16
                   ? bookName.slice(0, 15) + "..."
                   : bookName}{" "}
@@ -124,7 +125,7 @@ export default class CustomHeader extends Component {
             style={[navStyles.titleTouchable]}
             onPress={this.props.navigateToLanguage}
           >
-            <Text style={{ fontSize: 18, color: "#fff" }}>
+            <Text style={styles.headerText}>
               {this.props.language &&
                 this.props.language.charAt(0).toUpperCase() +
                   this.props.language.slice(1)}{" "}
@@ -133,7 +134,7 @@ export default class CustomHeader extends Component {
             <Icon name="arrow-drop-down" color={Color.White} size={20} />
           </TouchableOpacity>
           <TouchableOpacity
-            style={{ position: "absolute", right: 0, paddingRight: 8 }}
+            style={styles.pdfIcon}
             onPress={this.props.createPDF}
           >
             <Icon name="print" color={Color.White} size={28} />

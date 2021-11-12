@@ -1,14 +1,11 @@
 import { StyleSheet, Dimensions } from 'react-native'
-import { color } from 'react-native-reanimated';
 const width = Dimensions.get('window').width;
 import Color from '../../utils/colorConstants'
-
-export const styles = (colorFile, sizeFile) => {
-    return StyleSheet.create({
+import { colorStyle ,sizeStyle  } from '../../utils/dynamicStyle';
+export const styles = StyleSheet.create({
         container: {
             flex: 1,
-            backgroundColor: colorFile.backgroundColor
-
+            backgroundColor: colorStyle.backgroundColor
         },
         centerContent: {
             flex: 1,
@@ -21,13 +18,13 @@ export const styles = (colorFile, sizeFile) => {
             height: '100%'
         },
         verseWrapperText: {
-            fontSize: sizeFile.contentText,
-            color: colorFile.textColor,
+            fontSize: sizeStyle.textSize,
+            color: colorStyle.textColor,
             justifyContent: 'center',
 
         },
         modalContainer: {
-            backgroundColor: colorFile.backgroundColor,
+            backgroundColor: colorStyle.backgroundColor,
             flex: 1,
             flexDirection: 'column',
             justifyContent: 'center',
@@ -39,10 +36,10 @@ export const styles = (colorFile, sizeFile) => {
             padding: 10,
             justifyContent: "space-between",
             alignItems: "center",
-            backgroundColor: colorFile.backgroundColor,
+            backgroundColor: colorStyle.backgroundColor,
         },
         accordionHeaderText: {
-            color: colorFile.textColor,
+            color: colorStyle.textColor,
             fontWeight: "600"
         },
         chapterList: {
@@ -90,21 +87,21 @@ export const styles = (colorFile, sizeFile) => {
         },
 
         textString: {
-            fontSize: sizeFile.contentText,
-            color: colorFile.textColor,
+            fontSize: sizeStyle.textSize,
+            color: colorStyle.textColor,
             fontWeight: 'normal',
-            lineHeight: sizeFile.lineHeight,
+            lineHeight: sizeStyle.lineHeight,
             paddingVertical: 4
         },
         sectionHeading: {
             fontWeight: 'normal',
-            lineHeight: sizeFile.lineHeight,
-            fontSize: sizeFile.contentText + 1,
-            color: colorFile.sectionHeading,
+            lineHeight: sizeStyle.lineHeight,
+            fontSize: sizeStyle.textSize + 1,
+            color: colorStyle.sectionHeading,
         },
         bottomBarParallelPrevView: {
             position: 'absolute',
-            backgroundColor: colorFile.semiTransparentBackground,
+            backgroundColor: colorStyle.semiTransparentBackground,
             justifyContent: 'center',
             height: 40,
             width: 40,
@@ -114,7 +111,7 @@ export const styles = (colorFile, sizeFile) => {
         },
         bottomBarPrevView: {
             position: 'absolute',
-            backgroundColor: colorFile.semiTransparentBackground,
+            backgroundColor: colorStyle.semiTransparentBackground,
             justifyContent: 'center',
             height: 56,
             width: 56,
@@ -126,7 +123,7 @@ export const styles = (colorFile, sizeFile) => {
         },
         bottomBarNextParallelView: {
             position: 'absolute',
-            backgroundColor: colorFile.semiTransparentBackground,
+            backgroundColor: colorStyle.semiTransparentBackground,
             justifyContent: 'center',
             height: 40,
             width: 40,
@@ -143,7 +140,7 @@ export const styles = (colorFile, sizeFile) => {
             bottom: 20,
             right: 0,
             position: 'absolute',
-            backgroundColor: colorFile.semiTransparentBackground,
+            backgroundColor: colorStyle.semiTransparentBackground,
             justifyContent: 'center'
         },
 
@@ -162,34 +159,34 @@ export const styles = (colorFile, sizeFile) => {
             alignItems: 'center',
             zIndex: 2,
             alignSelf: 'center',
-            color: colorFile.chevronIconColor,
-            fontSize: sizeFile.chevronIconSize
+            color: colorStyle.chevronIconColor,
+            fontSize: sizeStyle.chevronIconSize
         },
         verseNumber: {
-            fontSize: sizeFile.contentText,
+            fontSize: sizeStyle.textSize,
         },
         verseChapterNumber: {
-            fontSize: sizeFile.titleText,
-            color: colorFile.textColor,
+            fontSize: sizeStyle.titleText,
+            color: colorStyle.textColor,
             fontWeight: 'bold'
         },
 
         verseTextSelectedHighlighted: {
-            backgroundColor: colorFile.highlightColor,
+            backgroundColor: colorStyle.highlightColor,
             textDecorationLine: 'underline',
         },
         verseTextNotSelectedNotHighlighted: {
 
         },
         verseTextNotSelectedHighlighted: {
-            backgroundColor: colorFile.highlightColor
+            backgroundColor: colorStyle.highlightColor
         },
         verseTextSelectedNotHighlighted: {
             textDecorationLine: 'underline',
         },
         textListFooter: {
-            color: colorFile.textColor,
-            fontSize: sizeFile.contentText - 2,
+            color: colorStyle.textColor,
+            fontSize: sizeStyle.textSize - 2,
             textAlign: 'center',
             paddingVertical: 2
         },
@@ -221,15 +218,35 @@ export const styles = (colorFile, sizeFile) => {
             alignItems: 'center'
         },
         reloadText: {
-            fontSize: sizeFile.contentText,
-            color: colorFile.textColor,
+            fontSize: sizeStyle.textSize,
+            color: colorStyle.textColor,
             textAlign: 'center'
         },
         emptyMessageIcon: {
-            fontSize: sizeFile.emptyIconSize,
+            fontSize: sizeStyle.emptyIconSize,
             margin: 16,
-            color: colorFile.iconColor,
+            color: colorStyle.iconColor,
             alignSelf: 'center'
         },
+        //bible content
+        iconRight:{ position: "absolute", right: 4 },
+        
+        centerContent:{ flex: 1, justifyContent: "center", alignSelf: "center" },
+        headerStyle:{
+            backgroundColor: Color.Blue_Color,
+            height: 40,
+            borderLeftWidth: 0.2,
+            borderLeftColor: Color.White,
+          },
+          //header
+          pdfIcon:{ position: "absolute", right: 0, paddingRight: 8 },
+          headerText:{ fontSize: 18, color: "#fff" },
+          //highlight color 
+          highlightView:{
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            bottom: 60, backgroundColor: '#fff', position: 'absolute', width: width
+        },
+        highlightText:{ marginHorizontal: width/25,marginVertical:8, borderWidth: 1,  borderRadius: 21, height: 42, width: 42},
     })
-}
+

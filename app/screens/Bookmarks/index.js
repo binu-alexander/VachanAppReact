@@ -13,6 +13,7 @@ import { getBookChaptersFromMapping } from "../../utils/UtilFunctions";
 import { connect } from "react-redux";
 import database from "@react-native-firebase/database";
 import Colors from "../../utils/colorConstants";
+import { styles } from "../Audio/style.js";
 
 class BookMarks extends Component {
   constructor(props) {
@@ -28,7 +29,6 @@ class BookMarks extends Component {
       email: this.props.email,
     };
 
-    this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
   }
   static getDerivedStateFromProps(props, state) {
     // Any time the current user changes,
@@ -78,7 +78,7 @@ class BookMarks extends Component {
   async componentDidMount() {
     this.fecthBookmarks();
   }
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     if (prevProps.books.length != this.props.books.length) {
       this.fecthBookmarks();
     }
@@ -124,7 +124,7 @@ class BookMarks extends Component {
       this.setState({ bookmarksList: data });
     }
   }
-  renderItem = ({ item }) => {
+  renderItem = ({ item, index }) => {
     var bookName = null;
     if (this.props.books) {
       for (var i = 0; i <= this.props.books.length - 1; i++) {
@@ -139,15 +139,14 @@ class BookMarks extends Component {
     }
     var value =
       item.chapterNumber.length > 0 &&
-      item.chapterNumber.map((e, index) => (
+      item.chapterNumber.map((e) => (
         <TouchableOpacity
-          style={this.styles.bookmarksView}
-          key={index}
+          style={styles.bookmarksView}
           onPress={() => {
             this.navigateToBible(item.bookId, bookName, e);
           }}
         >
-          <Text style={this.styles.bookmarksText}>
+          <Text style={styles.bookmarksText}>
             {this.props.languageName &&
               this.props.languageName.charAt(0).toUpperCase() +
                 this.props.languageName.slice(1)}{" "}
@@ -156,7 +155,7 @@ class BookMarks extends Component {
           </Text>
           <Icon
             name="delete-forever"
-            style={this.styles.iconCustom}
+            style={styles.iconCustom}
             onPress={() => {
               this.onBookmarkRemove(item.bookId, e);
             }}
@@ -174,30 +173,30 @@ class BookMarks extends Component {
   };
   render() {
     return (
-      <View style={this.styles.container}>
+      <View style={styles.container}>
         {this.state.isLoading ? (
           <ActivityIndicator
             size="small"
             color={Colors.Blue_Color}
             animate={true}
-            style={{ flex: 1, justifyContent: "center", alignSelf: "center" }}
+            style={styles.activityStyle}
           />
         ) : (
           <FlatList
             data={this.state.bookmarksList}
             contentContainerStyle={
               this.state.bookmarksList.length === 0 &&
-              this.styles.centerEmptySet
+              styles.centerEmptySet
             }
             renderItem={this.renderItem}
             ListEmptyComponent={
-              <View style={this.styles.emptyMessageContainer}>
+              <View style={styles.emptyMessageContainer}>
                 <Icon
                   name="collections-bookmark"
-                  style={this.styles.emptyMessageIcon}
+                  style={styles.emptyMessageIcon}
                 />
                 <Text
-                  style={this.styles.messageEmpty}
+                  style={styles.messageEmpty}
                   onPress={this.emptyMessageNavigation}
                 >
                   {this.state.message}

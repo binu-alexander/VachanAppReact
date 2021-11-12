@@ -1,76 +1,73 @@
-import {StyleSheet,Dimensions} from 'react-native'
-
-
-export const bookStyle=(colorFile, sizeFile) =>{
-    return StyleSheet.create({
+import { StyleSheet, Dimensions } from 'react-native'
+import { colorStyle, sizeStyle } from '../../../utils/dynamicStyle'
+export const styles = StyleSheet.create({
     imagecontainer: {
         ...StyleSheet.absoluteFillObject,
         alignItems: 'center',
-        resizeMode:'contain',
+        resizeMode: 'contain',
         justifyContent: 'center',
-        },
-        pinchableImage: {
+    },
+    pinchableImage: {
         width: 300,
         height: 300,
-        resizeMode:'contain',
-        },
-        wrapper: {
+        resizeMode: 'contain',
+    },
+    wrapper: {
         flex: 1,
-        backgroundColor:colorFile.backgroundColor,
-        },
-    container:{
-        flex:1,
-        backgroundColor:colorFile.backgroundColor,
-        padding:8
+        backgroundColor: colorStyle.backgroundColor,
     },
-    infoView:{
-        width:'100%',
-        fontSize:sizeFile.fontSize,
+    container: {
+        flex: 1,
+        backgroundColor: colorStyle.backgroundColor,
+        padding: 8
     },
-    infoText:{
-        fontSize:sizeFile.titleText,
-        color:colorFile.iconColor
+    infoView: {
+        width: '100%',
+        fontSize: sizeStyle.fontSize,
+    },
+    infoText: {
+        fontSize: sizeStyle.titleText,
+        color: colorStyle.iconColor
     },
 
-    emptyMessageContainer:{
-        flex:1,
-        alignItems:'center',
-        flexDirection:'column',
-        justifyContent:'center'
-    },
-    messageEmpty:{
-        fontSize:sizeFile.titleText,
-        color:colorFile.textColor,
-    },
-    emptyMessageIcon:{
-        fontSize:sizeFile.emptyIconSize,
-        margin:16,
-        color:colorFile.iconColor,
-    },
-    centerEmptySet: { 
-        justifyContent: 'center', 
+    emptyMessageContainer: {
+        flex: 1,
         alignItems: 'center',
-        height: '100%' 
+        flexDirection: 'column',
+        justifyContent: 'center'
     },
-    infoStyle:{
-        height:'50%',
-        width:'100%'
+    messageEmpty: {
+        fontSize: sizeStyle.titleText,
+        color: colorStyle.textColor,
     },
-    description:{
-        marginHorizontal:8,
-        fontSize:sizeFile.contentText,
-        color:colorFile.textColor
+    emptyMessageIcon: {
+        fontSize: sizeStyle.emptyIconSize,
+        margin: 16,
+        color: colorStyle.iconColor,
     },
-    title:{
-        margin:16,
-        fontSize:sizeFile.titleText,
-        color:colorFile.textColor
+    centerEmptySet: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%'
     },
-    cardItemStyle:{
-        paddingTop:16,
-        paddingBottom:16,
-        backgroundColor:colorFile.backgroundColor
-     },
-
-    })
-}
+    infoStyle: {
+        height: '50%',
+        width: '100%'
+    },
+    description: {
+        marginHorizontal: 8,
+        fontSize: sizeStyle.textSize,
+        color: colorStyle.textColor
+    },
+    title: {
+        margin: 16,
+        fontSize: sizeStyle.titleText,
+        color: colorStyle.textColor
+    },
+    cardItemStyle: {
+        paddingTop: 16,
+        paddingBottom: 16,
+        backgroundColor: colorStyle.backgroundColor
+    },
+    activityIndicator: { flex:1,justifyContent: 'center', alignSelf: 'center' }
+})

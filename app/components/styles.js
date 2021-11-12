@@ -18,7 +18,5 @@ export const buttonstyle = (colorFile, sizeFile) => {
             justifyContent: 'center',
             alignSelf: 'center'
         },
-
-
     })
 }

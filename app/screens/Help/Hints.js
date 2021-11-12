@@ -7,7 +7,7 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
 } from "react-native";
-import { HelpStyle } from "./styles.js";
+import { styles } from "./styles.js";
 import { connect } from "react-redux";
 import { constantFont } from "../../utils/dimens";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -113,7 +113,6 @@ class Help extends Component {
       ],
     };
     this.showHints = this.showHints.bind(this);
-    this.styleFile = HelpStyle(this.props.colorFile, this.props.sizeFile);
     this.animatedValue = new Animated.Value(0);
   }
   showHints(icon, index) {
@@ -127,6 +126,7 @@ class Help extends Component {
   handlePressIn = (index) => {
     this.setState({ index });
     Animated.spring(this.animatedValue, {
+      useNativeDriver: true,
       toValue: 0,
     }).start();
   };
@@ -141,7 +141,7 @@ class Help extends Component {
       transform: [{ scale: this.animatedValue }],
     };
     return (
-      <View style={{ flexDirection: "row", justifyContent: "center" }}>
+      <View style={styles.itemContainer}>
         <TouchableWithoutFeedback
           style={{
             width: width / 5,
@@ -152,7 +152,7 @@ class Help extends Component {
         >
           <Animated.View
             style={[
-              this.styleFile.AnimatedViewCustom,
+              styles.AnimatedViewCustom,
               { alignItems: "center" },
               this.props.doAnimate == true && index == this.state.index
                 ? animatedStyle
@@ -162,21 +162,21 @@ class Help extends Component {
             {item.icon == "book-open-variant" ? (
               <MaterialCommunityIcons
                 name={item.icon}
-                size={constantFont.iconLarge}
-                style={this.styleFile.iconColor}
+                // size={constantFont.iconLarge}
+                style={styles.cardItemIconCustom}
               />
             ) : (
               <Icon
                 name={item.icon}
-                size={constantFont.iconLarge}
-                style={this.styleFile.iconColor}
+                // size={constantFont.iconLarge}
+                style={styles.cardItemIconCustom}
               />
             )}
           </Animated.View>
         </TouchableWithoutFeedback>
-        <View style={[this.styleFile.textView, { alignItems: "flex-start" }]}>
-          <View style={this.styleFile.textRow}>
-            <Text style={this.styleFile.textStyle}>
+        <View style={[styles.textView, { alignItems: "flex-start" }]}>
+          <View style={styles.textRow}>
+            <Text style={styles.textStyle}>
               {item.visible ? item.hint : null}
             </Text>
           </View>
@@ -186,7 +186,7 @@ class Help extends Component {
   };
   render() {
     return (
-      <View style={this.styleFile.container}>
+      <View style={styles.container}>
         <FlatList data={this.state.iconName} renderItem={this.renderItem} />
       </View>
     );

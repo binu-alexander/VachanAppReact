@@ -1,27 +1,37 @@
 import {StyleSheet,Dimensions} from 'react-native'
 const width = Dimensions.get('window').width;
 import Color from '../../utils/colorConstants'
+import { colorStyle , sizeStyle} from '../../utils/dynamicStyle';
 
-export const styles =(colorFile, sizeFile) =>{
-    return StyleSheet.create({
+export const styles = StyleSheet.create({
     MainContainer :{
     flex:1,
-    backgroundColor:colorFile.backgroundColor,
+    backgroundColor:colorStyle.backgroundColor,
     // paddingBottom:20
     },
     container:{
-        backgroundColor:colorFile.backgroundColor
+        backgroundColor:colorStyle.backgroundColor
     },
     rowViewContainer: {
       fontSize: 17,
       padding: 4
      },
      emptyMessageIcon:{
-      fontSize:sizeFile.emptyIconSize,
+      fontSize:sizeStyle.emptyIconSize,
       margin:16,
-      color:colorFile.iconColor,
+      color:colorStyle.iconColor,
       alignSelf:'center'
     },
+    headerContainer:{
+      flexDirection: "row",
+      padding: 10,
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    centerItem:{
+      flex: 1, justifyContent: 'center', alignItems: 'center'
+     },
+     contentView:{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 8 },
     
      TextInputStyleClass:{
       position:'absolute',
@@ -50,18 +60,18 @@ export const styles =(colorFile, sizeFile) =>{
         padding: 6,
         paddingHorizontal:10,
         justifyContent:'space-between',
-        backgroundColor:colorFile.backgroundColor
+        backgroundColor:colorStyle.backgroundColor
       },
       iconStyleSelection:{
-        color:colorFile.iconColor
+        color:colorStyle.iconColor
       },
       headerText: {
         fontSize: 16,
-        color:colorFile.textColor
+        color:colorStyle.textColor
       },
       iconStyle:{
-        fontSize:sizeFile.iconSize,
-        color:colorFile.iconColor
+        fontSize:sizeStyle.iconSize,
+        color:colorStyle.iconColor
       },
       separator: {
         height: 0.5,
@@ -72,11 +82,11 @@ export const styles =(colorFile, sizeFile) =>{
       },
       text: {
         fontSize: 16,
-        color: colorFile.textColor,
+        color: colorStyle.textColor,
       },
       reloadText: {
-        fontSize: sizeFile.contentText,
-        color: colorFile.textColor,
+        fontSize: sizeStyle.textSize,
+        color: colorStyle.textColor,
         textAlign: 'center'
     },
       content: {
@@ -84,12 +94,12 @@ export const styles =(colorFile, sizeFile) =>{
         paddingVertical:10,
         flexDirection:"row",
         justifyContent:'space-between',
-        backgroundColor:colorFile.backgroundColor
+        backgroundColor:colorStyle.backgroundColor
       },
 
       //selectioncontent 
       modalContainer:{
-        backgroundColor:colorFile.backgroundColor,
+        backgroundColor:colorStyle.backgroundColor,
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'center',
@@ -101,10 +111,10 @@ export const styles =(colorFile, sizeFile) =>{
         padding: 10,
         justifyContent: "space-between",
         alignItems: "center" ,
-        backgroundColor:colorFile.backgroundColor,
+        backgroundColor:colorStyle.backgroundColor,
         },
         accordionHeaderText:{
-            color:colorFile.textColor,
+            color:colorStyle.textColor,
             fontWeight: "600" 
         },
         headerInner:{
@@ -112,16 +122,14 @@ export const styles =(colorFile, sizeFile) =>{
           padding: 10,
           justifyContent: "space-between",
           alignItems: "center" ,
-          backgroundColor:colorFile.backgroundColor
+          backgroundColor:colorStyle.backgroundColor
            },
         selectionHeaderModal:{
-          color:colorFile.textColor,
+          color:colorStyle.textColor,
           fontWeight:'600'
         },
         selectionInnerContent:{
           padding: 10,
-          backgroundColor:colorFile.backgroundColor,
+          backgroundColor:colorStyle.backgroundColor,
         }
    })
-
-}

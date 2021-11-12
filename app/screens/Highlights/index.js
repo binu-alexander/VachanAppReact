@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { getBookChaptersFromMapping } from "../../utils/UtilFunctions";
-import { highlightstyle } from "./styles";
+import { styles } from "./styles";
 import { connect } from "react-redux";
 import { updateVersionBook } from "../../store/action/";
 import database from "@react-native-firebase/database";
@@ -23,7 +23,6 @@ class HighLights extends Component {
       message: "",
       email: this.props.email,
     };
-    this.styles = highlightstyle(this.props.colorFile, this.props.sizeFile);
   }
   static getDerivedStateFromProps(props, state) {
     // Any time the current user changes,
@@ -139,12 +138,12 @@ class HighLights extends Component {
   async componentDidMount() {
     this.fetchHighlights();
   }
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     if (prevProps.books.length != this.props.books.length) {
       this.fetchHighlights();
     }
   }
-  navigateToBible = (bId, bookName, chapterNum) => {
+  navigateToBible = (bId, bookName, chapterNum, verseNum) => {
     this.props.updateVersionBook({
       bookId: bId,
       bookName: bookName,
@@ -160,7 +159,7 @@ class HighLights extends Component {
       this.props.navigation.navigate("Login");
     }
   };
-  renderItem = ({ item }) => {
+  renderItem = ({ item, index }) => {
     var bookName = null;
     if (this.props.books) {
       for (var i = 0; i <= this.props.books.length - 1; i++) {
@@ -177,13 +176,12 @@ class HighLights extends Component {
     let value =
       item.verseNumber &&
       item.verseNumber !== "undefined" &&
-      item.verseNumber.map((e, index) => {
+      item.verseNumber.map((e) => {
         console.log("e ", e);
         let verse = String(e).split(":", 1);
         return (
           <TouchableOpacity
-            key={index}
-            style={this.styles.bookmarksView}
+            style={styles.bookmarksView}
             onPress={() => {
               this.navigateToBible(
                 item.bookId,
@@ -193,7 +191,7 @@ class HighLights extends Component {
               );
             }}
           >
-            <Text style={this.styles.bookmarksText}>
+            <Text style={styles.bookmarksText}>
               {this.props.languageName &&
                 this.props.languageName.charAt(0).toUpperCase() +
                   this.props.languageName.slice(1)}{" "}
@@ -202,7 +200,7 @@ class HighLights extends Component {
             </Text>
             <Icon
               name="delete-forever"
-              style={this.styles.iconCustom}
+              style={styles.iconCustom}
               onPress={() => {
                 this.removeHighlight(item.bookId, item.chapterNumber, e);
               }}
@@ -215,30 +213,30 @@ class HighLights extends Component {
   render() {
     console.log("HIGHLIGHTS loader ", this.state.isLoading);
     return (
-      <View style={this.styles.container}>
+      <View style={styles.container}>
         {this.state.isLoading ? (
           <ActivityIndicator
             animate={true}
             size="small"
             color={Colors.Blue_Color}
-            style={{ flex: 1, justifyContent: "center", alignSelf: "center" }}
+            style={styles.activity}
           />
         ) : (
           <FlatList
             data={this.state.HightlightedVerseArray}
             contentContainerStyle={
               this.state.HightlightedVerseArray.length === 0 &&
-              this.styles.centerEmptySet
+              styles.centerEmptySet
             }
             renderItem={this.renderItem}
             ListEmptyComponent={
-              <View style={this.styles.emptyMessageContainer}>
+              <View style={styles.emptyMessageContainer}>
                 <Icon
                   name="border-color"
-                  style={this.styles.emptyMessageIcon}
+                  style={styles.emptyMessageIcon}
                 />
                 <Text
-                  style={this.styles.messageEmpty}
+                  style={styles.messageEmpty}
                   onPress={this.emptyMessageNavigation}
                 >
                   {this.state.message}

@@ -1,9 +1,9 @@
-import { View } from "native-base";
+import { Text, View } from "native-base";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import SelectionGrid from "../../../components/SelectionGrid";
 import vApi from "../../../utils/APIFetch";
-import { verseSelection } from "./styles";
+import { styles } from "./styles";
 
 class SelectVerse extends Component {
   constructor(props) {
@@ -24,7 +24,6 @@ class SelectVerse extends Component {
         ? this.props.route.params.totalChapters
         : null,
     };
-    this.styles = verseSelection(this.props.colorFile, this, props.sizeFile);
   }
 
   async fectchVerses() {
@@ -46,7 +45,7 @@ class SelectVerse extends Component {
   componentDidMount() {
     this.fectchVerses();
   }
-  static getDerivedStateFromProps(nextProps) {
+  static getDerivedStateFromProps(nextProps, prevState) {
     return {
       selectedChapterNumber: nextProps.route.params
         ? nextProps.route.params.selectedChapterNumber
@@ -67,7 +66,7 @@ class SelectVerse extends Component {
       this.fectchVerses();
     }
   }
-  onNumPress = (item) => {
+  onNumPress = (item, index) => {
     if (this.props.route.params) {
       this.props.route.params.getReference({
         bookId: this.state.selectedBookId,
@@ -83,7 +82,7 @@ class SelectVerse extends Component {
     return (
       <View style={{ flex: 1 }}>
         <SelectionGrid
-          styles={this.styles}
+          styles={styles}
           onNumPress={(item, index) => {
             this.onNumPress(item, index);
           }}

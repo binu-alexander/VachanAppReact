@@ -4,10 +4,11 @@ import Markdown from 'react-native-markdown-display';
 import ModalDropdown from 'react-native-modal-dropdown';
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import { OBSStyle } from './styles.js'
+import { styles } from './styles.js'
 import ApiUtils from '../../../utils/ApiUtils'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Colors from '../../../utils/colorConstants';
+import style from '../../../lib/react-native-calendars/src/calendar/header/style.js';
 
 
 const height = Dimensions.get('window').height
@@ -25,7 +26,6 @@ class OBS extends Component {
       storyList: [],
       bsIndex: "01",
     };
-    this.styles = OBSStyle(this.props.colorFile, this.props.sizeFile);
   }
 
   componentDidMount() {
@@ -121,45 +121,33 @@ class OBS extends Component {
     let colorFile = this.props.colorFile
     let sizeFile = this.props.sizeFile
     return (
-      <View style={this.styles.container}>
+      <View style={styles.container}>
         
-        <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between'}}>
-          <TouchableOpacity onPress={() => { this._dropdown_1 && this._dropdown_1.show(); }} style={{ padding: 10, margin: 10, borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderColor: colorFile.iconColor, borderWidth: 0.5 }}>
+        <View style={styles.obsdropdownView}>
+          <TouchableOpacity onPress={() => { this._dropdown_1 && this._dropdown_1.show(); }} style={styles.dropdownView}>
             <ModalDropdown
               ref={el => this._dropdown_1 = el}
               options={this.state.obsLang} onSelect={this.onSelectLang}
               defaultValue={this.state.defaultLanguage} isFullWidth={true}
-              dropdownStyle={{ width: "60%", height: height / 2 }}  dropdownTextStyle={{ fontSize: 18 }}
-              textStyle={{ fontSize: 18, fontWeight: '400', color: colorFile.textColor }} />
+              dropdownStyle={styles.dropdownSize}  dropdownTextStyle={{ fontSize: 18 }}
+              textStyle={styles.dropdownText } />
             <Icon name="arrow-drop-down" color={this.props.colorFile.iconColor} size={20} />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               this._dropdown_2 && this._dropdown_2.show();
             }}
-            style={{
-              padding: 10,
-              margin: 10,
-              borderRadius: 10,
-              width: 150,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              borderColor: colorFile.iconColor,
-              borderWidth: 0.5,
-            }}
+            style={[styles.dropdownView,{width:150}]}
           >
             <ModalDropdown
               ref={el => this._dropdown_2 = el} options={this.state.storyList} onSelect={this.onSelectStory}
               style={{ paddingRight: 20 }} defaultValue={this.state.storyList.length > 0 ? this.state.storyList[0] : ''}
-              isFullWidth={true} dropdownStyle={{ width: "60%", height: height / 2 }}
+              isFullWidth={true} dropdownStyle={styles.dropdownSize}
               dropdownTextStyle={{ fontSize: 18 }}
-              textStyle={{
+              textStyle={[{
                 paddingHorizontal: 8,
-                fontSize: 18,
-                fontWeight: "400",
-                color: colorFile.textColor,
-              }}
+               
+              },styles.dropdownText]}
             />
             <Icon
               name="arrow-drop-down"
@@ -175,7 +163,7 @@ class OBS extends Component {
             // contentContainerStyle={{paddingTop:20}}
             >
               <Markdown
-                style={this.styles}>
+                style={styles}>
                 {this.state.obsData}
               </Markdown>
             </ScrollView>

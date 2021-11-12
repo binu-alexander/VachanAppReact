@@ -9,7 +9,7 @@ import {
 } from 'react-native-gesture-handler';
 import { Text, View } from 'native-base';
 import { connect } from 'react-redux'
-import { bookStyle } from './styles.js'
+import { styles } from './styles.js'
 import Color from '../../../utils/colorConstants'
 
 
@@ -23,7 +23,6 @@ export class InfographicsImage extends React.Component {
       image: null,
       isLoading: false
     }
-    this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
 
     /* Pinching */
     this._baseScale = new Animated.Value(1);
@@ -100,9 +99,9 @@ export class InfographicsImage extends React.Component {
 
   render() {
     return (
-      <View style={this.styles.wrapper}>
+      <View style={styles.wrapper}>
         {this.state.isLoading &&
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <View style={styles.activityIndicator}>
             <ActivityIndicator animate={true} size={32} />
           </View>}
         {this.state.image &&
@@ -114,22 +113,22 @@ export class InfographicsImage extends React.Component {
             minPointers={1}
             maxPointers={2}
             avgTouches>
-            <Animated.View style={this.styles.wrapper}>
+            <Animated.View style={styles.wrapper}>
               <RotationGestureHandler
                 ref={this.rotationRef}
                 simultaneousHandlers={this.pinchRef}
                 onGestureEvent={this._onRotateGestureEvent}
                 onHandlerStateChange={this._onRotateHandlerStateChange}>
-                <Animated.View style={this.styles.wrapper}>
+                <Animated.View style={styles.wrapper}>
                   <PinchGestureHandler
                     ref={this.pinchRef}
                     simultaneousHandlers={this.rotationRef}
                     onGestureEvent={this._onPinchGestureEvent}
                     onHandlerStateChange={this._onPinchHandlerStateChange}>
-                    <Animated.View style={this.styles.imagecontainer} collapsable={false}>
+                    <Animated.View style={styles.imagecontainer} collapsable={false}>
                       <Animated.Image
                         style={[
-                          this.styles.pinchableImage,
+                          styles.pinchableImage,
                           {
                             transform: [
                               // { perspective: 200 },

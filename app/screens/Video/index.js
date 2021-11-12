@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { bookStyle } from "./styles.js";
+import { styles } from "./styles.js";
 import { Card, CardItem } from "native-base";
 import { Toast } from "native-base";
 import vApi from "../../utils/APIFetch";
@@ -25,7 +25,6 @@ class Video extends Component {
       isLoading: false,
       duplicateValue: [],
     };
-    this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
   }
 
   async fetchVideo() {
@@ -113,12 +112,12 @@ class Video extends Component {
   // renderItem = ({ item }) => {
   //   return (
   //     <Card>
-  //       <CardItem style={this.styles.cardItemStyle}>
+  //       <CardItem style={styles.cardItemStyle}>
   //         <TouchableOpacity
-  //           style={this.styles.videoView}
+  //           style={styles.videoView}
   //           onPress={() => this.playVideo(item)}
   //         >
-  //           <Text style={this.styles.videoText}>{item.title}</Text>
+  //           <Text style={styles.videoText}>{item.title}</Text>
   //         </TouchableOpacity>
   //       </CardItem>
   //     </Card>
@@ -126,7 +125,7 @@ class Video extends Component {
   // };
   render() {
     return (
-      <View style={this.styles.container}>
+      <View style={styles.container}>
         {/* {this.state.isLoading ? (
           <ActivityIndicator
             size="small"
@@ -138,25 +137,25 @@ class Video extends Component {
         <FlatList
           data={this.state.videos}
           contentContainerStyle={
-            this.state.videos.length === 0 && this.styles.centerEmptySet
+            this.state.videos.length === 0 && styles.centerEmptySet
           }
           renderItem={({ item }) => (
             <Card>
-              <CardItem style={this.styles.cardItemStyle}>
+              <CardItem style={styles.cardItemStyle}>
                 <TouchableOpacity
-                  style={this.styles.videoView}
+                  style={styles.videoView}
                   onPress={() => this.playVideo(item)}
                 >
-                  <Text style={this.styles.videoText}>{item.title}</Text>
+                  <Text style={styles.videoText}>{item.title}</Text>
                 </TouchableOpacity>
               </CardItem>
             </Card>
           )}
           extraData={this.state}
           ListEmptyComponent={
-            <View style={this.styles.emptyMessageContainer}>
-              <Icon name="video-library" style={this.styles.emptyMessageIcon} />
-              <Text style={this.styles.messageEmpty}>
+            <View style={styles.emptyMessageContainer}>
+              <Icon name="video-library" style={styles.emptyMessageIcon} />
+              <Text style={styles.messageEmpty}>
                 No Video for {this.props.languageName}
               </Text>
             </View>

@@ -33,7 +33,6 @@ class Login extends Component {
       isLoading: false,
       passwordVisible: true,
     };
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
   //on change text function for textInput
   updateInputVal = (val, prop) => {
@@ -51,8 +50,7 @@ class Login extends Component {
       });
       auth()
         .signInWithEmailAndPassword(this.state.email, this.state.password)
-        .then(() => {
-          //removed res from this then
+        .then((res) => {
           this.props.userLogedIn({ pasLogedIn: true, googleLogIn: false });
           this.props.navigation.navigate("Bible");
           this.setState({
@@ -95,6 +93,7 @@ class Login extends Component {
           this.setState({ isLoading: false });
           this.props.navigation.navigate("Bible");
         });
+      } else {
       }
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -113,14 +112,12 @@ class Login extends Component {
   };
 
   _signInFacebook = () => {
-    // eslint-disable-next-line no-undef
     LoginManager.logInWithPermissions(["public_profile", "email"])
       .then((result) => {
         if (result.isCancelled) {
           return Promise.reject(new Error("The user cancelled the request"));
         }
         // Retrieve the access token
-        // eslint-disable-next-line no-undef
         return AccessToken.getCurrentAccessToken();
       })
       .then((data) => {
@@ -130,14 +127,14 @@ class Login extends Component {
         // Login with the credential
         return auth().signInWithCredential(credential);
       })
-      .then(() => {
+      .then((res) => {
         this.setState({ isLoading: true }, () => {
           this.setState({ isLoading: false });
           this.props.navigation.navigate("Bible");
         });
       })
       .catch((error) => {
-        console.log(error.message);
+        const { code, message } = error;
       });
   };
   async componentDidMount() {
@@ -152,14 +149,12 @@ class Login extends Component {
         // accountName: '', // [Android] specifies an account name on the device that should be used
         // iosClientId: '<FROM DEVELOPER CONSOLE>', // [iOS] optional, if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
       });
-    } catch (error) {
-      console.log(error.message);
-    }
+    } catch (error) {}
   }
   render() {
     if (this.state.isLoading) {
       return (
-        <View style={this.styles.preloader}>
+        <View style={styles.preloader}>
           <ActivityIndicator size="large" color={Color.Blue_Color} />
         </View>
       );
@@ -167,52 +162,45 @@ class Login extends Component {
     return (
       <KeyboardAvoidingView
         behavior={Platform.OS == "ios" ? "padding" : "height"}
-        style={this.styles.container}
+        style={styles.container}
       >
         <View>
           <Icon
             name="close"
             size={28}
-            style={this.styles.headerCloseIcon}
+            style={styles.headerCloseIcon}
             onPress={() => {
               this.props.navigation.pop();
             }}
           />
         </View>
-        <View style={{ padding: 35, flex: 1 }}>
-          <View style={{ alignItems: "center", justifyContent: "center" }}>
+        <View style={styles.bcsIconContainer}>
+          <View style={styles.alignItem}>
             <Image
-              style={{ width: 50, height: 50, marginVertical: 16 }}
+              style={styles.bcsIcon}
               source={require("../../assets/bcs_old_favicon.png")}
             />
             <Text
-              style={{
-                fontSize: 26,
-                color: Color.Blue_Color,
-                fontWeight: "bold",
-              }}
+              style={styles.bcsImage}
             >
               Sign In
             </Text>
           </View>
           <View
-            style={{
-              flexDirection: "column",
-              justifyContent: "center",
-            }}
+            style={styles.justifyItem}
           >
             <TextInput
-              style={this.styles.inputStyle}
-              placeholderTextColor={this.styles.placeholderColor.color}
+              style={styles.inputStyle}
+              placeholderTextColor={styles.placeholderColor.color}
               placeholder="Email"
               value={this.state.email}
               onChangeText={(val) => this.updateInputVal(val, "email")}
             />
             <View>
               <TextInput
-                style={this.styles.inputStyle}
+                style={styles.inputStyle}
                 placeholder="Password"
-                placeholderTextColor={this.styles.placeholderColor.color}
+                placeholderTextColor={styles.placeholderColor.color}
                 value={this.state.password}
                 onChangeText={(val) => this.updateInputVal(val, "password")}
                 maxLength={15}
@@ -221,7 +209,7 @@ class Login extends Component {
               <Icon
                 name={this.state.passwordVisible ? "eye" : "eye-off"}
                 size={24}
-                style={this.styles.eyeIcon}
+                style={styles.eyeIcon}
                 onPress={() =>
                   this.setState({
                     passwordVisible: !this.state.passwordVisible,
@@ -235,22 +223,17 @@ class Login extends Component {
               onPress={() => this.login()}
             />
             <Text
-              style={this.styles.loginText}
+              style={styles.loginText}
               onPress={() => this.props.navigation.navigate("Reset")}
             >
               Reset password
             </Text>
             <View
-              style={{
-                flexDirection: "row",
-                marginVertical: 8,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              style={styles.deviderView}
             >
-              <View style={this.styles.dividerLine} />
-              <Text style={this.styles.divider}>Or</Text>
-              <View style={this.styles.dividerLine} />
+              <View style={styles.dividerLine} />
+              <Text style={styles.divider}>Or</Text>
+              <View style={styles.dividerLine} />
             </View>
             <View
               style={{
@@ -268,10 +251,10 @@ class Login extends Component {
               />
             </View>
             <Text
-              style={this.styles.loginText}
+              style={styles.loginText}
               onPress={() => this.props.navigation.navigate("Register")}
             >
-              Don&apos;t have account? Click here to Sign Up
+              Don't have account? Click here to Sign Up
             </Text>
           </View>
         </View>

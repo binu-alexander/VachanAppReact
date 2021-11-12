@@ -10,6 +10,7 @@ import ReloadButton from "../../../components/ReloadButton";
 import HTML from "react-native-render-html";
 import vApi from "../../../utils/APIFetch";
 import securityVaraibles from "../../../../securityVaraibles";
+import style from "../../../lib/react-native-calendars/src/calendar/header/style";
 
 const commentaryKey = securityVaraibles.COMMENTARY_KEY
   ? "?key=" + securityVaraibles.COMMENTARY_KEY
@@ -24,7 +25,6 @@ class Commentary extends Component {
       bookName: this.props.bookName,
       bookNameList: [],
     };
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
     this.alertPresent = false;
   }
   // fetch bookname in perticular language of commenatry
@@ -116,15 +116,15 @@ class Commentary extends Component {
       <View style={{ padding: 10 }}>
         {item.verse &&
           (item.verse == 0 ? (
-            <Text style={this.styles.commentaryHeading}>Chapter Intro</Text>
+            <Text style={styles.commentaryHeading}>Chapter Intro</Text>
           ) : (
-            <Text style={this.styles.commentaryHeading}>
+            <Text style={styles.commentaryHeading}>
               Verse Number : {item.verse}
             </Text>
           ))}
         <HTML
-          baseFontStyle={this.styles.textString}
-          tagsStyles={{ p: this.styles.textString }}
+          baseFontStyle={styles.textString}
+          tagsStyles={{ p: styles.textString }}
           html={item.text}
         />
       </View>
@@ -135,11 +135,11 @@ class Commentary extends Component {
       <View>
         {this.props.commentaryContent &&
         this.props.commentaryContent.bookIntro == "" ? null : (
-          <View style={this.styles.cardItemBackground}>
-            <Text style={this.styles.commentaryHeading}>Book Intro</Text>
+          <View style={styles.cardItemBackground}>
+            <Text style={styles.commentaryHeading}>Book Intro</Text>
             <HTML
-              baseFontStyle={this.styles.textString}
-              tagsStyles={{ p: this.styles.textString }}
+              baseFontStyle={styles.textString}
+              tagsStyles={{ p: styles.textString }}
               html={
                 this.props.commentaryContent &&
                 this.props.commentaryContent.bookIntro
@@ -155,12 +155,12 @@ class Commentary extends Component {
       <View style={{ paddingVertical: 20 }}>
         {this.props.commentaryContent &&
           this.props.commentaryContent.commentaries && (
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
+            <View style={styles.centerView}>
               {this.props.parallelMetaData?.revision !== null &&
                 this.props.parallelMetaData?.revision !== "" && (
                   <Text
                     textBreakStrategy={"simple"}
-                    style={{ textAlign: "center" }}
+                    style={styles.metadataStyle}
                   >
                     <Text>Copyright:</Text>{" "}
                     {this.props.parallelMetaData?.revision}
@@ -170,7 +170,7 @@ class Commentary extends Component {
                 this.props.parallelMetaData?.copyrightHolder !== "" && (
                   <Text
                     textBreakStrategy={"simple"}
-                    style={{ textAlign: "center" }}
+                    style={styles.metadataStyle}
                   >
                     <Text>License:</Text>{" "}
                     {this.props.parallelMetaData?.copyrightHolder}
@@ -180,7 +180,7 @@ class Commentary extends Component {
                 this.props.parallelMetaData?.license !== "" && (
                   <Text
                     textBreakStrategy={"simple"}
-                    style={{ textAlign: "center" }}
+                    style={style.metadataStyle}
                   >
                     <Text>Technology partner:</Text>{" "}
                     {this.props.parallelMetaData?.license}
@@ -216,7 +216,7 @@ class Commentary extends Component {
     }
 
     return (
-      <View style={this.styles.container}>
+      <View style={styles.container}>
         <Header
           style={{
             backgroundColor: Color.Blue_Color,
@@ -243,17 +243,17 @@ class Commentary extends Component {
 
         {this.props.error ? (
           <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={styles.centerButton}
           >
             <ReloadButton
-              styles={this.styles}
+              styles={styles}
               reloadFunction={this.updateData}
               message={null}
             />
           </View>
         ) : (
           <View style={{ flex: 1 }}>
-            <Text style={[this.styles.commentaryHeading, { margin: 10 }]}>
+            <Text style={[styles.commentaryHeading, { margin: 10 }]}>
               {bookName != null && bookName} {}{" "}
               {this.props.commentaryContent &&
                 this.props.commentaryContent.chapter}

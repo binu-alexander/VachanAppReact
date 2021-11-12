@@ -1,44 +1,46 @@
-import { StyleSheet } from "react-native";
+import {StyleSheet,Dimensions} from 'react-native'
+import {colorStyle,sizeStyle} from '../../utils/dynamicStyle'
 
-export const bookStyle = (colorFile, sizeFile) => {
-  return StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colorFile.backgroundColor,
+export const styles = StyleSheet.create({
+    container:{
+        flex:1,
+        backgroundColor:colorStyle.backgroundColor,
     },
-    bookmarksView: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      margin: 16,
-      fontSize: sizeFile.fontSize,
+    bookmarksView:{
+        flexDirection:'row',
+        justifyContent: 'space-between',
+        margin:16,
+        fontSize:sizeStyle.textSize
     },
-    bookmarksText: {
-      fontSize: sizeFile.titleText,
-      color: colorFile.iconColor,
+    bookmarksText:{
+        fontSize:sizeStyle.titleText,
+        color:colorStyle.iconColor
     },
-    iconCustom: {
-      color: colorFile.textColor,
-      fontSize: sizeFile.iconSize,
+    iconCustom:{
+        color:colorStyle.textColor,
+        fontSize:sizeStyle.iconSize
     },
-    emptyMessageContainer: {
-      flex: 1,
-      alignItems: "center",
-      flexDirection: "column",
-      justifyContent: "center",
+    emptyMessageContainer:{
+        flex:1,
+        alignItems:'center',
+        flexDirection:'column',
+        justifyContent:'center'
     },
-    messageEmpty: {
-      fontSize: sizeFile.titleText,
-      color: colorFile.textColor,
+    messageEmpty:{
+        fontSize:sizeStyle.titleText,
+        color:colorStyle.textColor,
     },
-    emptyMessageIcon: {
-      fontSize: sizeFile.emptyIconSize,
-      margin: 16,
-      color: colorFile.iconColor,
+    emptyMessageIcon:{
+        fontSize:sizeStyle.emptyIconSize,
+        margin:16,
+        color:colorStyle.iconColor,
     },
-    centerEmptySet: {
-      justifyContent: "center",
-      alignItems: "center",
-      height: "100%",
+    centerEmptySet: { 
+        justifyContent: 'center', 
+        alignItems: 'center',
+        height: '100%' 
     },
-  });
-};
+    activityStyle:{
+        flex: 1, justifyContent: "center", alignSelf: "center" 
+    }
+    })

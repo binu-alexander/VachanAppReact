@@ -30,7 +30,6 @@ class DictionaryWords extends Component {
       wordDescription: [],
       metadataVisible: false,
     }
-    this.styles = styles(this.props.colorFile, this.props.sizeFile)
     this.alertPresent = false
 
   }
@@ -62,11 +61,11 @@ class DictionaryWords extends Component {
   }
   _renderHeader = (item, expanded) => {
     return (
-      <View style={this.styles.headerStyle}>
-        <Text style={this.styles.headerText} >
+      <View style={styles.headerStyle}>
+        <Text style={styles.headerText} >
           {" "}{item.letter}
         </Text>
-        <Icon style={this.styles.iconStyle} name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up"} size={24} />
+        <Icon style={styles.iconStyle} name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up"} size={24} />
       </View>
     )
   }
@@ -79,7 +78,7 @@ class DictionaryWords extends Component {
           }}
           onPress={() => this.fetchWord(w)}
         >
-          <Text style={this.styles.textDescription}>{w.word}</Text>
+          <Text style={styles.textDescription}>{w.word}</Text>
         </TouchableOpacity>
       )
     )
@@ -110,7 +109,7 @@ class DictionaryWords extends Component {
   render() {
     console.log("AVAILABLE CONTENT ", this.state.dicMetaData)
     return (
-      <View style={this.styles.container}>
+      <View style={styles.container}>
         {this.state.isLoading &&
           <Spinner
             visible={true}
@@ -120,7 +119,7 @@ class DictionaryWords extends Component {
           (this.props.error) ?
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
               <ReloadButton
-                styles={this.styles}
+                styles={styles}
                 reloadFunction={this.updateData}
                 message={null}
               />
@@ -138,16 +137,16 @@ class DictionaryWords extends Component {
                 animated={true}
                 transparent={true}
                 visible={this.state.modalVisibleDictionary}>
-                <View style={this.styles.dictionaryModalView}>
+                <View style={styles.dictionaryModalView}>
                   <View style={{ width: '80%', height: '70%', position: 'absolute', zIndex: 0, }}>
                     <Icon
                       name='cancel' onPress={() => this.setState({ modalVisibleDictionary: false })}
-                      size={28} color={Color.Blue_Color} style={{ position: 'absolute', right: 0, zIndex: 1 }}
+                      size={28} color={Color.Blue_Color} style={styles.iconPosition}
                     />
-                    <ScrollView style={this.styles.scrollViewModal}>
-                      <Text style={this.styles.textString}>Description: {this.state.wordDescription.definition}</Text>
-                      <Text style={this.styles.textString}>Keyword: {this.state.wordDescription.keyword}</Text>
-                      {this.state.wordDescription.seeAlso != '' && <Text style={this.styles.textString}>See Also: {this.state.wordDescription.seeAlso}</Text>}
+                    <ScrollView style={styles.scrollViewModal}>
+                      <Text style={styles.textString}>Description: {this.state.wordDescription.definition}</Text>
+                      <Text style={styles.textString}>Keyword: {this.state.wordDescription.keyword}</Text>
+                      {this.state.wordDescription.seeAlso != '' && <Text style={styles.textString}>See Also: {this.state.wordDescription.seeAlso}</Text>}
                       <View style={{ marginBottom: 8 }} />
                     </ScrollView>
                   </View>
@@ -157,15 +156,15 @@ class DictionaryWords extends Component {
                 animated={true}
                 transparent={true}
                 visible={this.state.metadataVisible}>
-                <View style={[this.styles.dictionaryModalView, { backgroundColor: 'rgba(250,250,250,0.3)' }]}>
-                  <View style={{ width: '80%', position: 'absolute', zIndex: 0}}>
+                <View style={[styles.dictionaryModalView, { backgroundColor: 'rgba(250,250,250,0.3)' }]}>
+                  <View style={styles.dictionaryModalPosition}>
                     <Icon
                       name='cancel' onPress={() => this.setState({ metadataVisible: false })}
                       size={28} style={{ position: 'absolute', right: 0, zIndex: 1 }}
                     />
-                    <ScrollView style={this.styles.dictionScrollModal}>
-                      <Text style={this.styles.textString}>{this.state.dicMetaData.hasOwnProperty("Description\u00a0") ? <Text style={{ fontWeight: '900' }}>Description :</Text> + this.state.dicMetaData["Description\u00a0"] : null}</Text>
-                      <Text style={this.styles.textString}>
+                    <ScrollView style={styles.dictionScrollModal}>
+                      <Text style={styles.textString}>{this.state.dicMetaData.hasOwnProperty("Description\u00a0") ? <Text style={{ fontWeight: '900' }}>Description :</Text> + this.state.dicMetaData["Description\u00a0"] : null}</Text>
+                      <Text style={styles.textString}>
                         {this.state.dicMetaData.hasOwnProperty("Technology Partner") ?
                           <Text>
                             <Text style={{ fontWeight: 'bold' }}> Technology Partner:</Text>
@@ -173,7 +172,7 @@ class DictionaryWords extends Component {
                           </Text>
                           : null}
                       </Text>
-                      <Text style={this.styles.textString}>
+                      <Text style={styles.textString}>
                         {this.state.dicMetaData.hasOwnProperty("License") ?
                           <Text>
                             <Text style={{ fontWeight: 'bold' }}>License:</Text>
@@ -181,14 +180,14 @@ class DictionaryWords extends Component {
                           </Text>
                           : null}
                       </Text>
-                      <Text style={this.styles.textString}>
+                      <Text style={styles.textString}>
                         {this.state.dicMetaData.hasOwnProperty("Revision (Name & Year)") ?
                           <Text>
                             <Text style={{ fontWeight: 'bold' }}>Revision:</Text>
                             <Text>{this.state.dicMetaData["License"]}</Text>
                           </Text>
                           : null}</Text>
-                      <Text style={this.styles.textString}>
+                      <Text style={styles.textString}>
                         {this.state.dicMetaData.hasOwnProperty("Copyright Holder") ?
                           <Text>
                             <Text style={{ fontWeight: 'bold' }}>Copyright Holder:</Text>

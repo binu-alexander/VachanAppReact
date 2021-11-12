@@ -1,29 +1,29 @@
 import {StyleSheet} from 'react-native'
 import Color from '../../../utils/colorConstants'
+import { colorStyle, sizeStyle} from '../../../utils/dynamicStyle'
 
-export const styles =(colorFile, sizeFile) =>{
-    return StyleSheet.create({
+export const styles =StyleSheet.create({
         container:{
         flex:1,
-        backgroundColor:colorFile.backgroundColor,
+        backgroundColor:colorStyle.backgroundColor,
         },
         iconStyle:{
             fontSize:28,
-            color:colorFile.textColor,
-            fontSize:sizeFile.contentText
+            color:colorStyle.textColor,
+            fontSize:sizeStyle.textSize
         },
         headerText:{
             fontWeight: "600" ,
-            color:colorFile.textColor,
-            fontSize:sizeFile.contentText
+            color:colorStyle.textColor,
+            fontSize:sizeStyle.textSize
         },
         headerStyle:{
             flexDirection: "row",
             padding: 10,
             justifyContent: "space-between",
             alignItems: "center" ,
-            color:colorFile.textColor,
-            fontSize:sizeFile.contentText
+            color:colorStyle.textColor,
+            fontSize:sizeStyle.textSize
         },
         dictionaryModal:{
             flex: 1,
@@ -39,17 +39,17 @@ export const styles =(colorFile, sizeFile) =>{
         },
        
         cardStyle:{
-            backgroundColor:colorFile.backgroundColor
+            backgroundColor:colorStyle.backgroundColor
         },
         textStyle:{
-            color:colorFile.textColor,
-            fontSize:sizeFile.contentText,
+            color:colorStyle.textColor,
+            fontSize:sizeStyle.textSize,
         },
         textString:{
-            fontSize:sizeFile.contentText,
-            color:colorFile.textColor,
+            fontSize:sizeStyle.textSize,
+            color:colorStyle.textColor,
             fontWeight:'normal',
-            lineHeight:sizeFile.lineHeight
+            lineHeight:sizeStyle.lineHeight
         },
         scrollViewModal:{
             margin:12,
@@ -57,7 +57,7 @@ export const styles =(colorFile, sizeFile) =>{
             flex:1,
             borderColor:Color.Blue_Color,
             borderWidth:1,
-            backgroundColor:colorFile.backgroundColor,
+            backgroundColor:colorStyle.backgroundColor,
             
         },
         dictionScrollModal:{
@@ -65,11 +65,11 @@ export const styles =(colorFile, sizeFile) =>{
             padding:12,
             flex:1,
             borderWidth:1,
-            backgroundColor:colorFile.backgroundColor
+            backgroundColor:colorStyle.backgroundColor
         },
         textDescription:{
-            color:colorFile.textColor,
-            fontSize:sizeFile.contentText,
+            color:colorStyle.textColor,
+            fontSize:sizeStyle.textSize,
         },
         reloadButton:{
             height:40,width:120,borderRadius:4,
@@ -77,14 +77,14 @@ export const styles =(colorFile, sizeFile) =>{
             justifyContent:'center',alignItems:'center'
           },
         reloadText: {
-            fontSize: sizeFile.contentText,
-            color: colorFile.textColor,
+            fontSize: sizeStyle.textSize,
+            color: colorStyle.textColor,
             textAlign: 'center'
         },
         emptyMessageIcon:{
-            fontSize:sizeFile.emptyIconSize,
+            fontSize:sizeStyle.emptyIconSize,
             margin:16,
-            color:colorFile.iconColor,
+            color:colorStyle.iconColor,
             alignSelf:'center'
         },
         centerEmptySet: { 
@@ -100,22 +100,25 @@ export const styles =(colorFile, sizeFile) =>{
             justifyContent:'center'
         },
         emptyMessageIcon:{
-            fontSize:sizeFile.emptyIconSize,
+            fontSize:sizeStyle.emptyIconSize,
             margin:16,
-            color:colorFile.iconColor,
+            color:colorStyle.iconColor,
         },
         messageEmpty:{
-            fontSize:sizeFile.titleText,
-            color:colorFile.textColor,
+            fontSize:sizeStyle.titleText,
+            color:colorStyle.textColor,
         },
         cardItemStyle:{
             paddingTop:16,
             paddingBottom:16,
-            backgroundColor:colorFile.backgroundColor
+            backgroundColor:colorStyle.backgroundColor
          },
          dictionaryText:{
-            fontSize:sizeFile.titleText,
-            color:colorFile.iconColor
+            fontSize:sizeStyle.titleText,
+            color:colorStyle.iconColor
         },
+        iconPosition:
+            { position: 'absolute', right: 0, zIndex: 1 },
+            dictionaryModalPosition:{ width: '80%', position: 'absolute', zIndex: 0}
+        
     })
-}
