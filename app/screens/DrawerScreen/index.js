@@ -85,6 +85,7 @@ class DrawerScreen extends Component {
           </View>
           {iconName.map((iconName, index) => (
             <TouchableOpacity
+              key={index}
               onPress={() => {
                 this.props.navigation.navigate(iconName.pressIcon);
               }}

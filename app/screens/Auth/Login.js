@@ -51,7 +51,8 @@ class Login extends Component {
       });
       auth()
         .signInWithEmailAndPassword(this.state.email, this.state.password)
-        .then((res) => {
+        .then(() => {
+          //removed res from this then
           this.props.userLogedIn({ pasLogedIn: true, googleLogIn: false });
           this.props.navigation.navigate("Bible");
           this.setState({
@@ -94,7 +95,6 @@ class Login extends Component {
           this.setState({ isLoading: false });
           this.props.navigation.navigate("Bible");
         });
-      } else {
       }
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -113,12 +113,14 @@ class Login extends Component {
   };
 
   _signInFacebook = () => {
+    // eslint-disable-next-line no-undef
     LoginManager.logInWithPermissions(["public_profile", "email"])
       .then((result) => {
         if (result.isCancelled) {
           return Promise.reject(new Error("The user cancelled the request"));
         }
         // Retrieve the access token
+        // eslint-disable-next-line no-undef
         return AccessToken.getCurrentAccessToken();
       })
       .then((data) => {
@@ -128,14 +130,14 @@ class Login extends Component {
         // Login with the credential
         return auth().signInWithCredential(credential);
       })
-      .then((res) => {
+      .then(() => {
         this.setState({ isLoading: true }, () => {
           this.setState({ isLoading: false });
           this.props.navigation.navigate("Bible");
         });
       })
       .catch((error) => {
-        const { code, message } = error;
+        console.log(error.message);
       });
   };
   async componentDidMount() {
@@ -150,7 +152,9 @@ class Login extends Component {
         // accountName: '', // [Android] specifies an account name on the device that should be used
         // iosClientId: '<FROM DEVELOPER CONSOLE>', // [iOS] optional, if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
       });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error.message);
+    }
   }
   render() {
     if (this.state.isLoading) {
@@ -267,7 +271,7 @@ class Login extends Component {
               style={this.styles.loginText}
               onPress={() => this.props.navigation.navigate("Register")}
             >
-              Don't have account? Click here to Sign Up
+              Don&apos;t have account? Click here to Sign Up
             </Text>
           </View>
         </View>

@@ -40,7 +40,7 @@ class History extends Component {
         let historyList = [...this.state.historyList];
         var date = new Date();
         var cur = moment(date).format("D");
-        for (i = 0; i < historyData.length; i++) {
+        for (var i = 0; i < historyData.length; i++) {
           var end = moment(historyData[i].time).format("D");
           var timeDiff = Math.floor(cur - end);
           if (timeDiff == 0) {
@@ -60,10 +60,10 @@ class History extends Component {
           }
         }
 
-        for (i = 0; i < historyList.length; i++) {
-          if (historyList[i].list.length == 0) {
-            historyList.splice(i, 1);
-            i--;
+        for (var j = 0; j < historyList.length; j++) {
+          if (historyList[j].list.length == 0) {
+            historyList.splice(j, 1);
+            j--;
           }
         }
         this.setState({ historyList, isLoading: false });
@@ -146,6 +146,7 @@ class History extends Component {
         ) : (
           data.list.map((item, index) => (
             <TouchableOpacity
+              key={index}
               onPress={() => {
                 this.goToContent(item);
               }}

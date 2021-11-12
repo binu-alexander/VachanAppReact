@@ -143,7 +143,7 @@ class SelectBook extends Component {
       this.selectTab();
     }
   }
-  renderItem = ({ item, index }) => {
+  renderItem = ({ item }) => {
     return (
       <TouchableOpacity onPress={() => this.navigateTo(item)}>
         <View style={this.styles.bookList}>
@@ -174,7 +174,7 @@ class SelectBook extends Component {
     );
   };
 
-  onViewableItemsChanged = ({ viewableItems, changed }) => {
+  onViewableItemsChanged = ({ viewableItems }) => {
     if (viewableItems.length > 0) {
       if (viewableItems[0].index < this.state.OTSize) {
         // toggel to OT

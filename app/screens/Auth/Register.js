@@ -1,72 +1,80 @@
-
-import React, { Component } from 'react';
-import { ActivityIndicator, View, Text, TextInput, Image, Button, Alert, Platform, KeyboardAvoidingView } from 'react-native';
-import auth from '@react-native-firebase/auth';
-import { connect } from 'react-redux'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { styles } from './styles.js'
-import Color from '../../utils/colorConstants';
-import { userInfo,userLogedIn } from '../../store/action'
-
+import React, { Component } from "react";
+import {
+  ActivityIndicator,
+  View,
+  Text,
+  TextInput,
+  Image,
+  Button,
+  Alert,
+  Platform,
+  KeyboardAvoidingView,
+} from "react-native";
+import auth from "@react-native-firebase/auth";
+import { connect } from "react-redux";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { styles } from "./styles.js";
+import Color from "../../utils/colorConstants";
+import { userInfo, userLogedIn } from "../../store/action";
 
 class Register extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
-      displayName: '',
-      email: '',
-      password: '',
-      cpassword: '',
+      displayName: "",
+      email: "",
+      password: "",
+      cpassword: "",
       passwordVisible1: true,
       passwordVisible2: true,
       isLoading: false,
       filePath: {},
-    }
+    };
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
-  
+
   //on change text function for textInput
   updateInputVal = (val, prop) => {
     const state = this.state;
     state[prop] = val;
     this.setState(state);
-  }
+  };
   registerUser = () => {
-    if (this.state.email === '' && this.state.password === '') {
-      Alert.alert('Enter details to signup!')
+    if (this.state.email === "" && this.state.password === "") {
+      Alert.alert("Enter details to signup!");
     } else {
       this.setState({
         isLoading: true,
-      })
+      });
       if (this.state.cpassword === this.state.password) {
-          auth()
-          .createUserWithEmailAndPassword(this.state.email.trim(), this.state.password.trim())
-          .then(async (res) => {
-            this.props.userLogedIn({ pasLogedIn: true,googleLogIn:false })
-            this.setState({ isLoading: false })
-            this.props.navigation.navigate("Bible")
+        auth()
+          .createUserWithEmailAndPassword(
+            this.state.email.trim(),
+            this.state.password.trim()
+          )
+          .then(async () => {
+            this.props.userLogedIn({ pasLogedIn: true, googleLogIn: false });
+            this.setState({ isLoading: false });
+            this.props.navigation.navigate("Bible");
           })
-          .catch(error => {
-            if (error.code === 'auth/weak-password') {
-              Alert.alert("Weak password")
-
+          .catch((error) => {
+            if (error.code === "auth/weak-password") {
+              Alert.alert("Weak password");
             }
-            if (error.code === 'auth/email-already-in-use') {
-              Alert.alert("Email already in use")
-
+            if (error.code === "auth/email-already-in-use") {
+              Alert.alert("Email already in use");
             }
-            if (error.code === 'auth/invalid-email') {
-              Alert.alert("Invalid Email")
+            if (error.code === "auth/invalid-email") {
+              Alert.alert("Invalid Email");
             }
-            this.setState({ isLoading: false })
-          })
-      }
-      else {
-        Alert.alert("Password and confirm password donot match")
-        this.setState({ isLoading: false })
+            this.setState({ isLoading: false });
+          });
+      } else {
+        Alert.alert("Password and confirm password donot match");
+        this.setState({ isLoading: false });
       }
     }
-  }
+  };
 
   render() {
     if (this.state.isLoading) {
@@ -74,40 +82,58 @@ class Register extends Component {
         <View style={this.styles.preloader}>
           <ActivityIndicator size="large" color={Color.Blue_Color} />
         </View>
-      )
+      );
     }
     return (
       <KeyboardAvoidingView
         behavior={Platform.OS == "ios" ? "padding" : "height"}
-        style={this.styles.container} >
+        style={this.styles.container}
+      >
         <View>
-          <Icon name='close' size={28} style={this.styles.headerCloseIcon} onPress={() => { this.props.navigation.pop() }} />
+          <Icon
+            name="close"
+            size={28}
+            style={this.styles.headerCloseIcon}
+            onPress={() => {
+              this.props.navigation.pop();
+            }}
+          />
         </View>
         <View style={{ padding: 35, flex: 1 }}>
-          <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ alignItems: "center", justifyContent: "center" }}>
             <Image
               style={{ width: 50, height: 50, marginVertical: 16 }}
-              source={require('../../assets/bcs_old_favicon.png')}
+              source={require("../../assets/bcs_old_favicon.png")}
             />
-            <Text style={{ fontSize: 26, color: Color.Blue_Color, fontWeight: 'bold' }}>Sign Up</Text>
+            <Text
+              style={{
+                fontSize: 26,
+                color: Color.Blue_Color,
+                fontWeight: "bold",
+              }}
+            >
+              Sign Up
+            </Text>
           </View>
-          <View style={{
-            flexDirection: "column",
-            justifyContent: "center",
-          }}>
+          <View
+            style={{
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
             <TextInput
               style={this.styles.inputStyle}
               placeholder="Name"
               placeholderTextColor={this.styles.placeholderColor.color}
               value={this.state.displayName}
-              onChangeText={(val) => this.updateInputVal(val, 'displayName')}
+              onChangeText={(val) => this.updateInputVal(val, "displayName")}
             />
             <TextInput
               style={this.styles.inputStyle}
               placeholder="Email"
               placeholderTextColor={this.styles.placeholderColor.color}
               value={this.state.email}
-              onChangeText={(val) => this.updateInputVal(val, 'email')}
+              onChangeText={(val) => this.updateInputVal(val, "email")}
             />
             <View>
               <TextInput
@@ -115,11 +141,20 @@ class Register extends Component {
                 placeholder="Password"
                 placeholderTextColor={this.styles.placeholderColor.color}
                 value={this.state.password}
-                onChangeText={(val) => this.updateInputVal(val, 'password')}
+                onChangeText={(val) => this.updateInputVal(val, "password")}
                 maxLength={15}
                 secureTextEntry={this.state.passwordVisible1}
               />
-              <Icon name={this.state.passwordVisible1 ? 'eye' : 'eye-off'} size={24} style={this.styles.eyeIcon} onPress={() => this.setState({ passwordVisible1: !this.state.passwordVisible1 })} />
+              <Icon
+                name={this.state.passwordVisible1 ? "eye" : "eye-off"}
+                size={24}
+                style={this.styles.eyeIcon}
+                onPress={() =>
+                  this.setState({
+                    passwordVisible1: !this.state.passwordVisible1,
+                  })
+                }
+              />
             </View>
             <View>
               <TextInput
@@ -127,11 +162,20 @@ class Register extends Component {
                 placeholder="Confirm Password"
                 placeholderTextColor={this.styles.placeholderColor.color}
                 value={this.state.cpassword}
-                onChangeText={(val) => this.updateInputVal(val, 'cpassword')}
+                onChangeText={(val) => this.updateInputVal(val, "cpassword")}
                 maxLength={15}
                 secureTextEntry={this.state.passwordVisible2}
               />
-              <Icon name={this.state.passwordVisible2 ? 'eye' : 'eye-off'} size={24} style={this.styles.eyeIcon} onPress={() => this.setState({ passwordVisible2: !this.state.passwordVisible2 })} />
+              <Icon
+                name={this.state.passwordVisible2 ? "eye" : "eye-off"}
+                size={24}
+                style={this.styles.eyeIcon}
+                onPress={() =>
+                  this.setState({
+                    passwordVisible2: !this.state.passwordVisible2,
+                  })
+                }
+              />
             </View>
             <Button
               color={Color.Blue_Color}
@@ -140,7 +184,8 @@ class Register extends Component {
             />
             <Text
               style={this.styles.loginText}
-              onPress={() => this.props.navigation.goBack()}>
+              onPress={() => this.props.navigation.goBack()}
+            >
               Already Registered? Click here to Sign In
             </Text>
           </View>
@@ -148,10 +193,9 @@ class Register extends Component {
       </KeyboardAvoidingView>
     );
   }
-
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     language: state.updateVersion.language,
     versionCode: state.updateVersion.versionCode,
@@ -162,15 +206,14 @@ const mapStateToProps = state => {
     phoneNumber: state.userInfo.phoneNumber,
 
     sizeFile: state.updateStyling.sizeFile,
-    colorFile: state.updateStyling.colorFile
-  }
-}
-const mapDispatchToProps = dispatch => {
+    colorFile: state.updateStyling.colorFile,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
   return {
     userInfo: (payload) => dispatch(userInfo(payload)),
-    userLogedIn: (payload) => dispatch(userLogedIn(payload))
-  }
-}
+    userLogedIn: (payload) => dispatch(userLogedIn(payload)),
+  };
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(Register)
-
+export default connect(mapStateToProps, mapDispatchToProps)(Register);

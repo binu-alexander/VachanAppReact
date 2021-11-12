@@ -78,7 +78,7 @@ class BookMarks extends Component {
   async componentDidMount() {
     this.fecthBookmarks();
   }
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (prevProps.books.length != this.props.books.length) {
       this.fecthBookmarks();
     }
@@ -124,7 +124,7 @@ class BookMarks extends Component {
       this.setState({ bookmarksList: data });
     }
   }
-  renderItem = ({ item, index }) => {
+  renderItem = ({ item }) => {
     var bookName = null;
     if (this.props.books) {
       for (var i = 0; i <= this.props.books.length - 1; i++) {
@@ -139,9 +139,10 @@ class BookMarks extends Component {
     }
     var value =
       item.chapterNumber.length > 0 &&
-      item.chapterNumber.map((e) => (
+      item.chapterNumber.map((e, index) => (
         <TouchableOpacity
           style={this.styles.bookmarksView}
+          key={index}
           onPress={() => {
             this.navigateToBible(item.bookId, bookName, e);
           }}

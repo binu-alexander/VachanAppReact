@@ -139,12 +139,12 @@ class HighLights extends Component {
   async componentDidMount() {
     this.fetchHighlights();
   }
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (prevProps.books.length != this.props.books.length) {
       this.fetchHighlights();
     }
   }
-  navigateToBible = (bId, bookName, chapterNum, verseNum) => {
+  navigateToBible = (bId, bookName, chapterNum) => {
     this.props.updateVersionBook({
       bookId: bId,
       bookName: bookName,
@@ -160,7 +160,7 @@ class HighLights extends Component {
       this.props.navigation.navigate("Login");
     }
   };
-  renderItem = ({ item, index }) => {
+  renderItem = ({ item }) => {
     var bookName = null;
     if (this.props.books) {
       for (var i = 0; i <= this.props.books.length - 1; i++) {
@@ -177,11 +177,12 @@ class HighLights extends Component {
     let value =
       item.verseNumber &&
       item.verseNumber !== "undefined" &&
-      item.verseNumber.map((e) => {
+      item.verseNumber.map((e, index) => {
         console.log("e ", e);
         let verse = String(e).split(":", 1);
         return (
           <TouchableOpacity
+            key={index}
             style={this.styles.bookmarksView}
             onPress={() => {
               this.navigateToBible(
