@@ -121,10 +121,9 @@ class Help extends Component {
     visibility[index] = { ...visibility[index], visible: true };
     this.setState({ iconName: visibility });
   }
-  componentWillMount() {
+  componentDidMount(){
     this.animatedValue = new Animated.Value(1);
   }
-
   handlePressIn = (index) => {
     this.setState({ index });
     Animated.spring(this.animatedValue, {
