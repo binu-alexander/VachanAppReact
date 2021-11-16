@@ -93,7 +93,7 @@ class Help extends Component {
           visible: false,
         },
         {
-          icon: "book-open-variant",
+          icon: "auto-stories",
           pressIcon: "Multi-Content",
           hint: "View content parallelly",
           visible: false,
@@ -121,10 +121,9 @@ class Help extends Component {
     visibility[index] = { ...visibility[index], visible: true };
     this.setState({ iconName: visibility });
   }
-  UNSAFE_componentWillMount() {
+  componentDidMount(){
     this.animatedValue = new Animated.Value(1);
   }
-
   handlePressIn = (index) => {
     this.setState({ index });
     Animated.spring(this.animatedValue, {

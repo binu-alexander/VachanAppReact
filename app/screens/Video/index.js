@@ -110,51 +110,50 @@ class Video extends Component {
       this.fetchVideo();
     }
   }
-  renderItem = ({ item }) => {
-    return (
-      <Card>
-        <CardItem style={this.styles.cardItemStyle}>
-          <TouchableOpacity
-            style={this.styles.videoView}
-            onPress={() => this.playVideo(item)}
-          >
-            <Text style={this.styles.videoText}>{item.title}</Text>
-          </TouchableOpacity>
-        </CardItem>
-      </Card>
-    );
-  };
+  // renderItem = ({ item }) => {
+  //   return (
+  //     <Card>
+  //       <CardItem style={this.styles.cardItemStyle}>
+  //         <TouchableOpacity
+  //           style={this.styles.videoView}
+  //           onPress={() => this.playVideo(item)}
+  //         >
+  //           <Text style={this.styles.videoText}>{item.title}</Text>
+  //         </TouchableOpacity>
+  //       </CardItem>
+  //     </Card>
+  //   );
+  // };
   render() {
     return (
       <View style={this.styles.container}>
-        {this.state.isLoading ? (
-          <ActivityIndicator
-            size="small"
-            color={Colors.Blue_Color}
-            animate={true}
-            style={{ flex: 1, justifyContent: "center", alignSelf: "center" }}
-          />
-        ) : (
-          <FlatList
-            data={this.state.videos}
-            contentContainerStyle={
-              this.state.videos.length === 0 && this.styles.centerEmptySet
-            }
-            renderItem={this.renderItem}
-            extraData={this.state}
-            ListEmptyComponent={
-              <View style={this.styles.emptyMessageContainer}>
-                <Icon
-                  name="video-library"
-                  style={this.styles.emptyMessageIcon}
-                />
-                <Text style={this.styles.messageEmpty}>
-                  No Video for {this.props.languageName}
-                </Text>
-              </View>
-            }
-          />
-        )}
+        <FlatList
+          data={this.state.videos}
+          contentContainerStyle={
+            this.state.videos.length === 0 && this.styles.centerEmptySet
+          }
+          renderItem={({ item }) => (
+            <Card>
+              <CardItem style={this.styles.cardItemStyle}>
+                <TouchableOpacity
+                  style={this.styles.videoView}
+                  onPress={() => this.playVideo(item)}
+                >
+                  <Text style={this.styles.videoText}>{item.title}</Text>
+                </TouchableOpacity>
+              </CardItem>
+            </Card>
+          )}
+          extraData={this.state}
+          ListEmptyComponent={
+            <View style={this.styles.emptyMessageContainer}>
+              <Icon name="video-library" style={this.styles.emptyMessageIcon} />
+              <Text style={this.styles.messageEmpty}>
+                No Video for {this.props.languageName}
+              </Text>
+            </View>
+          }
+        />
       </View>
     );
   }

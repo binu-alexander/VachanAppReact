@@ -60,10 +60,10 @@ class History extends Component {
           }
         }
 
-        for (i = 0; i < historyList.length; i++) {
-          if (historyList[i].list.length == 0) {
-            historyList.splice(i, 1);
-            i--;
+        for (var j = 0; j < historyList.length; j++) {
+          if (historyList[j].list.length == 0) {
+            historyList.splice(j, 1);
+            j--;
           }
         }
         this.setState({ historyList, isLoading: false });
@@ -82,7 +82,7 @@ class History extends Component {
         <View style={this.styles.historyHeader}>
           <Text style={this.styles.accordionHeaderText}>{data.time}</Text>
           <Icon
-            name={isActive ? "keyboard-arrow-down" : "keyboard-arrow-up"}
+            name={isActive ? "keyboard-arrow-up" : "keyboard-arrow-down"}
             style={this.styles.iconCustom}
           />
         </View>
