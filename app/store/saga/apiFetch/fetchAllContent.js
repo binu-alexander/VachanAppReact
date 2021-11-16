@@ -34,7 +34,7 @@ function* fetchAllContent() {
     var bible = [];
     var commentary = [];
     for (var i = 0; i < bibleLanguage.length; i++) {
-      var versions = [];
+      let versions = [];
       const language =
         bibleLanguage[i].language.charAt(0).toUpperCase() +
         bibleLanguage[i].language.slice(1);
@@ -44,7 +44,7 @@ function* fetchAllContent() {
         languageCode = bibleLanguage[i].languageVersions[j].language.code;
         const { version } = bibleLanguage[i].languageVersions[j];
         const metaD = bibleLanguage[i].languageVersions[j].metadata;
-        var mData = [
+        let mData = [
           {
             abbreviation:
               metaD &&
@@ -145,15 +145,15 @@ function* fetchAllContent() {
         });
       }
     }
-    for (var i = 0; i < commentaryLanguage.length; i++) {
-      var versions = [];
+    for (var k = 0; k < commentaryLanguage.length; k++) {
+      let versions = [];
       const language =
-        commentaryLanguage[i].language.charAt(0).toUpperCase() +
-        commentaryLanguage[i].language.slice(1);
-      const languageCode = commentaryLanguage[i].languageCode;
-      for (var j = 0; j < commentaryLanguage[i].commentaries.length; j++) {
-        const metaD = commentaryLanguage[i].commentaries[j].metadata;
-        var mData = [
+        commentaryLanguage[k].language.charAt(0).toUpperCase() +
+        commentaryLanguage[k].language.slice(1);
+      const languageCode = commentaryLanguage[k].languageCode;
+      for (var l = 0; l < commentaryLanguage[k].commentaries.length; l++) {
+        const metaD = commentaryLanguage[k].commentaries[l].metadata;
+        let mData = [
           {
             abbreviation:
               metaD &&
