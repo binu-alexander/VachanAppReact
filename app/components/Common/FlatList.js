@@ -8,6 +8,7 @@ const ListContainer = ({
   listStyle,
   iconStyle,
   icon,
+  extraData,
   containerStyle,
   textStyle,
   message,
@@ -19,6 +20,7 @@ const ListContainer = ({
         data={listData}
         contentContainerStyle={listData.length === 0 && listStyle}
         renderItem={renderItem}
+        extraStateData={extraData}
         ListEmptyComponent={
           <View style={containerStyle}>
             <Icon name={icon} style={iconStyle} />

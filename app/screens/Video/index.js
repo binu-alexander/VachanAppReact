@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
-import Icon from "react-native-vector-icons/MaterialIcons";
 import { bookStyle } from "./styles.js";
 import { Card, CardItem } from "native-base";
 import { Toast } from "native-base";
 import vApi from "../../utils/APIFetch";
+import ListContainer from "../../components/Common/FlatList.js";
 class Video extends Component {
   constructor(props) {
     super(props);
@@ -103,6 +103,9 @@ class Video extends Component {
       this.fetchVideo();
     }
   }
+  emptyMessageNavigation = () => {
+    this.props.navigation.navigate("Bible");
+  };
   renderItem = ({ item }) => {
     return (
       <Card>
@@ -120,21 +123,17 @@ class Video extends Component {
   render() {
     return (
       <View style={this.styles.container}>
-        <FlatList
-          data={this.state.videos}
-          contentContainerStyle={
-            this.state.videos.length === 0 && this.styles.centerEmptySet
-          }
+        <ListContainer
+          listData={this.state.videos}
+          listStyle={this.styles.centerEmptySet}
           renderItem={this.renderItem}
-          extraData={this.state}
-          ListEmptyComponent={
-            <View style={this.styles.emptyMessageContainer}>
-              <Icon name="video-library" style={this.styles.emptyMessageIcon} />
-              <Text style={this.styles.messageEmpty}>
-                No Video for {this.props.languageName}
-              </Text>
-            </View>
-          }
+          extraStateData={this.state}
+          containerStyle={this.styles.emptyMessageContainer}
+          icon="video-library"
+          iconStyle={this.styles.emptyMessageIcon}
+          textStyle={this.styles.messageEmpty}
+          message={`No Video for ${this.props.languageName}`}
+          onPress={this.emptyMessageNavigation}
         />
       </View>
     );

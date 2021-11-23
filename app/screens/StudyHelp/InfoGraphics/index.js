@@ -1,11 +1,12 @@
 import React from "react";
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { Card, CardItem } from "native-base";
-import Icon from "react-native-vector-icons/MaterialIcons";
 import { connect } from "react-redux";
 import { bookStyle } from "./styles.js";
 import { Toast } from "native-base";
 import vApi from "../../../utils/APIFetch";
+// import ActivityIndicator from "./ActivityIndicator";
+import ListContainer from "../../../components/Common/FlatList.js";
 
 class Infographics extends React.Component {
   constructor(props) {
@@ -65,6 +66,9 @@ class Infographics extends React.Component {
       fileName: item.fileName,
     });
   };
+  emptyMessageNavigation = () => {
+    this.props.navigation.navigate("Bible");
+  };
   renderItem = ({ item }) => {
     var bookName = null;
     if (this.props.books) {
@@ -104,20 +108,16 @@ class Infographics extends React.Component {
             style={{ justifyContent: "center", alignSelf: "center" }}
           />
         ) : (
-          <FlatList
-            data={this.state.infographics}
-            contentContainerStyle={
-              this.state.infographics.length === 0 && this.styles.centerEmptySet
-            }
+          <ListContainer
+            listData={this.state.infographics}
+            listStyle={this.styles.centerEmptySet}
             renderItem={this.renderItem}
-            ListEmptyComponent={
-              <View style={this.styles.emptyMessageContainer}>
-                <Icon name="image" style={this.styles.emptyMessageIcon} />
-                <Text style={this.styles.messageEmpty}>
-                  No Infographics for {this.props.languageName}
-                </Text>
-              </View>
-            }
+            containerStyle={this.styles.emptyMessageContainer}
+            icon="image"
+            iconStyle={this.styles.emptyMessageIcon}
+            textStyle={this.styles.messageEmpty}
+            message={`No Infographics for ${this.props.languageName}`}
+            onPress={this.emptyMessageNavigation}
           />
         )}
       </View>
