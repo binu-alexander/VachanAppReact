@@ -270,6 +270,7 @@ class Commentary extends Component {
                 <View style={{ height: 40, marginBottom: 40 }}></View>
               }
               ListHeaderComponent={this.ListHeaderComponent}
+              // eslint-disable-next-line react/jsx-no-duplicate-props
               ListFooterComponent={this.renderFooter}
             />
           </View>

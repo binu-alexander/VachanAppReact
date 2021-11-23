@@ -1,12 +1,5 @@
 import React, { Component } from "react";
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  Alert,
-  StyleSheet,
-  StatusBar,
-} from "react-native";
+import { Text, View, TouchableOpacity, Alert } from "react-native";
 import FlowLayout from "../../components/FlowLayout";
 import { CommonActions } from "@react-navigation/native";
 import { HeaderBackButton } from "@react-navigation/stack";

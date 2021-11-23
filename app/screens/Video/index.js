@@ -103,20 +103,20 @@ class Video extends Component {
       this.fetchVideo();
     }
   }
-  // renderItem = ({ item }) => {
-  //   return (
-  //     <Card>
-  //       <CardItem style={this.styles.cardItemStyle}>
-  //         <TouchableOpacity
-  //           style={this.styles.videoView}
-  //           onPress={() => this.playVideo(item)}
-  //         >
-  //           <Text style={this.styles.videoText}>{item.title}</Text>
-  //         </TouchableOpacity>
-  //       </CardItem>
-  //     </Card>
-  //   );
-  // };
+  renderItem = ({ item }) => {
+    return (
+      <Card>
+        <CardItem style={this.styles.cardItemStyle}>
+          <TouchableOpacity
+            style={this.styles.videoView}
+            onPress={() => this.playVideo(item)}
+          >
+            <Text style={this.styles.videoText}>{item.title}</Text>
+          </TouchableOpacity>
+        </CardItem>
+      </Card>
+    );
+  };
   render() {
     return (
       <View style={this.styles.container}>
@@ -125,18 +125,7 @@ class Video extends Component {
           contentContainerStyle={
             this.state.videos.length === 0 && this.styles.centerEmptySet
           }
-          renderItem={({ item }) => (
-            <Card>
-              <CardItem style={this.styles.cardItemStyle}>
-                <TouchableOpacity
-                  style={this.styles.videoView}
-                  onPress={() => this.playVideo(item)}
-                >
-                  <Text style={this.styles.videoText}>{item.title}</Text>
-                </TouchableOpacity>
-              </CardItem>
-            </Card>
-          )}
+          renderItem={this.renderItem}
           extraData={this.state}
           ListEmptyComponent={
             <View style={this.styles.emptyMessageContainer}>
