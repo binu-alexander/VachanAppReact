@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";

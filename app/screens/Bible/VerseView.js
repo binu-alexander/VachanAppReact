@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Text, Alert } from "react-native";
 import { connect } from "react-redux";
-import { selectContent,parallelVisibleView } from "../../store/action/";
+import { selectContent, parallelVisibleView } from "../../store/action/";
 import { getResultText } from "../../utils/UtilFunctions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Color from "../../utils/colorConstants";
@@ -36,7 +36,7 @@ class VerseView extends Component {
           this.props.parallelVisibleView({
             modalVisible: false,
             visibleParallelView: false,
-          })
+          });
           Alert.alert(
             "",
             "Your text is selected, please choose any option from the bottom bar or unselect the text."
@@ -82,7 +82,7 @@ class VerseView extends Component {
       : this.props.verseData.verseNumber;
     for (var i = 0; i <= this.props.HightlightedVerse.length; i++) {
       if (this.props.HightlightedVerse[i]) {
-        let regexMatch = /(\d+)\:([a-zA-Z]+)/;
+        let regexMatch = /(\d+):([a-zA-Z]+)/;
         let match = this.props.HightlightedVerse[i].match(regexMatch);
         if (match) {
           if (parseInt(match[1]) == verseNumber) {
@@ -122,14 +122,27 @@ class VerseView extends Component {
   };
 
   render() {
-    let verseNumber = this.props.downloaded ? this.props.verseData.number : this.props.verseData.verseNumber
-    let verseText = this.props.downloaded ? this.props.verseData.text : this.props.verseData.verseText
-    let sectionHeading = this.props.downloaded ? this.props.verseData.section : this.props.sectionHeading
-    let obj = this.props.chapterNumber + '_' + this.props.index + '_' + verseNumber + '_' + verseText;
-    let isSelect = this.has(this.props.selectedReferences, obj)
-    let isHighlight = this.isHighlight()
-    let isNoted = this.isNoted()
-    if (verseNumber == 1 && typeof verseNumber != 'undefined') {
+    let verseNumber = this.props.downloaded
+      ? this.props.verseData.number
+      : this.props.verseData.verseNumber;
+    let verseText = this.props.downloaded
+      ? this.props.verseData.text
+      : this.props.verseData.verseText;
+    let sectionHeading = this.props.downloaded
+      ? this.props.verseData.section
+      : this.props.sectionHeading;
+    let obj =
+      this.props.chapterNumber +
+      "_" +
+      this.props.index +
+      "_" +
+      verseNumber +
+      "_" +
+      verseText;
+    let isSelect = this.has(this.props.selectedReferences, obj);
+    let isHighlight = this.isHighlight();
+    let isNoted = this.isNoted();
+    if (verseNumber == 1 && typeof verseNumber != "undefined") {
       return (
         <Text
           style={this.props.styles.textStyle}

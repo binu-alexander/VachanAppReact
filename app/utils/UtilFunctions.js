@@ -1,13 +1,17 @@
+/* eslint-disable no-prototype-builtins */
 import id_name_map from "../assets/mappings.json";
 const Constants = require("./constants");
-import {PermissionsAndroid} from 'react-native'
+import { PermissionsAndroid } from "react-native";
 
 export function getHeading(contents) {
   if (contents) {
     let data = contents.find((item) => Array.isArray(item));
     if (data) {
       for (let section of data) {
-        if (Object.keys(section)[0].startsWith('s') && typeof section[Object.keys(section)[0]][0] === 'string') {
+        if (
+          Object.keys(section)[0].startsWith("s") &&
+          typeof section[Object.keys(section)[0]][0] === "string"
+        ) {
           return section[Object.keys(section)[0]][0];
         }
       }
@@ -18,36 +22,38 @@ export function getHeading(contents) {
     return null;
   }
 }
-export async function AndroidPermission(permissionName){
+export async function AndroidPermission(permissionName) {
   // We need to ask permission for Android only
-  if (Platform.OS === 'android') {
+  //it showing not declare
+  // eslint-disable-next-line no-undef
+  if (Platform.OS === "android") {
     // Calling the permission function
-    const alertPermission = permissionName.replace(/\_/g,' ').toLowerCase()
-    console.log("alert permission ",alertPermission)
+    const alertPermission = permissionName.replace(/_/g, " ").toLowerCase();
+    console.log("alert permission ", alertPermission);
     // PermissionsAndroid.requestMultiple([PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE, PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE]).then((result) => {
     //   console.log('result', result);
     // })
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS[permissionName],
       {
-        title: "VachanGo needs "+ alertPermission +" permission",
-        message: 'VachanGo needs access to your '+alertPermission,
-      },
+        title: "VachanGo needs " + alertPermission + " permission",
+        message: "VachanGo needs access to your " + alertPermission,
+      }
     );
-    console.log("GRANTED ",granted,PermissionsAndroid.RESULTS.GRANTED)
+    console.log("GRANTED ", granted, PermissionsAndroid.RESULTS.GRANTED);
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
       // Permission Granted
-      return true
+      return true;
     } else {
       // Permission Denied
-      return false
+      return false;
       // alert('CAMERA Permission Denied');
     }
   } else {
-    return true
+    return true;
     // proceed();
   }
-};
+}
 export function getBookNameFromMapping(id) {
   var obj = id_name_map.id_name_map;
   for (var key in obj) {

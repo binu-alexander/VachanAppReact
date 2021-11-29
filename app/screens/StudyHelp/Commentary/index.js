@@ -51,7 +51,7 @@ class Commentary extends Component {
       this.fetchBookName();
     }
   }
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (
       this.props.bookId != prevProps.bookId ||
       prevProps.currentVisibleChapter != this.props.currentVisibleChapter
