@@ -1,12 +1,12 @@
 import { StyleSheet, Dimensions } from 'react-native'
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-import {colorStyle,sizeStyle} from '../../utils/dynamicStyle'
 
-export const styles = StyleSheet.create({
+export const noteStyle = (colorFile, sizeFile) => {
+    return StyleSheet.create({
         container: {
             flex: 1,
-            backgroundColor: colorStyle.backgroundColor
+            backgroundColor: colorFile.backgroundColor
         },
         noteCardItem: {
             justifyContent: 'space-between',
@@ -17,23 +17,23 @@ export const styles = StyleSheet.create({
         },
         chapterSelectionContainer: {
             flex: 1,
-            backgroundColor: colorStyle.backgroundColor
+            backgroundColor: colorFile.backgroundColor
         },
         selectGridNum: {
             flex: 0.25,
-            borderColor: colorStyle.borderColor,
+            borderColor: colorFile.gridBorderColor,
             height: width / 4,
             justifyContent: "center"
         },
         modalText: {
             textAlign: 'left',
-            fontSize: sizeStyle.titleText,
-            color: colorStyle.textColor
+            fontSize: sizeFile.titleText,
+            color: colorFile.textColor
         },
         modalMainView: {
             flex: 1, justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: colorStyle.semiTransparentBackground
+            backgroundColor: colorFile.semiTransparentBackground
         },
         modalView: {
             width: '80%', height: '80%', position: 'absolute', zIndex: 0, top: 80
@@ -42,23 +42,23 @@ export const styles = StyleSheet.create({
             position: 'absolute', right: -20, top: -20, zIndex: 1
         },
         chapterNum: {
-            fontSize: sizeStyle.titleText,
+            fontSize: sizeFile.titleText,
             textAlign: "center",
             alignItems: "center",
-            color: colorStyle.textColor
+            color: colorFile.textColor
         },
         cardItemStyle: {
             paddingTop: 16,
             paddingBottom: 16,
-            backgroundColor: colorStyle.backgroundColor
+            backgroundColor: colorFile.backgroundColor
         },
         notesContentView: {
             flex: 1,
-            backgroundColor: colorStyle.backgroundColor
+            backgroundColor: colorFile.backgroundColor
         },
         noteContent: {
             flex: 1,
-            backgroundColor: colorStyle.backgroundColor,
+            backgroundColor: colorFile.backgroundColor,
         },
         centerEmptySet: {
             justifyContent: 'center',
@@ -66,42 +66,42 @@ export const styles = StyleSheet.create({
             height: '100%'
         },
         noteFontCustom: {
-            fontSize: sizeStyle.textSize,
-            color: colorStyle.textColor
+            fontSize: sizeFile.contentText,
+            color: colorFile.textColor
         },
         noteText: {
-            fontSize: sizeStyle.textSize,
-            color: colorStyle.textColor
+            fontSize: sizeFile.contentText,
+            color: colorFile.textColor
         },
         deleteIon: {
-            fontSize: sizeStyle.iconSize,
-            color: colorStyle.textColor
+            fontSize: sizeFile.iconSize,
+            color: colorFile.textColor
         },
         noteFlatlistCustom: {
-            backgroundColor: colorStyle.backgroundColor,
+            backgroundColor: colorFile.backgroundColor,
             margin: 8
         },
         placeholderColor: {
-            color: colorStyle.textColor,
+            color: colorFile.textColor,
         },
         inputStyle: {
-            fontSize: sizeStyle.textSize,
-            color: colorStyle.textColor,
+            fontSize: sizeFile.contentText,
+            color: colorFile.textColor,
             margin: 8
         },
         NoteAddButton: {
             flex: 8
         },
         noteTextSize: {
-            fontSize: sizeStyle.textSize,
+            fontSize: sizeFile.contentText,
         },
         FlowLayoutCustom: {
             flex: 8
         },
         addIconCustom: {
             flex: 1,
-            fontSize: sizeStyle.iconSize,
-            color: colorStyle.iconColor
+            fontSize: sizeFile.iconSize,
+            color: colorFile.iconColor
         },
         noteTextView:
         {
@@ -112,23 +112,23 @@ export const styles = StyleSheet.create({
         containerEditNote: {
             flex: 1,
             flexDirection: 'column',
-            backgroundColor: colorStyle.backgroundColor,
+            backgroundColor: colorFile.backgroundColor,
         },
         editorInput: {
             flex: 1,
             borderColor: 'gray',
-            color: colorStyle.textColor,
+            color: colorFile.textColor,
             borderWidth: 1,
             marginHorizontal: 30,
             marginVertical: 5,
-            backgroundColor: colorStyle.backgroundColor
+            backgroundColor: colorFile.backgroundColor
         },
         customStyles:{
-            color: colorStyle.textColor,
+            color: colorFile.textColor,
         },
         editorText:{
-            color: colorStyle.textColor,
-            backgroundColor: colorStyle.backgroundColor
+            color: colorFile.textColor,
+            backgroundColor: colorFile.backgroundColor
         },
         subContainer: {
             justifyContent: 'space-between',
@@ -146,8 +146,8 @@ export const styles = StyleSheet.create({
         },
         tapButton: {
             flex: 8,
-            color: colorStyle.textColor,
-            fontSize: sizeStyle.titleText
+            color: colorFile.textColor,
+            fontSize: sizeFile.titleText
         },
         emptyMessageContainer: {
             flex: 1,
@@ -156,36 +156,36 @@ export const styles = StyleSheet.create({
             justifyContent: 'center'
         },
         messageEmpty: {
-            fontSize: sizeStyle.titleText,
-            color: colorStyle.textColor,
+            fontSize: sizeFile.titleText,
+            color: colorFile.textColor,
         },
         emptyMessageIcon: {
-            fontSize: sizeStyle.emptyIconSize,
+            fontSize: sizeFile.emptyIconSize,
             margin: 16,
-            color: colorStyle.iconColor,
+            color: colorFile.iconColor,
         },
         textEditorView: {
             flexDirection: 'column-reverse'
         },
         richTextEditor: {
             height: height,
-            color: colorStyle.textColor,
-            fontSize: sizeStyle.textSize,
-            backgroundColor: colorStyle.backgroundColor
+            color: colorFile.textColor,
+            fontSize: sizeFile.contentText,
+            backgroundColor: colorFile.backgroundColor
         },
         iconCustom: {
             margin: 8,
             padding: 8,
         },
         textStyle: {
-            color: colorStyle.textColor,
-            fontSize: sizeStyle.textSize
+            color: colorFile.textColor,
+            fontSize: sizeFile.contentText
         },
         iconReferClose: {
-            color: colorStyle.textColor,
-            fontSize: sizeStyle.textSize
+            color: colorFile.textColor,
+            fontSize: sizeFile.contentText
         }
 
     })
-
+}
 

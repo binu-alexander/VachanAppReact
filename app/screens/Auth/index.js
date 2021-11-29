@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { userInfo, userLogedIn } from '../../store/action'
 import Login from './Login'
+import { styles } from './styles.js'
 import ProfilePage from './ProfilePage';
 
 class Auth extends Component {
@@ -13,6 +14,7 @@ class Auth extends Component {
       userData: '',
       isLoading: false
     }
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
   render() {
     if (this.props.email) {

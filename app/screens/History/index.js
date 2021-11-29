@@ -11,7 +11,7 @@ import {
   updateMetadata,
 } from "../../store/action/";
 import { getBookChaptersFromMapping } from "../../utils/UtilFunctions";
-import { styles } from "./styles.js";
+import { historyStyle } from "./styles.js";
 import { connect } from "react-redux";
 
 var moment = require("moment");
@@ -29,6 +29,7 @@ class History extends Component {
       ],
       isLoading: false,
     };
+    this.styles = historyStyle(props.colorFile, props.sizeFile);
     this.onClearHistory = this.onClearHistory.bind(this);
   }
 
@@ -39,7 +40,7 @@ class History extends Component {
         let historyList = [...this.state.historyList];
         var date = new Date();
         var cur = moment(date).format("D");
-        for (i = 0; i < historyData.length; i++) {
+        for (var i = 0; i < historyData.length; i++) {
           var end = moment(historyData[i].time).format("D");
           var timeDiff = Math.floor(cur - end);
           if (timeDiff == 0) {
@@ -59,10 +60,10 @@ class History extends Component {
           }
         }
 
-        for (i = 0; i < historyList.length; i++) {
-          if (historyList[i].list.length == 0) {
-            historyList.splice(i, 1);
-            i--;
+        for (var j = 0; j < historyList.length; j++) {
+          if (historyList[j].list.length == 0) {
+            historyList.splice(j, 1);
+            j--;
           }
         }
         this.setState({ historyList, isLoading: false });
@@ -78,11 +79,11 @@ class History extends Component {
   _renderHeader = (data, index, isActive) => {
     return (
       <View>
-        <View style={styles.historyHeader}>
-          <Text style={styles.accordionHeaderText}>{data.time}</Text>
+        <View style={this.styles.historyHeader}>
+          <Text style={this.styles.accordionHeaderText}>{data.time}</Text>
           <Icon
             name={isActive ? "keyboard-arrow-up" : "keyboard-arrow-down"}
-            style={styles.iconCustom}
+            style={this.styles.iconCustom}
           />
         </View>
       </View>
@@ -145,11 +146,12 @@ class History extends Component {
         ) : (
           data.list.map((item, index) => (
             <TouchableOpacity
+              key={index}
               onPress={() => {
                 this.goToContent(item);
               }}
             >
-              <Text style={styles.contentText}>
+              <Text style={this.styles.contentText}>
                 {" "}
                 {item.languageName} {item.versionCode} {item.bookName}{" "}
                 {item.chapterNumber}{" "}
@@ -163,17 +165,17 @@ class History extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={this.styles.container}>
         {this.state.historyList.length == 0 ? (
-          <View style={styles.emptyMessageContainer}>
+          <View style={this.styles.emptyMessageContainer}>
             <Icon
               onPress={() => {
                 this.props.navigation.navigate("Bible");
               }}
               name="import-contacts"
-              style={styles.emptyMessageIcon}
+              style={this.styles.emptyMessageIcon}
             />
-            <Text style={styles.messageEmpty}>Start reading</Text>
+            <Text style={this.styles.messageEmpty}>Start reading</Text>
           </View>
         ) : (
           <Accordion

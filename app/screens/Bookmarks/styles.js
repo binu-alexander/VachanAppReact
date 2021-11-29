@@ -1,46 +1,44 @@
-import {StyleSheet,Dimensions} from 'react-native'
-import {colorStyle,sizeStyle} from '../../utils/dynamicStyle'
+import { StyleSheet } from "react-native";
 
-export const styles = StyleSheet.create({
-    container:{
-        flex:1,
-        backgroundColor:colorStyle.backgroundColor,
+export const bookStyle = (colorFile, sizeFile) => {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colorFile.backgroundColor,
     },
-    bookmarksView:{
-        flexDirection:'row',
-        justifyContent: 'space-between',
-        margin:16,
-        fontSize:sizeStyle.textSize
+    bookmarksView: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      margin: 16,
+      fontSize: sizeFile.fontSize,
     },
-    bookmarksText:{
-        fontSize:sizeStyle.titleText,
-        color:colorStyle.iconColor
+    bookmarksText: {
+      fontSize: sizeFile.titleText,
+      color: colorFile.iconColor,
     },
-    iconCustom:{
-        color:colorStyle.textColor,
-        fontSize:sizeStyle.iconSize
+    iconCustom: {
+      color: colorFile.textColor,
+      fontSize: sizeFile.iconSize,
     },
-    emptyMessageContainer:{
-        flex:1,
-        alignItems:'center',
-        flexDirection:'column',
-        justifyContent:'center'
+    emptyMessageContainer: {
+      flex: 1,
+      alignItems: "center",
+      flexDirection: "column",
+      justifyContent: "center",
     },
-    messageEmpty:{
-        fontSize:sizeStyle.titleText,
-        color:colorStyle.textColor,
+    messageEmpty: {
+      fontSize: sizeFile.titleText,
+      color: colorFile.textColor,
     },
-    emptyMessageIcon:{
-        fontSize:sizeStyle.emptyIconSize,
-        margin:16,
-        color:colorStyle.iconColor,
+    emptyMessageIcon: {
+      fontSize: sizeFile.emptyIconSize,
+      margin: 16,
+      color: colorFile.iconColor,
     },
-    centerEmptySet: { 
-        justifyContent: 'center', 
-        alignItems: 'center',
-        height: '100%' 
+    centerEmptySet: {
+      justifyContent: "center",
+      alignItems: "center",
+      height: "100%",
     },
-    activityStyle:{
-        flex: 1, justifyContent: "center", alignSelf: "center" 
-    }
-    })
+  });
+};

@@ -1,24 +1,24 @@
 import { StyleSheet } from 'react-native'
 import Color from '../../utils/colorConstants'
-import {colorStyle,sizeStyle} from '../../utils/dynamicStyle'
 
-export const styles = StyleSheet.create({
+export const aboutPage = (colorFile, sizeFile) => {
+    return StyleSheet.create({
         container: {
             flex: 1,
-            backgroundColor: colorStyle.backgroundColor,
+            backgroundColor: colorFile.backgroundColor,
         },
         textStyle: {
-            fontSize: sizeStyle.textSize,
-            color: colorStyle.textColor,
-            lineHeight: sizeStyle.lineHeight,
+            fontSize: sizeFile.contentText,
+            color: colorFile.textColor,
+            lineHeight: sizeFile.lineHeight,
         },
         textContainer: {
             margin: 16,
             padding: 8
         },
         featureList: {
-            fontSize: sizeStyle.textSize,
-            color: colorStyle.textColor,
+            fontSize: sizeFile.contentText,
+            color: colorFile.textColor,
             fontWeight: "bold"
         },
         italicText: {
@@ -30,26 +30,28 @@ export const styles = StyleSheet.create({
         linkText: {
             color: Color.Red,
             textDecorationLine: 'underline',
-            fontSize: sizeStyle.textSize
+            fontSize: sizeFile.contentText
         },
         featureView: {
             flexDirection: 'row'
         },
         TitleText: {
             paddingTop: 8,
-            fontSize: sizeStyle.titleText,
-            color: colorStyle.headingText,
-            lineHeight: sizeStyle.lineHeight
+            fontSize: sizeFile.titleText,
+            color: colorFile.sectionHeading,
+            lineHeight: sizeFile.lineHeight
         },
         bulletIcon: {
             fontSize: 26,
-            color: colorStyle.iconColor,
-            lineHeight: sizeStyle.lineHeight,
+            color: colorFile.iconColor,
+            lineHeight: sizeFile.lineHeight,
         },
         releaseNoteText:{
             paddingTop: 8,
-            lineHeight: sizeStyle.lineHeight,
-            fontSize: sizeStyle.titleText,
-            color: colorStyle.textColor,
+            lineHeight: sizeFile.lineHeight,
+            fontSize: sizeFile.titleText,
+            color: colorFile.textColor,
         }
     })
+
+}

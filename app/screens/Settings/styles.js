@@ -1,75 +1,76 @@
-import {StyleSheet,Dimensions} from 'react-native'
-const width = Dimensions.get('window').width;
-import { colorStyle  } from '../../utils/dynamicStyle';
-export const styles = StyleSheet.create({
-    container:{
-        flex:1,
-        backgroundColor:colorStyle.backgroundColor 
+import { StyleSheet, Dimensions } from "react-native";
+// import { Icon } from 'native-base';
+const width = Dimensions.get("window").width;
+
+export const settingsPageStyle = (colorFile) => {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colorFile.backgroundColor,
     },
-    containerMargin:{
-        flex:1,
-        margin:8
+    containerMargin: {
+      flex: 1,
+      margin: 8,
     },
     textStyle: {
-            color: colorStyle.textColor,   
-            fontSize:16,
-            marginLeft:4,
-            alignSelf:'center'
-    },
-    
-    cardItemStyle:{
-       paddingTop:8,
-       paddingBottom:8,
-       backgroundColor:colorStyle.backgroundColor
-    },
-    switchButtonCard:{
-        paddingTop:16,
-        paddingBottom:16,
-        backgroundColor:colorStyle.backgroundColor,
-        justifyContent:'space-between',
-    },
-    cardItemColumn:{
-        flexDirection:'column',
-    },
-    cardItemRow:{
-        flexDirection:'row',
-        marginVertical:4
-    },
-    modeTextCustom:{
-        color:colorStyle.textColor,
-        fontSize:16,
-        position: 'absolute', 
-        right: 50,
+      color: colorFile.textColor,
+      fontSize: 16,
+      marginLeft: 4,
+      alignSelf: "center",
     },
 
-    cardItemAlignRight:{
-        alignItems:'flex-start'
+    cardItemStyle: {
+      paddingTop: 8,
+      paddingBottom: 8,
+      backgroundColor: colorFile.backgroundColor,
     },
-    segmentCustom:{
-        width:width-50, 
-        height: 30, 
-        borderRadius: 50,
+    switchButtonCard: {
+      paddingTop: 16,
+      paddingBottom: 16,
+      backgroundColor: colorFile.backgroundColor,
+      justifyContent: "space-between",
     },
-    cardItemIconCustom:{
-        marginHorizontal:4,
-        marginVertical:4,
-        color:colorStyle.iconColor,
-        fontSize:32   
+    cardItemColumn: {
+      flexDirection: "column",
     },
-    
-    modeIconCustom:{
-        fontSize:32,
-        textAlign:'center'  
+    cardItemRow: {
+      flexDirection: "row",
+      marginVertical: 4,
     },
-    nightModeIconColor:{
-        color:colorStyle.accentColor
+    modeTextCustom: {
+      color: colorFile.textColor,
+      fontSize: 16,
+      position: "absolute",
+      right: 50,
     },
-    dayModeIconColor:{
-        color:colorStyle.accentColor
-    },
-    switchIcon:{
-        color:colorStyle.iconColor,
-    }
-})
 
+    cardItemAlignRight: {
+      alignItems: "flex-start",
+    },
+    segmentCustom: {
+      width: width - 50,
+      height: 30,
+      borderRadius: 50,
+    },
+    cardItemIconCustom: {
+      marginHorizontal: 4,
+      marginVertical: 4,
+      color: colorFile.settingsIconColor,
+      fontSize: 32,
+    },
 
+    modeIconCustom: {
+      fontSize: 32,
+      textAlign: "center",
+    },
+    nightModeIconColor: {
+      color: colorFile.accentColor,
+    },
+    dayModeIconColor: {
+      color: colorFile.accentColor,
+    },
+    switchIcon: {
+      color: colorFile.iconColor,
+    },
+  });
+};

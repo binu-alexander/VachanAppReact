@@ -51,6 +51,7 @@ class DrawerCommentary extends Component {
       selectedBookIndex: -1,
       selectedBook: this.props.bookName
     }
+    this.styles = styles(this.props.colorFile, this.props.sizeFile)
     this.alertPresent = false
   }
 
@@ -238,12 +239,12 @@ class DrawerCommentary extends Component {
       <View style={{ padding: 10 }}>
         {item.verse &&
           (item.verse == 0 ?
-            <Text style={styles.commentaryHeading}>Chapter Intro</Text> :
-            <Text style={styles.commentaryHeading}>Verse Number : {item.verse}</Text>
+            <Text style={this.styles.commentaryHeading}>Chapter Intro</Text> :
+            <Text style={this.styles.commentaryHeading}>Verse Number : {item.verse}</Text>
           )}
         <HTML
-          baseFontStyle={styles.textString}
-          tagsStyles={{ p: styles.textString }} html={item.text} />
+          baseFontStyle={this.styles.textString}
+          tagsStyles={{ p: this.styles.textString }} html={item.text} />
       </View>
     )
   }
@@ -251,11 +252,11 @@ class DrawerCommentary extends Component {
     return (
       <View>
         {this.props.commentaryContent && this.props.commentaryContent.bookIntro ?
-          <View style={styles.cardItemBackground}>
-            <Text style={styles.commentaryHeading}>Book Intro</Text>
+          <View style={this.styles.cardItemBackground}>
+            <Text style={this.styles.commentaryHeading}>Book Intro</Text>
             <HTML
-              baseFontStyle={styles.textString}
-              tagsStyles={{ p: styles.textString }} html={this.props.commentaryContent && this.props.commentaryContent.bookIntro} />
+              baseFontStyle={this.styles.textString}
+              tagsStyles={{ p: this.styles.textString }} html={this.props.commentaryContent && this.props.commentaryContent.bookIntro} />
           </View> : null}
       </View>
     )
@@ -263,25 +264,26 @@ class DrawerCommentary extends Component {
   }
   renderFooter = () => {
     var metadata = this.state.parallelMetaData
+    console.log("FOOTER ",this.state.parallelMetaData)
     return (
       <View style={{ paddingVertical: 20 }}>
         {
           this.props.commentaryContent && this.props.commentaryContent.commentaries && this.props.parallelMetaData &&
           <View style={{ justifyContent: 'center', alignItems: 'center' }}>
             {metadata?.revision !== null && metadata?.revision !== "" && (
-              <Text textBreakStrategy={"simple"} style={styles.metaData}>
+              <Text textBreakStrategy={"simple"} style={{ textAlign: 'center' }}>
                 <Text>Copyright:</Text>{" "}
                 {metadata?.revision}
               </Text>
             )}
             {metadata?.copyrightHolder !== null && metadata?.copyrightHolder !== "" && (
-              <Text textBreakStrategy={"simple"} style={styles.metaData}>
+              <Text textBreakStrategy={"simple"} style={{ textAlign: 'center' }}>
                 <Text>License:</Text>{" "}
                 {metadata?.copyrightHolder}
               </Text>
             )}
             {metadata?.license !== null && metadata?.license !== "" && (
-              <Text textBreakStrategy={"simple"} style={styles.metaData}>
+              <Text textBreakStrategy={"simple"} style={{ textAlign: 'center' }}>
                 <Text>
                   Technology partner:
                 </Text >{" "}
@@ -297,31 +299,46 @@ class DrawerCommentary extends Component {
   render() {
     console.log("parallel meta data ",this.state.parallelMetaData)
     return (
-      <View style={styles.container}>
+      <View style={this.styles.container}>
         {
           (this.props.error) ?
-            <View style={styles.centerAlignment}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
               <ReloadButton
-                styles={styles}
+                styles={this.styles}
                 reloadFunction={this.updateData}
                 message={null}
               />
             </View>
             : (this.props.parallelLanguage == undefined ? null :
               <View style={{ flex: 1 }}>
-                <View style={styles.alignStart}>
+                <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                   <TouchableOpacity
                     onPress={() => {
                       this._dropdown_1 && this._dropdown_1.show();
                     }}
-                    style={styles.dropdownView} >
+                    style={{
+                      padding: 10,
+                      margin: 10,
+                      borderRadius: 10,
+                      width: 150,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderColor: this.props.colorFile.iconColor,
+                      borderWidth: 0.5,
+                    }}
+                  >
                     <ModalDropdown
-                      ref={el => this._dropdown_1 = el} options={this.state.dropDownList} 
-                      onSelect={this.onSelectBook}
+                      ref={el => this._dropdown_1 = el} options={this.state.dropDownList} onSelect={this.onSelectBook}
                       style={{ paddingRight: 20 }} defaultValue={this.state.bookName}
-                      isFullWidth={true} dropdownStyle={styles.dropdownSize}
+                      isFullWidth={true} dropdownStyle={{ width: "60%", height: height / 2 }}
                       dropdownTextStyle={{ fontSize: 18 }}
-                      textStyle={[styles.textStyle,{paddingHorizontal:8}]}
+                      textStyle={{
+                        paddingHorizontal: 8,
+                        fontSize: 18,
+                        fontWeight: "400",
+                        color: this.props.colorFile.textColor,
+                      }}
                     />
                     <Icon
                       name="arrow-drop-down"
@@ -329,14 +346,13 @@ class DrawerCommentary extends Component {
                       size={20}
                     />
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => { this._dropdown_2 && this._dropdown_2.show(); }} 
-                  style={[styles.dropdownView,{wodth:150}]}>
+                  <TouchableOpacity onPress={() => { this._dropdown_2 && this._dropdown_2.show(); }} style={{ padding: 10, margin: 10, borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderColor: this.props.colorFile.iconColor, borderWidth: 0.5 }}>
                     <ModalDropdown
                       ref={el => this._dropdown_2 = el}
                       options={this.state.totalChapters} onSelect={this.onSelectChapter}
                       defaultValue={this.state.chapterNumber} isFullWidth={true}
-                      dropdownStyle={styles.dropdownSize} dropdownTextStyle={{ fontSize: 18 }}
-                      textStyle={styles.textStyle} />
+                      dropdownStyle={{ width: "60%", height: height / 2 }} dropdownTextStyle={{ fontSize: 18 }}
+                      textStyle={{ fontSize: 18, fontWeight: '400', color: this.props.colorFile.textColor }} />
                     <Icon name="arrow-drop-down" color={this.props.colorFile.iconColor} size={20} />
                   </TouchableOpacity>
                 </View>
@@ -345,7 +361,7 @@ class DrawerCommentary extends Component {
                   showsVerticalScrollIndicator={false}
                   contentContainerStyle={{ flexGrow: 1, margin: 16 }}
                   renderItem={this.renderItem}
-                  ListFooterComponent={<View style={styles.listFooter}></View>}
+                  ListFooterComponent={<View style={{ height: 40, marginBottom: 40 }}></View>}
                   ListHeaderComponent={this.ListHeaderComponent}
                   ListFooterComponent={this.renderFooter}
                 />

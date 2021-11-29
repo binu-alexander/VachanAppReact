@@ -1,37 +1,40 @@
 import {StyleSheet} from 'react-native'
-import { colorStyle, sizeStyle} from '../../utils/dynamicStyle'
-export const styles = StyleSheet.create({
+
+export const styles =(colorFile, sizeFile) =>{
+    return StyleSheet.create({
         emptyMessageIcon:{
-            fontSize:sizeStyle.emptyIconSize,
+            fontSize:sizeFile.emptyIconSize,
             margin:16,
-            color:colorStyle.iconColor,
+            color:colorFile.iconColor,
             alignSelf:'center'
         },
         tabLabel:{
             fontSize: 16, 
             margin: 0, 
             padding: 0, 
-            color: colorStyle.blueText
+            color: colorFile.blueText
         },
         tabBarOptions:{
             borderBottomWidth: 1,
-            borderColor: colorStyle.blueText,
-            backgroundColor: colorStyle.backgroundColor,
+            borderColor: colorFile.blueText,
+            backgroundColor: colorFile.backgroundColor,
             height: 36
         },
         indicatorStyle:{
-            backgroundColor: colorStyle.blueText,
+            backgroundColor: colorFile.blueText,
         },
         mainContainerReloadButton:{
             flex:1,
-            backgroundColor: colorStyle.backgroundColor,
+            backgroundColor: colorFile.backgroundColor,
             justifyContent:'center',
             alignItems:'center'
         },
         reloadText: {
-            fontSize: sizeStyle.textSize,
-            color: colorStyle.textColor,
+            fontSize: sizeFile.contentText,
+            color: colorFile.textColor,
             textAlign: 'center'
         },
 
     })
+    
+}

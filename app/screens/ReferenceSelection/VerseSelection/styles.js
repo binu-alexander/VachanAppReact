@@ -1,21 +1,22 @@
 import { StyleSheet, Dimensions } from "react-native";
 const width = Dimensions.get("window").width;
-import { colorStyle, sizeStyle } from "../../../utils/dynamicStyle";
-export const styles = StyleSheet.create({
+
+export const verseSelection = (colorFile, sizeFile) => {
+  return StyleSheet.create({
     container: {
       flex: 1,
       flexDirection: "row",
     },
     chapterSelectionContainer: {
       flex: 1,
-      backgroundColor: colorStyle.backgroundColor,
+      backgroundColor: colorFile.backgroundColor,
     },
     tabContainer: {
       flex: 1,
-      backgroundColor: colorStyle.backgroundColor,
+      backgroundColor: colorFile.backgroundColor,
     },
     textStyle: {
-      fontSize: sizeStyle.textSize,
+      fontSize: sizeFile.contentText,
     },
     sideBarContainer: {
       flexDirection: "column",
@@ -24,7 +25,7 @@ export const styles = StyleSheet.create({
     sideBarIconCustom: {
       alignSelf: "center",
       padding: 16,
-      color: colorStyle.sidebarIconColor,
+      color: colorFile.sidebarIconColor,
     },
     bookNameContainer: {
       flexDirection: "column",
@@ -46,19 +47,19 @@ export const styles = StyleSheet.create({
       paddingVertical: 12,
     },
     IconCustom: {
-      color: colorStyle.iconColor,
+      color: colorFile.iconColor,
     },
     chapterSelectionTouchable: {
       flex: 0.25,
       height: width / 4,
-      backgroundColor: colorStyle.backgroundColor,
+      backgroundColor: colorFile.backgroundColor,
       justifyContent: "center",
     },
     chapterNum: {
-      fontSize: sizeStyle.titleText,
+      fontSize: sizeFile.titleText,
       textAlign: "center",
       alignItems: "center",
-      color: colorStyle.textColor,
+      color: colorFile.textColor,
     },
     cardItemStyle: {
       paddingTop: 16,
@@ -76,15 +77,15 @@ export const styles = StyleSheet.create({
     bookName: {
       textAlign: "center",
       alignItems: "center",
-      color: colorStyle.textColor,
+      color: colorFile.textColor,
       margin: 8,
-      fontSize: sizeStyle.textSize,
+      fontSize: sizeFile.contentText,
     },
 
     //SelectChapter
     selectGridNum: {
       flex: 0.25,
-      borderColor: colorStyle.gridBorderColor,
+      borderColor: colorFile.gridBorderColor,
       borderRightWidth: 1,
       borderBottomWidth: 1,
       height: width / 4,
@@ -93,8 +94,8 @@ export const styles = StyleSheet.create({
     selectText: {
       textAlign: "center",
       alignItems: "center",
-      color: colorStyle.textColor,
-      fontSize: sizeStyle.textSize,
+      color: colorFile.textColor,
+      fontSize: sizeFile.contentText,
     },
   });
-
+};

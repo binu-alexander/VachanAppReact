@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   Text,
   View,
@@ -6,36 +6,43 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
-  Dimensions
-} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import DbQueries from '../../utils/dbQueries.js'
-import { getBookChaptersFromMapping, getBookNumberFromMapping, getResultText } from '../../utils/UtilFunctions'
-import SearchTab from '../../components/SearchTab/SearchTab'
-import { updateVersionBook, updateVersion, fetchVersionBooks, updateMetadata } from '../../store/action/'
+  Dimensions,
+} from "react-native";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import DbQueries from "../../utils/dbQueries.js";
+import {
+  getBookChaptersFromMapping,
+  getBookNumberFromMapping,
+  getResultText,
+} from "../../utils/UtilFunctions";
+import SearchTab from "../../components/SearchTab/SearchTab";
+import {
+  updateVersionBook,
+  updateVersion,
+  fetchVersionBooks,
+  updateMetadata,
+} from "../../store/action/";
 
-import { styles } from './styles'
-import { connect } from 'react-redux'
-import Color from '../../utils/colorConstants'
-import vApi from '../../utils/APIFetch';
-const width = Dimensions.get('window').width;
-
+import { searchStyle } from "./styles";
+import { connect } from "react-redux";
+import Color from "../../utils/colorConstants";
+import vApi from "../../utils/APIFetch";
+const width = Dimensions.get("window").width;
 
 const SearchResultTypes = {
   ALL: 0,
   OT: 1,
-  NT: 2
+  NT: 2,
 };
 
 class Search extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
       searchedResult: [],
       activeTab: SearchResultTypes.ALL,
       isLoading: false,
-      searchText: '',
+      searchText: "",
       tabsData: [],
       sourceId: this.props.sourceId,
       languageName: this.props.languageName,
@@ -45,98 +52,118 @@ class Search extends Component {
       bookName: this.props.bookName,
       bookId: this.props.bookId,
       books: this.props.books,
-      metadata:null
-    }
+      metadata: null,
+    };
 
-    this.onSearchText = this.onSearchText.bind(this)
-    this.toggleButton = this.toggleButton.bind(this)
-    this.clearData = this.clearData.bind(this)
+    this.onSearchText = this.onSearchText.bind(this);
+    this.toggleButton = this.toggleButton.bind(this);
+    this.clearData = this.clearData.bind(this);
 
+    this.styles = searchStyle(props.colorFile, props.sizeFile);
   }
 
   onSearchText() {
-    this.setState({ isLoading: true, searchedResult: [], tabsData: [] }, async () => {
-
-      if (this.state.downloaded) {
-        let searchResultByBookName = await DbQueries.querySearchBookWithName(this.state.versionCode, this.state.languageName, this.state.searchText
+    this.setState(
+      { isLoading: true, searchedResult: [], tabsData: [] },
+      async () => {
+        if (this.state.downloaded) {
+          let searchResultByBookName = await DbQueries.querySearchBookWithName(
+            this.state.versionCode,
+            this.state.languageName,
+            this.state.searchText
           );
-        if (searchResultByBookName) {
-          let reference = [{
-            bookId: searchResultByBookName.bookId,
-            bookName: searchResultByBookName.bookName,
-            chapterNumber: 1,
-            verseNumber: '1',
-            searchText: '',
-          }]
-          this.setState({ searchedResult: reference })
-          this.addRefListToTab(reference)
-        }
+          if (searchResultByBookName) {
+            let reference = [
+              {
+                bookId: searchResultByBookName.bookId,
+                bookName: searchResultByBookName.bookName,
+                chapterNumber: 1,
+                verseNumber: "1",
+                searchText: "",
+              },
+            ];
+            this.setState({ searchedResult: reference });
+            this.addRefListToTab(reference);
+          }
 
-        let searchResultByVerseText = await DbQueries.querySearchVerse(this.state.versionCode, this.state.languageName, this.state.searchText)
-        if (searchResultByVerseText && searchResultByVerseText.length > 0) {
-          this.setState({ searchedResult: [...this.state.searchedResult, ...searchResultByVerseText] })
-          this.addRefListToTab(searchResultByVerseText)
-        }
-        this.setState({ isLoading: false })
-      } else {
-        
-        var res = await vApi.get('search/' + JSON.parse(this.state.sourceId) + '?keyword=' + this.state.searchText)
-        var data = []
-        if (res.result.length > 0 && this.state.books) {
-          for (var i = 0; i < res.result.length; i++) {
-            for (var j = 0; j < this.state.books.length ; j++) {
-              var bId = this.state.books[j].bookId
-              var bName = this.state.books[j].bookName
-              if (bId == res.result[i].bookCode) {
-                data.push({
-                  bookId: res.result[i].bookCode,
-                  bookName: bName,
-                  chapterNumber: res.result[i].chapter,
-                  verseNumber: res.result[i].verse,
-                  text: res.result[i].text,
-                })
+          let searchResultByVerseText = await DbQueries.querySearchVerse(
+            this.state.versionCode,
+            this.state.languageName,
+            this.state.searchText
+          );
+          if (searchResultByVerseText && searchResultByVerseText.length > 0) {
+            this.setState({
+              searchedResult: [
+                ...this.state.searchedResult,
+                ...searchResultByVerseText,
+              ],
+            });
+            this.addRefListToTab(searchResultByVerseText);
+          }
+          this.setState({ isLoading: false });
+        } else {
+          var res = await vApi.get(
+            "search/" +
+              JSON.parse(this.state.sourceId) +
+              "?keyword=" +
+              this.state.searchText
+          );
+          var data = [];
+          if (res.result.length > 0 && this.state.books) {
+            for (var i = 0; i < res.result.length; i++) {
+              for (var j = 0; j < this.state.books.length; j++) {
+                var bId = this.state.books[j].bookId;
+                var bName = this.state.books[j].bookName;
+                if (bId == res.result[i].bookCode) {
+                  data.push({
+                    bookId: res.result[i].bookCode,
+                    bookName: bName,
+                    chapterNumber: res.result[i].chapter,
+                    verseNumber: res.result[i].verse,
+                    text: res.result[i].text,
+                  });
+                }
               }
             }
+            this.setState({ searchedResult: data });
+            this.addRefListToTab(data);
           }
-          this.setState({ searchedResult: data })
-          this.addRefListToTab(data)
         }
       }
-    })
-    this.setState({ isLoading: false })
+    );
+    this.setState({ isLoading: false });
   }
-
 
   clearData() {
     if (this.state.searchText) {
-      this.setState({ searchText: "" })
+      this.setState({ searchText: "" });
     }
   }
 
   addRefListToTab(list) {
     switch (this.state.activeTab) {
       case SearchResultTypes.ALL: {
-        this.setState({ tabsData: [...this.state.tabsData, ...list] })
+        this.setState({ tabsData: [...this.state.tabsData, ...list] });
         break;
       }
       case SearchResultTypes.OT: {
         let reflist = [];
         for (var i = 0; i < list.length; i++) {
           if (getBookNumberFromMapping(list[i].bookId) <= 39) {
-            reflist.push(list[i])
+            reflist.push(list[i]);
           }
         }
-        this.setState({ tabsData: [...this.state.tabsData, ...reflist] })
+        this.setState({ tabsData: [...this.state.tabsData, ...reflist] });
         break;
       }
       case SearchResultTypes.NT: {
         let reflist = [];
-        for (var i = 0; i < list.length; i++) {
-          if (getBookNumberFromMapping(list[i].bookId) >= 40) {
-            reflist.push(list[i])
+        for (var j = 0; j < list.length; j++) {
+          if (getBookNumberFromMapping(list[j].bookId) >= 40) {
+            reflist.push(list[j]);
           }
         }
-        this.setState({ tabsData: [...this.state.tabsData, ...reflist] })
+        this.setState({ tabsData: [...this.state.tabsData, ...reflist] });
         break;
       }
     }
@@ -146,75 +173,91 @@ class Search extends Component {
     this.setState({ tabsData: [] }, () => {
       switch (activeTab) {
         case SearchResultTypes.ALL: {
-          this.setState({ tabsData: this.state.searchedResult })
+          this.setState({ tabsData: this.state.searchedResult });
           break;
         }
         case SearchResultTypes.OT: {
           let data = [];
           for (var i = 0; i < this.state.searchedResult.length; i++) {
-            if (getBookNumberFromMapping(this.state.searchedResult[i].bookId) <= 39) {
-              data.push(this.state.searchedResult[i])
+            if (
+              getBookNumberFromMapping(this.state.searchedResult[i].bookId) <=
+              39
+            ) {
+              data.push(this.state.searchedResult[i]);
             }
           }
-          this.setState({ tabsData: data })
+          this.setState({ tabsData: data });
           break;
         }
         case SearchResultTypes.NT: {
           let data = [];
-          for (var i = 0; i < this.state.searchedResult.length; i++) {
-            if (getBookNumberFromMapping(this.state.searchedResult[i].bookId) >= 40) {
-              data.push(this.state.searchedResult[i])
+          for (var j = 0; j < this.state.searchedResult.length; j++) {
+            if (
+              getBookNumberFromMapping(this.state.searchedResult[j].bookId) >=
+              40
+            ) {
+              data.push(this.state.searchedResult[j]);
             }
           }
-          this.setState({ tabsData: data })
+          this.setState({ tabsData: data });
           break;
         }
       }
-    })
+    });
   }
 
-
-   componentDidMount() {
+  componentDidMount() {
     this.subs = this.props.navigation.addListener("didFocus", async () => {
-      const response = await vApi.get("booknames")
+      const response = await vApi.get("booknames");
       for (var i = 0; i < response.length; i++) {
-        var books = []
-        if (this.state.languageName.toLowerCase() == response[i].language.name) {
+        var books = [];
+        if (
+          this.state.languageName.toLowerCase() == response[i].language.name
+        ) {
           for (var j = 0; j < response[i].bookNames.length; j++) {
             books.push({
               bookId: response[i].bookNames[j].book_code,
               bookName: response[i].bookNames[j].short,
               bookNumber: response[i].bookNames[j].book_id,
-            })
+            });
           }
-          this.setState({ books })
+          this.setState({ books });
         }
       }
       this.setState({
-        tabsData: [], searchedResult: [], searchText: '', isLoading: false
-      })
-    })
+        tabsData: [],
+        searchedResult: [],
+        searchText: "",
+        isLoading: false,
+      });
+    });
     this.props.navigation.setOptions({
-        headerTitle: ()=>
-          <TextInput
-            placeholder="Enter Search Text"
-            underlineColorAndroid={Color.Transparent}
-            style={{ color: Color.White, width: width - 90 }}
-            // onChange={(text) => this.setState({text:text})}
-            onChangeText={(text) => this.setState({searchText:text})}
-            placeholderTextColor={Color.White}
-            returnKeyType="search"
-            multiline={false}
-            numberOfLines={1}
-            value={this.state.text}
-            onSubmitEditing={() => this.onSearchText()}
-          />,
-        headerRight: ()=>
-          <TouchableOpacity onPress={() => this.onSearchText()}>
-            <Icon name={'search'} size={24} color={Color.White} style={{ marginHorizontal: 8 }} />
-          </TouchableOpacity>
-        
-    })
+      headerTitle: () => (
+        <TextInput
+          placeholder="Enter Search Text"
+          underlineColorAndroid={Color.Transparent}
+          style={{ color: Color.White, width: width - 90 }}
+          // onChange={(text) => this.setState({text:text})}
+          onChangeText={(text) => this.setState({ searchText: text })}
+          placeholderTextColor={Color.White}
+          returnKeyType="search"
+          multiline={false}
+          numberOfLines={1}
+          value={this.state.text}
+          onSubmitEditing={() => this.onSearchText()}
+        />
+      ),
+      headerRight: () => (
+        <TouchableOpacity onPress={() => this.onSearchText()}>
+          <Icon
+            name={"search"}
+            size={24}
+            color={Color.White}
+            style={{ marginHorizontal: 8 }}
+          />
+        </TouchableOpacity>
+      ),
+    });
   }
   componentWillUnmount() {
     this.subs();
@@ -225,26 +268,33 @@ class Search extends Component {
       return;
     }
     this.setState({ activeTab }, () => {
-      this.renderDataOnPressTab(activeTab)
-    })
+      this.renderDataOnPressTab(activeTab);
+    });
   }
 
-  goToBible = (bId, bookName, chapterNum, verseNum) => {
+  goToBible = (bId, bookName, chapterNum) => {
     this.props.updateVersionBook({
       bookId: bId,
       bookName: bookName,
       chapterNumber: chapterNum,
       totalChapters: getBookChaptersFromMapping(bId),
-    })
+    });
 
     this.props.updateVersion({
-      language: this.state.languageName, languageCode: this.state.languageCode,
-      versionCode: this.state.versionCode, sourceId: this.state.sourceId, downloaded: this.state.downloaded
-    })
-    
-    this.props.fetchVersionBooks({ language:  this.state.languageName, versionCode: this.state.versionCode, 
-      downloaded: this.state.downloaded, sourceId: this.state.sourceId })
-    if(this.state.metadata === null){
+      language: this.state.languageName,
+      languageCode: this.state.languageCode,
+      versionCode: this.state.versionCode,
+      sourceId: this.state.sourceId,
+      downloaded: this.state.downloaded,
+    });
+
+    this.props.fetchVersionBooks({
+      language: this.state.languageName,
+      versionCode: this.state.versionCode,
+      downloaded: this.state.downloaded,
+      sourceId: this.state.sourceId,
+    });
+    if (this.state.metadata === null) {
       this.props.updateMetadata({
         copyrightHolder: null,
         description: null,
@@ -252,9 +302,9 @@ class Search extends Component {
         source: null,
         technologyPartner: null,
         revision: null,
-        versionNameGL: null
-      })
-    } else{
+        versionNameGL: null,
+      });
+    } else {
       this.props.updateMetadata({
         copyrightHolder: this.state.metadata[0].copyrightHolder,
         description: this.state.metadata[0].description,
@@ -262,92 +312,122 @@ class Search extends Component {
         source: this.state.metadata[0].source,
         technologyPartner: this.state.metadata[0].technologyPartner,
         revision: this.state.metadata[0].revision,
-        versionNameGL: this.state.metadata[0].versionNameGL
-      })
+        versionNameGL: this.state.metadata[0].versionNameGL,
+      });
     }
-     
 
-    this.props.navigation.navigate('Bible')
-  }
+    this.props.navigation.navigate("Bible");
+  };
 
   ListEmptyComponent = () => {
     return (
-      <View style={styles.ListEmptyContainer}>
-        {this.state.isLoading == false && this.state.tabsData == null
-          ? <Text>No Result Found</Text>
-          : null
-        }
+      <View style={this.styles.ListEmptyContainer}>
+        {this.state.isLoading == false && this.state.tabsData == null ? (
+          <Text>No Result Found</Text>
+        ) : null}
       </View>
-    )
-  }
+    );
+  };
 
   ListFooterComponent = () => {
     return (
       <View>
-        {this.state.isLoading
-          ? <ActivityIndicator style={styles.activityCenter} size="large" color={Color.Blue_Color} />
-          : null
-        }
+        {this.state.isLoading ? (
+          <ActivityIndicator
+            style={{ alignItems: "center", justifyContent: "center" }}
+            size="large"
+            color={Color.Blue_Color}
+          />
+        ) : null}
       </View>
-    )
-  }
+    );
+  };
 
-  searchedData = ({ item, index }) => {
+  searchedData = ({ item }) => {
     return (
-      <TouchableOpacity style={styles.searchedDataContainer}
-        onPress={() => { this.goToBible(item.bookId, item.bookName, item.chapterNumber, item.verseNumber, this.state.languageName) }}
+      <TouchableOpacity
+        style={this.styles.searchedDataContainer}
+        onPress={() => {
+          this.goToBible(
+            item.bookId,
+            item.bookName,
+            item.chapterNumber,
+            item.verseNumber,
+            this.state.languageName
+          );
+        }}
       >
-        <Text style={styles.searchedData}>
+        <Text style={this.styles.searchedData}>
           {item.bookName} {item.chapterNumber} : {item.verseNumber}
         </Text>
-        <Text style={styles.textStyle}>{getResultText(item.text)}</Text>
+        <Text style={this.styles.textStyle}>{getResultText(item.text)}</Text>
       </TouchableOpacity>
-    )
-  }
+    );
+  };
   updateLangVer = async (item) => {
     this.setState({
-      tabsData: [], searchedResult: [],
-      sourceId: item.sourceId, languageCode: item.languageCode,
-      languageName: item.languageName, versionCode: item.versionCode,
-      downloaded: item.downloaded, books: item.books,metadata:item.metadata
-    })
-  }
+      tabsData: [],
+      searchedResult: [],
+      sourceId: item.sourceId,
+      languageCode: item.languageCode,
+      languageName: item.languageName,
+      versionCode: item.versionCode,
+      downloaded: item.downloaded,
+      books: item.books,
+      metadata: item.metadata,
+    });
+  };
   render() {
-    let text = this.state.isLoading == true ? "Loading..." : this.state.tabsData.length + " search results found"
+    let text =
+      this.state.isLoading == true
+        ? "Loading..."
+        : this.state.tabsData.length + " search results found";
     return (
-      <View style={styles.container}>
-        <View style={styles.toggleBibleTouchable}>
-          <Text style={styles.headerStyle}>Bible</Text>
-          <TouchableOpacity style={{ backgroundColor: Color.Blue_Color, padding: 8, borderRadius: 8 }} onPress={() => this.props.navigation.navigate('LanguageList', { updateLangVer: this.updateLangVer })}>
-            <Text style={styles.text}>
-              {this.state.languageName.charAt(0).toUpperCase() + this.state.languageName.slice(1)} {this.state.versionCode.toUpperCase()}
+      <View style={this.styles.container}>
+        <View style={this.styles.toggleBibleTouchable}>
+          <Text style={this.styles.headerStyle}>Bible</Text>
+          <TouchableOpacity
+            style={{
+              backgroundColor: Color.Blue_Color,
+              padding: 8,
+              borderRadius: 8,
+            }}
+            onPress={() =>
+              this.props.navigation.navigate("LanguageList", {
+                updateLangVer: this.updateLangVer,
+              })
+            }
+          >
+            <Text style={this.styles.text}>
+              {this.state.languageName.charAt(0).toUpperCase() +
+                this.state.languageName.slice(1)}{" "}
+              {this.state.versionCode.toUpperCase()}
             </Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.textLength}>{text}</Text>
-        {
-          this.state.searchedResult.length > 0 &&
-          <View style={{flex:1}}>
+        <Text style={this.styles.textLength}>{text}</Text>
+        {this.state.searchedResult.length > 0 && (
+          <View style={{ flex: 1 }}>
             <SearchTab
               toggleFunction={this.toggleButton}
               activeTab={this.state.activeTab}
             />
             <FlatList
-              contentContainerStyle={{paddingBottom:60}}
-              ref={ref => this.elementIndex = ref}
+              contentContainerStyle={{ paddingBottom: 60 }}
+              ref={(ref) => (this.elementIndex = ref)}
               data={this.state.tabsData}
               renderItem={this.searchedData}
               ListEmptyComponent={this.ListEmptyComponent}
               ListFooterComponent={this.ListFooterComponent}
             />
           </View>
-        }
+        )}
       </View>
-    )
+    );
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     languageName: state.updateVersion.language,
     languageCode: state.updateVersion.languageCode,
@@ -358,16 +438,15 @@ const mapStateToProps = state => {
     books: state.versionFetch.versionBooks,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-  }
-}
-const mapDispatchToProps = dispatch => {
+  };
+};
+const mapDispatchToProps = (dispatch) => {
   return {
     updateVersionBook: (value) => dispatch(updateVersionBook(value)),
     updateVersion: (value) => dispatch(updateVersion(value)),
     fetchVersionBooks: (value) => dispatch(fetchVersionBooks(value)),
     updateMetadata: (payload) => dispatch(updateMetadata(payload)),
+  };
+};
 
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Search)
+export default connect(mapStateToProps, mapDispatchToProps)(Search);

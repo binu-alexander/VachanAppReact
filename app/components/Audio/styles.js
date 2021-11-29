@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native'
-import { colorStyle ,sizeStyle  } from '../../utils/dynamicStyle'
-export const styles = StyleSheet.create({
+
+export const styles = (colorFile, sizeFile) => {
+  return StyleSheet.create({
     container: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -24,4 +25,4 @@ export const styles = StyleSheet.create({
     }
 
   })
-
+}

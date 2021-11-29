@@ -15,6 +15,7 @@ import { getHeading } from "../../utils/UtilFunctions";
 class BibleChapter extends Component {
   constructor(props) {
     super(props);
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
     this.state = {
       currentParallelViewChapter: this.props.currentChapter,
       bookId: this.props.bookId,
@@ -233,10 +234,16 @@ class BibleChapter extends Component {
     }
   };
   render() {
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
     return (
-      <View style={styles.container}>
+      <View style={this.styles.container}>
         <Header
-          style={styles.headerStyle}
+          style={{
+            backgroundColor: Color.Blue_Color,
+            height: 40,
+            borderLeftWidth: 0.2,
+            borderLeftColor: Color.White,
+          }}
         >
           <Button transparent onPress={this.goToSelectionTab}>
             {this.state.shortbookName ? (
@@ -247,7 +254,7 @@ class BibleChapter extends Component {
             ) : null}
             <Icon name="arrow-drop-down" color={Color.White} size={20} />
           </Button>
-          <Right style={styles.iconRight}>
+          <Right style={{ position: "absolute", right: 4 }}>
             <Button
               transparent
               onPress={() => this.props.closeParallelView(false)}
@@ -261,10 +268,10 @@ class BibleChapter extends Component {
         )}
         {this.state.parallelBible == null && this.state.error ? (
           <View
-            style={styles.centerContent}
+            style={{ flex: 1, justifyContent: "center", alignSelf: "center" }}
           >
             <ReloadButton
-              styles={styles}
+              styles={this.styles}
               reloadFunction={this.queryParallelBible}
               message={this.state.message}
             />
@@ -280,30 +287,30 @@ class BibleChapter extends Component {
             >
               {this.state.parallelBible &&
                 this.state.parallelBible.map((verse, index) => (
-                  <View style={{ marginHorizontal: 16 }}>
+                  <View style={{ marginHorizontal: 16 }} key={index}>
                     {(verse.verseNumber == 1 &&
                       typeof verse.verseNumber != "undefined") == 1 ? (
                       <Text
                         letterSpacing={24}
-                        style={styles.verseWrapperText}
+                        style={this.styles.verseWrapperText}
                       >
                         {typeof verse.verseText == "undefined" ? null : (
                           <Text>
                             {this.state.parallelBibleHeading != null ? (
-                              <Text style={styles.sectionHeading}>
+                              <Text style={this.styles.sectionHeading}>
                                 {this.state.parallelBibleHeading} {"\n"}
                               </Text>
                             ) : null}
                             <Text>
-                              <Text style={styles.verseChapterNumber}>
+                              <Text style={this.styles.verseChapterNumber}>
                                 {this.state.currentParallelViewChapter}{" "}
                               </Text>
-                              <Text style={styles.textString}>
+                              <Text style={this.styles.textString}>
                                 {getResultText(verse.verseText)}
                               </Text>
                             </Text>
                             {getHeading(verse.contents) ? (
-                              <Text style={styles.sectionHeading}>
+                              <Text style={this.styles.sectionHeading}>
                                 {"\n"}
                                 {getHeading(verse.contents)}
                               </Text>
@@ -316,18 +323,18 @@ class BibleChapter extends Component {
                         {typeof verse.verseText == "undefined" ? null : (
                           <Text
                             letterSpacing={24}
-                            style={styles.verseWrapperText}
+                            style={this.styles.verseWrapperText}
                           >
                             <Text>
-                              <Text style={styles.verseNumber}>
+                              <Text style={this.styles.verseNumber}>
                                 {verse.verseNumber}
                               </Text>
-                              <Text style={styles.textString}>
+                              <Text style={this.styles.textString}>
                                 {getResultText(verse.verseText)}
                               </Text>
                             </Text>
                             {getHeading(verse.contents) ? (
-                              <Text style={styles.sectionHeading}>
+                              <Text style={this.styles.sectionHeading}>
                                 {"\n"}
                                 {getHeading(verse.contents)}
                               </Text>
@@ -338,14 +345,14 @@ class BibleChapter extends Component {
                     ) : null}
                   </View>
                 ))}
-              <View style={styles.addToSharefooterComponent}>
+              <View style={this.styles.addToSharefooterComponent}>
                 {this.props.parallelMetaData != null &&
                   this.state.parallelBible && (
-                    <View style={styles.footerView}>
+                    <View style={this.styles.footerView}>
                       {this.props.parallelMetaData.revision !== null &&
                         this.props.parallelMetaData.revision !== "" && (
-                          <Text style={styles.textListFooter}>
-                            <Text style={styles.footerText}>
+                          <Text style={this.styles.textListFooter}>
+                            <Text style={this.styles.footerText}>
                               Copyright:
                             </Text>{" "}
                             {this.props.parallelMetaData.revision}
@@ -353,16 +360,16 @@ class BibleChapter extends Component {
                         )}
                       {this.props.parallelMetaData.license !== null &&
                         this.props.parallelMetaData.license !== "" && (
-                          <Text style={styles.textListFooter}>
-                            <Text style={styles.footerText}>License:</Text>{" "}
+                          <Text style={this.styles.textListFooter}>
+                            <Text style={this.styles.footerText}>License:</Text>{" "}
                             {this.props.parallelMetaData.license}
                           </Text>
                         )}
                       {this.props.parallelMetaData.technologyPartner !== null &&
                         this.props.parallelMetaData.technologyPartner !==
-                        "" && (
-                          <Text style={styles.textListFooter}>
-                            <Text style={styles.footerText}>
+                          "" && (
+                          <Text style={this.styles.textListFooter}>
+                            <Text style={this.styles.footerText}>
                               Technology partner:
                             </Text>{" "}
                             {this.props.parallelMetaData.technologyPartner}
@@ -377,8 +384,8 @@ class BibleChapter extends Component {
               style={{
                 justifyContent:
                   this.state.currentParallelViewChapter != 1 &&
-                    (this.state.currentParallelViewChapter ==
-                      this.state.currentParallelViewChapter) !=
+                  (this.state.currentParallelViewChapter ==
+                    this.state.currentParallelViewChapter) !=
                     this.state.totalChapters
                     ? "center"
                     : "space-around",
@@ -386,14 +393,14 @@ class BibleChapter extends Component {
               }}
             >
               {this.state.PpeviousContent &&
-                Object.keys(this.state.PpeviousContent).length > 0 &&
-                this.state.PpeviousContent.constructor === Object ? (
-                <View style={styles.bottomBarParallelPrevView}>
+              Object.keys(this.state.PpeviousContent).length > 0 &&
+              this.state.PpeviousContent.constructor === Object ? (
+                <View style={this.styles.bottomBarParallelPrevView}>
                   <Icon
                     name={"chevron-left"}
                     color={Color.Blue_Color}
                     size={16}
-                    style={styles.bottomBarChevrontIcon}
+                    style={this.styles.bottomBarChevrontIcon}
                     onPress={() =>
                       this.queryParallelBible(
                         this.state.PpeviousContent.chapterId,
@@ -404,14 +411,14 @@ class BibleChapter extends Component {
                 </View>
               ) : null}
               {this.state.pNextContent &&
-                Object.keys(this.state.pNextContent).length > 0 &&
-                this.state.pNextContent.constructor === Object ? (
-                <View style={styles.bottomBarNextParallelView}>
+              Object.keys(this.state.pNextContent).length > 0 &&
+              this.state.pNextContent.constructor === Object ? (
+                <View style={this.styles.bottomBarNextParallelView}>
                   <Icon
                     name={"chevron-right"}
                     color={Color.Blue_Color}
                     size={16}
-                    style={styles.bottomBarChevrontIcon}
+                    style={this.styles.bottomBarChevrontIcon}
                     onPress={() =>
                       this.queryParallelBible(
                         this.state.pNextContent.chapterId,

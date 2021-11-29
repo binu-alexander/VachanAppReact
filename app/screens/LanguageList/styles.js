@@ -1,37 +1,27 @@
 import {StyleSheet,Dimensions} from 'react-native'
 const width = Dimensions.get('window').width;
 import Color from '../../utils/colorConstants'
-import { colorStyle , sizeStyle} from '../../utils/dynamicStyle';
 
-export const styles = StyleSheet.create({
+export const styles =(colorFile, sizeFile) =>{
+    return StyleSheet.create({
     MainContainer :{
     flex:1,
-    backgroundColor:colorStyle.backgroundColor,
+    backgroundColor:colorFile.backgroundColor,
     // paddingBottom:20
     },
     container:{
-        backgroundColor:colorStyle.backgroundColor
+        backgroundColor:colorFile.backgroundColor
     },
     rowViewContainer: {
       fontSize: 17,
       padding: 4
      },
      emptyMessageIcon:{
-      fontSize:sizeStyle.emptyIconSize,
+      fontSize:sizeFile.emptyIconSize,
       margin:16,
-      color:colorStyle.iconColor,
+      color:colorFile.iconColor,
       alignSelf:'center'
     },
-    headerContainer:{
-      flexDirection: "row",
-      padding: 10,
-      justifyContent: "space-between",
-      alignItems: "center",
-    },
-    centerItem:{
-      flex: 1, justifyContent: 'center', alignItems: 'center'
-     },
-     contentView:{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 8 },
     
      TextInputStyleClass:{
       position:'absolute',
@@ -60,18 +50,18 @@ export const styles = StyleSheet.create({
         padding: 6,
         paddingHorizontal:10,
         justifyContent:'space-between',
-        backgroundColor:colorStyle.backgroundColor
+        backgroundColor:colorFile.backgroundColor
       },
       iconStyleSelection:{
-        color:colorStyle.iconColor
+        color:colorFile.iconColor
       },
       headerText: {
         fontSize: 16,
-        color:colorStyle.textColor
+        color:colorFile.textColor
       },
       iconStyle:{
-        fontSize:sizeStyle.iconSize,
-        color:colorStyle.iconColor
+        fontSize:sizeFile.iconSize,
+        color:colorFile.iconColor
       },
       separator: {
         height: 0.5,
@@ -82,11 +72,11 @@ export const styles = StyleSheet.create({
       },
       text: {
         fontSize: 16,
-        color: colorStyle.textColor,
+        color: colorFile.textColor,
       },
       reloadText: {
-        fontSize: sizeStyle.textSize,
-        color: colorStyle.textColor,
+        fontSize: sizeFile.contentText,
+        color: colorFile.textColor,
         textAlign: 'center'
     },
       content: {
@@ -94,12 +84,12 @@ export const styles = StyleSheet.create({
         paddingVertical:10,
         flexDirection:"row",
         justifyContent:'space-between',
-        backgroundColor:colorStyle.backgroundColor
+        backgroundColor:colorFile.backgroundColor
       },
 
       //selectioncontent 
       modalContainer:{
-        backgroundColor:colorStyle.backgroundColor,
+        backgroundColor:colorFile.backgroundColor,
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'center',
@@ -111,10 +101,10 @@ export const styles = StyleSheet.create({
         padding: 10,
         justifyContent: "space-between",
         alignItems: "center" ,
-        backgroundColor:colorStyle.backgroundColor,
+        backgroundColor:colorFile.backgroundColor,
         },
         accordionHeaderText:{
-            color:colorStyle.textColor,
+            color:colorFile.textColor,
             fontWeight: "600" 
         },
         headerInner:{
@@ -122,14 +112,16 @@ export const styles = StyleSheet.create({
           padding: 10,
           justifyContent: "space-between",
           alignItems: "center" ,
-          backgroundColor:colorStyle.backgroundColor
+          backgroundColor:colorFile.backgroundColor
            },
         selectionHeaderModal:{
-          color:colorStyle.textColor,
+          color:colorFile.textColor,
           fontWeight:'600'
         },
         selectionInnerContent:{
           padding: 10,
-          backgroundColor:colorStyle.backgroundColor,
+          backgroundColor:colorFile.backgroundColor,
         }
    })
+
+}

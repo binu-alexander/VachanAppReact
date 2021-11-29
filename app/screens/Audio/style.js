@@ -1,24 +1,24 @@
 import { StyleSheet } from "react-native";
-import {colorStyle,sizeStyle} from '../../utils/dynamicStyle'
 
-export const styles =  StyleSheet.create({
+export const AudioListStyle = (colorFile, sizeFile) => {
+  return StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colorStyle.backgroundColor,
+      backgroundColor: colorFile.backgroundColor,
       padding: 8,
     },
     audioView: {
       width: "100%",
-      fontSize: sizeStyle.textSize,
+      fontSize: sizeFile.fontSize,
     },
     audioText: {
-      fontSize: sizeStyle.titleText,
-      color: colorStyle.iconColor,
+      fontSize: sizeFile.titleText,
+      color: colorFile.iconColor,
     },
     cardItemStyle: {
       paddingTop: 16,
       paddingBottom: 16,
-      backgroundColor: colorStyle.backgroundColor,
+      backgroundColor: colorFile.backgroundColor,
     },
     centerEmptySet: { 
       justifyContent: 'center', 
@@ -33,14 +33,14 @@ export const styles =  StyleSheet.create({
       paddingVertical: 5,
     },
     messageEmpty:{
-      fontSize:sizeStyle.titleText,
-      color:colorStyle.textColor,
+      fontSize:sizeFile.titleText,
+      color:colorFile.textColor,
   },
     emptyMessageIcon: {
       paddingBottom:20,
       alignSelf:'center',
-      fontSize: sizeStyle.emptyIconSize,
-      color: colorStyle.iconColor,
+      fontSize: sizeFile.emptyIconSize,
+      color: colorFile.iconColor,
     },
   });
-
+};

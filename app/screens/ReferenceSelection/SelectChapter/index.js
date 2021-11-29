@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { View } from "react-native";
 
 import SelectionGrid from "../../../components/SelectionGrid/";
-import { styles } from "./styles.js";
+import { numberSelection } from "./styles.js";
 import { connect } from "react-redux";
 import { Icon } from "native-base";
 import { updateVersionBook } from "../../../store/action";
@@ -33,6 +33,7 @@ class ChapterSelection extends Component {
         ? this.props.route.params.selectedChapterNumber
         : null,
     };
+    this.styles = numberSelection(this.props.colorFile, this.props.sizeFile);
   }
   static getDerivedStateFromProps(nextProps, prevState) {
     return {
@@ -57,7 +58,7 @@ class ChapterSelection extends Component {
       prevSelectChap: prevState.selectedChapterNumber,
     };
   }
-  onNumPress = (item, index) => {
+  onNumPress = (item) => {
     var chapterNum = item == null ? this.state.selectedChapterNumber : item;
     let selectedChapter =
       chapterNum > this.state.totalChapters ? "1" : chapterNum;
@@ -89,7 +90,7 @@ class ChapterSelection extends Component {
     return (
       <View style={{ flex: 1 }}>
         <SelectionGrid
-          styles={styles}
+          styles={this.styles}
           onNumPress={(item, index) => {
             this.onNumPress(item, index);
           }}
@@ -103,7 +104,15 @@ class ChapterSelection extends Component {
           name="back"
           onPress={this.onBack}
           size={64}
-          style={styles.iconBack}
+          style={{
+            position: "absolute",
+            bottom: 0,
+            right: 0,
+            paddingRight: 20,
+            paddingBottom: 10,
+            color: "rgba(62, 64, 149, 0.8)",
+            fontSize: 40,
+          }}
         />
       </View>
     );

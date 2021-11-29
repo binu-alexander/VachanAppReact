@@ -1,15 +1,21 @@
-import React, { Component } from 'react';
-import { View, Text, Dimensions, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
-import { connect } from 'react-redux';
-import ModalDropdown from 'react-native-modal-dropdown';
-import { fetchVersionBooks, updateVersionBook } from '../../../store/action/'
-import { getBookChaptersFromMapping } from '../../../utils/UtilFunctions'
-import { GIT_BASE_API } from '../../../utils/APIConstant'
-import { Agenda } from '../../../lib/react-native-calendars';
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import { styles } from './styles.js'
-import Colors from '../../../utils/colorConstants'
-var moment = require('moment');
+import React, { Component } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
+import { connect } from "react-redux";
+import ModalDropdown from "react-native-modal-dropdown";
+import { fetchVersionBooks, updateVersionBook } from "../../../store/action/";
+import { getBookChaptersFromMapping } from "../../../utils/UtilFunctions";
+import { GIT_BASE_API } from "../../../utils/APIConstant";
+import { Agenda } from "../../../lib/react-native-calendars";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import { OBSStyle } from "./styles.js";
+import Colors from "../../../utils/colorConstants";
+var moment = require("moment");
 
 class BRP extends Component {
   constructor(props) {
@@ -24,6 +30,7 @@ class BRP extends Component {
       readingPlan: [],
       calendarOpened: false,
     };
+    this.styles = OBSStyle(this.props.colorFile, this.props.sizeFile);
     this._dropdown_1 = null;
   }
   laodMonthItem(day) {
@@ -108,13 +115,14 @@ class BRP extends Component {
     }
   }
   renderItem(item) {
-    return item.reading.map((val) => {
+    return item.reading.map((val, i) => {
       return (
         <TouchableOpacity
-          style={[styles.item, { height: item.height }]}
+          key={i}
+          style={[this.styles.item, { height: item.height }]}
           onPress={() => this.navigateTo(val.ref)}
         >
-          <Text style={styles.textStyle}>{val.text} </Text>
+          <Text style={this.styles.textStyle}>{val.text} </Text>
         </TouchableOpacity>
       );
     });
@@ -128,7 +136,6 @@ class BRP extends Component {
   }
 
   componentDidMount() {
- 
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, "0");
     var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
@@ -150,9 +157,8 @@ class BRP extends Component {
     ];
     let currentMonth = monthNames[mm - 1] + " " + yyyy;
     this.setState({ selectedDate, currentMonth }, () => {
-      this.fetchPlan()
-    })
-    
+      this.fetchPlan();
+    });
   }
 
   fetchPlan() {
@@ -164,26 +170,55 @@ class BRP extends Component {
           for (var i = 0; i < json.length; i++) {
             planList.push(json[i].name);
           }
-          this.setState({ planList, manifestData: json },()=>{
+          this.setState({ planList, manifestData: json }, () => {
             this.props.navigation.setOptions({
-              headerRight: ()=>
-                <TouchableOpacity style={styles.dropdownView}>
+              headerRight: () => (
+                <TouchableOpacity
+                  style={{
+                    marginRight: 10,
+                    borderRadius: 10,
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: Colors.white,
+                  }}
+                >
                   <ModalDropdown
                     options={this.state.planList}
                     onSelect={this.onSelect}
-                    defaultValue={this.state.planList.length > 0 ? this.state.planList[0] : ''}
+                    defaultValue={
+                      this.state.planList.length > 0
+                        ? this.state.planList[0]
+                        : ""
+                    }
                     isFullWidth={true}
-                    dropdownStyle={{ padding: 10, width: '60%', height: 'auto' }}
-                    adjustFrame={style => { this.state.planList.length > 2 ? 80 : -1; return style; }}
+                    dropdownStyle={{
+                      padding: 10,
+                      width: "60%",
+                      height: "auto",
+                    }}
+                    adjustFrame={(style) => {
+                      this.state.planList.length > 2 ? 80 : -1;
+                      return style;
+                    }}
                     dropdownTextStyle={{ fontSize: 18 }}
-                    textStyle={{ fontSize: 18, fontWeight: '800', color: '#fff' }}
+                    textStyle={{
+                      fontSize: 18,
+                      fontWeight: "800",
+                      color: "#fff",
+                    }}
                   />
-                  <Icon name="arrow-drop-down" color={'#fff'} size={20} />
+                  <Icon name="arrow-drop-down" color={"#fff"} size={20} />
                 </TouchableOpacity>
-            })
-          })
-          
-          fetch(GIT_BASE_API + 'bible_reading_plans/' + this.state.manifestData[0].file)
+              ),
+            });
+          });
+
+          fetch(
+            GIT_BASE_API +
+              "bible_reading_plans/" +
+              this.state.manifestData[0].file
+          )
             .then((response) => response.json())
             .then((json) => {
               this.setState({ readingPlan: json }, () => {
@@ -192,7 +227,9 @@ class BRP extends Component {
               });
             });
         });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error.message);
+    }
   }
   onSelect = (value) => {
     try {
@@ -210,7 +247,9 @@ class BRP extends Component {
             }
           );
         });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   onUpdateSelectedDate = (date) => {
@@ -254,7 +293,7 @@ class BRP extends Component {
   };
   renderEmptyData() {
     return (
-      <View style={styles.centerView}>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text
           style={{
             textAlign: "center",
@@ -269,7 +308,7 @@ class BRP extends Component {
     );
   }
   render() {
-    console.log(" brp ",this.state.planList[0])
+    console.log(" brp ", this.state.planList[0]);
     const themeStyle = {
       calendarBackground: this.props.colorFile.backgroundColor, //agenda background
       agendaKnobColor: this.props.colorFile.blueText, // knob color
@@ -287,12 +326,12 @@ class BRP extends Component {
       textDisabledColor: this.props.colorFile.textColor,
     };
     return (
-      <View style={styles.container}>
-        {Object.keys(this.state.items).length > 0 ? 
+      <View style={this.styles.container}>
+        {Object.keys(this.state.items).length > 0 ? (
           <View style={{ flex: 1 }}>
             <Text
               style={[
-                styles.agendaDate,
+                this.styles.agendaDate,
                 {
                   color: this.state.calendarOpened
                     ? this.props.colorFile.backgroundColor
@@ -303,7 +342,7 @@ class BRP extends Component {
               {this.state.currentMonth}
             </Text>
             <Agenda
-              style={[styles.agendaBackgroundColor]}
+              style={[this.styles.agendaBackgroundColor]}
               items={this.state.monthItems}
               ref={(ref) => {
                 this.agenda = ref;
@@ -324,7 +363,14 @@ class BRP extends Component {
               theme={themeStyle}
             />
           </View>
-          : <ActivityIndicator size="small" color={Colors.Blue_Color} animate={true} style={styles.activityIndicator} />}
+        ) : (
+          <ActivityIndicator
+            size="small"
+            color={Colors.Blue_Color}
+            animate={true}
+            style={{ flex: 1, justifyContent: "center", alignSelf: "center" }}
+          />
+        )}
       </View>
     );
   }

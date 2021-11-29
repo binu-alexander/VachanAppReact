@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { List, ListItem, Right, Left } from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { styles } from './styles.js'
+import { settingsPageStyle } from './styles.js'
 import { nightColors, dayColors } from '../../utils/colors.js'
 import { connect } from 'react-redux'
 import { updateColorMode, updateFontSize, updateVerseInLine } from '../../store/action/index'
@@ -25,7 +25,7 @@ class Setting extends Component {
       sizeFile: this.props.sizeFile,
       verseInLine: this.props.verseInLine
     }
-
+    this.styles = settingsPageStyle(this.props.colorFile, this.props.sizeFile);
   }
   async onChangeSlider(value) {
     await this.props.updateFontSize(value)
@@ -51,49 +51,50 @@ class Setting extends Component {
     }
   }
   render() {
+    this.styles = settingsPageStyle(this.props.colorFile, this.props.sizeFile)
     const dayModeIconColor = this.state.colorMode == 1 ? dayColors.accentColor : Color.Gray
     const nightModeIconColor = this.state.colorMode == 0 ? nightColors.accentColor : Color.Gray
 
     return (
-      <View style={styles.container}>
-        <View style={styles.containerMargin}>
+      <View style={this.styles.container}>
+        <View style={this.styles.containerMargin}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <List>
-              <ListItem style={styles.cardItemStyle}>
+              <ListItem style={this.styles.cardItemStyle}>
                 <Left>
-                  <Text style={styles.textStyle}>
+                  <Text style={this.styles.textStyle}>
                     Reading Mode
                   </Text>
                 </Left>
                 <Right>
                   <View
                     style={
-                      styles.cardItemColumn
+                      this.styles.cardItemColumn
                     }>
-                    <View style={styles.cardItemRow}>
+                    <View style={this.styles.cardItemRow}>
                       <Text
                         style={
-                          styles.modeTextCustom
+                          this.styles.modeTextCustom
                         }>
                         Night
                       </Text>
                       <Icon
                         name="brightness-7"
-                        style={styles.modeIconCustom}
+                        style={this.styles.modeIconCustom}
                         color={nightModeIconColor}
                         onPress={() => this.props.updateColorMode(0)}
                       />
                     </View>
-                    <View style={styles.cardItemRow}>
+                    <View style={this.styles.cardItemRow}>
                       <Text
                         style={
-                          styles.modeTextCustom
+                          this.styles.modeTextCustom
                         }>
                         Day
                       </Text>
                       <Icon
                         name="brightness-5"
-                        style={styles.modeIconCustom}
+                        style={this.styles.modeIconCustom}
                         color={dayModeIconColor}
                         onPress={() => this.props.updateColorMode(1)}
                       />
@@ -101,14 +102,14 @@ class Setting extends Component {
                   </View>
                 </Right>
               </ListItem>
-              <ListItem bordered style={styles.cardItemStyle}>
-                <Right style={styles.cardItemAlignRight}>
-                  <View style={styles.cardItemRow}>
-                    <Icon name='format-size' style={styles.cardItemIconCustom} />
-                    <Text style={styles.textStyle}>Text Size</Text>
+              <ListItem bordered style={this.styles.cardItemStyle}>
+                <Right style={this.styles.cardItemAlignRight}>
+                  <View style={this.styles.cardItemRow}>
+                    <Icon name='format-size' style={this.styles.cardItemIconCustom} />
+                    <Text style={this.styles.textStyle}>Text Size</Text>
                   </View>
                   <Slider
-                    style={styles.segmentCustom}
+                    style={this.styles.segmentCustom}
                     step={1}
                     minimumValue={0}
                     maximumValue={4}
@@ -121,14 +122,14 @@ class Setting extends Component {
               </ListItem>
               <ListItem >
                 <TouchableOpacity style={[{ flexDirection: 'row' }]} onPress={() => this.props.navigation.navigate('LanguageList',{updateLangVer:null})}>
-                  <Icon name='cloud-download' style={styles.cardItemIconCustom} />
-                  <Text style={styles.textStyle}>Download More Bibles</Text>
+                  <Icon name='cloud-download' style={this.styles.cardItemIconCustom} />
+                  <Text style={this.styles.textStyle}>Download More Bibles</Text>
                 </TouchableOpacity>
               </ListItem>
               <ListItem >
                 <TouchableOpacity style={[{ flexDirection: 'row' }]} onPress={() => this.props.navigation.navigate('About')}>
-                  <Icon name='info' style={styles.cardItemIconCustom} />
-                  <Text style={styles.textStyle}>About</Text>
+                  <Icon name='info' style={this.styles.cardItemIconCustom} />
+                  <Text style={this.styles.textStyle}>About</Text>
                 </TouchableOpacity>
               </ListItem>
             </List>

@@ -1,18 +1,11 @@
 import React, { Component } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { connect } from "react-redux";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { styles } from "./styles.js";
+import { bookStyle } from "./styles.js";
 import { Card, CardItem } from "native-base";
 import { Toast } from "native-base";
 import vApi from "../../utils/APIFetch";
-import Colors from "../../utils/colorConstants";
 class Video extends Component {
   constructor(props) {
     super(props);
@@ -25,6 +18,7 @@ class Video extends Component {
       isLoading: false,
       duplicateValue: [],
     };
+    this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
   }
 
   async fetchVideo() {
@@ -48,12 +42,12 @@ class Video extends Component {
             }
           }
         } else {
-          for (var i = 0; i < videos[0].books[key].length; i++) {
+          for (var j = 0; j < videos[0].books[key].length; j++) {
             videoAll.push({
-              title: videos[0].books[key][i].title,
-              url: videos[0].books[key][i].url,
-              description: videos[0].books[key][i].description,
-              theme: videos[0].books[key][i].theme,
+              title: videos[0].books[key][j].title,
+              url: videos[0].books[key][j].url,
+              description: videos[0].books[key][j].description,
+              theme: videos[0].books[key][j].theme,
             });
           }
         }
@@ -112,12 +106,12 @@ class Video extends Component {
   // renderItem = ({ item }) => {
   //   return (
   //     <Card>
-  //       <CardItem style={styles.cardItemStyle}>
+  //       <CardItem style={this.styles.cardItemStyle}>
   //         <TouchableOpacity
-  //           style={styles.videoView}
+  //           style={this.styles.videoView}
   //           onPress={() => this.playVideo(item)}
   //         >
-  //           <Text style={styles.videoText}>{item.title}</Text>
+  //           <Text style={this.styles.videoText}>{item.title}</Text>
   //         </TouchableOpacity>
   //       </CardItem>
   //     </Card>
@@ -125,37 +119,29 @@ class Video extends Component {
   // };
   render() {
     return (
-      <View style={styles.container}>
-        {/* {this.state.isLoading ? (
-          <ActivityIndicator
-            size="small"
-            color={Colors.Blue_Color}
-            animate={true}
-            style={{ flex: 1, justifyContent: "center", alignSelf: "center" }}
-          />
-        ) : ( */}
+      <View style={this.styles.container}>
         <FlatList
           data={this.state.videos}
           contentContainerStyle={
-            this.state.videos.length === 0 && styles.centerEmptySet
+            this.state.videos.length === 0 && this.styles.centerEmptySet
           }
           renderItem={({ item }) => (
             <Card>
-              <CardItem style={styles.cardItemStyle}>
+              <CardItem style={this.styles.cardItemStyle}>
                 <TouchableOpacity
-                  style={styles.videoView}
+                  style={this.styles.videoView}
                   onPress={() => this.playVideo(item)}
                 >
-                  <Text style={styles.videoText}>{item.title}</Text>
+                  <Text style={this.styles.videoText}>{item.title}</Text>
                 </TouchableOpacity>
               </CardItem>
             </Card>
           )}
           extraData={this.state}
           ListEmptyComponent={
-            <View style={styles.emptyMessageContainer}>
-              <Icon name="video-library" style={styles.emptyMessageIcon} />
-              <Text style={styles.messageEmpty}>
+            <View style={this.styles.emptyMessageContainer}>
+              <Icon name="video-library" style={this.styles.emptyMessageIcon} />
+              <Text style={this.styles.messageEmpty}>
                 No Video for {this.props.languageName}
               </Text>
             </View>
