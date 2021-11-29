@@ -4,7 +4,7 @@ import Markdown from "react-native-markdown-display";
 import ModalDropdown from "react-native-modal-dropdown";
 import { connect } from "react-redux";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { OBSStyle } from "./styles.js";
+import { styles } from "./styles.js";
 // import ApiUtils from '../../../utils/ApiUtils'
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Colors from "../../../utils/colorConstants";
@@ -25,7 +25,7 @@ class OBS extends Component {
       storyList: [],
       bsIndex: "01",
     };
-    this.styles = OBSStyle(this.props.colorFile, this.props.sizeFile);
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
 
   componentDidMount() {
@@ -136,32 +136,18 @@ class OBS extends Component {
     }
   }
   render() {
-    console.log("PARAMS list OBS language  ", this.state.languagesList.length);
     let colorFile = this.props.colorFile;
     // let sizeFile = this.props.sizeFile;
     return (
       <View style={this.styles.container}>
         <View
-          style={{
-            flexDirection: "row",
-            alignItems: "flex-start",
-            justifyContent: "space-between",
-          }}
+          style={this.styles.dropdownView}
         >
           <TouchableOpacity
             onPress={() => {
               this._dropdown_1 && this._dropdown_1.show();
             }}
-            style={{
-              padding: 10,
-              margin: 10,
-              borderRadius: 10,
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              borderColor: colorFile.iconColor,
-              borderWidth: 0.5,
-            }}
+            style={this.styles.dropdownPos}
           >
             <ModalDropdown
               ref={(el) => (this._dropdown_1 = el)}
@@ -169,13 +155,9 @@ class OBS extends Component {
               onSelect={this.onSelectLang}
               defaultValue={this.state.defaultLanguage}
               isFullWidth={true}
-              dropdownStyle={{ width: "60%", height: height / 2 }}
+              dropdownStyle={this.styles.dropdownSize}
               dropdownTextStyle={{ fontSize: 18 }}
-              textStyle={{
-                fontSize: 18,
-                fontWeight: "400",
-                color: colorFile.textColor,
-              }}
+              textStyle={this.styles.dropdownText}
             />
             <Icon
               name="arrow-drop-down"
@@ -187,17 +169,7 @@ class OBS extends Component {
             onPress={() => {
               this._dropdown_2 && this._dropdown_2.show();
             }}
-            style={{
-              padding: 10,
-              margin: 10,
-              borderRadius: 10,
-              width: 150,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              borderColor: colorFile.iconColor,
-              borderWidth: 0.5,
-            }}
+            style={this.styles.dropdownPos}
           >
             <ModalDropdown
               ref={(el) => (this._dropdown_2 = el)}
@@ -208,14 +180,9 @@ class OBS extends Component {
                 this.state.storyList.length > 0 ? this.state.storyList[0] : ""
               }
               isFullWidth={true}
-              dropdownStyle={{ width: "60%", height: height / 2 }}
+              dropdownStyle={this.styles.dropdownSize}
               dropdownTextStyle={{ fontSize: 18 }}
-              textStyle={{
-                paddingHorizontal: 8,
-                fontSize: 18,
-                fontWeight: "400",
-                color: colorFile.textColor,
-              }}
+              textStyle={this.styles.dropdownText}
             />
             <Icon
               name="arrow-drop-down"
@@ -227,7 +194,7 @@ class OBS extends Component {
         {this.state.obsData ? (
           <ScrollView
             // contentInsetAdjustmentBehavior="automatic"
-            style={{ paddingHorizontal: 12, height: "100%" }}
+            style={this.styles.scrollView}
             // contentContainerStyle={{paddingTop:20}}
           >
             <Markdown style={this.styles}>{this.state.obsData}</Markdown>
@@ -237,7 +204,7 @@ class OBS extends Component {
             animate={true}
             size="small"
             color={Colors.Blue_Color}
-            style={{ flex: 1, justifyContent: "center", alignSelf: "center" }}
+            style={this.styles.loaderPos}
           />
         )}
       </View>

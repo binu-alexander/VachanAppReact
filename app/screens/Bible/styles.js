@@ -138,13 +138,13 @@ export const styles = (colorFile, sizeFile) => {
     iconStyle: {
       color: colorFile.chevronIconColor,
     },
-    // playButton: {
-    //     height: 56,
-    //     width: 56,
-    //     alignItems: 'center',
-    //     flexDirection: 'row',
-    //     justifyContent: 'center',
-    // },
+    playButton: {
+        height: 56,
+        width: 56,
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
     bottomBarAudioCenter: {
       borderRadius: 32,
       margin: 8,
@@ -246,5 +246,14 @@ export const styles = (colorFile, sizeFile) => {
       color: colorFile.textColor,
       textAlign: "center",
     },
+    headerView:{ position: "absolute", top: 0, zIndex: 2, width: "50%" },
+    innerContainer:{flex: 1,
+    flexDirection: "column"},
+    reloadButtonCenter:{
+      flex: 1,
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+    }
   });
 };

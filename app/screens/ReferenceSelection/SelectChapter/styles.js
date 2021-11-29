@@ -1,7 +1,7 @@
 import {StyleSheet,Dimensions} from 'react-native'
 const width = Dimensions.get('window').width;
 
-export const numberSelection = (colorFile, sizeFile) =>{
+export const styles = (colorFile, sizeFile) =>{
     return StyleSheet.create({
    container:{
         flex:1,
@@ -96,7 +96,16 @@ export const numberSelection = (colorFile, sizeFile) =>{
         alignItems:"center", 
         color:colorFile.textColor,
         fontSize:sizeFile.contentText
-    }
+    },
+    chapterIconPos:{
+        position: "absolute",
+        bottom: 0,
+        right: 0,
+        paddingRight: 20,
+        paddingBottom: 10,
+        color: "rgba(62, 64, 149, 0.8)",
+        fontSize: 40,
+      }
     
 })
 }

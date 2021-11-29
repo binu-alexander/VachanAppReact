@@ -4,7 +4,7 @@ import { Text, TouchableOpacity, FlatList } from "react-native";
 import { connect } from "react-redux";
 import { updateVersionBook, ToggleAudio } from "../../store/action/";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { AudioListStyle } from "./style";
+import { style } from "./style";
 
 // class Audio extends Component {
 //   constructor(props) {
@@ -81,7 +81,7 @@ import { AudioListStyle } from "./style";
 // }
 
 const Audio = (props) => {
-  const styles = AudioListStyle(props.colorFile, props.sizeFile);
+  const styles = style(props.colorFile, props.sizeFile);
   const [allAudioBooks, setAllAudioBooks] = useState([]);
   const navigateToBible = (bId, bookName, chapterNum) => {
     props.updateVersionBook({

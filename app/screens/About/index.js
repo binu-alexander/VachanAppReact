@@ -6,14 +6,14 @@ import {
   Dimensions,
   ScrollView
 } from 'react-native';
-import { aboutPage } from './styles.js'
+import { styles } from './styles.js'
 import { connect } from 'react-redux'
 const screenHeight = Dimensions.get('window').height
+
 class About extends Component {
- 
   constructor(props) {
     super(props);
-    this.styles = aboutPage(this.props.colorFile, this.props.sizeFile);
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
 
   render() {

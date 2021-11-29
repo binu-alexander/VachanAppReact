@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { List, ListItem, Right, Left } from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { settingsPageStyle } from './styles.js'
+import { styles } from './styles.js'
 import { nightColors, dayColors } from '../../utils/colors.js'
 import { connect } from 'react-redux'
 import { updateColorMode, updateFontSize, updateVerseInLine } from '../../store/action/index'
@@ -25,7 +25,7 @@ class Setting extends Component {
       sizeFile: this.props.sizeFile,
       verseInLine: this.props.verseInLine
     }
-    this.styles = settingsPageStyle(this.props.colorFile, this.props.sizeFile);
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
   async onChangeSlider(value) {
     await this.props.updateFontSize(value)
@@ -51,7 +51,7 @@ class Setting extends Component {
     }
   }
   render() {
-    this.styles = settingsPageStyle(this.props.colorFile, this.props.sizeFile)
+    this.styles = styles(this.props.colorFile, this.props.sizeFile)
     const dayModeIconColor = this.state.colorMode == 1 ? dayColors.accentColor : Color.Gray
     const nightModeIconColor = this.state.colorMode == 0 ? nightColors.accentColor : Color.Gray
 

@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-export const historyStyle = (colorFile, sizeFile) => {
+export const styles = (colorFile, sizeFile) => {
   return StyleSheet.create({
     container: {
       flex: 1,

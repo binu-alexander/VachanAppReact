@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { connect } from "react-redux";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { bookStyle } from "./styles.js";
+import { styles } from "./styles.js";
 import { Card, CardItem } from "native-base";
 import { Toast } from "native-base";
 import vApi from "../../utils/APIFetch";
@@ -18,7 +18,7 @@ class Video extends Component {
       isLoading: false,
       duplicateValue: [],
     };
-    this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
 
   async fetchVideo() {
@@ -103,20 +103,7 @@ class Video extends Component {
       this.fetchVideo();
     }
   }
-  // renderItem = ({ item }) => {
-  //   return (
-  //     <Card>
-  //       <CardItem style={this.styles.cardItemStyle}>
-  //         <TouchableOpacity
-  //           style={this.styles.videoView}
-  //           onPress={() => this.playVideo(item)}
-  //         >
-  //           <Text style={this.styles.videoText}>{item.title}</Text>
-  //         </TouchableOpacity>
-  //       </CardItem>
-  //     </Card>
-  //   );
-  // };
+  
   render() {
     return (
       <View style={this.styles.container}>

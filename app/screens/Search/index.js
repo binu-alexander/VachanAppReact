@@ -23,7 +23,7 @@ import {
   updateMetadata,
 } from "../../store/action/";
 
-import { searchStyle } from "./styles";
+import { styles } from "./styles";
 import { connect } from "react-redux";
 import Color from "../../utils/colorConstants";
 import vApi from "../../utils/APIFetch";
@@ -59,7 +59,7 @@ class Search extends Component {
     this.toggleButton = this.toggleButton.bind(this);
     this.clearData = this.clearData.bind(this);
 
-    this.styles = searchStyle(props.colorFile, props.sizeFile);
+    this.styles = styles(props.colorFile, props.sizeFile);
   }
 
   onSearchText() {

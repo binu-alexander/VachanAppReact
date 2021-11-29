@@ -179,27 +179,20 @@ class Login extends Component {
             }}
           />
         </View>
-        <View style={{ padding: 35, flex: 1 }}>
-          <View style={{ alignItems: "center", justifyContent: "center" }}>
+        <View style={this.styles.iconContainer}>
+          <View style={this.styles.centerContainer}>
             <Image
               style={{ width: 50, height: 50, marginVertical: 16 }}
               source={require("../../assets/bcs_old_favicon.png")}
             />
             <Text
-              style={{
-                fontSize: 26,
-                color: Color.Blue_Color,
-                fontWeight: "bold",
-              }}
+              style={this.styles.signinText}
             >
               Sign In
             </Text>
           </View>
           <View
-            style={{
-              flexDirection: "column",
-              justifyContent: "center",
-            }}
+            style={this.styles.signinInput}
           >
             <TextInput
               style={this.styles.inputStyle}
@@ -241,24 +234,14 @@ class Login extends Component {
               Reset password
             </Text>
             <View
-              style={{
-                flexDirection: "row",
-                marginVertical: 8,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              style={this.styles.dividerView}
             >
               <View style={this.styles.dividerLine} />
               <Text style={this.styles.divider}>Or</Text>
               <View style={this.styles.dividerLine} />
             </View>
             <View
-              style={{
-                flex: 1,
-                alignItems: "center",
-                justifyContent: "center",
-                marginVertical: 32,
-              }}
+              style={this.styles.signinButton}
             >
               <GoogleSigninButton
                 // style={{ width: 68, height: 68 }}

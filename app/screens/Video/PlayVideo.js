@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import YoutubePlayer from "react-native-youtube-iframe";
-import { bookStyle } from "./styles.js";
+import { styles } from "./styles.js";
 import { View, Text, ActivityIndicator, AppState } from "react-native";
 import { connect } from "react-redux";
 
@@ -17,7 +17,7 @@ class PlayVideo extends Component {
       playing: false,
       isLoading: false,
     };
-    this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
   //   componentDidMount() {
   //     this.onChangeState();
@@ -61,7 +61,7 @@ class PlayVideo extends Component {
       <View style={this.styles.container}>
         <Text style={this.styles.title}>{this.state.title}</Text>
         {this.state.isLoading ? (
-          <View style={{ justifyContent: "center", alignItems: "center" }}>
+          <View style={this.styles.loaderPos}>
             <ActivityIndicator animate={true} size={32} />
           </View>
         ) : null}

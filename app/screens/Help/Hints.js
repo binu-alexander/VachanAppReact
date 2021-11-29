@@ -7,7 +7,7 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
 } from "react-native";
-import { HelpStyle } from "./styles.js";
+import { styles } from "./styles.js";
 import { connect } from "react-redux";
 import { constantFont } from "../../utils/dimens";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -113,7 +113,7 @@ class Help extends Component {
       ],
     };
     this.showHints = this.showHints.bind(this);
-    this.styleFile = HelpStyle(this.props.colorFile, this.props.sizeFile);
+    this.styleFile = styles(this.props.colorFile, this.props.sizeFile);
     this.animatedValue = new Animated.Value(0);
   }
   showHints(icon, index) {
@@ -141,7 +141,7 @@ class Help extends Component {
       transform: [{ scale: this.animatedValue }],
     };
     return (
-      <View style={{ flexDirection: "row", justifyContent: "center" }}>
+      <View style={this.styleFile.centerContainer}>
         <TouchableWithoutFeedback
           style={{
             width: width / 5,

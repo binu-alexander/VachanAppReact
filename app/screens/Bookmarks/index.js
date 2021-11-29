@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { bookStyle } from "./styles.js";
+import { styles } from "./styles.js";
 import { updateVersionBook } from "../../store/action/";
 import { getBookChaptersFromMapping } from "../../utils/UtilFunctions";
 import { connect } from "react-redux";
@@ -28,7 +28,7 @@ class BookMarks extends Component {
       email: this.props.email,
     };
 
-    this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
   static getDerivedStateFromProps(props, state) {
     // Any time the current user changes,
@@ -180,7 +180,7 @@ class BookMarks extends Component {
             size="small"
             color={Colors.Blue_Color}
             animate={true}
-            style={{ flex: 1, justifyContent: "center", alignSelf: "center" }}
+            style={this.styles.loaderPosition}
           />
         ) : (
           <FlatList

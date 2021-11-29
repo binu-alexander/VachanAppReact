@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-export const bookStyle = (colorFile, sizeFile) => {
+export const styles = (colorFile, sizeFile) => {
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -40,5 +40,7 @@ export const bookStyle = (colorFile, sizeFile) => {
       alignItems: "center",
       height: "100%",
     },
+    loaderPosition:{ flex: 1, justifyContent: "center", alignSelf: "center" }
+
   });
 };

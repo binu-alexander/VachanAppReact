@@ -69,7 +69,7 @@ class DrawerScreen extends Component {
               source={require("../../assets/headerbook.jpg")}
               style={{ flex: 1, width: 280 }}
             >
-              <View style={{ position: "absolute", bottom: 0, margin: 8 }}>
+              <View style={this.styles.drwrImgContainer}>
                 <Image
                   style={this.styles.imageStyle}
                   source={require("../../assets/bcs_old_favicon.png")}
@@ -77,7 +77,7 @@ class DrawerScreen extends Component {
                 <View style={this.styles.goToLogin}>
                   <Image
                     source={require("../../assets/logo.png")}
-                    style={{ padding: 4, width: 136, height: 30 }}
+                    style={this.styles.drawerImage}
                   />
                 </View>
               </View>

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { WebView } from "react-native-webview";
-import { HelpStyle } from "./styles.js";
+import { styles } from "./styles.js";
 import { connect } from "react-redux";
 import Color from "../../utils/colorConstants";
 
@@ -9,7 +9,7 @@ class Feedback extends Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.styleFile = HelpStyle(this.props.colorFile, this.props.sizeFile);
+    this.styleFile = styles(this.props.colorFile, this.props.sizeFile);
   }
 
   displaySpinner() {

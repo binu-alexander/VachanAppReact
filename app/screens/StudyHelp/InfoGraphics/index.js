@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import { Card, CardItem } from "native-base";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { connect } from "react-redux";
-import { bookStyle } from "./styles.js";
+import { styles } from "./styles.js";
 import { Toast } from "native-base";
 import vApi from "../../../utils/APIFetch";
 
@@ -19,7 +19,7 @@ class Infographics extends React.Component {
       url: null,
       isLoading: false,
     };
-    this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
   async fetchInfographics() {
     const apiData = await vApi.get("infographics/" + this.props.languageCode);
@@ -101,7 +101,7 @@ class Infographics extends React.Component {
           // eslint-disable-next-line react/jsx-no-undef
           <ActivityIndicator // it is showing undefined
             animate={true}
-            style={{ justifyContent: "center", alignSelf: "center" }}
+            style={this.styles.loaderCenter}
           />
         ) : (
           <FlatList

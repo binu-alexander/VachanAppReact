@@ -160,7 +160,7 @@ class Commentary extends Component {
                 this.props.parallelMetaData?.revision !== "" && (
                   <Text
                     textBreakStrategy={"simple"}
-                    style={{ textAlign: "center" }}
+                    style={this.styles.metadataText}
                   >
                     <Text>Copyright:</Text>{" "}
                     {this.props.parallelMetaData?.revision}
@@ -170,7 +170,7 @@ class Commentary extends Component {
                 this.props.parallelMetaData?.copyrightHolder !== "" && (
                   <Text
                     textBreakStrategy={"simple"}
-                    style={{ textAlign: "center" }}
+                    style={this.styles.metadataText}
                   >
                     <Text>License:</Text>{" "}
                     {this.props.parallelMetaData?.copyrightHolder}
@@ -180,7 +180,7 @@ class Commentary extends Component {
                 this.props.parallelMetaData?.license !== "" && (
                   <Text
                     textBreakStrategy={"simple"}
-                    style={{ textAlign: "center" }}
+                    style={this.styles.metadataText}
                   >
                     <Text>Technology partner:</Text>{" "}
                     {this.props.parallelMetaData?.license}
@@ -243,7 +243,7 @@ class Commentary extends Component {
 
         {this.props.error ? (
           <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={this.styles.reloadButtonPos}
           >
             <ReloadButton
               styles={this.styles}
@@ -267,7 +267,7 @@ class Commentary extends Component {
               contentContainerStyle={{ flexGrow: 1, margin: 16 }}
               renderItem={this.renderItem}
               ListFooterComponent={
-                <View style={{ height: 40, marginBottom: 40 }}></View>
+                <View style={this.styles.listFooter}></View>
               }
               ListHeaderComponent={this.ListHeaderComponent}
               ListFooterComponent={this.renderFooter}

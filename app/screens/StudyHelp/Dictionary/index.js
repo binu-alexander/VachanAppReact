@@ -72,7 +72,6 @@ class Infographics extends React.Component {
     );
   };
   render() {
-    "dictionaries ", this.state.dictionaries;
     return (
       <View style={[this.styles.container, { padding: 8 }]}>
         {this.state.isLoading ? (

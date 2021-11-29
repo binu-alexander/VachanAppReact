@@ -1,7 +1,7 @@
 import { StyleSheet, Dimensions } from "react-native";
 const width = Dimensions.get("window").width;
 
-export const HelpStyle = (colorFile, sizeFile) => {
+export const styles = (colorFile, sizeFile) => {
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -50,5 +50,6 @@ export const HelpStyle = (colorFile, sizeFile) => {
       color: colorFile.settingsIconColor,
       padding: 16,
     },
+    centerContainer:{ flexDirection: "row", justifyContent: "center" }
   });
 };

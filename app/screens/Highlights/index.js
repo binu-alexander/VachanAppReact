@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { getBookChaptersFromMapping } from "../../utils/UtilFunctions";
-import { highlightstyle } from "./styles";
+import { styles } from "./styles";
 import { connect } from "react-redux";
 import { updateVersionBook } from "../../store/action/";
 import database from "@react-native-firebase/database";
@@ -23,7 +23,7 @@ class HighLights extends Component {
       message: "",
       email: this.props.email,
     };
-    this.styles = highlightstyle(this.props.colorFile, this.props.sizeFile);
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
   static getDerivedStateFromProps(props, state) {
     // Any time the current user changes,
@@ -213,7 +213,6 @@ class HighLights extends Component {
     return <View>{bookName && value}</View>;
   };
   render() {
-    console.log("HIGHLIGHTS loader ", this.state.isLoading);
     return (
       <View style={this.styles.container}>
         {this.state.isLoading ? (
@@ -221,7 +220,7 @@ class HighLights extends Component {
             animate={true}
             size="small"
             color={Colors.Blue_Color}
-            style={{ flex: 1, justifyContent: "center", alignSelf: "center" }}
+            style={this.styles.loaderStyle}
           />
         ) : (
           <FlatList

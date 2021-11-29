@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-export const highlightstyle = (colorFile, sizeFile) => {
+export const styles = (colorFile, sizeFile) => {
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -40,5 +40,6 @@ export const highlightstyle = (colorFile, sizeFile) => {
       alignItems: "center",
       height: "100%",
     },
+    loaderStyle:{ flex: 1, justifyContent: "center", alignSelf: "center" }
   });
 };

@@ -1342,7 +1342,7 @@ class Bible extends Component {
       <View style={this.styles.container}>
         {this.props.visibleParallelView ? (
           <View
-            style={{ position: "absolute", top: 0, zIndex: 2, width: "50%" }}
+            style={this.styles.headerView}
           >
             <Header style={{ backgroundColor: Color.Blue_Color, height: 40 }}>
               <Button
@@ -1388,21 +1388,15 @@ class Bible extends Component {
         <View style={this.styles.singleView}>
           {/** Single view with only bible text */}
           <View
-            style={{
-              flex: 1,
-              flexDirection: "column",
-              width: this.props.visibleParallelView ? "50%" : width,
-            }}
+            style={[
+            this.styles.innerContainer,
+            {width: this.props.visibleParallelView ? "50%" : width,
+            }]}
           >
             {this.state.unAvailableContent &&
             this.state.chapterContent.length == 0 ? (
               <View
-                style={{
-                  flex: 1,
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
+                style={this.styles.reloadButtonCenter}
               >
                 <ReloadButton
                   styles={this.styles}
@@ -1555,55 +1549,7 @@ class Bible extends Component {
     );
   }
 }
-// const navStyles = StyleSheet.create({
-//   navbar: {
-//     position: "absolute",
-//     top: 0,
-//     left: 0,
-//     right: 0,
-//     alignItems: "center",
-//     backgroundColor: "white",
-//     borderBottomColor: "#dedede",
-//     borderBottomWidth: 1,
-//     height: NAVBAR_HEIGHT,
-//     justifyContent: "center",
-//     paddingTop: STATUS_BAR_HEIGHT,
-//   },
-//   title: {
-//     color: "#333333",
-//   },
-//   headerLeftStyle: {
-//     alignItems: "stretch",
-//     justifyContent: "space-evenly",
-//     flexDirection: "row",
-//     flex: 1,
-//   },
-//   border: {
-//     paddingHorizontal: 4,
-//     paddingVertical: 4,
 
-//     borderWidth: 0.2,
-//     borderColor: Color.White,
-//   },
-//   headerRightStyle: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     justifyContent: "space-between",
-//     paddingHorizontal: 8,
-//     flex: 1,
-//   },
-//   touchableStyleRight: {},
-
-//   touchableStyleLeft: {
-//     flexDirection: "row",
-//     marginHorizontal: 8,
-//   },
-//   headerTextStyle: {
-//     fontSize: 18,
-//     color: Color.White,
-//     textAlign: "center",
-//   },
-// });
 
 const mapStateToProps = (state) => {
   return {

@@ -128,7 +128,6 @@ class DictionaryWords extends Component {
   };
 
   render() {
-    console.log("AVAILABLE CONTENT ", this.state.dicMetaData);
     return (
       <View style={this.styles.container}>
         {this.state.isLoading && (
@@ -160,12 +159,7 @@ class DictionaryWords extends Component {
             >
               <View style={this.styles.dictionaryModalView}>
                 <View
-                  style={{
-                    width: "80%",
-                    height: "70%",
-                    position: "absolute",
-                    zIndex: 0,
-                  }}
+                  style={this.styles.dicModalPos}
                 >
                   <Icon
                     name="cancel"
@@ -174,7 +168,7 @@ class DictionaryWords extends Component {
                     }
                     size={28}
                     color={Color.Blue_Color}
-                    style={{ position: "absolute", right: 0, zIndex: 1 }}
+                    style={this.styles.cancelIcon}
                   />
                   <ScrollView style={this.styles.scrollViewModal}>
                     <Text style={this.styles.textString}>
@@ -204,12 +198,12 @@ class DictionaryWords extends Component {
                   { backgroundColor: "rgba(250,250,250,0.3)" },
                 ]}
               >
-                <View style={{ width: "80%", position: "absolute", zIndex: 0 }}>
+                <View style={this.styles.dic}>
                   <Icon
                     name="cancel"
                     onPress={() => this.setState({ metadataVisible: false })}
                     size={28}
-                    style={{ position: "absolute", right: 0, zIndex: 1 }}
+                    style={this.styles.cancelIcon}
                   />
                   <ScrollView style={this.styles.dictionScrollModal}>
                     <Text style={this.styles.textString}>

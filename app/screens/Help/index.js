@@ -1,15 +1,15 @@
 import React, { Component } from "react";
 import { View, TouchableOpacity, Text } from "react-native";
 import { Card, CardItem } from "native-base";
-import { HelpStyle } from "./styles.js";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { connect } from "react-redux";
+import { styles } from "../About/styles.js";
 
 class Help extends Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.styles = HelpStyle(this.props.colorFile, this.props.sizeFile);
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
 
   render() {

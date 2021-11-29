@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native'
 import Color from '../../utils/colorConstants'
 
-export const aboutPage = (colorFile, sizeFile) => {
+export const styles = (colorFile, sizeFile) => {
     return StyleSheet.create({
         container: {
             flex: 1,
@@ -16,25 +16,25 @@ export const aboutPage = (colorFile, sizeFile) => {
             margin: 16,
             padding: 8
         },
-        featureList: {
-            fontSize: sizeFile.contentText,
-            color: colorFile.textColor,
-            fontWeight: "bold"
-        },
-        italicText: {
-            fontWeight: 'bold', fontStyle: 'italic'
-        },
-        boldText: {
-            fontWeight: "bold"
-        },
+        // featureList: {
+        //     fontSize: sizeFile.contentText,
+        //     color: colorFile.textColor,
+        //     fontWeight: "bold"
+        // },
+        // italicText: {
+        //     fontWeight: 'bold', fontStyle: 'italic'
+        // },
+        // boldText: {
+        //     fontWeight: "bold"
+        // },
         linkText: {
             color: Color.Red,
             textDecorationLine: 'underline',
             fontSize: sizeFile.contentText
         },
-        featureView: {
-            flexDirection: 'row'
-        },
+        // featureView: {
+        //     flexDirection: 'row'
+        // },
         TitleText: {
             paddingTop: 8,
             fontSize: sizeFile.titleText,

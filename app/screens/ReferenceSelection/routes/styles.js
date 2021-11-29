@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import Color from "../../../utils/colors";
 
-export const routestyle = (colorFile) => {
+export const styles = (colorFile) => {
   return StyleSheet.create({
     tabLabel: {
       fontSize: 16,

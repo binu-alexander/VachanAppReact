@@ -1,6 +1,4 @@
 import { StyleSheet } from "react-native";
-// const height = Dimensions.get("window").height;
-// const width = Dimensions.get("window").width;
 
 import Color from "../../utils/colorConstants";
 export const styles = (colorFile, sizeFile) => {
@@ -18,32 +16,32 @@ export const styles = (colorFile, sizeFile) => {
       marginLeft: 4,
       lineHeight: sizeFile.lineHeight,
     },
-    cardItemStyle: {
-      backgroundColor: colorFile.backgroundColor,
-    },
-    cardStyle: {
-      margin: 16,
-      padding: 8,
-    },
-    loaderStyle: {
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-      flexDirection: "row",
-      color: "#0000ff",
-    },
-    iconStyle: {
-      margin: 8,
-      padding: 8,
-      fontSize: sizeFile.iconSize,
-      color: colorFile.iconColor,
-    },
-    textInputStyle: {
-      height: 40,
-      borderColor: Color.Gray,
-      borderWidth: 1,
-      marginVertical: 8,
-    },
+    // cardItemStyle: {
+    //   backgroundColor: colorFile.backgroundColor,
+    // },
+    // cardStyle: {
+    //   margin: 16,
+    //   padding: 8,
+    // },
+    // loaderStyle: {
+    //   flex: 1,
+    //   alignItems: "center",
+    //   justifyContent: "center",
+    //   flexDirection: "row",
+    //   color: "#0000ff",
+    // },
+    // iconStyle: {
+    //   margin: 8,
+    //   padding: 8,
+    //   fontSize: sizeFile.iconSize,
+    //   color: colorFile.iconColor,
+    // },
+    // textInputStyle: {
+    //   height: 40,
+    //   borderColor: Color.Gray,
+    //   borderWidth: 1,
+    //   marginVertical: 8,
+    // },
     placeholderColor: {
       color: colorFile.textColor,
     },
@@ -54,14 +52,14 @@ export const styles = (colorFile, sizeFile) => {
       fontSize: 32,
     },
     //login
-    passwordView: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      marginBottom: 15,
-      paddingBottom: 15,
-      marginHorizontal: 10,
-    },
+    // passwordView: {
+    //   flexDirection: "row",
+    //   alignItems: "center",
+    //   justifyContent: "center",
+    //   marginBottom: 15,
+    //   paddingBottom: 15,
+    //   marginHorizontal: 10,
+    // },
     loginText: {
       color: Color.Blue_Color,
       marginTop: 25,
@@ -114,12 +112,12 @@ export const styles = (colorFile, sizeFile) => {
       color: "#00BFFF",
       marginTop: 10,
     },
-    description: {
-      fontSize: 16,
-      color: Color.Gray,
-      marginTop: 10,
-      textAlign: "center",
-    },
+    // description: {
+    //   fontSize: 16,
+    //   color: Color.Gray,
+    //   marginTop: 10,
+    //   textAlign: "center",
+    // },
     buttonContainer: {
       marginTop: 10,
       height: 45,
@@ -189,5 +187,42 @@ export const styles = (colorFile, sizeFile) => {
       backgroundColor: colorFile.backgroundColor,
       color: colorFile.textColor,
     },
+  iconContainer:{ padding: 35, flex: 1 },
+  centerContainer:{ alignItems: "center", justifyContent: "center" },
+  signinText:{
+    fontSize: 26,
+    color: Color.Blue_Color,
+    fontWeight: "bold",
+  },
+  
+  signinInput:{
+    flexDirection: "column",
+    justifyContent: "center",
+  },
+  dividerView:{
+    flexDirection: "row",
+    marginVertical: 8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  signinButton:{
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 32,
+  },
+  centerProfileImg:{
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  resetContainer:{
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    padding: 35,
+  }
   });
 };
+
+

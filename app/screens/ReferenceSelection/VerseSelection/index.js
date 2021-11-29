@@ -1,9 +1,10 @@
+import { slice } from "lodash";
 import { View } from "native-base";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import SelectionGrid from "../../../components/SelectionGrid";
 import vApi from "../../../utils/APIFetch";
-import { verseSelection } from "./styles";
+import { styles } from "./styles";
 
 class SelectVerse extends Component {
   constructor(props) {
@@ -24,7 +25,7 @@ class SelectVerse extends Component {
         ? this.props.route.params.totalChapters
         : null,
     };
-    this.styles = verseSelection(this.props.colorFile, this, props.sizeFile);
+    this.styles = styles(this.props.colorFile, this, props.sizeFile);
   }
 
   async fectchVerses() {

@@ -2,7 +2,7 @@ import { StyleSheet, Dimensions } from 'react-native'
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-export const noteStyle = (colorFile, sizeFile) => {
+export const styles = (colorFile, sizeFile) => {
     return StyleSheet.create({
         container: {
             flex: 1,
@@ -184,7 +184,8 @@ export const noteStyle = (colorFile, sizeFile) => {
         iconReferClose: {
             color: colorFile.textColor,
             fontSize: sizeFile.contentText
-        }
+        },
+        loaderPosition:{ flex: 1, justifyContent: "center", alignSelf: "center" }
 
     })
 }

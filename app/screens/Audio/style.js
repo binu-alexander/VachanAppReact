@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-export const AudioListStyle = (colorFile, sizeFile) => {
+export const style = (colorFile, sizeFile) => {
   return StyleSheet.create({
     container: {
       flex: 1,

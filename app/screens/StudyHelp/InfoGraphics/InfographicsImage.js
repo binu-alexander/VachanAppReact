@@ -9,7 +9,7 @@ import {
 } from "react-native-gesture-handler";
 import { Text, View } from "native-base";
 import { connect } from "react-redux";
-import { bookStyle } from "./styles.js";
+import { styles } from "./styles.js";
 import Color from "../../../utils/colorConstants";
 
 export class InfographicsImage extends React.Component {
@@ -21,7 +21,7 @@ export class InfographicsImage extends React.Component {
       image: null,
       isLoading: false,
     };
-    this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
 
     /* Pinching */
     this._baseScale = new Animated.Value(1);
@@ -87,12 +87,7 @@ export class InfographicsImage extends React.Component {
     this.props.navigation.setOptions({
       headerTitle: () => (
         <Text
-          style={{
-            fontSize: 18,
-            color: Color.White,
-            fontWeight: "bold",
-            marginRight: 12,
-          }}
+          style={this.styles.headerTitle}
         >
           Image
         </Text>
@@ -100,12 +95,7 @@ export class InfographicsImage extends React.Component {
       headerRight: () => (
         <TouchableOpacity onPress={this.resetSize}>
           <Text
-            style={{
-              fontSize: 18,
-              color: Color.White,
-              fontWeight: "bold",
-              marginRight: 12,
-            }}
+            style={this.styles.headerRight}
           >
             Reset Size
           </Text>
@@ -126,7 +116,7 @@ export class InfographicsImage extends React.Component {
       <View style={this.styles.wrapper}>
         {this.state.isLoading && (
           <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={this.styles.loaderPos}
           >
             <ActivityIndicator animate={true} size={32} />
           </View>

@@ -121,6 +121,12 @@ export const styles =(colorFile, sizeFile) =>{
         selectionInnerContent:{
           padding: 10,
           backgroundColor:colorFile.backgroundColor,
+        },
+        listContainer:{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginHorizontal: 8,
         }
    })
 

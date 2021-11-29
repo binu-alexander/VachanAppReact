@@ -233,9 +233,9 @@ function* fetchAllContent() {
           },
         ];
         versions.push({
-          sourceId: commentaryLanguage[i].commentaries[j].sourceId,
-          versionName: commentaryLanguage[i].commentaries[j].name,
-          versionCode: commentaryLanguage[i].commentaries[j].code,
+          sourceId: commentaryLanguage[k].commentaries[l].sourceId,
+          versionName: commentaryLanguage[k].commentaries[l].name,
+          versionCode: commentaryLanguage[k].commentaries[l].code,
           metaData: mData,
           downloaded: false,
         });
