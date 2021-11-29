@@ -1,18 +1,28 @@
-import { AppRegistry } from 'react-native';
-import App from './app/utils/routes'
-// import App from './app/navigation'
-// import Audio from './app/screens/Audio'
-import React, {Component} from 'react'
-import Googlesign from './app/screens/Googlesign'
+import 'react-native-gesture-handler';
+import React, {Component} from 'react';
+import createSagaMiddleware from 'redux-saga';
+import {AppRegistry} from 'react-native';
+import { Provider } from "react-redux";
+import { persistStore } from 'redux-persist';
+import { PersistGate } from 'redux-persist/es/integration/react';
+import App from './App';
+import rootSaga from './app/store/saga/';
+import { typography } from './app/utils/typography';
+import store from './app/store/';
 
-//import AddData from './app/utils/AddData'
-export default class AutographaGo extends Component {
+const persistor = persistStore(store)
 
+typography()
+
+class RNRedux extends Component{
+ 
     render(){
-        return(
-            <App/>
-        )
+    return <Provider store={store}>
+            <PersistGate persistor={persistor}>
+              <App/>   
+            </PersistGate>
+            </Provider>
     }
 }
 
-AppRegistry.registerComponent('AutographaGo_ReactNative', () =>App);
+AppRegistry.registerComponent('VachanGo', () => RNRedux ) ;

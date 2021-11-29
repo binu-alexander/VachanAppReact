@@ -10,7 +10,8 @@ ReferenceModel.schema = {
         bookName:'string',
         chapterNumber:'int',
         verseNumber:'string',
+        verseText:'string',
         versionCode:'string',
-        languageCode:'string'
+        languageName:'string'
     }
 };

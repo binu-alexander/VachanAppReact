@@ -1,42 +1,168 @@
-import React, { Component } from 'react';
-import Player from './Player';
-import {Text} from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialIcons'
+import { Card, CardItem, View } from "native-base";
+import React, { useEffect, useState } from "react";
+import { Text, TouchableOpacity, FlatList } from "react-native";
+import { connect } from "react-redux";
+import { updateVersionBook, ToggleAudio } from "../../store/action/";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import { AudioListStyle } from "./style";
 
-export const TRACKS = [
-  {
-    title: 'Genesis 1',
-    // artist: 'Twenty One Pilots',
-    albumArtUrl: "http://36.media.tumblr.com/14e9a12cd4dca7a3c3c4fe178b607d27/tumblr_nlott6SmIh1ta3rfmo1_1280.jpg",
-    audioUrl: "http://russprince.com/hobbies/files/13%20Beethoven%20-%20Fur%20Elise.mp3",
-  },
-]
+// class Audio extends Component {
+//   constructor(props) {
+//     super(props);
+//     this.styles = AudioListStyle(this.props.colorFile, this.props.sizeFile);
+//     this.state = {
+//       allAudioBooks: [],
+//     };
+//   }
+//   navigateToBible = (bId, bookName, chapterNum) => {
+//     this.props.updateVersionBook({
+//       bookId: bId,
+//       bookName: bookName,
+//       chapterNumber: chapterNum,
+//     });
+//     this.props.ToggleAudio({ audio: true, status: true });
+//     this.props.navigation.navigate("Bible");
+//   };
+//   componentDidMount() {
+//     const books = this.props.books;
+//     const audioBooks = this.props.audioList && this.props.audioList[0].books;
+//     const arrayBooks = audioBooks && Object.keys(audioBooks);
+//     const allBooks = books.map((code) => code);
+//     let allAudioBooks = [];
+//     if (arrayBooks != undefined) {
+//       for (var i = 0; i < arrayBooks.length; i++) {
+//         let temp = allBooks.find((item) => item.bookId === arrayBooks[i]);
+//         allAudioBooks.push(temp);
+//       }
+//       this.setState({ allAudioBooks });
+//     }
+//   }
+//   render() {
+//     return (
+//       <View style={this.styles.container}>
+//         <FlatList
+//           data={this.state.allAudioBooks}
+//           contentContainerStyle={
+//             this.state.allAudioBooks.length === 0 && this.styles.centerEmptySet
+//           }
+//           keyExtractor={(item) => item && item.bookNumber.toString()}
+//           renderItem={({ item }) => (
+//             <Card>
+//               <CardItem style={this.styles.cardItemStyle}>
+//                 <TouchableOpacity
+//                   style={this.styles.audioView}
+//                   onPress={() =>
+//                     this.navigateToBible(
+//                       item.bookId,
+//                       item.bookName,
+//                       item.numOfChapters
+//                     )
+//                   }
+//                 >
+//                   <Text style={this.styles.audioText}>
+//                     {item && item.bookName} {item && item.numOfChapters}
+//                   </Text>
+//                 </TouchableOpacity>
+//               </CardItem>
+//             </Card>
+//           )}
+//           ListEmptyComponent={
+//             <View style={this.styles.emptyMessageContainer}>
+//               <Icon name="volume-up" style={this.styles.emptyMessageIcon} />
+//               <Text style={this.styles.messageEmpty}>
+//                 Audio for {this.props.language} not available
+//               </Text>
+//             </View>
+//           }
+//         />
+//       </View>
+//     );
+//   }
+// }
 
-export default class Audio extends Component {
-    constructor(props){
-        super(props)
-        console.log("PROPS ON NOTEPAD "+JSON.stringify(props))
-        this.state ={
-            close:this.props.screenProps.close
-        }
+const Audio = (props) => {
+  const styles = AudioListStyle(props.colorFile, props.sizeFile);
+  const [allAudioBooks, setAllAudioBooks] = useState([]);
+  const navigateToBible = (bId, bookName, chapterNum) => {
+    props.updateVersionBook({
+      bookId: bId,
+      bookName: bookName,
+      chapterNumber: chapterNum,
+    });
+    props.ToggleAudio({ audio: true, status: true });
+    props.navigation.navigate("Bible");
+  };
+  useEffect(() => {
+    const books = props.books;
+    const audioBooks = props.audioList && props.audioList[0].books;
+    const arrayBooks = audioBooks && Object.keys(audioBooks);
+    const allBooks = books.map((code) => code);
+    let allAudioBooks = [];
+    if (arrayBooks != undefined) {
+      for (var i = 0; i < arrayBooks.length; i++) {
+        let temp = allBooks.find((item) => item.bookId === arrayBooks[i]);
+        allAudioBooks.push(temp);
+      }
+      setAllAudioBooks(allAudioBooks);
     }
-    componentDidMount(){
-        console.log("DID MOUNT OF NOTEPAD")
-        this.props.navigation.setParams({ 
-            closeOnPress: this.props.screenProps.closeSplitScreen,
-        })
-    }
-    static navigationOptions = ({navigation}) =>{
-        const { params = {} } = navigation.state;
-            return{
-                headerTitle:(<Text style={{fontSize:14,color:"white",marginLeft:10}}>Audio</Text>),
-                headerRight:(
-                    <Icon name="close"  style={{fontSize:20,marginRight:10,color:"#fff"}} onPress={() => {params.closeOnPress()}} />
-                ),
-                tabBarIcon: (<Icon name="library-music" size={20} style={{color:'#fff'}}/>)
-            }
+  }, []);
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={allAudioBooks}
+        contentContainerStyle={
+          allAudioBooks.length === 0 && styles.centerEmptySet
         }
-  render() {
-    return <Player tracks={TRACKS} />
-  }
-}
+        keyExtractor={(item) => item && item.bookNumber.toString()}
+        renderItem={({ item }) => (
+          <Card>
+            <CardItem style={styles.cardItemStyle}>
+              <TouchableOpacity
+                style={styles.audioView}
+                onPress={() =>
+                  navigateToBible(
+                    item.bookId,
+                    item.bookName,
+                    item.numOfChapters
+                  )
+                }
+              >
+                <Text style={styles.audioText}>
+                  {item && item.bookName} {item && item.numOfChapters}
+                </Text>
+              </TouchableOpacity>
+            </CardItem>
+          </Card>
+        )}
+        ListEmptyComponent={
+          <View style={styles.emptyMessageContainer}>
+            <Icon name="volume-up" style={styles.emptyMessageIcon} />
+            <Text style={styles.messageEmpty}>
+              Audio for {props.language} not available
+            </Text>
+          </View>
+        }
+      />
+    </View>
+  );
+};
+const mapStateToProps = (state) => {
+  return {
+    language: state.updateVersion.language,
+    languageCode: state.updateVersion.languageCode,
+    audioList: state.updateVersion.audioList,
+    books: state.versionFetch.versionBooks,
+    audio: state.audio.audio,
+    status: state.audio.status,
+    sizeFile: state.updateStyling.sizeFile,
+    colorFile: state.updateStyling.colorFile,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateVersionBook: (value) => dispatch(updateVersionBook(value)),
+    ToggleAudio: (value) => dispatch(ToggleAudio(value)),
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Audio);

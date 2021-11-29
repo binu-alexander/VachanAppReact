@@ -1,8 +1,7 @@
-var ApiUtils = {  
-    checkStatus: function(response) {
-      if (response.ok) {
-        console.log("response ok "+response)
-        return response;
+var ApiUtils = {
+    checkStatus: function (response) {
+      if (response.ok && response.status == 200) {
+        return response
       } else {
         let error = new Error(response.statusText);
         error.response = response;

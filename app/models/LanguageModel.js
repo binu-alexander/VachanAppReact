@@ -5,10 +5,12 @@ import Realm from 'realm'
 export default class LanguageModel extends Realm.Object {}
 LanguageModel.schema = {
     name: 'LanguageModel',
-    primaryKey: 'languageCode',
+    primaryKey: 'languageName',
     properties: {
-    	languageCode: 'string',
-    	languageName: 'string',
-    	versionModels: 'VersionModel[]'
+        // languageCode: 'string',
+        languageName: 'string',
+        languageCode:'string',
+        versionModels: 'VersionModel[]',
+		bookNameList:'bookNameList[]',
     }
 };

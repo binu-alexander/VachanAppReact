@@ -1,39 +1,56 @@
-import {StyleSheet,Dimensions} from 'react-native'
-import { Icon } from 'native-base';
-const width = Dimensions.get('window').width;
+import { StyleSheet } from 'react-native'
+import Color from '../../utils/colorConstants'
 
-export const aboutPage =(colorFile, sizeFile) =>{
+export const aboutPage = (colorFile, sizeFile) => {
     return StyleSheet.create({
-        container:{
-            backgroundColor:colorFile.backgroundColor,
+        container: {
+            flex: 1,
+            backgroundColor: colorFile.backgroundColor,
         },
-        textStyle:{
-                fontSize:sizeFile.contentText,
-                color:colorFile.textColor,
+        textStyle: {
+            fontSize: sizeFile.contentText,
+            color: colorFile.textColor,
+            lineHeight: sizeFile.lineHeight,
         },
-        
-        textContainer:{
-            margin:16,
-            padding:8
+        textContainer: {
+            margin: 16,
+            padding: 8
         },
-        featureList:{
-            fontSize:sizeFile.contentText,
-            color:colorFile.textColor,
-            fontWeight:"bold"
+        featureList: {
+            fontSize: sizeFile.contentText,
+            color: colorFile.textColor,
+            fontWeight: "bold"
         },
-        italicText:{
-            fontWeight:'bold',fontStyle:'italic'
+        italicText: {
+            fontWeight: 'bold', fontStyle: 'italic'
         },
-        boldText:{
-            fontWeight:"bold"
+        boldText: {
+            fontWeight: "bold"
         },
-        linkText:{
-                color: 'red',
-                textDecorationLine:'underline',
-                fontSize:sizeFile.contentText
+        linkText: {
+            color: Color.Red,
+            textDecorationLine: 'underline',
+            fontSize: sizeFile.contentText
         },
-        featureView:{
-            flexDirection:'row'
+        featureView: {
+            flexDirection: 'row'
+        },
+        TitleText: {
+            paddingTop: 8,
+            fontSize: sizeFile.titleText,
+            color: colorFile.sectionHeading,
+            lineHeight: sizeFile.lineHeight
+        },
+        bulletIcon: {
+            fontSize: 26,
+            color: colorFile.iconColor,
+            lineHeight: sizeFile.lineHeight,
+        },
+        releaseNoteText:{
+            paddingTop: 8,
+            lineHeight: sizeFile.lineHeight,
+            fontSize: sizeFile.titleText,
+            color: colorFile.textColor,
         }
     })
 

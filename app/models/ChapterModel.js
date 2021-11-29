@@ -7,8 +7,11 @@ ChapterModel.schema = {
     name: 'ChapterModel',
     properties: {
       chapterNumber: 'int',
-      numberOfVerses: 'int',
-      verseComponentsModels: 'VerseComponentsModel[]',
-      chapterOwner: {type: 'linkingObjects', objectType: 'BookModel', property:'chapterModels' }
+      numberOfVerses:'int',
+      chapterHeading:{type: 'string', optional: true},
+      // totalChapters:'int',
+      verses: 'VerseModel[]',
+      // chapterOwner: {type: 'linkingObjects', objectType: 'BookModel', property:'chapters' }
     }
 };
+
