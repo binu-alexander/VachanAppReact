@@ -121,9 +121,10 @@ class Help extends Component {
     visibility[index] = { ...visibility[index], visible: true };
     this.setState({ iconName: visibility });
   }
-  componentDidMount(){
+  componentWillMount() {
     this.animatedValue = new Animated.Value(1);
   }
+
   handlePressIn = (index) => {
     this.setState({ index });
     Animated.spring(this.animatedValue, {
@@ -141,7 +142,7 @@ class Help extends Component {
       transform: [{ scale: this.animatedValue }],
     };
     return (
-      <View style={this.styleFile.centerContainer}>
+      <View style={{ flexDirection: "row", justifyContent: "center" }}>
         <TouchableWithoutFeedback
           style={{
             width: width / 5,

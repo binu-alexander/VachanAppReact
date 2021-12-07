@@ -205,6 +205,7 @@ class EditNote extends Component {
   };
 
   render() {
+    console.log("PARAM ",this.props.route.params)
     return (
       <View style={this.styles.containerEditNote}>
         <View style={this.styles.subContainer}>

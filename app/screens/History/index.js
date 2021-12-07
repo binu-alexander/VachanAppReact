@@ -29,7 +29,7 @@ class History extends Component {
       ],
       isLoading: false,
     };
-    this.styles = historyStyle(props.colorFile, props.sizeFile);
+    this.styles = styles(props.colorFile, props.sizeFile);
     this.onClearHistory = this.onClearHistory.bind(this);
   }
 
