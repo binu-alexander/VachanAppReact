@@ -20,11 +20,17 @@ export const style = (colorFile, sizeFile) => {
       paddingBottom: 16,
       backgroundColor: colorFile.backgroundColor,
     },
-    centerEmptySet: { 
-      justifyContent: 'center', 
-      alignItems: 'center',
-      height: '100%' 
-  },
+    centerEmptySet: {
+      justifyContent: "center",
+      alignItems: "center",
+      height: "100%",
+    },
+    emptyMessageContainer: {
+      flex: 1,
+      alignItems: "center",
+      flexDirection: "column",
+      justifyContent: "center",
+    },
     messagContainer: {
       flex: 1,
       flexDirection: "row",
@@ -32,13 +38,13 @@ export const style = (colorFile, sizeFile) => {
       paddingHorizontal: 10,
       paddingVertical: 5,
     },
-    messageEmpty:{
-      fontSize:sizeFile.titleText,
-      color:colorFile.textColor,
-  },
+    messageEmpty: {
+      fontSize: sizeFile.titleText,
+      color: colorFile.textColor,
+    },
     emptyMessageIcon: {
-      paddingBottom:20,
-      alignSelf:'center',
+      paddingBottom: 20,
+      alignSelf: "center",
       fontSize: sizeFile.emptyIconSize,
       color: colorFile.iconColor,
     },

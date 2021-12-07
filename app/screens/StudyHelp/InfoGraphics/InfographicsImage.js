@@ -10,7 +10,6 @@ import {
 import { Text, View } from "native-base";
 import { connect } from "react-redux";
 import { styles } from "./styles.js";
-import Color from "../../../utils/colorConstants";
 
 export class InfographicsImage extends React.Component {
   constructor(props) {

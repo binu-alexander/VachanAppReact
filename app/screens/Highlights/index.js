@@ -1,11 +1,5 @@
 import React, { Component } from "react";
-import {
-  Text,
-  View,
-  ActivityIndicator,
-  TouchableOpacity,
-  FlatList,
-} from "react-native";
+import { Text, View, ActivityIndicator, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { getBookChaptersFromMapping } from "../../utils/UtilFunctions";
 import { styles } from "./styles";
@@ -13,6 +7,7 @@ import { connect } from "react-redux";
 import { updateVersionBook } from "../../store/action/";
 import database from "@react-native-firebase/database";
 import Colors from "../../utils/colorConstants";
+import ListContainer from "../../components/Common/FlatList";
 
 class HighLights extends Component {
   constructor(props) {
@@ -223,27 +218,16 @@ class HighLights extends Component {
             style={this.styles.loaderStyle}
           />
         ) : (
-          <FlatList
-            data={this.state.HightlightedVerseArray}
-            contentContainerStyle={
-              this.state.HightlightedVerseArray.length === 0 &&
-              this.styles.centerEmptySet
-            }
+          <ListContainer
+            listData={this.state.HightlightedVerseArray}
+            listStyle={this.styles.centerEmptySet}
             renderItem={this.renderItem}
-            ListEmptyComponent={
-              <View style={this.styles.emptyMessageContainer}>
-                <Icon
-                  name="border-color"
-                  style={this.styles.emptyMessageIcon}
-                />
-                <Text
-                  style={this.styles.messageEmpty}
-                  onPress={this.emptyMessageNavigation}
-                >
-                  {this.state.message}
-                </Text>
-              </View>
-            }
+            icon="border-color"
+            containerStyle={this.styles.emptyMessageContainer}
+            iconStyle={this.styles.emptyMessageIcon}
+            textStyle={this.styles.messageEmpty}
+            message={this.state.message}
+            onPress={this.emptyMessageNavigation}
           />
         )}
       </View>

@@ -1,6 +1,6 @@
 import { Card, CardItem, View } from "native-base";
 import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity, FlatList } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 import { updateVersionBook, ToggleAudio } from "../../store/action/";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -92,6 +92,27 @@ const Audio = (props) => {
     props.ToggleAudio({ audio: true, status: true });
     props.navigation.navigate("Bible");
   };
+  const emptyMessageNavigation = () => {
+    this.props.navigation.navigate("Bible");
+  };
+  const renderItem = ({ item }) => {
+    return (
+      <Card>
+        <CardItem style={styles.cardItemStyle}>
+          <TouchableOpacity
+            style={styles.audioView}
+            onPress={() =>
+              navigateToBible(item.bookId, item.bookName, item.numOfChapters)
+            }
+          >
+            <Text style={styles.audioText}>
+              {item && item.bookName} {item && item.numOfChapters}
+            </Text>
+          </TouchableOpacity>
+        </CardItem>
+      </Card>
+    );
+  };
   useEffect(() => {
     const books = props.books;
     const audioBooks = props.audioList && props.audioList[0].books;
@@ -108,40 +129,16 @@ const Audio = (props) => {
   }, []);
   return (
     <View style={styles.container}>
-      <FlatList
-        data={allAudioBooks}
-        contentContainerStyle={
-          allAudioBooks.length === 0 && styles.centerEmptySet
-        }
-        keyExtractor={(item) => item && item.bookNumber.toString()}
-        renderItem={({ item }) => (
-          <Card>
-            <CardItem style={styles.cardItemStyle}>
-              <TouchableOpacity
-                style={styles.audioView}
-                onPress={() =>
-                  navigateToBible(
-                    item.bookId,
-                    item.bookName,
-                    item.numOfChapters
-                  )
-                }
-              >
-                <Text style={styles.audioText}>
-                  {item && item.bookName} {item && item.numOfChapters}
-                </Text>
-              </TouchableOpacity>
-            </CardItem>
-          </Card>
-        )}
-        ListEmptyComponent={
-          <View style={styles.emptyMessageContainer}>
-            <Icon name="volume-up" style={styles.emptyMessageIcon} />
-            <Text style={styles.messageEmpty}>
-              Audio for {props.language} not available
-            </Text>
-          </View>
-        }
+      <ListContainer
+        listData={allAudioBooks}
+        listStyle={styles.centerEmptySet}
+        renderItem={renderItem}
+        icon="volume-up"
+        iconStyle={styles.emptyMessageIcon}
+        containerStyle={styles.emptyMessageContainer}
+        textStyle={styles.messageEmpty}
+        message={`Audio for ${props.language} not available`}
+        onPress={emptyMessageNavigation}
       />
     </View>
   );

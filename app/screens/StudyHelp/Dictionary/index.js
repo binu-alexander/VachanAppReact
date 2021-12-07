@@ -1,17 +1,11 @@
 import React from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Card, CardItem } from "native-base";
-import Icon from "react-native-vector-icons/MaterialIcons";
 import { connect } from "react-redux";
 import { styles } from "./styles.js";
 import vApi from "../../../utils/APIFetch";
 import Colors from "../../../utils/colorConstants";
+import ListContainer from "../../../components/Common/FlatList.js";
 
 class Infographics extends React.Component {
   constructor(props) {
@@ -49,6 +43,9 @@ class Infographics extends React.Component {
       }
     );
   }
+  emptyMessageNavigation = () => {
+    this.props.navigation.navigate("Bible");
+  };
   gotoDicionary = (sourceId) => {
     this.props.navigation.navigate("DictionaryWords", {
       dictionarySourceId: sourceId,
@@ -82,20 +79,16 @@ class Infographics extends React.Component {
             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           />
         ) : (
-          <FlatList
-            data={this.state.dictionaries}
-            contentContainerStyle={
-              this.state.dictionaries.length === 0 && this.styles.centerEmptySet
-            }
+          <ListContainer
+            listData={this.state.dictionaries}
+            listStyle={this.styles.centerEmptySet}
             renderItem={this.renderItem}
-            ListEmptyComponent={
-              <View style={this.styles.emptyMessageContainer}>
-                <Icon name="book" style={this.styles.emptyMessageIcon} />
-                <Text style={this.styles.messageEmpty}>
-                  No Dictionary for {this.props.languageName}
-                </Text>
-              </View>
-            }
+            icon="book"
+            iconStyle={this.styles.emptyMessageIcon}
+            containerStyle={this.styles.emptyMessageContainer}
+            textStyle={this.styles.messageEmpty}
+            message={`No Dictionary for ${this.props.languageName}`}
+            onPress={this.emptyMessageNavigation}
           />
         )}
       </View>

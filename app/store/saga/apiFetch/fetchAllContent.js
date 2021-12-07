@@ -146,14 +146,14 @@ function* fetchAllContent() {
       }
     }
     for (var k = 0; k < commentaryLanguage.length; k++) {
-      let versions = [];
+      var versions = [];
       const language =
         commentaryLanguage[k].language.charAt(0).toUpperCase() +
         commentaryLanguage[k].language.slice(1);
       const languageCode = commentaryLanguage[k].languageCode;
       for (var l = 0; l < commentaryLanguage[k].commentaries.length; l++) {
         const metaD = commentaryLanguage[k].commentaries[l].metadata;
-        let mData = [
+        var mData = [
           {
             abbreviation:
               metaD &&

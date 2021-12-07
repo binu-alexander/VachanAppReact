@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-
+import Color from '../../../utils/colorConstants'
 export const styles = (colorFile, sizeFile) => {
   return StyleSheet.create({
     imagecontainer: {

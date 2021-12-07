@@ -1,17 +1,12 @@
 import React, { Component } from "react";
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  FlatList,
-  ActivityIndicator,
-} from "react-native";
+import { Text, View, TouchableOpacity, ActivityIndicator } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Card, CardItem } from "native-base";
 import { connect } from "react-redux";
 import database from "@react-native-firebase/database";
 import { styles } from "./styles.js";
 import Colors from "../../utils/colorConstants";
+import ListContainer from "../../components/Common/FlatList.js";
 
 class Note extends Component {
   constructor(props) {
@@ -239,7 +234,7 @@ class Note extends Component {
             style={this.styles.loaderPosition}
           />
         ) : (
-          <FlatList
+          /* <FlatList
             contentContainerStyle={
               this.state.notesData.length === 0
                 ? this.styles.centerEmptySet
@@ -257,6 +252,21 @@ class Note extends Component {
                 </Text>
               </View>
             }
+          /> */
+          <ListContainer
+            listData={this.state.notesData}
+            listStyle={
+              this.styles.centerEmptySet
+                ? this.styles.centerEmptySet
+                : this.styles.noteFlatlistCustom
+            }
+            renderItem={this.renderItem}
+            containerStyle={this.styles.emptyMessageContainer}
+            icon="note"
+            iconStyle={this.styles.emptyMessageIcon}
+            textStyle={this.styles.messageEmpty}
+            message={this.state.message}
+            onPress={this.emptyMessageNavigation}
           />
         )}
       </View>
