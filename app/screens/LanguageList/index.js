@@ -369,12 +369,7 @@ class LanguageList extends Component {
         {item.versionModels.map((element, index) => (
           <TouchableOpacity
             key={index}
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginHorizontal: 8,
-            }}
+            style={this.styles.listContainer}
             onPress={() => {
               this.navigateTo(
                 item.languageName,

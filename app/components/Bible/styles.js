@@ -220,5 +220,7 @@ export const styles = (colorFile, sizeFile) => {
       color: colorFile.iconColor,
       alignSelf: "center",
     },
+    centerReloadButton:{ flex: 1, justifyContent: "center", alignSelf: "center" },
+    scrollVContainer:{ paddingBottom: 20, marginTop: 10 }
   });
 };

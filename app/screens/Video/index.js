@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
-import { bookStyle } from "./styles.js";
+import { styles } from "./styles.js";
 import { Card, CardItem } from "native-base";
 import { Toast } from "native-base";
 import vApi from "../../utils/APIFetch";
@@ -18,7 +18,7 @@ class Video extends Component {
       isLoading: false,
       duplicateValue: [],
     };
-    this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
 
   async fetchVideo() {

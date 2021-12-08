@@ -71,12 +71,7 @@ class Reset extends Component {
     return (
       <View style={this.styles.container}>
         <View
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            padding: 35,
-          }}
+          style={this.styles.resetContainer}
         >
           <Text style={this.styles.textStyle}>
             Enter your email address and we&apos;ll send a link to reset your

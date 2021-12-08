@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-export const OBSStyle = (colorFile, sizeFile) => {
+export const styles = (colorFile, sizeFile) => {
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -85,5 +85,6 @@ export const OBSStyle = (colorFile, sizeFile) => {
       alignItems: "center",
       height: "100%",
     },
+   loaderCenter: { flex: 1, justifyContent: "center", alignSelf: "center" }
   });
 };

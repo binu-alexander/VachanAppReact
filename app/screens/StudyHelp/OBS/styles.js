@@ -1,8 +1,8 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet,Dimensions } from "react-native";
 // const width = Dimensions.get('window').width;
-// const height = Dimensions.get('window').height;
+const height = Dimensions.get('window').height;
 
-export const OBSStyle = (colorFile, sizeFile) => {
+export const styles = (colorFile, sizeFile) => {
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -78,5 +78,30 @@ export const OBSStyle = (colorFile, sizeFile) => {
       alignItems: "center",
       height: "100%",
     },
+    dropdownView:{
+      flexDirection: "row",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+    },
+    dropdownPos:{
+      padding: 10,
+      margin: 10,
+      borderRadius: 10,
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      borderColor: colorFile.iconColor,
+      borderWidth: 0.5,
+    },
+    dropdownSize:{ width: "60%", height: height / 2 },
+    dropdownText:{
+      paddingHorizontal: 8,
+      fontSize: 18,
+      fontWeight: "400",
+      color: colorFile.textColor,
+    },
+    loaderPos:{ flex: 1, justifyContent: "center", alignSelf: "center" },
+    scrollView:{ paddingHorizontal: 12, height: "100%" }
+    
   });
 };

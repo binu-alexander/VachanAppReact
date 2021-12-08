@@ -123,7 +123,7 @@ export default class CustomHeader extends Component {
             style={[navStyles.titleTouchable]}
             onPress={this.props.navigateToLanguage}
           >
-            <Text style={{ fontSize: 18, color: "#fff" }}>
+            <Text style={navStyles.langVer}>
               {this.props.language &&
                 this.props.language.charAt(0).toUpperCase() +
                   this.props.language.slice(1)}{" "}
@@ -132,7 +132,7 @@ export default class CustomHeader extends Component {
             <Icon name="arrow-drop-down" color={Color.White} size={20} />
           </TouchableOpacity>
           <TouchableOpacity
-            style={{ position: "absolute", right: 0, paddingRight: 8 }}
+            style={navStyles.printView}
             onPress={this.props.createPDF}
           >
             <Icon name="print" color={Color.White} size={28} />
@@ -159,6 +159,8 @@ const navStyles = StyleSheet.create({
     justifyContent: "center",
     // paddingTop: STATUS_BAR_HEIGHT,
   },
+  printView:{ position: "absolute", right: 0, paddingRight: 8 },
+  langVer:{ fontSize: 18, color: "#fff" },
   title: {
     color: "#333333",
     flexDirection: "row",

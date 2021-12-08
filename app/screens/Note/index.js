@@ -4,7 +4,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import { Card, CardItem } from "native-base";
 import { connect } from "react-redux";
 import database from "@react-native-firebase/database";
-import { noteStyle } from "./styles.js";
+import { styles } from "./styles.js";
 import Colors from "../../utils/colorConstants";
 import ListContainer from "../../components/Common/FlatList.js";
 
@@ -28,9 +28,8 @@ class Note extends Component {
       message: "",
       email: this.props.email,
     };
-    this.styles = noteStyle(props.colorFile, props.sizeFile);
+    this.styles = styles(props.colorFile, props.sizeFile);
 
-    this.fetchNotes = this.fetchNotes.bind(this);
     this.onDelete = this.onDelete.bind(this);
   }
   static getDerivedStateFromProps(props, state) {
@@ -74,7 +73,7 @@ class Note extends Component {
     this.setState({ notesData: data });
   };
 
-  fetchNotes() {
+  fetchNotes=()=> {
     this.setState({ isLoading: true }, () => {
       if (this.state.email) {
         var firebaseRef = database().ref(
@@ -231,7 +230,7 @@ class Note extends Component {
             size="small"
             color={Colors.Blue_Color}
             animate={true}
-            style={{ flex: 1, justifyContent: "center", alignSelf: "center" }}
+            style={this.styles.loaderPosition}
           />
         ) : (
           /* <FlatList

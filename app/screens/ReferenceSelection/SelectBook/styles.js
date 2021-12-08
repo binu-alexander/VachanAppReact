@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 import colorConstants from "../../../utils/colorConstants";
 import Color from "../../../utils/colorConstants";
 
-export const SelectBookPageStyle = (colorFile, sizeFile) => {
+export const styles = (colorFile, sizeFile) => {
   return StyleSheet.create({
     container: {
       flex: 1,

@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Segment, Button } from "native-base";
-import { SelectBookPageStyle } from "./styles.js";
+import { styles } from "./styles.js";
 import { connect } from "react-redux";
 import Spinner from "react-native-loading-spinner-overlay";
 import Color from "../../../utils/colorConstants";
@@ -25,7 +25,7 @@ class SelectBook extends Component {
       OTSize: 0,
       isLoading: false,
     };
-    this.styles = SelectBookPageStyle(
+    this.styles = styles(
       this.props.colorFile,
       this.props.sizeFile
     );

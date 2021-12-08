@@ -63,11 +63,7 @@ class ProfilePage extends Component {
           <Card style={this.styles.cardStyling}>
             <CardItem style={this.styles.cardItemStyling}>
               <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
+                style={this.styles.centerProfileImg}
               >
                 <Image
                   style={this.styles.avatar}

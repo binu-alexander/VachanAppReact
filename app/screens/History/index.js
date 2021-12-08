@@ -11,7 +11,7 @@ import {
   updateMetadata,
 } from "../../store/action/";
 import { getBookChaptersFromMapping } from "../../utils/UtilFunctions";
-import { historyStyle } from "./styles.js";
+import { styles } from "./styles.js";
 import { connect } from "react-redux";
 
 var moment = require("moment");
@@ -29,7 +29,7 @@ class History extends Component {
       ],
       isLoading: false,
     };
-    this.styles = historyStyle(props.colorFile, props.sizeFile);
+    this.styles = styles(props.colorFile, props.sizeFile);
     this.onClearHistory = this.onClearHistory.bind(this);
   }
 

@@ -2,10 +2,9 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Card, CardItem } from "native-base";
 import { connect } from "react-redux";
-import { bookStyle } from "./styles.js";
+import { styles } from "./styles.js";
 import { Toast } from "native-base";
 import vApi from "../../../utils/APIFetch";
-// import ActivityIndicator from "./ActivityIndicator";
 import ListContainer from "../../../components/Common/FlatList.js";
 
 class Infographics extends React.Component {
@@ -20,7 +19,7 @@ class Infographics extends React.Component {
       url: null,
       isLoading: false,
     };
-    this.styles = bookStyle(this.props.colorFile, this.props.sizeFile);
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
   async fetchInfographics() {
     const apiData = await vApi.get("infographics/" + this.props.languageCode);

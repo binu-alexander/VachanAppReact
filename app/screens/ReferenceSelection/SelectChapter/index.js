@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { View } from "react-native";
 
 import SelectionGrid from "../../../components/SelectionGrid/";
-import { numberSelection } from "./styles.js";
+import { styles } from "./styles.js";
 import { connect } from "react-redux";
 import { Icon } from "native-base";
 import { updateVersionBook } from "../../../store/action";
@@ -33,7 +33,7 @@ class ChapterSelection extends Component {
         ? this.props.route.params.selectedChapterNumber
         : null,
     };
-    this.styles = numberSelection(this.props.colorFile, this.props.sizeFile);
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
   static getDerivedStateFromProps(nextProps, prevState) {
     return {
@@ -82,11 +82,7 @@ class ChapterSelection extends Component {
     }
   };
   render() {
-    console.log(
-      this.state.selectedChapterNumber,
-      this.state.prevSelectChap,
-      "chap"
-    );
+    
     return (
       <View style={{ flex: 1 }}>
         <SelectionGrid
@@ -104,15 +100,7 @@ class ChapterSelection extends Component {
           name="back"
           onPress={this.onBack}
           size={64}
-          style={{
-            position: "absolute",
-            bottom: 0,
-            right: 0,
-            paddingRight: 20,
-            paddingBottom: 10,
-            color: "rgba(62, 64, 149, 0.8)",
-            fontSize: 40,
-          }}
+          style={this.styles.chapterIconPos}
         />
       </View>
     );

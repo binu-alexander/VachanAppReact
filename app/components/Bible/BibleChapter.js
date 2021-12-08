@@ -268,7 +268,7 @@ class BibleChapter extends Component {
         )}
         {this.state.parallelBible == null && this.state.error ? (
           <View
-            style={{ flex: 1, justifyContent: "center", alignSelf: "center" }}
+            style={this.styles.centerReloadButton}
           >
             <ReloadButton
               styles={this.styles}
@@ -279,7 +279,7 @@ class BibleChapter extends Component {
         ) : (
           <View style={{ flex: 1 }}>
             <ScrollView
-              contentContainerStyle={{ paddingBottom: 20, marginTop: 10 }}
+              contentContainerStyle={this.styles.scrollVContainer}
               showsVerticalScrollIndicator={false}
               ref={(ref) => {
                 this.scrollViewRef = ref;

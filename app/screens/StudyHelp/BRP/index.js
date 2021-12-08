@@ -13,7 +13,7 @@ import { getBookChaptersFromMapping } from "../../../utils/UtilFunctions";
 import { GIT_BASE_API } from "../../../utils/APIConstant";
 import { Agenda } from "../../../lib/react-native-calendars";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { OBSStyle } from "./styles.js";
+import { styles } from "./styles.js";
 import Colors from "../../../utils/colorConstants";
 var moment = require("moment");
 
@@ -30,7 +30,7 @@ class BRP extends Component {
       readingPlan: [],
       calendarOpened: false,
     };
-    this.styles = OBSStyle(this.props.colorFile, this.props.sizeFile);
+    this.styles = styles(this.props.colorFile, this.props.sizeFile);
     this._dropdown_1 = null;
   }
   laodMonthItem(day) {
@@ -308,7 +308,6 @@ class BRP extends Component {
     );
   }
   render() {
-    console.log(" brp ", this.state.planList[0]);
     const themeStyle = {
       calendarBackground: this.props.colorFile.backgroundColor, //agenda background
       agendaKnobColor: this.props.colorFile.blueText, // knob color
@@ -368,7 +367,7 @@ class BRP extends Component {
             size="small"
             color={Colors.Blue_Color}
             animate={true}
-            style={{ flex: 1, justifyContent: "center", alignSelf: "center" }}
+            style={this.styles.loaderCenter}
           />
         )}
       </View>

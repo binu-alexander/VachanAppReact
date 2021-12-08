@@ -3,7 +3,7 @@ import { Text, View, TouchableOpacity, Alert } from "react-native";
 import FlowLayout from "../../components/FlowLayout";
 import { CommonActions } from "@react-navigation/native";
 import { HeaderBackButton } from "@react-navigation/stack";
-import { noteStyle } from "./styles.js";
+import { styles } from "./styles.js";
 import { connect } from "react-redux";
 import database from "@react-native-firebase/database";
 import Color from "../../utils/colorConstants";
@@ -29,7 +29,7 @@ class EditNote extends Component {
       modalVisible: false,
     };
     this._editor = React.createRef();
-    this.styles = noteStyle(props.colorFile, props.sizeFile);
+    this.styles = styles(props.colorFile, props.sizeFile);
   }
   saveNote = async () => {
     var time = Date.now();
@@ -205,6 +205,7 @@ class EditNote extends Component {
   };
 
   render() {
+    console.log("PARAM ",this.props.route.params)
     return (
       <View style={this.styles.containerEditNote}>
         <View style={this.styles.subContainer}>
@@ -282,36 +283,4 @@ const mapDispatchToProps = (dispatch) => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditNote);
 
-// var styles = StyleSheet.create({
-//   root: {
-//     flex: 1,
-//     marginTop: StatusBar.currentHeight || 0,
-//     backgroundColor: "#eaeaea",
-//   },
-//   input: {
-//     borderColor: "gray",
-//     borderWidth: 1,
-//     marginHorizontal: 30,
-//     marginVertical: 5,
-//     backgroundColor: "white",
-//   },
-//   textbox: {
-//     height: 40,
-//     paddingHorizontal: 20,
-//   },
-//   editor: {
-//     flex: 1,
-//     padding: 0,
-//   },
-//   buttons: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-//   btn: {
-//     alignItems: "center",
-//     backgroundColor: "#ddd",
-//     padding: 10,
-//     margin: 3,
-//   },
-// });
+

@@ -119,5 +119,14 @@ export const styles = (colorFile, sizeFile) => {
       fontSize: sizeFile.titleText,
       color: colorFile.iconColor,
     },
+    dicModalPos:{
+      width: "80%",
+      height: "70%",
+      position: "absolute",
+      zIndex: 0,
+    },
+    cancelIcon:{ position: "absolute", right: 0, zIndex: 1 },
+    metaDataText:{ fontWeight: "bold" }
+
   });
 };

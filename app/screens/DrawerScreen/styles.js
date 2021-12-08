@@ -50,5 +50,7 @@ export const styles = (colorFile) => {
       color: colorFile.iconColor,
     },
     imageStyle: { width: 64, height: 64, alignSelf: "center", padding: 8 },
+    drawerImage:{ padding: 4, width: 136, height: 30 },
+    drwrImgContainer:{ position: "absolute", bottom: 0, margin: 8 }
   });
 };

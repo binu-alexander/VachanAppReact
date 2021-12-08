@@ -1,7 +1,7 @@
 import {StyleSheet,Dimensions} from 'react-native'
 const height = Dimensions.get('window').height
 
-export const bookStyle=(colorFile, sizeFile) =>{
+export const styles=(colorFile, sizeFile) =>{
     return StyleSheet.create({
     container:{
         flex:1,
@@ -57,6 +57,7 @@ export const bookStyle=(colorFile, sizeFile) =>{
         paddingBottom:16,
         backgroundColor:colorFile.backgroundColor
      },
+     loaderPos:{ justifyContent: "center", alignItems: "center" }
 
     })
 }

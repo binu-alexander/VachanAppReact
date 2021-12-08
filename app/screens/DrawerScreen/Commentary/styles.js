@@ -1,5 +1,6 @@
 import { StyleSheet, Dimensions } from 'react-native'
 import Color from '../../../utils/colorConstants'
+const height = Dimensions.get('window').height
 
 export const styles = (colorFile, sizeFile) => {
     return StyleSheet.create({
@@ -70,6 +71,29 @@ export const styles = (colorFile, sizeFile) => {
             color: colorFile.iconColor,
             alignSelf: 'center'
         },
-
+        headerView:{ paddingHorizontal: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' },
+        centerContainer:{ justifyContent: 'center', alignItems: 'center' },
+        metaDataText:{ textAlign: 'center' , color: colorFile.textColor,},
+        dropdownPosition:{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
+        
+        dropdownView:{
+            padding: 10,
+            margin: 10,
+            borderRadius: 10,
+            width: 150,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            borderColor: colorFile.iconColor,
+            borderWidth: 0.5,
+          },
+          dropdownText:{
+            paddingHorizontal: 8,
+            fontSize: 18,
+            fontWeight: "400",
+            color: colorFile.textColor,
+          },
+          dropdownSize:{ width: "60%", height: height / 2 },
+         listFooter: {height: 40, marginBottom: 40 }
     })
 }
