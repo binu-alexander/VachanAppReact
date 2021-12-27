@@ -132,7 +132,7 @@ class HighLights extends Component {
     });
   }
   async componentDidMount() {
-    this.fetchHighlights();
+  await this.fetchHighlights();
   }
   componentDidUpdate(prevProps) {
     if (prevProps.books.length != this.props.books.length) {

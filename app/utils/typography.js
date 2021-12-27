@@ -6,7 +6,7 @@ export const typography = () => {
   Text.render = function (...args) {
     const origin = oldRender.call(this, ...args);
     return React.cloneElement(origin, {
-      style: [{ fontFamily: 'Roboto' }, origin.props.style]
+      style: [{ fontFamily: 'System' }, origin.props.style]
     })
   }
 }

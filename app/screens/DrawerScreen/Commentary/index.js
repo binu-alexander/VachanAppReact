@@ -57,7 +57,8 @@ class DrawerCommentary extends Component {
 
   async fetchBookName() {
     try {
-      let response = await vApi.get('booknames')
+      const response = await vApi.get('booknames')
+      console.log("Response bookname ",response)
       this.setState({ bookResponse: response }, () => {
         this.updateBookName()
       })
@@ -162,7 +163,7 @@ class DrawerCommentary extends Component {
 
   componentDidMount() {
     this.props.navigation.setOptions({
-      headerTitle: () => <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff' }}>Commentary</Text>,
+      // headerTitle: () => <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff' }}>Commentary</Text>,
       headerRight: () =>
         <View style={{ paddingHorizontal: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
           <SelectContent

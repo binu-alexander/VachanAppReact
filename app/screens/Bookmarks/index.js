@@ -44,6 +44,7 @@ class BookMarks extends Component {
         firebaseRef.once("value", (snapshot) => {
           var data = [];
           var list = snapshot.val();
+          console.log("Bookmarks on main screen ",list)
           if (snapshot.val() != null) {
             for (var key in list) {
               data.push({ bookId: key, chapterNumber: list[key] });
@@ -71,7 +72,7 @@ class BookMarks extends Component {
     });
   }
   async componentDidMount() {
-    this.fecthBookmarks();
+  await this.fecthBookmarks();
   }
   componentDidUpdate(prevProps) {
     if (prevProps.books.length != this.props.books.length) {

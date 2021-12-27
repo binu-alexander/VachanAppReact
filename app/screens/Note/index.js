@@ -139,8 +139,8 @@ class Note extends Component {
       }
     });
   }
-  componentDidMount() {
-    this.fetchNotes();
+  async componentDidMount() {
+  await  this.fetchNotes();
   }
 
   bodyText(text) {

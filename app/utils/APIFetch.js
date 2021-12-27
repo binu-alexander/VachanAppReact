@@ -21,6 +21,9 @@ class vApi {
           return error;
         });
     }
+    else{
+      return null
+    }
   }
 }
 

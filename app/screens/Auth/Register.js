@@ -94,9 +94,8 @@ class Register extends Component {
             name="close"
             size={28}
             style={this.styles.headerCloseIcon}
-            onPress={() => {
-              this.props.navigation.pop();
-            }}
+            onPress={() =>this.props.navigation.pop()}
+            
           />
         </View>
         <View style={this.styles.iconContainer}>

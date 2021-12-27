@@ -4,7 +4,6 @@ import { userInfo, userLogedIn } from '../../store/action'
 import Login from './Login'
 import { styles } from './styles.js'
 import ProfilePage from './ProfilePage';
-
 class Auth extends Component {
   constructor(props) {
     super(props)
@@ -18,7 +17,7 @@ class Auth extends Component {
   }
   render() {
     if (this.props.email) {
-      return <ProfilePage navigation={this.props.navigation} />
+      return<ProfilePage navigation={this.props.navigation} />
     }
     else {
       return <Login navigation={this.props.navigation} />

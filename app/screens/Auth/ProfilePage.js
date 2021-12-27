@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, Image } from "react-native";
+import { Text, View, Image, Platform } from "react-native";
 import { connect } from "react-redux";
 import { Card, CardItem, Header, Left, Button, Body, Title } from "native-base";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -8,6 +8,8 @@ import auth from "@react-native-firebase/auth";
 import { styles } from "./styles.js";
 import Color from "../../utils/colorConstants";
 import { GoogleSignin } from "@react-native-community/google-signin";
+import { CommonActions } from '@react-navigation/native';
+
 class ProfilePage extends Component {
   constructor(props) {
     super(props);
@@ -18,7 +20,6 @@ class ProfilePage extends Component {
     };
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
   }
-
   logOut = async () => {
     try {
       if (this.props.pasLogedIn) {
@@ -46,6 +47,16 @@ class ProfilePage extends Component {
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
     return (
       <View style={this.styles.container}>
+        {/* <Header style={{ backgroundColor: Color.Blue_Color }}>
+          <Left>
+            <Button
+              transparent
+              onPress={() => this.props.navigation.navigate("Bible")}>
+              <Icon size={24} color={Color.White} name="arrow-back" />
+            </Button>
+           
+          </Left>
+        </Header> */}
         <Header style={{ backgroundColor: Color.Blue_Color }}>
           <Left>
             <Button

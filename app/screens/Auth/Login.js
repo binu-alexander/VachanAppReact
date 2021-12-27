@@ -22,6 +22,8 @@ import {
 // import { AccessToken, LoginManager, LoginButton } from 'react-native-fbsdk';
 import { styles } from "./styles.js";
 import Color from "../../utils/colorConstants";
+import CustomStatusBar from "../../components/CustomStatusBar";
+import { CommonActions } from '@react-navigation/native';
 
 class Login extends Component {
   constructor(props) {
@@ -41,7 +43,7 @@ class Login extends Component {
     state[prop] = val;
     this.setState(state);
   };
-
+  
   login = async () => {
     if (this.state.email === "" && this.state.password === "") {
       Alert.alert("Please enter email and password !");
@@ -54,10 +56,8 @@ class Login extends Component {
         .then(() => {
           //removed res from this then
           this.props.userLogedIn({ pasLogedIn: true, googleLogIn: false });
+          this.setState({ isLoading: false, });
           this.props.navigation.navigate("Bible");
-          this.setState({
-            isLoading: false,
-          });
         })
         .catch((error) => {
           if (error.code === "auth/user-not-found") {
@@ -156,6 +156,9 @@ class Login extends Component {
       console.log(error.message);
     }
   }
+  onClose=()=>{
+    this.props.navigation.pop()
+  }
   render() {
     if (this.state.isLoading) {
       return (
@@ -165,19 +168,18 @@ class Login extends Component {
       );
     }
     return (
+      <CustomStatusBar>
       <KeyboardAvoidingView
         behavior={Platform.OS == "ios" ? "padding" : "height"}
         style={this.styles.container}
       >
         <View>
-          <Icon
-            name="close"
-            size={28}
-            style={this.styles.headerCloseIcon}
-            onPress={() => {
-              this.props.navigation.pop();
-            }}
-          />
+            <Icon
+              name="close"
+              size={28}
+              style={this.styles.headerCloseIcon}
+              onPress={this.onClose}
+            />
         </View>
         <View style={this.styles.iconContainer}>
           <View style={this.styles.centerContainer}>
@@ -259,6 +261,7 @@ class Login extends Component {
           </View>
         </View>
       </KeyboardAvoidingView>
+      </CustomStatusBar>
     );
   }
 }
