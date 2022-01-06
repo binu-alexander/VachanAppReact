@@ -23,7 +23,7 @@ import {
 import { styles } from "./styles.js";
 import Color from "../../utils/colorConstants";
 import CustomStatusBar from "../../components/CustomStatusBar";
-import { CommonActions } from '@react-navigation/native';
+import { CommonActions } from "@react-navigation/native";
 
 const Login = (props) => {
   const [email, setEmail] = useState("");
@@ -227,18 +227,10 @@ const Login = (props) => {
             Don&apos;t have account? Click here to Sign Up
           </Text>
         </View>
-<<<<<<< HEAD
       </View>
     </KeyboardAvoidingView>
   );
 };
-=======
-      </KeyboardAvoidingView>
-      </CustomStatusBar>
-    );
-  }
-}
->>>>>>> fd765e5c358203b85ba992bc7dab1cebfe73ef0c
 
 const mapStateToProps = (state) => {
   return {
