@@ -1,5 +1,5 @@
 /* eslint-disable no-prototype-builtins */
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TouchableOpacity,
   ScrollView,
@@ -18,85 +18,60 @@ import Color from "../../../utils/colorConstants";
 import ReloadButton from "../../../components/ReloadButton";
 import vApi from "../../../utils/APIFetch";
 
-class DictionaryWords extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      modalVisibleDictionary: false,
-      dictionarySourceId: this.props.route.params
-        ? this.props.route.params.dictionarySourceId
-        : null,
-      dicMetaData: this.props.route.params
-        ? this.props.route.params.metadata[0].metadata
-        : null,
-      wordDescription: [],
-      metadataVisible: false,
-    };
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
-    this.alertPresent = false;
-  }
-
-  componentDidMount() {
-    this.props.navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity
-          style={{ margin: 8 }}
-          onPress={() =>
-            this.setState({ metadataVisible: !this.state.metadataVisible })
-          }
-        >
-          <Icon name="info" size={20} color="#fff" />
-        </TouchableOpacity>
-      ),
-    });
-    this.props.vachanAPIFetch("dictionaries/" + this.state.dictionarySourceId);
-  }
-  fetchWord = async (word) => {
+const DictionaryWords = (props) => {
+  const dictionarySourceId = props.route.params
+    ? props.route.params.dictionarySourceId
+    : null;
+  const dicMetaData = props.route.params
+    ? props.route.params.metadata[0].metadata
+    : null;
+  const [modalVisibleDictionary, setModalVisibleDictionary] = useState(false);
+  const [wordDescription, setWordDescription] = useState([]);
+  const [metadataVisible, setMetadataVisible] = useState(false);
+  const isLoading = false;
+  const style = styles(props.colorFile, props.sizeFile);
+  let alertPresent = false;
+  const fetchWord = async (word) => {
     try {
       var wordDescription = await vApi.get(
-        "dictionaries/" + this.state.dictionarySourceId + "/" + word.wordId
+        "dictionaries/" + dictionarySourceId + "/" + word.wordId
       );
-      this.setState({
-        wordDescription: wordDescription.meaning,
-        modalVisibleDictionary: true,
-      });
+      setWordDescription(wordDescription.meaning);
+      setModalVisibleDictionary(true);
     } catch (error) {
-      this.setState({
-        wordDescription: [],
-        modalVisibleDictionary: false,
-      });
+      setWordDescription([]);
+      setModalVisibleDictionary(false);
     }
   };
-  _renderHeader = (item, expanded) => {
+  const _renderHeader = (item, expanded) => {
     return (
-      <View style={this.styles.headerStyle}>
-        <Text style={this.styles.headerText}> {item.letter}</Text>
+      <View style={style.headerStyle}>
+        <Text style={style.headerText}> {item.letter}</Text>
         <Icon
-          style={this.styles.iconStyle}
+          style={style.iconStyle}
           name={expanded ? "keyboard-arrow-down" : "keyboard-arrow-up"}
           size={24}
         />
       </View>
     );
   };
-  _renderContent = (item) => {
+  const _renderContent = (item) => {
     return item.words.map((w, i) => (
       <TouchableOpacity
         key={i}
         style={{
           padding: 20,
         }}
-        onPress={() => this.fetchWord(w)}
+        onPress={() => fetchWord(w)}
       >
-        <Text style={this.styles.textDescription}>{w.word}</Text>
+        <Text style={style.textDescription}>{w.word}</Text>
       </TouchableOpacity>
     ));
   };
-
-  errorMessage() {
-    if (!this.alertPresent) {
-      this.alertPresent = true;
-      if (this.props.dictionaryContent.length === 0) {
+  const errorMessage = () => {
+    if (!alertPresent) {
+      alertPresent = true;
+      if (props.dictionaryContent.length === 0) {
         Alert.alert(
           "",
           "Check your internet connection",
@@ -104,177 +79,164 @@ class DictionaryWords extends Component {
             {
               text: "OK",
               onPress: () => {
-                this.alertPresent = false;
+                alertPresent = false;
               },
             },
           ],
           { cancelable: false }
         );
 
-        this.props.vachanAPIFetch(
-          "dictionaries/" + this.props.dictionarySourceId
-        );
+        props.vachanAPIFetch("dictionaries/" + props.dictionarySourceId);
       } else {
-        this.alertPresent = false;
+        alertPresent = false;
       }
     }
-  }
-  updateData = () => {
-    if (this.props.error) {
-      this.errorMessage();
+  };
+  const updateData = () => {
+    if (props.error) {
+      errorMessage();
     } else {
       return;
     }
   };
 
-  render() {
-    return (
-      <View style={this.styles.container}>
-        {this.state.isLoading && (
-          <Spinner visible={true} textContent={"Loading..."} />
-        )}
-        {this.props.error ? (
-          <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+  useEffect(() => {
+    props.navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          style={{ margin: 8 }}
+          onPress={() => setMetadataVisible(!metadataVisible)}
+        >
+          <Icon name="info" size={20} color="#fff" />
+        </TouchableOpacity>
+      ),
+    });
+    props.vachanAPIFetch("dictionaries/" + dictionarySourceId);
+  }, []);
+  return (
+    <View style={style.container}>
+      {isLoading && <Spinner visible={true} textContent={"Loading..."} />}
+      {props.error ? (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ReloadButton
+            styles={style}
+            reloadFunction={updateData}
+            message={null}
+          />
+        </View>
+      ) : (
+        <View>
+          <Accordion
+            dataArray={props.dictionaryContent}
+            animation={true}
+            expanded={[0]}
+            renderHeader={_renderHeader}
+            renderContent={_renderContent}
+          />
+          <Modal
+            animated={true}
+            transparent={true}
+            visible={modalVisibleDictionary}
           >
-            <ReloadButton
-              styles={this.styles}
-              reloadFunction={this.updateData}
-              message={null}
-            />
-          </View>
-        ) : (
-          <View>
-            <Accordion
-              dataArray={this.props.dictionaryContent}
-              animation={true}
-              expanded={[0]}
-              renderHeader={this._renderHeader}
-              renderContent={this._renderContent}
-            />
-            <Modal
-              animated={true}
-              transparent={true}
-              visible={this.state.modalVisibleDictionary}
+            <View style={style.dictionaryModalView}>
+              <View style={style.dicModalPos}>
+                <Icon
+                  name="cancel"
+                  onPress={() => setModalVisibleDictionary(false)}
+                  size={28}
+                  color={Color.Blue_Color}
+                  style={style.cancelIcon}
+                />
+                <ScrollView style={style.scrollViewModal}>
+                  <Text style={style.textString}>
+                    Description: {wordDescription.definition}
+                  </Text>
+                  <Text style={style.textString}>
+                    Keyword: {wordDescription.keyword}
+                  </Text>
+                  {wordDescription.seeAlso != "" && (
+                    <Text style={style.textString}>
+                      See Also: {wordDescription.seeAlso}
+                    </Text>
+                  )}
+                  <View style={{ marginBottom: 8 }} />
+                </ScrollView>
+              </View>
+            </View>
+          </Modal>
+          <Modal animated={true} transparent={true} visible={metadataVisible}>
+            <View
+              style={[
+                style.dictionaryModalView,
+                { backgroundColor: "rgba(250,250,250,0.3)" },
+              ]}
             >
-              <View style={this.styles.dictionaryModalView}>
-                <View
-                  style={this.styles.dicModalPos}
-                >
-                  <Icon
-                    name="cancel"
-                    onPress={() =>
-                      this.setState({ modalVisibleDictionary: false })
-                    }
-                    size={28}
-                    color={Color.Blue_Color}
-                    style={this.styles.cancelIcon}
-                  />
-                  <ScrollView style={this.styles.scrollViewModal}>
-                    <Text style={this.styles.textString}>
-                      Description: {this.state.wordDescription.definition}
-                    </Text>
-                    <Text style={this.styles.textString}>
-                      Keyword: {this.state.wordDescription.keyword}
-                    </Text>
-                    {this.state.wordDescription.seeAlso != "" && (
-                      <Text style={this.styles.textString}>
-                        See Also: {this.state.wordDescription.seeAlso}
+              <View style={style.dic}>
+                <Icon
+                  name="cancel"
+                  onPress={() => setMetadataVisible(false)}
+                  size={28}
+                  style={style.cancelIcon}
+                />
+                <ScrollView style={style.dictionScrollModal}>
+                  <Text style={style.textString}>
+                    {dicMetaData.hasOwnProperty("Description\u00a0")
+                      ? (
+                          <Text style={{ fontWeight: "900" }}>
+                            Description :
+                          </Text>
+                        ) + dicMetaData["Description\u00a0"]
+                      : null}
+                  </Text>
+                  <Text style={style.textString}>
+                    {dicMetaData.hasOwnProperty("Technology Partner") ? (
+                      <Text>
+                        <Text style={{ fontWeight: "bold" }}>
+                          {" "}
+                          Technology Partner:
+                        </Text>
+                        <Text>{dicMetaData["Technology Partner"]}</Text>
                       </Text>
-                    )}
-                    <View style={{ marginBottom: 8 }} />
-                  </ScrollView>
-                </View>
+                    ) : null}
+                  </Text>
+                  <Text style={style.textString}>
+                    {dicMetaData.hasOwnProperty("License") ? (
+                      <Text>
+                        <Text style={{ fontWeight: "bold" }}>License:</Text>
+                        <Text>{dicMetaData["License"]}</Text>
+                      </Text>
+                    ) : null}
+                  </Text>
+                  <Text style={style.textString}>
+                    {dicMetaData.hasOwnProperty("Revision (Name & Year)") ? (
+                      <Text>
+                        <Text style={{ fontWeight: "bold" }}>Revision:</Text>
+                        <Text>{dicMetaData["License"]}</Text>
+                      </Text>
+                    ) : null}
+                  </Text>
+                  <Text style={style.textString}>
+                    {dicMetaData.hasOwnProperty("Copyright Holder") ? (
+                      <Text>
+                        <Text style={{ fontWeight: "bold" }}>
+                          Copyright Holder:
+                        </Text>
+                        <Text>{dicMetaData["Copyright Holder"]}</Text>
+                      </Text>
+                    ) : null}
+                  </Text>
+                  <View style={{ marginBottom: 8 }} />
+                </ScrollView>
               </View>
-            </Modal>
-            <Modal
-              animated={true}
-              transparent={true}
-              visible={this.state.metadataVisible}
-            >
-              <View
-                style={[
-                  this.styles.dictionaryModalView,
-                  { backgroundColor: "rgba(250,250,250,0.3)" },
-                ]}
-              >
-                <View style={this.styles.dic}>
-                  <Icon
-                    name="cancel"
-                    onPress={() => this.setState({ metadataVisible: false })}
-                    size={28}
-                    style={this.styles.cancelIcon}
-                  />
-                  <ScrollView style={this.styles.dictionScrollModal}>
-                    <Text style={this.styles.textString}>
-                      {this.state.dicMetaData.hasOwnProperty(
-                        "Description\u00a0"
-                      )
-                        ? (
-                            <Text style={{ fontWeight: "900" }}>
-                              Description :
-                            </Text>
-                          ) + this.state.dicMetaData["Description\u00a0"]
-                        : null}
-                    </Text>
-                    <Text style={this.styles.textString}>
-                      {this.state.dicMetaData.hasOwnProperty(
-                        "Technology Partner"
-                      ) ? (
-                        <Text>
-                          <Text style={{ fontWeight: "bold" }}>
-                            {" "}
-                            Technology Partner:
-                          </Text>
-                          <Text>
-                            {this.state.dicMetaData["Technology Partner"]}
-                          </Text>
-                        </Text>
-                      ) : null}
-                    </Text>
-                    <Text style={this.styles.textString}>
-                      {this.state.dicMetaData.hasOwnProperty("License") ? (
-                        <Text>
-                          <Text style={{ fontWeight: "bold" }}>License:</Text>
-                          <Text>{this.state.dicMetaData["License"]}</Text>
-                        </Text>
-                      ) : null}
-                    </Text>
-                    <Text style={this.styles.textString}>
-                      {this.state.dicMetaData.hasOwnProperty(
-                        "Revision (Name & Year)"
-                      ) ? (
-                        <Text>
-                          <Text style={{ fontWeight: "bold" }}>Revision:</Text>
-                          <Text>{this.state.dicMetaData["License"]}</Text>
-                        </Text>
-                      ) : null}
-                    </Text>
-                    <Text style={this.styles.textString}>
-                      {this.state.dicMetaData.hasOwnProperty(
-                        "Copyright Holder"
-                      ) ? (
-                        <Text>
-                          <Text style={{ fontWeight: "bold" }}>
-                            Copyright Holder:
-                          </Text>
-                          <Text>
-                            {this.state.dicMetaData["Copyright Holder"]}
-                          </Text>
-                        </Text>
-                      ) : null}
-                    </Text>
-                    <View style={{ marginBottom: 8 }} />
-                  </ScrollView>
-                </View>
-              </View>
-            </Modal>
-          </View>
-        )}
-      </View>
-    );
-  }
-}
+            </View>
+          </Modal>
+        </View>
+      )}
+    </View>
+  );
+};
 
 const mapStateToProps = (state) => {
   return {

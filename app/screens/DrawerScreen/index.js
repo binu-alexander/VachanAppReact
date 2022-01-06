@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ScrollView,
   Text,
@@ -13,119 +13,112 @@ import { connect } from "react-redux";
 import { fetchVersionBooks } from "../../store/action/";
 import VersionCheck from "react-native-version-check";
 
-class DrawerScreen extends Component {
-  constructor(props) {
-    super(props);
-    this.unsubscriber = null;
-    this.state = {
-      initializing: true,
-      user: "",
-      currentVersion: "1.0.0",
-    };
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
-  }
-
-  async componentDidMount() {
+const DrawerScreen = (props) => {
+  const [state, setState] = useState({
+    currentVersion: "1.0.0",
+  });
+  // let unsubscriber = null;
+  const style = styles(props.colorFile, props.sizeFile);
+  useEffect(async () => {
     let currentVersion = await VersionCheck.getCurrentVersion();
-    if (this.props.books.length == 0) {
-      this.props.fetchVersionBooks({
-        language: this.props.language,
-        versionCode: this.props.versionCode,
-        downloaded: this.props.downloaded,
-        sourceId: this.props.sourceId,
+    if (props.books.length == 0) {
+      props.fetchVersionBooks({
+        language: props.language,
+        versionCode: props.versionCode,
+        downloaded: props.downloaded,
+        sourceId: props.sourceId,
       });
     }
-    this.setState({ currentVersion });
-  }
-  render() {
-    const iconName = [
-      {
-        icon: "account-circle",
-        pressIcon: "Auth",
-        text: this.props.email ? "Profile" : "Log In/Sign Up",
-      },
-      { icon: "bookmark", pressIcon: "Bookmarks", text: "Bookmarks" },
-      { icon: "border-color", pressIcon: "Highlights", text: "Highlights" },
-      { icon: "note", pressIcon: "Notes", text: "Notes" },
-      { icon: "videocam", pressIcon: "Video", text: "Video" },
-      { icon: "volume-up", pressIcon: "Audio", text: "Audio" },
-      { icon: "book", pressIcon: "Dictionary", text: "Dictionary" },
-      { icon: "image", pressIcon: "Infographics", text: "Infographics" },
-      { icon: "receipt", pressIcon: "OBS", text: "Bible Stories" },
-      { icon: "event", pressIcon: "BRP", text: "Reading Plans" },
-      { icon: "comment", pressIcon: "DrawerCommentary", text: "Commentary" },
-      { icon: "history", pressIcon: "History", text: "History" },
-      { icon: "search", pressIcon: "Search", text: "Search" },
-      { icon: "settings", pressIcon: "Settings", text: "Settings" },
-      { icon: "info", pressIcon: "About", text: "About Us" },
-      { icon: "help", pressIcon: "Help", text: "Help" },
-    ];
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
-    return (
-      <View style={this.styles.container}>
-        <ScrollView style={this.styles.container}>
-          <View style={this.styles.headerContainer}>
-            <ImageBackground
-              source={require("../../assets/headerbook.jpg")}
-              style={{ flex: 1, width: 280 }}
-            >
-              <View style={this.styles.drwrImgContainer}>
+    setState({ currentVersion });
+  }, []);
+  const iconName = [
+    {
+      icon: "account-circle",
+      pressIcon: "Auth",
+      text: props.email ? "Profile" : "Log In/Sign Up",
+    },
+    { icon: "bookmark", pressIcon: "Bookmarks", text: "Bookmarks" },
+    { icon: "border-color", pressIcon: "Highlights", text: "Highlights" },
+    { icon: "note", pressIcon: "Notes", text: "Notes" },
+    { icon: "videocam", pressIcon: "Video", text: "Video" },
+    { icon: "volume-up", pressIcon: "Audio", text: "Audio" },
+    { icon: "book", pressIcon: "Dictionary", text: "Dictionary" },
+    { icon: "image", pressIcon: "Infographics", text: "Infographics" },
+    { icon: "receipt", pressIcon: "OBS", text: "Bible Stories" },
+    { icon: "event", pressIcon: "BRP", text: "Reading Plans" },
+    { icon: "comment", pressIcon: "DrawerCommentary", text: "Commentary" },
+    { icon: "history", pressIcon: "History", text: "History" },
+    { icon: "search", pressIcon: "Search", text: "Search" },
+    { icon: "settings", pressIcon: "Settings", text: "Settings" },
+    { icon: "info", pressIcon: "About", text: "About Us" },
+    { icon: "help", pressIcon: "Help", text: "Help" },
+  ];
+  return (
+    <View style={style.container}>
+      <ScrollView style={style.container}>
+        <View style={style.headerContainer}>
+          <ImageBackground
+            source={require("../../assets/headerbook.jpg")}
+            style={{ flex: 1, width: 280 }}
+          >
+            <View style={style.drwrImgContainer}>
+              <Image
+                style={style.imageStyle}
+                source={require("../../assets/bcs_old_favicon.png")}
+              />
+              <View style={style.goToLogin}>
                 <Image
-                  style={this.styles.imageStyle}
-                  source={require("../../assets/bcs_old_favicon.png")}
+                  source={require("../../assets/logo.png")}
+                  style={style.drawerImage}
                 />
-                <View style={this.styles.goToLogin}>
-                  <Image
-                    source={require("../../assets/logo.png")}
-                    style={this.styles.drawerImage}
-                  />
-                </View>
               </View>
-            </ImageBackground>
-          </View>
-          {iconName.map((iconName, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => {
-                this.props.navigation.navigate(iconName.pressIcon);
+            </View>
+          </ImageBackground>
+        </View>
+        {iconName.map((iconName, index) => (
+          <TouchableOpacity
+            key={index}
+            onPress={() => {
+              props.navigation.navigate(iconName.pressIcon);
+            }}
+            style={style.drawerItem}
+          >
+            <View
+              style={{
+                flexDirection: "row",
               }}
-              style={this.styles.drawerItem}
             >
-              <View
-                style={{
-                  flexDirection: "row",
-                }}
-              >
-                <Icon
-                  name={iconName.icon}
-                  size={20}
-                  style={this.styles.iconStyleDrawer}
-                />
-                <Text style={this.styles.textStyle}>{iconName.text}</Text>
-                {/* <DrawerItem
+              <Icon
+                name={iconName.icon}
+                size={20}
+                style={style.iconStyleDrawer}
+              />
+              <Text style={style.textStyle}>{iconName.text}</Text>
+              {/* <DrawerItem
                       label={iconName.text}
-                      labelStyle={this.styles.textStyle}
+                      labelStyle={style.textStyle}
                       onPress={() => {
                         this.props.navigation.navigate(iconName.pressIcon)
                       }}
                     /> */}
-              </View>
-              <Icon
-                name="chevron-right"
-                size={20}
-                style={this.styles.iconStyleDrawer}
-              />
-            </TouchableOpacity>
-          ))}
-          {/*for appstore app*/}
-          <Text style={this.styles.versionText}>APP VERSION {this.state.currentVersion}</Text>
-          {/*//for tesing */}
-          {/* <Text style={this.styles.versionText}>APP VERSION 1.3.2-alpha.5</Text> */}
-        </ScrollView>
-      </View>
-    );
-  }
-}
+            </View>
+            <Icon
+              name="chevron-right"
+              size={20}
+              style={style.iconStyleDrawer}
+            />
+          </TouchableOpacity>
+        ))}
+        {/*for appstore app*/}
+        <Text style={style.versionText}>
+          APP VERSION {state.currentVersion}
+        </Text>
+        {/*//for tesing */}
+        {/* <Text style={this.styles.versionText}>APP VERSION 1.3.2-alpha.5</Text> */}
+      </ScrollView>
+    </View>
+  );
+};
 const mapStateToProps = (state) => {
   return {
     sizeFile: state.updateStyling.sizeFile,

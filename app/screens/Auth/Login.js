@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   View,
@@ -23,41 +23,25 @@ import {
 import { styles } from "./styles.js";
 import Color from "../../utils/colorConstants";
 
-class Login extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      email: "",
-      password: "",
-      user: "",
-      isLoading: false,
-      passwordVisible: true,
-    };
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
-  }
-  //on change text function for textInput
-  updateInputVal = (val, prop) => {
-    const state = this.state;
-    state[prop] = val;
-    this.setState(state);
-  };
-
-  login = async () => {
-    if (this.state.email === "" && this.state.password === "") {
+const Login = (props) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  // const [user,setUser]=useState("")
+  const [isLoading, setIsLoading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(true);
+  const style = styles(props.colorFile, props.sizeFile);
+  const login = async () => {
+    if (email === "" && password === "") {
       Alert.alert("Please enter email and password !");
     } else {
-      this.setState({
-        isLoading: true,
-      });
+      setIsLoading(true);
       auth()
-        .signInWithEmailAndPassword(this.state.email, this.state.password)
+        .signInWithEmailAndPassword(email, password)
         .then(() => {
           //removed res from this then
-          this.props.userLogedIn({ pasLogedIn: true, googleLogIn: false });
-          this.props.navigation.navigate("Bible");
-          this.setState({
-            isLoading: false,
-          });
+          props.userLogedIn({ pasLogedIn: true, googleLogIn: false });
+          props.navigation.navigate("Bible");
+          setIsLoading(false);
         })
         .catch((error) => {
           if (error.code === "auth/user-not-found") {
@@ -74,27 +58,27 @@ class Login extends Component {
               "Something went wrong. Please check your internet connection"
             );
           }
-          this.setState({ isLoading: false });
+          setIsLoading(false);
         });
     }
   };
-
-  _signInGoogle = async () => {
+  const _signInGoogle = async () => {
     try {
       await GoogleSignin.hasPlayServices();
       const data = await GoogleSignin.signIn();
       if (data) {
-        this.setState({ isLoading: true }, async () => {
+        setIsLoading(true);
+        async () => {
           const credential = auth.GoogleAuthProvider.credential(
             data.idToken,
             data.accessToken
           );
           // Login with the credential
           await auth().signInWithCredential(credential);
-          this.props.userLogedIn({ pasLogedIn: false, googleLogIn: true });
-          this.setState({ isLoading: false });
-          this.props.navigation.navigate("Bible");
-        });
+          props.userLogedIn({ pasLogedIn: false, googleLogIn: true });
+          setIsLoading(false);
+          props.navigation.navigate("Bible");
+        };
       }
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -111,36 +95,35 @@ class Login extends Component {
       }
     }
   };
-
-  _signInFacebook = () => {
-    // eslint-disable-next-line no-undef
-    LoginManager.logInWithPermissions(["public_profile", "email"])
-      .then((result) => {
-        if (result.isCancelled) {
-          return Promise.reject(new Error("The user cancelled the request"));
-        }
-        // Retrieve the access token
-        // eslint-disable-next-line no-undef
-        return AccessToken.getCurrentAccessToken();
-      })
-      .then((data) => {
-        const credential = auth.FacebookAuthProvider.credential(
-          data.accessToken
-        );
-        // Login with the credential
-        return auth().signInWithCredential(credential);
-      })
-      .then(() => {
-        this.setState({ isLoading: true }, () => {
-          this.setState({ isLoading: false });
-          this.props.navigation.navigate("Bible");
-        });
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
-  };
-  async componentDidMount() {
+  // const _signInFacebook = () => {
+  //   // eslint-disable-next-line no-undef
+  //   LoginManager.logInWithPermissions(["public_profile", "email"])
+  //     .then((result) => {
+  //       if (result.isCancelled) {
+  //         return Promise.reject(new Error("The user cancelled the request"));
+  //       }
+  //       // Retrieve the access token
+  //       // eslint-disable-next-line no-undef
+  //       return AccessToken.getCurrentAccessToken();
+  //     })
+  //     .then((data) => {
+  //       const credential = auth.FacebookAuthProvider.credential(
+  //         data.accessToken
+  //       );
+  //       // Login with the credential
+  //       return auth().signInWithCredential(credential);
+  //     })
+  //     .then(() => {
+  //       setState({ isLoading: true }, () => {
+  //         setState({ isLoading: false });
+  //         props.navigation.navigate("Bible");
+  //       });
+  //     })
+  //     .catch((error) => {
+  //       console.log(error.message);
+  //     });
+  // };
+  useEffect(() => {
     try {
       GoogleSignin.configure({
         webClientId:
@@ -155,113 +138,97 @@ class Login extends Component {
     } catch (error) {
       console.log(error.message);
     }
-  }
-  render() {
-    if (this.state.isLoading) {
-      return (
-        <View style={this.styles.preloader}>
-          <ActivityIndicator size="large" color={Color.Blue_Color} />
-        </View>
-      );
-    }
+  }, []);
+  if (isLoading) {
     return (
-      <KeyboardAvoidingView
-        behavior={Platform.OS == "ios" ? "padding" : "height"}
-        style={this.styles.container}
-      >
-        <View>
-          <Icon
-            name="close"
-            size={28}
-            style={this.styles.headerCloseIcon}
-            onPress={() => {
-              this.props.navigation.pop();
-            }}
-          />
-        </View>
-        <View style={this.styles.iconContainer}>
-          <View style={this.styles.centerContainer}>
-            <Image
-              style={{ width: 50, height: 50, marginVertical: 16 }}
-              source={require("../../assets/bcs_old_favicon.png")}
-            />
-            <Text
-              style={this.styles.signinText}
-            >
-              Sign In
-            </Text>
-          </View>
-          <View
-            style={this.styles.signinInput}
-          >
-            <TextInput
-              style={this.styles.inputStyle}
-              placeholderTextColor={this.styles.placeholderColor.color}
-              placeholder="Email"
-              value={this.state.email}
-              onChangeText={(val) => this.updateInputVal(val, "email")}
-            />
-            <View>
-              <TextInput
-                style={this.styles.inputStyle}
-                placeholder="Password"
-                placeholderTextColor={this.styles.placeholderColor.color}
-                value={this.state.password}
-                onChangeText={(val) => this.updateInputVal(val, "password")}
-                maxLength={15}
-                secureTextEntry={this.state.passwordVisible}
-              />
-              <Icon
-                name={this.state.passwordVisible ? "eye" : "eye-off"}
-                size={24}
-                style={this.styles.eyeIcon}
-                onPress={() =>
-                  this.setState({
-                    passwordVisible: !this.state.passwordVisible,
-                  })
-                }
-              />
-            </View>
-            <Button
-              color={Color.Blue_Color}
-              title="Sign In"
-              onPress={() => this.login()}
-            />
-            <Text
-              style={this.styles.loginText}
-              onPress={() => this.props.navigation.navigate("Reset")}
-            >
-              Reset password
-            </Text>
-            <View
-              style={this.styles.dividerView}
-            >
-              <View style={this.styles.dividerLine} />
-              <Text style={this.styles.divider}>Or</Text>
-              <View style={this.styles.dividerLine} />
-            </View>
-            <View
-              style={this.styles.signinButton}
-            >
-              <GoogleSigninButton
-                // style={{ width: 68, height: 68 }}
-                size={GoogleSigninButton.Size.Wide}
-                color={GoogleSigninButton.Color.Dark}
-                onPress={this._signInGoogle}
-              />
-            </View>
-            <Text
-              style={this.styles.loginText}
-              onPress={() => this.props.navigation.navigate("Register")}
-            >
-              Don&apos;t have account? Click here to Sign Up
-            </Text>
-          </View>
-        </View>
-      </KeyboardAvoidingView>
+      <View style={style.preloader}>
+        <ActivityIndicator size="large" color={Color.Blue_Color} />
+      </View>
     );
   }
-}
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      style={style.container}
+    >
+      <View>
+        <Icon
+          name="close"
+          size={28}
+          style={style.headerCloseIcon}
+          onPress={() => {
+            props.navigation.pop();
+          }}
+        />
+      </View>
+      <View style={style.iconContainer}>
+        <View style={style.centerContainer}>
+          <Image
+            style={{ width: 50, height: 50, marginVertical: 16 }}
+            source={require("../../assets/bcs_old_favicon.png")}
+          />
+          <Text style={style.signinText}>Sign In</Text>
+        </View>
+        <View style={style.signinInput}>
+          <TextInput
+            style={style.inputStyle}
+            placeholderTextColor={style.placeholderColor.color}
+            placeholder="Email"
+            value={email}
+            onChangeText={(val) => setEmail(val)}
+          />
+          <View>
+            <TextInput
+              style={style.inputStyle}
+              placeholder="Password"
+              placeholderTextColor={style.placeholderColor.color}
+              value={password}
+              onChangeText={(val) => setPassword(val)}
+              maxLength={15}
+              secureTextEntry={passwordVisible}
+            />
+            <Icon
+              name={passwordVisible ? "eye" : "eye-off"}
+              size={24}
+              style={style.eyeIcon}
+              onPress={() => setPasswordVisible(!passwordVisible)}
+            />
+          </View>
+          <Button
+            color={Color.Blue_Color}
+            title="Sign In"
+            onPress={() => login()}
+          />
+          <Text
+            style={style.loginText}
+            onPress={() => props.navigation.navigate("Reset")}
+          >
+            Reset password
+          </Text>
+          <View style={style.dividerView}>
+            <View style={style.dividerLine} />
+            <Text style={style.divider}>Or</Text>
+            <View style={style.dividerLine} />
+          </View>
+          <View style={style.signinButton}>
+            <GoogleSigninButton
+              // style={{ width: 68, height: 68 }}
+              size={GoogleSigninButton.Size.Wide}
+              color={GoogleSigninButton.Color.Dark}
+              onPress={_signInGoogle}
+            />
+          </View>
+          <Text
+            style={style.loginText}
+            onPress={() => props.navigation.navigate("Register")}
+          >
+            Don&apos;t have account? Click here to Sign Up
+          </Text>
+        </View>
+      </View>
+    </KeyboardAvoidingView>
+  );
+};
 
 const mapStateToProps = (state) => {
   return {

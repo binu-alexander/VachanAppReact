@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import DbQueries from "../../utils/dbQueries";
 import { View } from "native-base";
@@ -16,94 +16,44 @@ import { connect } from "react-redux";
 
 var moment = require("moment");
 
-class History extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      historyList: [
-        { time: "Today", list: [] },
-        { time: "Yesterday", list: [] },
-        { time: "1 week ago", list: [] },
-        { time: "1 month ago", list: [] },
-        { time: "2 months ago", list: [] },
-      ],
-      isLoading: false,
-    };
-    this.styles = styles(props.colorFile, props.sizeFile);
-    this.onClearHistory = this.onClearHistory.bind(this);
-  }
-
-  async componentDidMount() {
-    this.setState({ isLoading: true }, async () => {
-      let historyData = await DbQueries.queryHistory();
-      if (historyData) {
-        let historyList = [...this.state.historyList];
-        var date = new Date();
-        var cur = moment(date).format("D");
-        for (var i = 0; i < historyData.length; i++) {
-          var end = moment(historyData[i].time).format("D");
-          var timeDiff = Math.floor(cur - end);
-          if (timeDiff == 0) {
-            historyList[0].list.push(historyData[i]);
-          }
-          if (timeDiff == 1) {
-            historyList[1].list.push(historyData[i]);
-          }
-          if (timeDiff >= 2 && timeDiff <= 7) {
-            historyList[2].list.push(historyData[i]);
-          }
-          if (timeDiff > 7 && timeDiff <= 30) {
-            historyList[3].list.push(historyData[i]);
-          }
-          if (timeDiff > 30) {
-            historyList[4].list.push(historyData[i]);
-          }
-        }
-
-        for (var j = 0; j < historyList.length; j++) {
-          if (historyList[j].list.length == 0) {
-            historyList.splice(j, 1);
-            j--;
-          }
-        }
-        this.setState({ historyList, isLoading: false });
-      }
-    });
-  }
-
-  onClearHistory = () => {
-    DbQueries.clearHistory();
-    this.setState({ historyList: [] });
-  };
-
-  _renderHeader = (data, index, isActive) => {
+const History = (props) => {
+  const [historyLists, setHistoryLists] = useState([
+    { time: "Today", list: [] },
+    { time: "Yesterday", list: [] },
+    { time: "1 week ago", list: [] },
+    { time: "1 month ago", list: [] },
+    { time: "2 months ago", list: [] },
+  ]);
+  const [isLoading, setIsLoading] = useState(false);
+  const style = styles(props.colorFile, props.sizeFile);
+  const _renderHeader = (data, index, isActive) => {
     return (
       <View>
-        <View style={this.styles.historyHeader}>
-          <Text style={this.styles.accordionHeaderText}>{data.time}</Text>
+        <View style={style.historyHeader}>
+          <Text style={style.accordionHeaderText}>{data.time}</Text>
           <Icon
             name={isActive ? "keyboard-arrow-up" : "keyboard-arrow-down"}
-            style={this.styles.iconCustom}
+            style={style.iconCustom}
           />
         </View>
       </View>
     );
   };
-  async goToContent(item) {
-    this.props.updateVersion({
+  const goToContent = async (item) => {
+    props.updateVersion({
       language: item.languageName,
       languageCode: item.languageCode,
       versionCode: item.versionCode,
       sourceId: item.sourceId,
       downloaded: item.downloaded,
     });
-    this.props.updateVersionBook({
+    props.updateVersionBook({
       bookId: item.bookId,
       bookName: item.bookName,
       chapterNumber: item.chapterNumber,
       totalChapters: getBookChaptersFromMapping(item.bookId),
     });
-    this.props.fetchVersionBooks({
+    props.fetchVersionBooks({
       language: item.languageName,
       versionCode: item.versionCode,
       downloaded: item.downloaded,
@@ -115,7 +65,7 @@ class History extends Component {
       item.sourceId
     );
     if (getVersionMetaData && getVersionMetaData.length > 0) {
-      this.props.updateMetadata({
+      props.updateMetadata({
         copyrightHolder: getVersionMetaData[0].copyrightHolder,
         description: getVersionMetaData[0].description,
         license: getVersionMetaData[0].license,
@@ -125,7 +75,7 @@ class History extends Component {
         versionNameGL: getVersionMetaData[0].versionNameGL,
       });
     } else {
-      this.props.updateMetadata({
+      props.updateMetadata({
         copyrightHolder: null,
         description: null,
         license: null,
@@ -135,23 +85,22 @@ class History extends Component {
         versionNameGL: null,
       });
     }
-    this.props.navigation.navigate("Bible");
-  }
-
-  _renderContent = (data) => {
+    props.navigation.navigate("Bible");
+  };
+  const _renderContent = (data) => {
     return (
       <View>
-        {this.state.isLoading ? (
+        {isLoading ? (
           <ActivityIndicator animate={true} />
         ) : (
           data.list.map((item, index) => (
             <TouchableOpacity
               key={index}
               onPress={() => {
-                this.goToContent(item);
+                goToContent(item);
               }}
             >
-              <Text style={this.styles.contentText}>
+              <Text style={style.contentText}>
                 {" "}
                 {item.languageName} {item.versionCode} {item.bookName}{" "}
                 {item.chapterNumber}{" "}
@@ -162,34 +111,69 @@ class History extends Component {
       </View>
     );
   };
+  useEffect(async () => {
+    setIsLoading(true);
+    let historyData = await DbQueries.queryHistory();
+    console.log(historyData, "data");
+    if (historyData) {
+      console.log(historyLists, "list");
+      let historyList = [...historyLists];
+      var date = new Date();
+      var cur = moment(date).format("D");
+      for (var i = 0; i < historyData.length; i++) {
+        var end = moment(historyData[i].time).format("D");
+        var timeDiff = Math.floor(cur - end);
+        if (timeDiff == 0) {
+          historyList[0].list.push(historyData[i]);
+        }
+        if (timeDiff == 1) {
+          historyList[1].list.push(historyData[i]);
+        }
+        if (timeDiff >= 2 && timeDiff <= 7) {
+          historyList[2].list.push(historyData[i]);
+        }
+        if (timeDiff > 7 && timeDiff <= 30) {
+          historyList[3].list.push(historyData[i]);
+        }
+        if (timeDiff > 30) {
+          historyList[4].list.push(historyData[i]);
+        }
+      }
 
-  render() {
-    return (
-      <View style={this.styles.container}>
-        {this.state.historyList.length == 0 ? (
-          <View style={this.styles.emptyMessageContainer}>
-            <Icon
-              onPress={() => {
-                this.props.navigation.navigate("Bible");
-              }}
-              name="import-contacts"
-              style={this.styles.emptyMessageIcon}
-            />
-            <Text style={this.styles.messageEmpty}>Start reading</Text>
-          </View>
-        ) : (
-          <Accordion
-            dataArray={this.state.historyList}
-            expanded={[0]}
-            renderHeader={this._renderHeader}
-            renderContent={this._renderContent}
+      for (var j = 0; j < historyList.length; j++) {
+        if (historyList[j].list.length == 0) {
+          historyList.splice(j, 1);
+          j--;
+        }
+      }
+      setHistoryLists(historyList);
+      setIsLoading(false);
+    }
+  }, []);
+  return (
+    <View style={style.container}>
+      {historyLists.length == 0 ? (
+        <View style={style.emptyMessageContainer}>
+          <Icon
+            onPress={() => {
+              props.navigation.navigate("Bible");
+            }}
+            name="import-contacts"
+            style={style.emptyMessageIcon}
           />
-        )}
-      </View>
-    );
-  }
-}
-
+          <Text style={style.messageEmpty}>Start reading</Text>
+        </View>
+      ) : (
+        <Accordion
+          dataArray={historyLists}
+          expanded={[0]}
+          renderHeader={_renderHeader}
+          renderContent={_renderContent}
+        />
+      )}
+    </View>
+  );
+};
 const mapStateToProps = (state) => {
   return {
     languageName: state.updateVersion.language,

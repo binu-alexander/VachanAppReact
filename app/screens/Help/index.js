@@ -1,47 +1,44 @@
-import React, { Component } from 'react';
-import { View, TouchableOpacity, Text } from 'react-native'
-import { Card, CardItem } from 'native-base';
-import { styles } from './styles.js';
-import Icon from 'react-native-vector-icons/MaterialIcons'
-import { connect } from 'react-redux'
+import React from "react";
+import { View, TouchableOpacity, Text } from "react-native";
+import { Card, CardItem } from "native-base";
+import { styles } from "./styles";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import { connect } from "react-redux";
 
-class Help extends Component {
-
-  constructor(props) {
-    super(props)
-    this.state = {
-    }
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
-  }
-
-  render() {
-    return (
-      <View style={[this.styles.container,{padding:8}]}>
-        <Card style={this.styles.Card}>
-          <TouchableOpacity style={[{ flexDirection: 'row' }]} onPress={() => this.props.navigation.navigate('Hints')}>
-            <CardItem style={this.styles.Card}>
-              <Icon name='lightbulb-outline' style={this.styles.cardItemIconCustom} />
-              <Text style={this.styles.textStyle}>Hints</Text>
-            </CardItem>
-          </TouchableOpacity>
-        </Card>
-        <Card style={this.styles.Card}>
-          <TouchableOpacity style={[{ flexDirection: 'row' }]} onPress={() => this.props.navigation.navigate('Feedback')}>
-            <CardItem style={this.styles.Card}>
-              <Icon name='feedback' style={this.styles.cardItemIconCustom} />
-              <Text style={this.styles.textStyle}>Feedback</Text>
-            </CardItem>
-          </TouchableOpacity>
-        </Card>
-      </View>
-    );
-  }
+const Help = (props) => {
+  const style = styles(props.colorFile, props.sizeFile);
+  return (
+    <View style={[style.container, { padding: 8 }]}>
+      <Card style={style.Card}>
+        <TouchableOpacity
+          style={[{ flexDirection: "row" }]}
+          onPress={() => props.navigation.navigate("Hints")}
+        >
+          <CardItem style={style.Card}>
+            <Icon name="lightbulb-outline" style={style.cardItemIconCustom} />
+            <Text style={style.textStyle}>Hints</Text>
+          </CardItem>
+        </TouchableOpacity>
+      </Card>
+      <Card style={style.Card}>
+        <TouchableOpacity
+          style={[{ flexDirection: "row" }]}
+          onPress={() => props.navigation.navigate("Feedback")}
+        >
+          <CardItem style={styles.Card}>
+            <Icon name="feedback" style={style.cardItemIconCustom} />
+            <Text style={style.textStyle}>Feedback</Text>
+          </CardItem>
+        </TouchableOpacity>
+      </Card>
+    </View>
+  );
 };
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-  }
-}
+  };
+};
 
-export default connect(mapStateToProps, null)(Help)
+export default connect(mapStateToProps, null)(Help);

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Text, View, ActivityIndicator, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { getBookChaptersFromMapping } from "../../utils/UtilFunctions";
@@ -9,29 +9,15 @@ import database from "@react-native-firebase/database";
 import Colors from "../../utils/colorConstants";
 import ListContainer from "../../components/Common/FlatList";
 
-class HighLights extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      HightlightedVerseArray: [],
-      isLoading: false,
-      message: "",
-      email: this.props.email,
-    };
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
-  }
-  static getDerivedStateFromProps(props, state) {
-    // Any time the current user changes,
-    // Reset any parts of state that are tied to that user.
-    if (props.email !== state.email) {
-      return {
-        email: props.email,
-      };
-    }
-    return null;
-  }
-  removeHighlight = (id, chapterNum, verseNum) => {
-    var data = this.state.HightlightedVerseArray;
+const HighLights = (props) => {
+  const [HightlightedVerseArray, setHightlightedVerseArray] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const email = props.email;
+  const style = styles(props.colorFile, props.sizeFile);
+  const prevBooks = useRef(props.books).current;
+  const removeHighlight = (id, chapterNum, verseNum) => {
+    var data = HightlightedVerseArray;
     data.forEach((a, i) => {
       if (a.bookId == id && a.chapterNumber == chapterNum) {
         a.verseNumber.forEach(async (b, j) => {
@@ -42,9 +28,9 @@ class HighLights extends Component {
               database()
                 .ref(
                   "users/" +
-                    this.props.uid +
+                    props.uid +
                     "/highlights/" +
-                    this.props.sourceId +
+                    props.sourceId +
                     "/" +
                     id +
                     "/" +
@@ -59,9 +45,9 @@ class HighLights extends Component {
               database()
                 .ref(
                   "users/" +
-                    this.props.uid +
+                    props.uid +
                     "/highlights/" +
-                    this.props.sourceId +
+                    props.sourceId +
                     "/" +
                     id
                 )
@@ -71,101 +57,79 @@ class HighLights extends Component {
         });
       }
     });
-    this.setState({ HightlightedVerseArray: data });
+    setHightlightedVerseArray(data);
   };
-
-  fetchHighlights() {
-    this.setState({ isLoading: true }, () => {
-      if (this.state.email) {
-        database()
-          .ref(
-            "/users/" +
-              this.props.uid +
-              "/highlights/" +
-              this.props.sourceId +
-              "/"
-          )
-          .once("value", (snapshot) => {
-            var highlights = snapshot.val();
-            var array = [];
-            if (highlights != null) {
-              for (var key in highlights) {
-                for (var val in highlights[key]) {
-                  if (highlights[key][val] != null) {
-                    let value = highlights[key][val];
-                    if (value != undefined) {
-                      let verseNumber = [];
-                      for (var i = 0; i < value.length; i++) {
-                        if (value[i]) {
-                          verseNumber.push(value[i]);
-                        }
+  const fetchHighlights = () => {
+    setIsLoading(true);
+    if (email) {
+      database()
+        .ref("/users/" + props.uid + "/highlights/" + props.sourceId + "/")
+        .once("value", (snapshot) => {
+          var highlights = snapshot.val();
+          var array = [];
+          if (highlights != null) {
+            for (var key in highlights) {
+              for (var val in highlights[key]) {
+                if (highlights[key][val] != null) {
+                  let value = highlights[key][val];
+                  if (value != undefined) {
+                    let verseNumber = [];
+                    for (var i = 0; i < value.length; i++) {
+                      if (value[i]) {
+                        verseNumber.push(value[i]);
                       }
-                      array.push({
-                        bookId: key,
-                        chapterNumber: val,
-                        verseNumber: verseNumber,
-                      });
                     }
+                    array.push({
+                      bookId: key,
+                      chapterNumber: val,
+                      verseNumber: verseNumber,
+                    });
                   }
                 }
               }
-              this.setState({
-                HightlightedVerseArray: array,
-                isLoading: false,
-              });
-            } else {
-              this.setState({
-                HightlightedVerseArray: [],
-                message: "No highlights for " + this.props.languageName,
-                isLoading: false,
-              });
             }
-          });
-        this.setState({ isLoading: false });
-      } else {
-        this.setState({
-          HightlightedVerseArray: [],
-          isLoading: false,
-          message: "Please click here for login",
+            setHightlightedVerseArray(array);
+            setIsLoading(false);
+          } else {
+            setIsLoading(false);
+            setMessage("No highlights for " + props.languageName);
+            setHightlightedVerseArray(HightlightedVerseArray);
+          }
         });
-      }
-    });
-  }
-  async componentDidMount() {
-    this.fetchHighlights();
-  }
-  componentDidUpdate(prevProps) {
-    if (prevProps.books.length != this.props.books.length) {
-      this.fetchHighlights();
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+      setMessage("Please click here for login");
+      setHightlightedVerseArray(HightlightedVerseArray);
     }
-  }
-  navigateToBible = (bId, bookName, chapterNum) => {
-    this.props.updateVersionBook({
+  };
+  const navigateToBible = (bId, bookName, chapterNum) => {
+    props.updateVersionBook({
       bookId: bId,
       bookName: bookName,
       chapterNumber: chapterNum,
       totalChapters: getBookChaptersFromMapping(bId),
     });
-    this.props.navigation.navigate("Bible");
+    props.navigation.navigate("Bible");
   };
-  emptyMessageNavigation = () => {
-    if (this.state.email) {
-      this.props.navigation.navigate("Bible");
+  const emptyMessageNavigation = () => {
+    if (email) {
+      props.navigation.navigate("Bible");
     } else {
-      this.props.navigation.navigate("Login");
+      props.navigation.navigate("Login");
     }
   };
-  renderItem = ({ item }) => {
+  const renderItem = ({ item }) => {
     var bookName = null;
-    if (this.props.books) {
-      for (var i = 0; i <= this.props.books.length - 1; i++) {
-        var bId = this.props.books[i].bookId;
+    if (props.books) {
+      for (var i = 0; i <= props.books.length - 1; i++) {
+        var bId = props.books[i].bookId;
         if (bId == item.bookId) {
-          bookName = this.props.books[i].bookName;
+          bookName = props.books[i].bookName;
         }
       }
     } else {
-      this.setState({ HightlightedVerseArray: [] });
+      setHightlightedVerseArray(HightlightedVerseArray);
       return;
     }
 
@@ -178,28 +142,23 @@ class HighLights extends Component {
         return (
           <TouchableOpacity
             key={index}
-            style={this.styles.bookmarksView}
+            style={style.bookmarksView}
             onPress={() => {
-              this.navigateToBible(
-                item.bookId,
-                bookName,
-                item.chapterNumber,
-                e
-              );
+              navigateToBible(item.bookId, bookName, item.chapterNumber, e);
             }}
           >
-            <Text style={this.styles.bookmarksText}>
-              {this.props.languageName &&
-                this.props.languageName.charAt(0).toUpperCase() +
-                  this.props.languageName.slice(1)}{" "}
-              {this.props.versionCode && this.props.versionCode.toUpperCase()}{" "}
-              {bookName} {item.chapterNumber} {":"} {verse}
+            <Text style={style.bookmarksText}>
+              {props.languageName &&
+                props.languageName.charAt(0).toUpperCase() +
+                  props.languageName.slice(1)}{" "}
+              {props.versionCode && props.versionCode.toUpperCase()} {bookName}{" "}
+              {item.chapterNumber} {":"} {verse}
             </Text>
             <Icon
               name="delete-forever"
-              style={this.styles.iconCustom}
+              style={style.iconCustom}
               onPress={() => {
-                this.removeHighlight(item.bookId, item.chapterNumber, e);
+                removeHighlight(item.bookId, item.chapterNumber, e);
               }}
             />
           </TouchableOpacity>
@@ -207,33 +166,39 @@ class HighLights extends Component {
       });
     return <View>{bookName && value}</View>;
   };
-  render() {
-    return (
-      <View style={this.styles.container}>
-        {this.state.isLoading ? (
-          <ActivityIndicator
-            animate={true}
-            size="small"
-            color={Colors.Blue_Color}
-            style={this.styles.loaderStyle}
-          />
-        ) : (
-          <ListContainer
-            listData={this.state.HightlightedVerseArray}
-            listStyle={this.styles.centerEmptySet}
-            renderItem={this.renderItem}
-            icon="border-color"
-            containerStyle={this.styles.emptyMessageContainer}
-            iconStyle={this.styles.emptyMessageIcon}
-            textStyle={this.styles.messageEmpty}
-            message={this.state.message}
-            onPress={this.emptyMessageNavigation}
-          />
-        )}
-      </View>
-    );
-  }
-}
+
+  useEffect(() => {
+    fetchHighlights();
+    if (prevBooks.length != props.books.length) {
+      fetchHighlights();
+    }
+  }, [prevBooks, props.books, HightlightedVerseArray]);
+  console.log(HightlightedVerseArray, message, prevBooks, "high");
+  return (
+    <View style={style.container}>
+      {isLoading ? (
+        <ActivityIndicator
+          animate={true}
+          size="small"
+          color={Colors.Blue_Color}
+          style={style.loaderStyle}
+        />
+      ) : (
+        <ListContainer
+          listData={HightlightedVerseArray}
+          listStyle={style.centerEmptySet}
+          renderItem={renderItem}
+          icon="border-color"
+          containerStyle={style.emptyMessageContainer}
+          iconStyle={style.emptyMessageIcon}
+          textStyle={style.messageEmpty}
+          message={message}
+          onPress={emptyMessageNavigation}
+        />
+      )}
+    </View>
+  );
+};
 
 const mapStateToProps = (state) => {
   return {

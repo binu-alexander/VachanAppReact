@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   View,
@@ -12,94 +12,70 @@ import { styles } from "./styles.js";
 import { connect } from "react-redux";
 import Color from "../../utils/colorConstants";
 
-class Reset extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      email: "",
-      isLoading: false,
-    };
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
-  }
-
-  //on change text function for textInput
-  updateInputVal = (val, prop) => {
-    const state = this.state;
-    state[prop] = val;
-    this.setState(state);
-  };
-
-  reset = () => {
-    if (this.state.email === "" && this.state.password === "") {
+const Reset = (props) => {
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const password = "";
+  const style = styles(props.colorFile, props.sizeFile);
+  const reset = () => {
+    if (email === "" && password === "") {
       Alert.alert("Enter details to signin!");
     } else {
-      this.setState({
-        isLoading: true,
-      });
+      setIsLoading(true);
       auth()
-        .sendPasswordResetEmail(this.state.email)
+        .sendPasswordResetEmail(email)
         .then(() => {
           alert(
             "We will attempt to send a reset password email to " +
-              this.state.email +
+              email +
               "\n" +
               "Click the email to Continue"
           );
-          this.setState({
-            isLoading: false,
-          });
+          setIsLoading(false);
         })
         .catch(() => {
           // eslint-disable-next-line no-undef
           if (code === "auth/user-not-found") {
             Alert.alert(" user not found ");
           }
-          this.setState({
-            isLoading: false,
-          });
+          setIsLoading(false);
         });
     }
   };
-  render() {
-    if (this.state.isLoading) {
-      return (
-        <View style={this.styles.preloader}>
-          <ActivityIndicator size="large" color={Color.Blue_Color} />
-        </View>
-      );
-    }
+  if (isLoading) {
     return (
-      <View style={this.styles.container}>
-        <View
-          style={this.styles.resetContainer}
-        >
-          <Text style={this.styles.textStyle}>
-            Enter your email address and we&apos;ll send a link to reset your
-            password.
-          </Text>
-          <TextInput
-            style={this.styles.inputStyle}
-            placeholderTextColor={this.styles.placeholderColor.color}
-            placeholder="Enter email"
-            value={this.state.email}
-            onChangeText={(val) => this.updateInputVal(val, "email")}
-          />
-          <Button
-            color={Color.Blue_Color}
-            title="Reset Password"
-            onPress={() => this.reset()}
-          />
-          <Text
-            style={this.styles.loginText}
-            onPress={() => this.props.navigation.goBack()}
-          >
-            Back to login
-          </Text>
-        </View>
+      <View style={style.preloader}>
+        <ActivityIndicator size="large" color={Color.Blue_Color} />
       </View>
     );
   }
-}
+
+  return (
+    <View style={style.container}>
+      <View style={style.resetContainer}>
+        <Text style={style.textStyle}>
+          Enter your email address and we&apos;ll send a link to reset your
+          password.
+        </Text>
+        <TextInput
+          style={style.inputStyle}
+          placeholderTextColor={style.placeholderColor.color}
+          placeholder="Enter email"
+          value={email}
+          onChangeText={(val) => setEmail(val)}
+        />
+        <Button
+          color={Color.Blue_Color}
+          title="Reset Password"
+          onPress={() => reset()}
+        />
+        <Text style={style.loginText} onPress={() => props.navigation.goBack()}>
+          Back to login
+        </Text>
+      </View>
+    </View>
+  );
+};
 
 const mapStateToProps = (state) => {
   return {

@@ -267,6 +267,7 @@ class BRP extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
+    console.log(prevState.items, "prevState");
     if (
       prevProps.books.length != this.props.books.length ||
       Object.keys(prevState.items).length !=

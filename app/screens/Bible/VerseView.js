@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { Text, Alert } from "react-native";
 import { connect } from "react-redux";
 import { selectContent, parallelVisibleView } from "../../store/action/";
@@ -6,34 +6,29 @@ import { getResultText } from "../../utils/UtilFunctions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Color from "../../utils/colorConstants";
 
-class VerseView extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      unableSelection: false,
-    };
-  }
-  onPress() {
-    let verseNumber = this.props.downloaded
-      ? this.props.verseData.number
-      : this.props.verseData.verseNumber;
-    let verseText = this.props.downloaded
-      ? this.props.verseData.text
-      : this.props.verseData.verseText;
-    this.props.getSelection(
-      this.props.index,
-      this.props.chapterNumber,
+const VerseView = (props) => {
+  const [unableSelection, setUnableSelection] = useState(false);
+  const onPress = () => {
+    let verseNumber = props.downloaded
+      ? props.verseData.number
+      : props.verseData.verseNumber;
+    let verseText = props.downloaded
+      ? props.verseData.text
+      : props.verseData.verseText;
+    props.getSelection(
+      props.index,
+      props.chapterNumber,
       verseNumber,
       verseText
     );
-    this.setState({ unableSelection: false });
-  }
+    setUnableSelection(false);
+  };
 
-  has(selectedReferences, obj) {
+  const has = (selectedReferences, obj) => {
     for (var i = 0; i < selectedReferences.length; i++) {
       if (selectedReferences[i] == obj) {
-        if (this.props.visibleParallelView) {
-          this.props.parallelVisibleView({
+        if (props.visibleParallelView) {
+          props.parallelVisibleView({
             modalVisible: false,
             visibleParallelView: false,
           });
@@ -46,8 +41,8 @@ class VerseView extends Component {
       }
     }
     return false;
-  }
-  getColor = (colorConst) => {
+  };
+  const getColor = (colorConst) => {
     let value = Color.highlightColorA.const;
     switch (colorConst) {
       case Color.highlightColorA.const:
@@ -76,190 +71,180 @@ class VerseView extends Component {
     }
     return value;
   };
-  isHighlight() {
-    let verseNumber = this.props.downloaded
-      ? this.props.verseData.number
-      : this.props.verseData.verseNumber;
-    for (var i = 0; i <= this.props.HightlightedVerse.length; i++) {
-      if (this.props.HightlightedVerse[i]) {
+  const isHighlight = () => {
+    let verseNumber = props.downloaded
+      ? props.verseData.number
+      : props.verseData.verseNumber;
+    for (var i = 0; i <= props.HightlightedVerse.length; i++) {
+      if (props.HightlightedVerse[i]) {
         let regexMatch = /(\d+):([a-zA-Z]+)/;
-        let match = this.props.HightlightedVerse[i].match(regexMatch);
+        let match = props.HightlightedVerse[i].match(regexMatch);
         if (match) {
           if (parseInt(match[1]) == verseNumber) {
-            return this.getColor(match[2]);
+            return getColor(match[2]);
           }
         }
       }
     }
     return false;
-  }
-  isNoted() {
+  };
+  const isNoted = () => {
     var arr = [];
-    for (var i = 0; i <= this.props.notesList.length - 1; i++) {
-      for (var j = 0; j <= this.props.notesList[i].verses.length - 1; j++) {
-        var index = arr.indexOf(this.props.notesList[i].verses[j]);
+    for (var i = 0; i <= props.notesList.length - 1; i++) {
+      for (var j = 0; j <= props.notesList[i].verses.length - 1; j++) {
+        var index = arr.indexOf(props.notesList[i].verses[j]);
         if (index == -1) {
-          arr.push(this.props.notesList[i].verses[j]);
+          arr.push(props.notesList[i].verses[j]);
         }
       }
     }
-    let verseNumber = this.props.downloaded
-      ? this.props.verseData.number
-      : this.props.verseData.verseNumber;
+    let verseNumber = props.downloaded
+      ? props.verseData.number
+      : props.verseData.verseNumber;
     var value = arr.filter((v) => v == verseNumber);
     if (value[0]) {
       return true;
     } else {
       return false;
     }
-  }
-  goToNote = (verse_num) => {
-    this.props.navigation.navigate("Notes", {
-      chapterNumber: this.props.chapterNumber,
-      bookId: this.props.bookId,
+  };
+  const goToNote = (verse_num) => {
+    props.navigation.navigate("Notes", {
+      chapterNumber: props.chapterNumber,
+      bookId: props.bookId,
       verseNumber: verse_num,
     });
   };
 
-  render() {
-    let verseNumber = this.props.downloaded
-      ? this.props.verseData.number
-      : this.props.verseData.verseNumber;
-    let verseText = this.props.downloaded
-      ? this.props.verseData.text
-      : this.props.verseData.verseText;
-    let sectionHeading = this.props.downloaded
-      ? this.props.verseData.section
-      : this.props.sectionHeading;
-    let obj =
-      this.props.chapterNumber +
-      "_" +
-      this.props.index +
-      "_" +
-      verseNumber +
-      "_" +
-      verseText;
-    let isSelect = this.has(this.props.selectedReferences, obj);
-    let isHighlight = this.isHighlight();
-    let isNoted = this.isNoted();
-    if (verseNumber == 1 && typeof verseNumber != "undefined") {
-      return (
-        <Text
-          style={this.props.styles.textStyle}
-          onLayout={(event) =>
-            this.props.onLayout(event, this.props.index, verseNumber)
-          }
-          // onLayout={(event) => console.log(event, "event verse")}
-        >
-          {this.props.chapterHeader ? (
-            <Text style={this.props.styles.sectionHeading}>
-              {this.props.chapterHeader} {"\n"}
-            </Text>
-          ) : null}
-
-          <Text
-            onPress={() => {
-              this.onPress();
-            }}
-          >
-            <Text style={this.props.styles.verseChapterNumber}>
-              {this.props.chapterNumber}{" "}
-            </Text>
-            <Text
-              style={[
-                this.props.styles.textHighlight,
-                isSelect && isHighlight
-                  ? {
-                      backgroundColor: isHighlight,
-                      textDecorationLine: "underline",
-                    }
-                  : !isSelect && !isHighlight
-                  ? this.props.styles.textHighlight
-                  : !isSelect && isHighlight
-                  ? { backgroundColor: isHighlight }
-                  : { textDecorationLine: "underline" },
-              ]}
-            >
-              {getResultText(verseText)}
-            </Text>
-            {isNoted ? (
-              <Icon
-                onPress={() => this.goToNote(verseNumber)}
-                name="note-outline"
-                size={20}
-                style={{ padding: 8 }}
-              />
-            ) : null}
+  let verseNumber = props.downloaded
+    ? props.verseData.number
+    : props.verseData.verseNumber;
+  let verseText = props.downloaded
+    ? props.verseData.text
+    : props.verseData.verseText;
+  let sectionHeading = props.downloaded
+    ? props.verseData.section
+    : props.sectionHeading;
+  let obj =
+    props.chapterNumber +
+    "_" +
+    props.index +
+    "_" +
+    verseNumber +
+    "_" +
+    verseText;
+  let isSelect = has(props.selectedReferences, obj);
+  let isHighlights = isHighlight();
+  let isNote = isNoted();
+  if (verseNumber == 1 && typeof verseNumber != "undefined") {
+    return (
+      <Text
+        style={props.styles.textStyle}
+        onLayout={(event) => props.onLayout(event, props.index, verseNumber)}
+        // onLayout={(event) => console.log(event, "event verse")}
+      >
+        {props.chapterHeader ? (
+          <Text style={props.styles.sectionHeading}>
+            {props.chapterHeader} {"\n"}
           </Text>
-          {sectionHeading ? (
-            <Text style={this.props.styles.sectionHeading}>
-              {"\n"} {sectionHeading}
-            </Text>
-          ) : null}
-        </Text>
-      );
-    } else if (typeof verseText != "undefined") {
-      return (
+        ) : null}
+
         <Text
-          textBreakStrategy={"simple"}
-          style={this.props.styles.textStyle}
           onPress={() => {
-            this.onPress();
+            onPress();
           }}
-          onLayout={(event) =>
-            this.props.onLayout(event, this.props.index, verseNumber)
-          }
         >
-          <Text textBreakStrategy={"simple"}>
-            <Text
-              textBreakStrategy={"simple"}
-              style={this.props.styles.verseNumber}
-            >
-              {verseNumber}{" "}
-            </Text>
-            <Text
-              textBreakStrategy={"simple"}
-              style={[
-                this.props.styles.textHighlight,
-                isSelect && isHighlight
-                  ? {
-                      backgroundColor: isHighlight,
-                      textDecorationLine: "underline",
-                    }
-                  : !isSelect && !isHighlight
-                  ? this.props.styles.textHighlight
-                  : !isSelect && isHighlight
-                  ? { backgroundColor: isHighlight }
-                  : { textDecorationLine: "underline" },
-              ]}
-            >
-              {getResultText(verseText)}
-            </Text>
-            {isNoted ? (
-              <Icon
-                onPress={() => this.goToNote(verseNumber)}
-                name="note-outline"
-                size={20}
-                style={{ padding: 8 }}
-              />
-            ) : null}
+          <Text style={props.styles.verseChapterNumber}>
+            {props.chapterNumber}{" "}
           </Text>
-          {sectionHeading ? (
-            <Text
-              textBreakStrategy={"simple"}
-              style={this.props.styles.sectionHeading}
-            >
-              {"\n"} {sectionHeading}
-            </Text>
+          <Text
+            style={[
+              props.styles.textHighlight,
+              isSelect && isHighlights
+                ? {
+                    backgroundColor: isHighlights,
+                    textDecorationLine: "underline",
+                  }
+                : !isSelect && !isHighlights
+                ? props.styles.textHighlight
+                : !isSelect && isHighlights
+                ? { backgroundColor: isHighlights }
+                : { textDecorationLine: "underline" },
+            ]}
+          >
+            {getResultText(verseText)}
+          </Text>
+          {isNote ? (
+            <Icon
+              onPress={() => goToNote(verseNumber)}
+              name="note-outline"
+              size={20}
+              style={{ padding: 8 }}
+            />
           ) : null}
         </Text>
-      );
-    } else {
-      return null;
-    }
+        {sectionHeading ? (
+          <Text style={props.styles.sectionHeading}>
+            {"\n"} {sectionHeading}
+          </Text>
+        ) : null}
+      </Text>
+    );
+  } else if (typeof verseText != "undefined") {
+    return (
+      <Text
+        textBreakStrategy={"simple"}
+        style={props.styles.textStyle}
+        onPress={() => {
+          onPress();
+        }}
+        onLayout={(event) => props.onLayout(event, props.index, verseNumber)}
+      >
+        <Text textBreakStrategy={"simple"}>
+          <Text textBreakStrategy={"simple"} style={props.styles.verseNumber}>
+            {verseNumber}{" "}
+          </Text>
+          <Text
+            textBreakStrategy={"simple"}
+            style={[
+              props.styles.textHighlight,
+              isSelect && isHighlights
+                ? {
+                    backgroundColor: isHighlights,
+                    textDecorationLine: "underline",
+                  }
+                : !isSelect && !isHighlights
+                ? props.styles.textHighlight
+                : !isSelect && isHighlights
+                ? { backgroundColor: isHighlights }
+                : { textDecorationLine: "underline" },
+            ]}
+          >
+            {getResultText(verseText)}
+          </Text>
+          {isNote ? (
+            <Icon
+              onPress={() => goToNote(verseNumber)}
+              name="note-outline"
+              size={20}
+              style={{ padding: 8 }}
+            />
+          ) : null}
+        </Text>
+        {sectionHeading ? (
+          <Text
+            textBreakStrategy={"simple"}
+            style={props.styles.sectionHeading}
+          >
+            {"\n"} {sectionHeading}
+          </Text>
+        ) : null}
+      </Text>
+    );
+  } else {
+    return null;
   }
-}
-
+};
 const mapStateToProps = (state) => {
   return {
     bookId: state.updateVersion.bookId,
