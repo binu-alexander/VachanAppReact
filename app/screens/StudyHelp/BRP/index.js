@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Platform
 } from "react-native";
 import { connect } from "react-redux";
 import ModalDropdown from "react-native-modal-dropdown";
@@ -204,7 +205,7 @@ class BRP extends Component {
                     dropdownTextStyle={{ fontSize: 18 }}
                     textStyle={{
                       fontSize: 18,
-                      fontWeight: "800",
+                      fontWeight: Platform.OS ==='android' ? "800" : '400',
                       color: "#fff",
                     }}
                   />

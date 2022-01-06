@@ -100,6 +100,7 @@ class EditNote extends Component {
   onBack = async () => {
     if (this.state.noteIndex == -1) {
       if (this.state.contentBody == "") {
+        this.props.navigation.dispatch(CommonActions.goBack())
         return;
       }
       this.showAlert();
@@ -107,8 +108,7 @@ class EditNote extends Component {
     } else {
       if (
         this.state.contentBody !== this.props.route.params.contentBody ||
-        this.state.bcvRef.verses.length !==
-          this.props.route.params.bcvRef.verses.length
+        this.state.bcvRef.verses.length !== this.props.route.params.bcvRef.verses.length
       ) {
         this.showAlert();
         return;
@@ -248,7 +248,7 @@ class EditNote extends Component {
             [{ align: [] }],
             [{ size: ["small", false, "large", "huge"] }],
             [
-              { color: ["#000000", "#e60000", "#ff9900", "yellow"] },
+              { color: [] },
               { background: [] },
             ],
           ]}

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component,Fragment } from "react";
 import {
   Text,
   View,
@@ -8,6 +8,7 @@ import {
   Share,
   AppState,
   Animated,
+  StatusBar,Platform
 } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -56,6 +57,7 @@ import HighlightColorGrid from "../../components/Bible/HighlightColorGrid";
 import { getHeading, AndroidPermission } from "../../utils/UtilFunctions";
 import RNHTMLtoPDF from "react-native-html-to-pdf";
 import Permission from "../../utils/constants";
+import CustomStatusBar from "../../components/CustomStatusBar";
 const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
 const width = Dimensions.get("window").width;
 const NAVBAR_HEIGHT = 64;
@@ -131,28 +133,34 @@ class Bible extends Component {
     this.unsubscriber = auth().onAuthStateChanged((user) => {
       if (user) {
         this.setState({
-          user: user._user.email,
-          userData: user,
-          isLoading: false,
-          imageUrl: user._user.photoURL,
+          user: user._user.email, userData: user,
+          isLoading: false,imageUrl: user._user.photoURL,
+          uid: user._user.uid, email: user._user.email
+        },()=>{
+          this.getHighlights();
+          this.getBookMarks();
+          this.getNotes();  
         });
         this.props.userInfo({
-          email: user._user.email,
-          uid: user._user.uid,
-          userName: user._user.displayName,
-          phoneNumber: null,
+          email: user._user.email, uid: user._user.uid,
+          userName: user._user.displayName, phoneNumber: null,
           photo: user._user.photoURL,
         });
-        this.setState({ uid: user._user.uid, email: user._user.email });
       } else {
         this.props.userInfo({
-          email: null,
-          uid: null,
-          userName: null,
-          phoneNumber: null,
+          email: null, uid: null,
+          userName: null, phoneNumber: null,
           photo: null,
         });
-        this.setState({ uid: null, email: null });
+        this.setState({ 
+          user: null, userData: null,
+          isLoading: false,imageUrl:null,
+          uid: null, email: null,
+         },()=>{
+          this.getHighlights();
+          this.getBookMarks();
+          this.getNotes();
+        });
       }
     });
     this.ZoomTextSize();
@@ -174,6 +182,7 @@ class Bible extends Component {
 
     AppState.addEventListener("change", this._handleAppStateChange);
     this.subs = this.props.navigation.addListener("focus", () => {
+      console.log("FOCUS ")
       this.setState(
         {
           isLoading: true,
@@ -571,7 +580,7 @@ class Bible extends Component {
       });
       this.getHighlights();
       this.getNotes();
-      this.isBookmark();
+      this.isBookmarked();
     } catch (error) {
       this.setState({
         isLoading: false,
@@ -680,11 +689,12 @@ class Bible extends Component {
               this.props.bookId
           )
           .on("value", (snapshot) => {
+            console.log("SNAPSHOT GET BOOKMARKS ",snapshot.val())
             if (snapshot.val() === null) {
               this.setState({ bookmarksList: [], isBookmark: false });
             } else {
               this.setState({ bookmarksList: snapshot.val() }, () =>
-                this.isBookmark()
+                this.isBookmarked()
               );
             }
           });
@@ -715,8 +725,9 @@ class Bible extends Component {
             if (snapshot.val() === null) {
               this.setState({ notesList: [] });
             } else {
+              console.log("snapshot.val() ",snapshot.val())
               if (Array.isArray(snapshot.val())) {
-                this.setState({ notesList: snapshot.val() });
+                this.setState({ notesList: snapshot.val()});
               } else {
                 this.setState({
                   notesList: [snapshot.val()],
@@ -736,21 +747,19 @@ class Bible extends Component {
     }
   }
   //check chapter is bookmarked
-  isBookmark = () => {
+  isBookmarked = () => {
+    console.log("bookmarked list",this.state.bookmarksList)
     if (this.state.bookmarksList.length > 0) {
-      for (var i = 0; i < this.state.bookmarksList.length; i++) {
-        if (this.state.bookmarksList[i] == this.state.currentVisibleChapter) {
-          this.setState({ isBookmark: true });
-          return;
-        }
-      }
+      let bm = this.state.bookmarksList.includes(this.state.currentVisibleChapter);
+      this.setState({ isBookmark: bm });
+    }else{
       this.setState({ isBookmark: false });
     }
-    this.setState({ isBookmark: false });
   };
 
   //add book mark from header icon
   onBookmarkPress = (isbookmark) => {
+    console.log("BOOKMARK LIST")
     if (this.state.connection_Status) {
       if (this.state.email) {
         var newBookmarks = isbookmark
@@ -768,8 +777,7 @@ class Bible extends Component {
               this.props.bookId
           )
           .set(newBookmarks);
-        this.setState({ bookmarksList: newBookmarks });
-        this.setState({ isBookmark: !isbookmark });
+        this.setState({ bookmarksList: newBookmarks,isBookmark: !isbookmark });
         Toast.show({
           text: isbookmark
             ? "Bookmarked chapter removed"
@@ -1339,6 +1347,7 @@ class Bible extends Component {
   render() {
     this.styles = styles(this.props.colorFile, this.props.sizeFile);
     return (
+      <CustomStatusBar>
       <View style={this.styles.container}>
         {this.props.visibleParallelView ? (
           <View
@@ -1546,6 +1555,7 @@ class Bible extends Component {
           )}
         </View>
       </View>
+      </CustomStatusBar>
     );
   }
 }

@@ -64,7 +64,7 @@ function* fetchVersionBooks(params) {
         bookListData.push(books);
       }
     } else {
-      let found = false;
+      // let found = false;
       const response = state.contents.allBooks;
       for (var k = 0; k < response.length; k++) {
         if (payload.language.toLowerCase() == response[k].language.name) {
@@ -85,22 +85,22 @@ function* fetchVersionBooks(params) {
           found = true;
         }
       }
-      if (!found) {
-        //can exit app to refresh the data or give alert
-        Alert.alert(
-          "Check for update in languageList screen",
-          [
-            {
-              text: "OK",
-              onPress: () => {
-                return;
-              },
-            },
-          ],
-          { cancelable: false }
-        );
-        // BackHandler.exitApp();
-      }
+      // if (!found) {
+      //   //can exit app to refresh the data or give alert
+      //   Alert.alert(
+      //     "Check for update in languageList screen",
+      //     [
+      //       {
+      //         text: "OK",
+      //         onPress: () => {
+      //           return;
+      //         },
+      //       },
+      //     ],
+      //     { cancelable: false }
+      //   );
+      //   // BackHandler.exitApp();
+      // }
     }
     var res =
       bookListData.length == 0

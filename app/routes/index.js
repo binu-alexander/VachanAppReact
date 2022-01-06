@@ -1,6 +1,7 @@
 // all of our routes
 // import { createStackNavigator, createDrawerNavigator, createSwitchNavigator, createAppContainer } from 'react-navigation'
 import React, { Component } from "react";
+import {Platform} from 'react-native';
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import About from "../screens/About/";
@@ -13,7 +14,6 @@ import History from "../screens/History/";
 
 import Commentary from "../screens/StudyHelp/Commentary/";
 import DrawerCommentary from "../screens/DrawerScreen/Commentary/";
-
 
 import Dictionary from "../screens/StudyHelp/Dictionary/";
 import DictionaryWords from "../screens/StudyHelp/Dictionary/DictionaryWords";
@@ -55,6 +55,7 @@ function NavStackScreen() {
           backgroundColor: Color.Blue_Color,
           elevation: 0,
           shadowOpacity: 0,
+          fontWeight: "bold",
         },
         headerTintColor: Color.White,
         headerTitleStyle: {
@@ -67,6 +68,7 @@ function NavStackScreen() {
         name="Bible"
         component={Bible}
         options={{
+          headerBackTitleVisible: false,
           headerShown: false,
           headerTintColor: Color.White,
           headerTitleStyle: {
@@ -77,13 +79,16 @@ function NavStackScreen() {
       <NavStack.Screen
         name="DrawerScreen"
         component={DrawerScreen}
-        options={{}}
+          options={{
+            headerBackTitleVisible: false,
+          }}
       />
       <NavStack.Screen
         name="LanguageList"
         component={LanguageList}
         options={{
           headerTitle: "Languages",
+          headerBackTitle: "Languages",
         }}
       />
 
@@ -91,6 +96,7 @@ function NavStackScreen() {
         name="ReferenceSelection"
         component={ReferenceSelection}
         options={{
+          headerBackTitleVisible: false,
           headerTitle: null,
           headerStyle: {
             backgroundColor: Color.Blue_Color,
@@ -100,26 +106,29 @@ function NavStackScreen() {
           },
         }}
       />
-      <NavStack.Screen name="Search" component={Search} options={{}} />
+      <NavStack.Screen name="Search" component={Search} options={{headerBackTitleVisible: false,}} />
       <NavStack.Screen
         name="About"
         component={About}
         options={{
-          headerTitle: "About Us",
+          headerBackTitle: "About Us",
+          headerTitle:Platform.OS === 'android' ?  "About Us" : null,
         }}
       />
       <NavStack.Screen
         name="Settings"
         component={Settings}
         options={{
-          headerTitle: "Settings",
+          headerBackTitle: "Settings",
+          headerTitle: Platform.OS === 'android' ? "Settings" : null,
         }}
       />
       <NavStack.Screen
         name="Notes"
         component={Notes}
         options={{
-          headerTitle: "Notes",
+          headerBackTitle: "Notes",
+          headerTitle: Platform.OS === 'android' ? "Notes" :null,
         }}
       />
       <NavStack.Screen name="EditNote" component={EditNote} options={{}} />
@@ -127,20 +136,23 @@ function NavStackScreen() {
         name="Highlights"
         component={Highlights}
         options={{
-          headerTitle: "Highlights",
+          headerBackTitle: "Highlights",
+          headerTitle: Platform.OS === 'android' ? "Highlights" : null,
         }}
       />
       <NavStack.Screen
         name="History"
         component={History}
         options={{
-          headerTitle: "History",
+          headerBackTitle: "History",
+          headerTitle: Platform.OS === 'android' ? "History" : null,
         }}
       />
       <NavStack.Screen
         name="Commentary"
         component={Commentary}
         options={{
+          headerBackTitleVisible: false,
           headerShown: false,
         }}
       />
@@ -148,39 +160,44 @@ function NavStackScreen() {
         name="Dictionary"
         component={Dictionary}
         options={{
-          headerTitle: "Dictionary",
+          headerBackTitle: "Dictionary",
+          headerTitle: Platform.OS === 'android' ? "Dictionary" : null,
         }}
       />
       <NavStack.Screen
         name="DictionaryWords"
         component={DictionaryWords}
         options={{
-          headerTitle: "Dictionary words",
+          headerBackTitle: "Dictionary words",
+          headerTitle: Platform.OS === 'android' ? "Dictionary words" : null,
         }}
       />
       <NavStack.Screen
         name="Infographics"
         component={Infographics}
         options={{
-          headerTitle: "Infographics",
+          headerBackTitle: "Infographics",
+          headerTitle: Platform.OS === 'android' ? "Infographics" : null,
         }}
       />
       <NavStack.Screen
         name="InfographicsImage"
         component={InfographicsImage}
-        options={{}}
+        options={{headerBackTitleVisible: false,}}
       />
       <NavStack.Screen
         name="Reset"
         component={Reset}
         options={{
-          headerTitle: "Forgot Passsword ?",
+          headerBackTitle: "Forgot Passsword ?",
+          headerTitle:Platform.OS === 'android' ? "Forgot Passsword ?" : null,
         }}
       />
       <NavStack.Screen
         name="Register"
         component={Register}
         options={{
+          headerBackTitleVisible: false,
           headerShown: false,
         }}
       />
@@ -188,13 +205,19 @@ function NavStackScreen() {
         name="Login"
         component={Login}
         options={{
+          headerBackTitleVisible: false,
           headerShown: false,
         }}
       />
       <NavStack.Screen
         name="ProfilePage"
         component={ProfilePage}
+        // options={{
+        //   // headerBackTitle: "Profile",
+        //   // headerTitle:Platform.OS === 'android' ? "Profile" : null,
+        // }}
         options={{
+          headerBackTitleVisible: false,
           headerShown: false,
         }}
       />
@@ -202,6 +225,7 @@ function NavStackScreen() {
         name="Auth"
         component={Auth}
         options={{
+          headerBackTitleVisible: false,
           headerShown: false,
         }}
       />
@@ -209,35 +233,40 @@ function NavStackScreen() {
         name="Bookmarks"
         component={Bookmarks}
         options={{
-          headerTitle: "Bookmarks",
+          headerBackTitle: "Bookmarks",
+          headerTitle:Platform.OS === 'android' ? "Bookmarks" : null,
         }}
       />
       <NavStack.Screen
         name="Audio"
         component={Audio}
         options={{
-          headerTitle: "Audio",
+          headerBackTitle: "Audio",
+          headerTitle:Platform.OS === 'android' ? "Audio" : null,
         }}
       />
       <NavStack.Screen
         name="Video"
         component={Video}
         options={{
-          headerTitle: "Video",
+          headerBackTitle: "Video",
+          headerTitle:Platform.OS === 'android' ? "Video" : null,
         }}
       />
       <DrawerStack.Screen
         name="BRP"
         component={BRP}
         options={{
-          headerTitle: "Reading Plans",
+          headerBackTitle: "Reading Plans",
+          headerTitle:Platform.OS === 'android' ? "Reading Plans" : null,
         }}
       />
       <DrawerStack.Screen
         name="DrawerCommentary"
         component={DrawerCommentary}
         options={{
-          headerTitle: "Commentary",
+          headerBackTitle: "Commentary",
+          headerTitle:Platform.OS === 'android' ? "Commentary" : null,
         }}
       />
       
@@ -245,7 +274,8 @@ function NavStackScreen() {
         name="OBS"
         component={OBS}
         options={{
-          headerTitle: "Bible Stories ",
+          headerBackTitle: "Bible Stories ",
+          headerTitle:Platform.OS === 'android' ? "Bible Stories" : null,
         }}
       />
       <NavStack.Screen name="PlayVideo" component={PlayVideo} options={{}} />
@@ -253,21 +283,24 @@ function NavStackScreen() {
         name="Help"
         component={Help}
         options={{
-          headerTitle: "Help",
+          headerBackTitle: "Help",
+          headerTitle:Platform.OS === 'android' ? "Help" : null,
         }}
       />
       <NavStack.Screen
         name="Hints"
         component={Hints}
         options={{
-          headerTitle: "Hints",
+          headerBackTitle: "Hints",
+          headerTitle:Platform.OS === 'android' ? "Hints" : null,
         }}
       />
       <NavStack.Screen
         name="Feedback"
         component={Feedback}
         options={{
-          headerTitle: "Feedback",
+          headerBackTitle: "Feedback",
+          headerTitle:Platform.OS === 'android' ? "Feedback" : null,
         }}
       />
     </NavStack.Navigator>
