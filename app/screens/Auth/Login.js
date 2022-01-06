@@ -22,8 +22,8 @@ import {
 // import { AccessToken, LoginManager, LoginButton } from 'react-native-fbsdk';
 import { styles } from "./styles.js";
 import Color from "../../utils/colorConstants";
-import CustomStatusBar from "../../components/CustomStatusBar";
-import { CommonActions } from "@react-navigation/native";
+// import CustomStatusBar from "../../components/CustomStatusBar";
+// import { CommonActions } from "@react-navigation/native";
 
 const Login = (props) => {
   const [email, setEmail] = useState("");
