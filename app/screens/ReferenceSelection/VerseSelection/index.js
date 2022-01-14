@@ -1,102 +1,79 @@
-import { slice } from "lodash";
+import React, { useEffect, useRef, useState } from "react";
 import { View } from "native-base";
-import React, { Component } from "react";
-import { connect } from "react-redux";
 import SelectionGrid from "../../../components/SelectionGrid";
 import vApi from "../../../utils/APIFetch";
+import { connect } from "react-redux";
+
 import { styles } from "./styles";
 
-class SelectVerse extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      versesData: [],
-      selectedBookId: this.props.route.params
-        ? this.props.route.params.selectedBookId
-        : null,
-      selectedBookName: this.props.route.params
-        ? this.props.route.params.selectedBookName
-        : null,
+const SelectVerse = (props) => {
+  const selectedBookId = props.route.params
+    ? props.route.params.selectedBookId
+    : null;
+  const selectedBookName = props.route.params
+    ? props.route.params.selectedBookName
+    : null;
 
-      selectedChapterNumber: this.props.route.params
-        ? this.props.route.params.selectedChapterNumber
-        : null,
-      totalChapters: this.props.route.params
-        ? this.props.route.params.totalChapters
-        : null,
-    };
-    this.styles = styles(this.props.colorFile, this, props.sizeFile);
-  }
-
-  async fectchVerses() {
+  const selectedChapterNumber = props.route.params
+    ? props.route.params.selectedChapterNumber
+    : null;
+  const totalChapters = props.route.params
+    ? props.route.params.totalChapters
+    : null;
+  const [versesData, setVersesData] = useState([]);
+  const prevData = useRef(versesData).current;
+  const style = styles(props.colorFile, props.sizeFile);
+  const fectchVerses = async () => {
     let versesArray = [];
     const url =
       "bibles/" +
-      this.props.sourceId +
+      props.sourceId +
       "/books/" +
-      this.state.selectedBookId +
+      selectedBookId +
       "/chapters/" +
-      this.state.selectedChapterNumber +
+      selectedChapterNumber +
       "/verses";
     let verses = await vApi.get(url);
     if (verses) {
       verses.map((item) => versesArray.push(item.verse.number));
     }
-    this.setState({ versesData: versesArray });
-  }
-  componentDidMount() {
-    this.fectchVerses();
-  }
-  static getDerivedStateFromProps(nextProps) {
-    return {
-      selectedChapterNumber: nextProps.route.params
-        ? nextProps.route.params.selectedChapterNumber
-        : null,
-      totalChapters: nextProps.route.params
-        ? nextProps.route.params.totalChapters
-        : null,
-      selectedBookName: nextProps.route.params
-        ? nextProps.route.params.selectedBookName
-        : null,
-      selectedBookId: nextProps.route.params
-        ? nextProps.route.params.selectedBookId
-        : null,
-    };
-  }
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.versesData != this.state.versesData) {
-      this.fectchVerses();
-    }
-  }
-  onNumPress = (item) => {
-    if (this.props.route.params) {
-      this.props.route.params.getReference({
-        bookId: this.state.selectedBookId,
-        bookName: this.state.selectedBookName,
-        chapterNumber: this.state.selectedChapterNumber,
-        totalChapters: this.state.totalChapters,
+    setVersesData(versesArray);
+  };
+  const onNumPress = (item) => {
+    if (props.route.params) {
+      props.route.params.getReference({
+        bookId: selectedBookId,
+        bookName: selectedBookName,
+        chapterNumber: selectedChapterNumber,
+        totalChapters: totalChapters,
         selectedVerse: item ? item : 1,
       });
-      this.props.navigation.navigate("Bible");
+      props.navigation.navigate("Bible");
     }
   };
-  render() {
-    return (
-      <View style={{ flex: 1 }}>
-        <SelectionGrid
-          styles={this.styles}
-          onNumPress={(item, index) => {
-            this.onNumPress(item, index);
-          }}
-          numbers={this.state.versesData}
-          selectedNumber={this.props.route.params.selectedVerse}
-          blueText={this.props.colorFile.blueText}
-          textColor={this.props.colorFile.textColor}
-        />
-      </View>
-    );
-  }
-}
+
+  useEffect(() => {
+    fectchVerses();
+    if (prevData != versesData) {
+      fectchVerses();
+    }
+  }, [prevData, versesData]);
+  return (
+    <View style={{ flex: 1 }}>
+      <SelectionGrid
+        styles={style}
+        onNumPress={(item, index) => {
+          onNumPress(item, index);
+        }}
+        numbers={versesData}
+        selectedNumber={props.route.params.selectedVerse}
+        blueText={props.colorFile.blueText}
+        textColor={props.colorFile.textColor}
+      />
+    </View>
+  );
+};
+
 const mapStateToProps = (state) => {
   return {
     sourceId: state.updateVersion.sourceId,

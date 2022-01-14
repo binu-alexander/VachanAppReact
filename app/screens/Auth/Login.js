@@ -28,7 +28,6 @@ import Color from "../../utils/colorConstants";
 const Login = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const [user,setUser]=useState("")
   const [isLoading, setIsLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(true);
   const style = styles(props.colorFile, props.sizeFile);

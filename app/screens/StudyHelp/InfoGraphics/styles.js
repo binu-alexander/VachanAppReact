@@ -1,9 +1,9 @@
 import { StyleSheet } from "react-native";
-import Color from '../../../utils/colorConstants'
+import Color from "../../../utils/colorConstants";
 export const styles = (colorFile, sizeFile) => {
   return StyleSheet.create({
     imagecontainer: {
-      ...StyleSheet.absoluteFillObject,
+      // ...StyleSheet.absoluteFillObject,
       alignItems: "center",
       resizeMode: "contain",
       justifyContent: "center",
@@ -70,18 +70,19 @@ export const styles = (colorFile, sizeFile) => {
       paddingBottom: 16,
       backgroundColor: colorFile.backgroundColor,
     },
-    loaderCenter:{flex:1, justifyContent: "center", alignSelf: "center"},
-    headerTitle:{
+    loaderCenter: { flex: 1, justifyContent: "center", alignSelf: "center" },
+    headerTitle: {
       fontSize: 18,
       color: Color.White,
       fontWeight: "bold",
       marginRight: 12,
     },
-    headerRight:{
+    headerRight: {
       fontSize: 18,
       color: Color.White,
       fontWeight: "bold",
       marginRight: 12,
-    },loaderPos:{ flex: 1, justifyContent: "center", alignItems: "center" }
+    },
+    loaderPos: { flex: 1, justifyContent: "center", alignItems: "center" },
   });
 };

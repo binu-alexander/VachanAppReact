@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   StyleSheet,
   Text,
@@ -10,38 +10,32 @@ import {
 var { width } = Dimensions.get("window");
 import { connect } from "react-redux";
 
-class FlowLayout extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    let items = this.props.dataValue.verses.map((value, position) => {
-      return (
-        <View key={position}>
-          <TouchableOpacity
-            onPress={() => {
-              this.props.openReference(value, position);
-            }}
-          >
-            <View style={[styles.corner, { backgroundColor: "transparent" }]}>
-              <Text style={this.props.styles.textStyle}>
-                {this.props.dataValue.bookName}{" "}
-                {this.props.dataValue.chapterNumber}:{value}
-              </Text>
-              {/* {
+const FlowLayout = (props) => {
+  let items = props.dataValue.verses.map((value, position) => {
+    return (
+      <View key={position}>
+        <TouchableOpacity
+          onPress={() => {
+            props.openReference(value, position);
+          }}
+        >
+          <View style={[styles.corner, { backgroundColor: "transparent" }]}>
+            <Text style={props.styles.textStyle}>
+              {props.dataValue.bookName} {props.dataValue.chapterNumber}:{value}
+            </Text>
+            {/* {
 						   this.props.dataValue.verses.length === 1 ? null :  <Icon name="clear" style={this.props.styles.iconReferClose}
 						   onPress={()=> {this.props.deleteReference(position)}} />
 					   } */}
-            </View>
-          </TouchableOpacity>
-        </View>
-      );
-    });
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  });
 
-    return <View style={[styles.container, this.props.style]}>{items}</View>;
-  }
-}
+  return <View style={[styles.container, props.style]}>{items}</View>;
+};
+
 const mapStateToProps = (state) => {
   return {
     language: state.updateVersion.language,

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View, TouchableOpacity, ActivityIndicator } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Card, CardItem } from "native-base";
@@ -8,50 +8,22 @@ import { styles } from "./styles.js";
 import Colors from "../../utils/colorConstants";
 import ListContainer from "../../components/Common/FlatList.js";
 
-class Note extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      verseNumber: this.props.route.params
-        ? this.props.route.params.verseNumber
-        : null,
-      chapterNumber: this.props.route.params
-        ? this.props.route.params.chapterNumber
-        : null,
-      bookId: this.props.route.params ? this.props.route.params.bookId : null,
+const Note = (props) => {
+  const chapterNumber = props.route.params
+    ? props.route.params.chapterNumber
+    : null;
+  const bookId = props.route.params ? props.route.params.bookId : null;
+  const [notesData, setNotesData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const email = props.email;
+  const style = styles(props.colorFile, props.sizeFile);
 
-      colorFile: this.props.colorFile,
-      sizeFile: this.props.sizeFile,
-      notesData: [],
-      referenceList: [],
-      isLoading: false,
-      message: "",
-      email: this.props.email,
-    };
-    this.styles = styles(props.colorFile, props.sizeFile);
-
-    this.onDelete = this.onDelete.bind(this);
-  }
-  static getDerivedStateFromProps(props, state) {
-    // Any time the current user changes,
-    // Reset any parts of state that are tied to that user.
-    if (props.email !== state.email) {
-      return {
-        email: props.email,
-      };
-    }
-    return null;
-  }
-  onDelete = (createdTime, body, k, l) => {
-    var data = [...this.state.notesData];
+  const onDelete = (createdTime, body, k, l) => {
+    var data = [...notesData];
     data.forEach((a, i) => {
       var firebaseRef = database().ref(
-        "users/" +
-          this.props.uid +
-          "/notes/" +
-          this.props.sourceId +
-          "/" +
-          a.bookId
+        "users/" + props.uid + "/notes/" + props.sourceId + "/" + a.bookId
       );
       if (i == k) {
         a.notes.forEach((b, j) => {
@@ -70,42 +42,28 @@ class Note extends Component {
         });
       }
     });
-    this.setState({ notesData: data });
+    setNotesData(data);
   };
 
-  fetchNotes=()=> {
-    this.setState({ isLoading: true }, () => {
-      if (this.state.email) {
-        var firebaseRef = database().ref(
-          "users/" + this.props.uid + "/notes/" + this.props.sourceId
-        );
-        firebaseRef.once("value", (snapshot) => {
-          if (snapshot.val() === null) {
-            this.setState({
-              notesData: [],
-              message: "No Note for " + this.props.languageName,
-              isLoading: false,
-            });
-          } else {
-            var arr = [];
-            var notes = snapshot.val();
-            for (var bookKey in notes) {
-              for (var chapterKey in notes[bookKey]) {
-                if (notes[bookKey][chapterKey] != null) {
-                  if (this.state.chapterNumber && this.state.bookId) {
-                    if (
-                      chapterKey == this.state.chapterNumber &&
-                      bookKey == this.state.bookId
-                    ) {
-                      arr.push({
-                        bookId: bookKey,
-                        chapterNumber: chapterKey,
-                        notes: Array.isArray(notes[bookKey][chapterKey])
-                          ? notes[bookKey][chapterKey]
-                          : [notes[bookKey][chapterKey]],
-                      });
-                    }
-                  } else {
+  const fetchNotes = () => {
+    setIsLoading(true);
+    if (email) {
+      var firebaseRef = database().ref(
+        "users/" + props.uid + "/notes/" + props.sourceId
+      );
+      firebaseRef.once("value", (snapshot) => {
+        if (snapshot.val() === null) {
+          setNotesData([]);
+          setMessage("No Note for " + props.languageName);
+          setIsLoading(false);
+        } else {
+          var arr = [];
+          var notes = snapshot.val();
+          for (var bookKey in notes) {
+            for (var chapterKey in notes[bookKey]) {
+              if (notes[bookKey][chapterKey] != null) {
+                if (chapterNumber && bookId) {
+                  if (chapterKey == chapterNumber && bookKey == bookId) {
                     arr.push({
                       bookId: bookKey,
                       chapterNumber: chapterKey,
@@ -114,60 +72,64 @@ class Note extends Component {
                         : [notes[bookKey][chapterKey]],
                     });
                   }
+                } else {
+                  arr.push({
+                    bookId: bookKey,
+                    chapterNumber: chapterKey,
+                    notes: Array.isArray(notes[bookKey][chapterKey])
+                      ? notes[bookKey][chapterKey]
+                      : [notes[bookKey][chapterKey]],
+                  });
                 }
               }
             }
-            arr.sort(function (a, b) {
-              return (
-                new Date(b.notes[0].modifiedTime) -
-                new Date(a.notes[0].modifiedTime)
-              );
-            });
-            this.setState({
-              notesData: arr,
-              isLoading: false,
-            });
           }
-        });
-        this.setState({ isLoading: false });
-      } else {
-        this.setState({
-          notesData: [],
-          isLoading: false,
-          message: "Please  click here for login",
-        });
-      }
-    });
-  }
-  async componentDidMount() {
-  await  this.fetchNotes();
-  }
-
-  bodyText(text) {
-    return text;
-  }
-  dateFormate(modifiedTime) {
-    var date = new Date(modifiedTime).toLocaleString();
-    return date;
-  }
-  emptyMessageNavigation = () => {
-    if (this.state.email) {
-      this.props.navigation.navigate("Bible");
+          arr.sort(function (a, b) {
+            return (
+              new Date(b.notes[0].modifiedTime) -
+              new Date(a.notes[0].modifiedTime)
+            );
+          });
+          setNotesData(arr);
+          setIsLoading(false);
+        }
+      });
+      setIsLoading(false);
     } else {
-      this.props.navigation.navigate("Login");
+      setNotesData([]);
+      setIsLoading(false);
+      setMessage("Please  click here for login");
     }
   };
-  renderItem = ({ item, index }) => {
+  const bodyText = (text) => {
+    return text;
+  };
+  const dateFormate = (modifiedTime) => {
+    var date = new Date(modifiedTime).toLocaleString();
+    return date;
+  };
+  const emptyMessageNavigation = () => {
+    if (email) {
+      props.navigation.navigate("Bible");
+    } else {
+      props.navigation.navigate("Login");
+    }
+  };
+
+  useEffect(() => {
+    fetchNotes();
+  }, [email, message]);
+  const renderItem = ({ item, index }) => {
     var bookName = null;
-    if (this.props.books) {
-      for (var i = 0; i <= this.props.books.length - 1; i++) {
-        var bId = this.props.books[i].bookId;
+    if (props.books) {
+      for (var i = 0; i <= props.books.length - 1; i++) {
+        var bId = props.books[i].bookId;
         if (bId == item.bookId) {
-          bookName = this.props.books[i].bookName;
+          bookName = props.books[i].bookName;
         }
       }
     } else {
-      this.setState({ notesData: [] });
+      setNotesData([]);
       return;
     }
     let value =
@@ -175,9 +137,9 @@ class Note extends Component {
       item.notes.map((val, j) => (
         <TouchableOpacity
           key={j}
-          style={this.styles.noteContent}
+          style={style.noteContent}
           onPress={() => {
-            this.props.navigation.navigate("EditNote", {
+            props.navigation.navigate("EditNote", {
               bcvRef: {
                 bookId: item.bookId,
                 bookName: bookName,
@@ -185,32 +147,31 @@ class Note extends Component {
                 verses: val.verses,
               },
               notesList: item.notes,
-              contentBody: this.bodyText(val.body),
-              onbackNote: this.fetchNotes,
+              contentBody: bodyText(val.body),
+              onbackNote: fetchNotes,
               noteIndex: j,
             });
           }}
         >
           <Card>
-            <CardItem style={this.styles.cardItemStyle}>
-              <View style={this.styles.notesContentView}>
-                <Text style={this.styles.noteText}>
-                  {this.props.languageName &&
-                    this.props.languageName.charAt(0).toUpperCase() +
-                      this.props.languageName.slice(1)}{" "}
-                  {this.props.versionCode &&
-                    this.props.versionCode.toUpperCase()}{" "}
+            <CardItem style={style.cardItemStyle}>
+              <View style={style.notesContentView}>
+                <Text style={style.noteText}>
+                  {props.languageName &&
+                    props.languageName.charAt(0).toUpperCase() +
+                      props.languageName.slice(1)}{" "}
+                  {props.versionCode && props.versionCode.toUpperCase()}{" "}
                   {bookName} {item.chapterNumber} {":"} {val.verses.join()}
                 </Text>
-                <View style={this.styles.noteCardItem}>
-                  <Text style={this.styles.noteFontCustom}>
-                    {this.dateFormate(val.modifiedTime)}
+                <View style={style.noteCardItem}>
+                  <Text style={style.noteFontCustom}>
+                    {dateFormate(val.modifiedTime)}
                   </Text>
                   <Icon
                     name="delete-forever"
-                    style={this.styles.deleteIon}
+                    style={style.deleteIon}
                     onPress={() =>
-                      this.onDelete(val.createdTime, val.body, index, j)
+                      onDelete(val.createdTime, val.body, index, j)
                     }
                   />
                 </View>
@@ -222,18 +183,17 @@ class Note extends Component {
     return <View>{bookName && value}</View>;
   };
 
-  render() {
-    return (
-      <View style={this.styles.container}>
-        {this.state.isLoading ? (
-          <ActivityIndicator
-            size="small"
-            color={Colors.Blue_Color}
-            animate={true}
-            style={this.styles.loaderPosition}
-          />
-        ) : (
-          /* <FlatList
+  return (
+    <View style={style.container}>
+      {isLoading ? (
+        <ActivityIndicator
+          size="small"
+          color={Colors.Blue_Color}
+          animate={true}
+          style={style.loaderPosition}
+        />
+      ) : (
+        /* <FlatList
             contentContainerStyle={
               this.state.notesData.length === 0
                 ? this.styles.centerEmptySet
@@ -252,27 +212,25 @@ class Note extends Component {
               </View>
             }
           /> */
-          <ListContainer
-            listData={this.state.notesData}
-            listStyle={
-              this.styles.centerEmptySet
-                ? this.styles.centerEmptySet
-                : this.styles.noteFlatlistCustom
-            }
-            renderItem={this.renderItem}
-            containerStyle={this.styles.emptyMessageContainer}
-            icon="note"
-            iconStyle={this.styles.emptyMessageIcon}
-            textStyle={this.styles.messageEmpty}
-            message={this.state.message}
-            onPress={this.emptyMessageNavigation}
-          />
-        )}
-      </View>
-    );
-  }
-}
-
+        <ListContainer
+          listData={notesData}
+          listStyle={
+            style.centerEmptySet
+              ? style.centerEmptySet
+              : style.noteFlatlistCustom
+          }
+          renderItem={renderItem}
+          containerStyle={style.emptyMessageContainer}
+          icon="note"
+          iconStyle={style.emptyMessageIcon}
+          textStyle={style.messageEmpty}
+          message={message}
+          onPress={emptyMessageNavigation}
+        />
+      )}
+    </View>
+  );
+};
 const mapStateToProps = (state) => {
   return {
     sizeFile: state.updateStyling.sizeFile,

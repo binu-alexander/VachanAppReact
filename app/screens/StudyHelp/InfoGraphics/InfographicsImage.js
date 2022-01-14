@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Animated, ActivityIndicator } from "react-native";
 import {
   PanGestureHandler,
@@ -11,307 +11,154 @@ import { Text, View } from "native-base";
 import { connect } from "react-redux";
 import { styles } from "./styles.js";
 
-export class InfographicsImage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      url: this.props.route.params.url,
-      fileName: this.props.route.params.fileName,
-      image: null,
-      isLoading: false,
-    };
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
+const InfographicsImage = (props) => {
+  const url = props.route.params.url;
+  const fileName = props.route.params.fileName;
+  const [image, setImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const style = styles(props.colorFile, props.sizeFile);
 
-    /* Pinching */
-    this._baseScale = new Animated.Value(1);
-    this._pinchScale = new Animated.Value(1);
-    this._scale = Animated.multiply(this._baseScale, this._pinchScale);
-    this._lastScale = 1;
-    this._onPinchGestureEvent = Animated.event(
-      [{ nativeEvent: { scale: this._pinchScale } }],
-      { useNativeDriver: true }
-    );
+  /* Pinching */
+  let _baseScale = new Animated.Value(1);
+  let _pinchScale = new Animated.Value(1);
+  let _scale = Animated.multiply(_baseScale, _pinchScale);
+  let _lastScale = 1;
+  let _onPinchGestureEvent = Animated.event(
+    [{ nativeEvent: { scale: _pinchScale } }],
+    { useNativeDriver: true }
+  );
 
-    /* Rotation */
-    this._rotate = new Animated.Value(0);
-    this._rotateStr = this._rotate.interpolate({
-      inputRange: [-100, 100],
-      outputRange: ["-100rad", "100rad"],
-      extrapolate: "clamp",
-    });
-    this._lastRotate = 0;
-    this._onRotateGestureEvent = Animated.event(
-      [{ nativeEvent: { rotation: this._rotate } }],
-      { useNativeDriver: true }
-    );
+  /* Rotation */
+  let _rotate = new Animated.Value(0);
+  let _rotateStr = _rotate.interpolate({
+    inputRange: [-100, 100],
+    outputRange: ["-100rad", "100rad"],
+    extrapolate: "clamp",
+  });
+  let _lastRotate = 0;
+  let _onRotateGestureEvent = Animated.event(
+    [{ nativeEvent: { rotation: _rotate } }],
+    { useNativeDriver: true }
+  );
 
-    /* Tilt */
-    this.translateX = new Animated.Value(0);
-    this.translateY = new Animated.Value(0);
+  /* Tilt */
+  let translateX = new Animated.Value(0);
+  let translateY = new Animated.Value(0);
 
-    this._onTiltGestureEvent = Animated.event(
-      [
-        {
-          nativeEvent: {
-            translationY: this.translateY,
-            translationX: this.translateX,
-          },
+  let _onTiltGestureEvent = Animated.event(
+    [
+      {
+        nativeEvent: {
+          translationY: translateY,
+          translationX: translateX,
         },
-      ],
-      { useNativeDriver: true }
-    );
-  }
-  _onRotateHandlerStateChange = (event) => {
+      },
+    ],
+    { useNativeDriver: true }
+  );
+  const _onRotateHandlerStateChange = (event) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
-      this._lastRotate += event.nativeEvent.rotation;
-      this._rotate.setOffset(this._lastRotate);
-      this._rotate.setValue(0);
+      _lastRotate += event.nativeEvent.rotation;
+      _rotate.setOffset(_lastRotate);
+      _rotate.setValue(0);
     }
   };
-  _onPinchHandlerStateChange = (event) => {
+  const _onPinchHandlerStateChange = (event) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
-      this._lastScale *= event.nativeEvent.scale;
+      _lastScale *= event.nativeEvent.scale;
 
-      this._baseScale.setValue(this._lastScale);
-      this._pinchScale.setValue(1);
+      _baseScale.setValue(_lastScale);
+      _pinchScale.setValue(1);
     }
   };
-  _onTiltGestureStateChange = (event) => {
+  const _onTiltGestureStateChange = (event) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
-      this.translateY.extractOffset();
-      this.translateX.extractOffset();
+      translateY.extractOffset();
+      translateX.extractOffset();
     }
   };
-  async componentDidMount() {
-    this.props.navigation.setOptions({
-      headerTitle: () => <Text style={this.styles.headerTitle}>Image</Text>,
+  const resetSize = () => {
+    _baseScale.setValue(1);
+    _rotate.setOffset(0);
+    translateX.setOffset(0);
+    translateY.setOffset(0);
+  };
+  useEffect(async () => {
+    props.navigation.setOptions({
+      headerTitle: () => <Text style={style.headerTitle}>Image</Text>,
       headerRight: () => (
-        <TouchableOpacity onPress={this.resetSize}>
-          <Text style={this.styles.headerRight}>Reset Size</Text>
+        <TouchableOpacity onPress={resetSize}>
+          <Text style={style.headerRight}>Reset Size</Text>
         </TouchableOpacity>
       ),
     });
-    this.setState({ image: this.state.url + this.state.fileName });
-  }
-  resetSize = () => {
-    this._baseScale.setValue(1);
-    this._rotate.setOffset(0);
-    this.translateX.setOffset(0);
-    this.translateY.setOffset(0);
-  };
-
-  render() {
-    return (
-      <View style={this.styles.wrapper}>
-        {this.state.isLoading && (
-          <View style={this.styles.loaderPos}>
-            <ActivityIndicator animate={true} size={32} />
-          </View>
-        )}
-        {this.state.image && (
-          <PanGestureHandler
-            ref={this.panRef}
-            onGestureEvent={this._onTiltGestureEvent}
-            onHandlerStateChange={this._onTiltGestureStateChange}
-            minDist={10}
-            minPointers={1}
-            maxPointers={2}
-            avgTouches
-          >
-            <Animated.View style={this.styles.wrapper}>
-              <RotationGestureHandler
-                ref={this.rotationRef}
-                simultaneousHandlers={this.pinchRef}
-                onGestureEvent={this._onRotateGestureEvent}
-                onHandlerStateChange={this._onRotateHandlerStateChange}
-              >
-                <Animated.View style={this.styles.wrapper}>
-                  <PinchGestureHandler
-                    ref={this.pinchRef}
-                    simultaneousHandlers={this.rotationRef}
-                    onGestureEvent={this._onPinchGestureEvent}
-                    onHandlerStateChange={this._onPinchHandlerStateChange}
+    setImage(url + fileName);
+  }, []);
+  let panRef = useRef();
+  let rotationRef = useRef();
+  let pinchRef = useRef();
+  return (
+    <View style={styles.wrapper}>
+      {isLoading && (
+        <View style={styles.loaderPos}>
+          <ActivityIndicator animate={true} size={32} />
+        </View>
+      )}
+      {image && (
+        <PanGestureHandler
+          ref={panRef}
+          onGestureEvent={_onTiltGestureEvent}
+          onHandlerStateChange={_onTiltGestureStateChange}
+          minDist={10}
+          minPointers={1}
+          maxPointers={2}
+          avgTouches
+        >
+          <Animated.View style={styles.wrapper}>
+            <RotationGestureHandler
+              ref={rotationRef}
+              simultaneousHandlers={pinchRef}
+              onGestureEvent={_onRotateGestureEvent}
+              onHandlerStateChange={_onRotateHandlerStateChange}
+            >
+              <Animated.View style={styles.wrapper}>
+                <PinchGestureHandler
+                  ref={pinchRef}
+                  simultaneousHandlers={rotationRef}
+                  onGestureEvent={_onPinchGestureEvent}
+                  onHandlerStateChange={_onPinchHandlerStateChange}
+                >
+                  <Animated.View
+                    style={style.imagecontainer}
+                    collapsable={false}
                   >
-                    <Animated.View
-                      style={this.styles.imagecontainer}
-                      collapsable={false}
-                    >
-                      <Animated.Image
-                        style={[
-                          this.styles.pinchableImage,
-                          {
-                            transform: [
-                              // { perspective: 200 },
-                              { scale: this._scale },
-                              { translateY: this.translateY },
-                              { translateX: this.translateX },
-                              { rotate: this._rotateStr },
-                            ],
-                          },
-                        ]}
-                        onLoadStart={() => this.setState({ isLoading: true })}
-                        onLoadEnd={() => this.setState({ isLoading: false })}
-                        source={{ uri: this.state.image }}
-                      />
-                    </Animated.View>
-                  </PinchGestureHandler>
-                </Animated.View>
-              </RotationGestureHandler>
-            </Animated.View>
-          </PanGestureHandler>
-        )}
-      </View>
-    );
-  }
-}
-// const InfographicsImage = (props) => {
-//   const url = props.route.params.url;
-//   const fileName = props.route.params.fileName;
-//   const [image, setImage] = useState(null);
-//   const [isLoading, setIsLoading] = useState(false);
-//   const style = styles(props.colorFile, props.sizeFile);
-
-//   /* Pinching */
-//   let _baseScale = new Animated.Value(1);
-//   let _pinchScale = new Animated.Value(1);
-//   let _scale = Animated.multiply(_baseScale, _pinchScale);
-//   let _lastScale = 1;
-//   let _onPinchGestureEvent = Animated.event(
-//     [{ nativeEvent: { scale: _pinchScale } }],
-//     { useNativeDriver: true }
-//   );
-
-//   /* Rotation */
-//   let _rotate = new Animated.Value(0);
-//   let _rotateStr = _rotate.interpolate({
-//     inputRange: [-100, 100],
-//     outputRange: ["-100rad", "100rad"],
-//     extrapolate: "clamp",
-//   });
-//   let _lastRotate = 0;
-//   let _onRotateGestureEvent = Animated.event(
-//     [{ nativeEvent: { rotation: _rotate } }],
-//     { useNativeDriver: true }
-//   );
-
-//   /* Tilt */
-//   let translateX = new Animated.Value(0);
-//   let translateY = new Animated.Value(0);
-
-//   let _onTiltGestureEvent = Animated.event(
-//     [
-//       {
-//         nativeEvent: {
-//           translationY: translateY,
-//           translationX: translateX,
-//         },
-//       },
-//     ],
-//     { useNativeDriver: true }
-//   );
-//   const _onRotateHandlerStateChange = (event) => {
-//     if (event.nativeEvent.oldState === State.ACTIVE) {
-//       _lastRotate += event.nativeEvent.rotation;
-//       _rotate.setOffset(_lastRotate);
-//       _rotate.setValue(0);
-//     }
-//   };
-//   const _onPinchHandlerStateChange = (event) => {
-//     if (event.nativeEvent.oldState === State.ACTIVE) {
-//       _lastScale *= event.nativeEvent.scale;
-
-//       _baseScale.setValue(_lastScale);
-//       _pinchScale.setValue(1);
-//     }
-//   };
-//   const _onTiltGestureStateChange = (event) => {
-//     if (event.nativeEvent.oldState === State.ACTIVE) {
-//       translateY.extractOffset();
-//       translateX.extractOffset();
-//     }
-//   };
-//   const resetSize = () => {
-//     _baseScale.setValue(1);
-//     _rotate.setOffset(0);
-//     translateX.setOffset(0);
-//     translateY.setOffset(0);
-//   };
-//   useEffect(async () => {
-//     props.navigation.setOptions({
-//       headerTitle: () => <Text style={style.headerTitle}>Image</Text>,
-//       headerRight: () => (
-//         <TouchableOpacity onPress={resetSize}>
-//           <Text style={style.headerRight}>Reset Size</Text>
-//         </TouchableOpacity>
-//       ),
-//     });
-//     setImage(url + fileName);
-//   }, []);
-//   let panRef = useRef();
-//   let rotationRef = useRef();
-//   let pinchRef = useRef();
-//   return (
-//     <View style={styles.wrapper}>
-//       {isLoading && (
-//         <View style={styles.loaderPos}>
-//           <ActivityIndicator animate={true} size={32} />
-//         </View>
-//       )}
-//       {image && (
-//         <PanGestureHandler
-//           ref={panRef}
-//           onGestureEvent={_onTiltGestureEvent}
-//           onHandlerStateChange={_onTiltGestureStateChange}
-//           minDist={10}
-//           minPointers={1}
-//           maxPointers={2}
-//           avgTouches
-//         >
-//           <Animated.View style={styles.wrapper}>
-//             <RotationGestureHandler
-//               ref={rotationRef}
-//               simultaneousHandlers={pinchRef}
-//               onGestureEvent={_onRotateGestureEvent}
-//               onHandlerStateChange={_onRotateHandlerStateChange}
-//             >
-//               <Animated.View style={styles.wrapper}>
-//                 <PinchGestureHandler
-//                   ref={pinchRef}
-//                   simultaneousHandlers={rotationRef}
-//                   onGestureEvent={_onPinchGestureEvent}
-//                   onHandlerStateChange={_onPinchHandlerStateChange}
-//                 >
-//                   <Animated.View
-//                     style={style.imagecontainer}
-//                     collapsable={false}
-//                   >
-//                     <Animated.Image
-//                       style={[
-//                         style.pinchableImage,
-//                         {
-//                           transform: [
-//                             // { perspective: 200 },
-//                             { scale: _scale },
-//                             { translateY: translateY },
-//                             { translateX: translateX },
-//                             { rotate: _rotateStr },
-//                           ],
-//                         },
-//                       ]}
-//                       onLoadStart={() => setIsLoading(true)}
-//                       onLoadEnd={() => setIsLoading(false)}
-//                       source={{ uri: image }}
-//                     />
-//                   </Animated.View>
-//                 </PinchGestureHandler>
-//               </Animated.View>
-//             </RotationGestureHandler>
-//           </Animated.View>
-//         </PanGestureHandler>
-//       )}
-//     </View>
-//   );
-// };
+                    <Animated.Image
+                      style={[
+                        style.pinchableImage,
+                        {
+                          transform: [
+                            // { perspective: 200 },
+                            { scale: _scale },
+                            { translateY: translateY },
+                            { translateX: translateX },
+                            { rotate: _rotateStr },
+                          ],
+                        },
+                      ]}
+                      onLoadStart={() => setIsLoading(true)}
+                      onLoadEnd={() => setIsLoading(false)}
+                      source={{ uri: image }}
+                    />
+                  </Animated.View>
+                </PinchGestureHandler>
+              </Animated.View>
+            </RotationGestureHandler>
+          </Animated.View>
+        </PanGestureHandler>
+      )}
+    </View>
+  );
+};
 
 const mapStateToProps = (state) => {
   return {

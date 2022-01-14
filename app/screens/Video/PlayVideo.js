@@ -1,87 +1,78 @@
-import React, { Component } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import YoutubePlayer from "react-native-youtube-iframe";
 import { styles } from "./styles.js";
 import { View, Text, ActivityIndicator, AppState } from "react-native";
 import { connect } from "react-redux";
 
-class PlayVideo extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      url: this.props.route.params ? this.props.route.params.url : null,
-      title: this.props.route.params ? this.props.route.params.title : null,
-      description: this.props.route.params
-        ? this.props.route.params.description
-        : null,
-      theme: this.props.route.params ? this.props.route.params.theme : null,
-      playing: false,
-      isLoading: false,
-    };
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
-  }
-  //   componentDidMount() {
-  //     this.onChangeState();
-  //   }
-  onError = () => alert("Oh! ");
-  onReady() {
-    this.setState({ playing: this.state.playing });
-  }
-  onChangeState(event) {
+const PlayVideo = (props) => {
+  const url = props.route.params ? props.route.params.url : null;
+  const title = props.route.params ? props.route.params.title : null;
+  const description = props.route.params
+    ? props.route.params.description
+    : null;
+  const theme = props.route.params ? props.route.params.theme : null;
+  const [playing, setPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const style = styles(props.colorFile, props.sizeFile);
+  const textRef = useRef("playerRef");
+  const onError = () => alert("Oh! ");
+  const onReady = () => {
+    setPlaying(playing);
+  };
+  const onChangeState = (event) => {
     if (event === undefined) {
-      this.setState({ isLoading: true });
+      setIsLoading(true);
     } else {
-      this.setState({ isLoading: false });
-    }
-  }
-  handleYoutubePlay = (currentAppState) => {
-    if (currentAppState == "background") {
-      this.setState({ playing: false });
-    }
-    if (currentAppState == "inactive") {
-      this.setState({ playing: false });
-    }
-    if (currentAppState == "active") {
-      this.setState({ playing: true });
+      setIsLoading(false);
     }
   };
-  componentDidMount() {
-    this.onChangeState();
-    this.props.navigation.setOptions({
-      headerTitle: this.state.theme,
-    });
-    this.setState({ playing: true });
-    AppState.addEventListener("change", this.handleYoutubePlay);
-  }
-  componentWillUnmount() {
-    AppState.removeEventListener("change", this.handleYoutubePlay);
-  }
+  const handleYoutubePlay = (currentAppState) => {
+    if (currentAppState == "background") {
+      setPlaying(false);
+    }
+    if (currentAppState == "inactive") {
+      setPlaying(false);
+    }
+    if (currentAppState == "active") {
+      setPlaying(true);
+    }
+  };
 
-  render() {
-    return (
-      <View style={this.styles.container}>
-        <Text style={this.styles.title}>{this.state.title}</Text>
-        {this.state.isLoading ? (
-          <View style={this.styles.loaderPos}>
-            <ActivityIndicator animate={true} size={32} />
-          </View>
-        ) : null}
-        <YoutubePlayer
-          ref={"playerRef"}
-          height={"36%"}
-          width={"100%"}
-          videoId={this.state.url}
-          play={this.state.playing}
-          onChangeState={(event) => this.onChangeState(event)}
-          onReady={() => this.onReady}
-          onError={this.onError}
-          volume={50}
-          playbackRate={1}
-        />
-        <Text style={this.styles.description}>{this.state.description}</Text>
-      </View>
-    );
-  }
-}
+  useEffect(() => {
+    onChangeState();
+    props.navigation.setOptions({
+      headerTitle: theme,
+    });
+    setPlaying(true);
+    AppState.addEventListener("change", handleYoutubePlay);
+    return () => {
+      AppState.removeEventListener("change", handleYoutubePlay);
+    };
+  }, []);
+  return (
+    <View style={style.container}>
+      <Text style={style.title}>{title}</Text>
+      {isLoading ? (
+        <View style={style.loaderPos}>
+          <ActivityIndicator animate={true} size={32} />
+        </View>
+      ) : null}
+      <YoutubePlayer
+        ref={textRef}
+        height={"36%"}
+        width={"100%"}
+        videoId={url}
+        play={playing}
+        onChangeState={(event) => onChangeState(event)}
+        onReady={() => onReady}
+        onError={onError}
+        volume={50}
+        playbackRate={1}
+      />
+      <Text style={style.description}>{description}</Text>
+    </View>
+  );
+};
 const mapStateToProps = (state) => {
   return {
     languageCode: state.updateVersion.languageCode,

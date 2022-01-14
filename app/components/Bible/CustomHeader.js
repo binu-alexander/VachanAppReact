@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   View,
   Animated,
@@ -15,133 +15,123 @@ const NAVBAR_HEIGHT = 80;
 // const HEADER_MIN_HEIGHT = 0;
 // const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
-export default class CustomHeader extends Component {
-  constructor(props) {
-    super(props);
-  }
-  render() {
-    let bookName = !isNaN(this.props.bookName.charAt(0))
-      ? this.props.bookName.charAt(0).toUpperCase() +
-        this.props.bookName.slice(1)
-      : this.props.bookName;
-    const navbarTranslate = this.props.clampedScroll.interpolate({
-      inputRange: [0, NAVBAR_HEIGHT],
-      outputRange: [0, -NAVBAR_HEIGHT],
-      extrapolate: "clamp",
-    });
-    return (
-      <Animated.View
-        style={[
-          navStyles.navbar,
-          { transform: [{ translateY: navbarTranslate }] },
-        ]}
-      >
-        <View style={navStyles.headerRightStyle}>
+const CustomHeader = (props) => {
+  let bookName = !isNaN(props.bookName.charAt(0))
+    ? props.bookName.charAt(0).toUpperCase() + props.bookName.slice(1)
+    : props.bookName;
+  const navbarTranslate = props.clampedScroll.interpolate({
+    inputRange: [0, NAVBAR_HEIGHT],
+    outputRange: [0, -NAVBAR_HEIGHT],
+    extrapolate: "clamp",
+  });
+
+  return (
+    <Animated.View
+      style={[
+        navStyles.navbar,
+        { transform: [{ translateY: navbarTranslate }] },
+      ]}
+    >
+      <View style={navStyles.headerRightStyle}>
+        <TouchableOpacity
+          style={navStyles.touchableStyleRight}
+          onPress={() => {
+            props.navigation.toggleDrawer();
+          }}
+        >
+          <Icon name="menu" color={Color.White} size={28} />
+        </TouchableOpacity>
+        {props.audio ? (
           <TouchableOpacity
-            style={navStyles.touchableStyleRight}
-            onPress={() => {
-              this.props.navigation.toggleDrawer();
-            }}
-          >
-            <Icon name="menu" color={Color.White} size={28} />
-          </TouchableOpacity>
-          {this.props.audio ? (
-            <TouchableOpacity
-              onPress={this.props.toggleAudio}
-              style={navStyles.touchableStyleRight}
-            >
-              <Icon name="volume-up" size={28} color={Color.White} />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              onPress={this.props.toggleAudio}
-              style={navStyles.touchableStyleRight}
-            >
-              <Icon name="volume-off" size={28} color={Color.White} />
-            </TouchableOpacity>
-          )}
-          <TouchableOpacity
-            onPress={this.props.navigateToVideo}
+            onPress={props.toggleAudio}
             style={navStyles.touchableStyleRight}
           >
-            <Icon name="videocam" size={24} color={Color.White} />
+            <Icon name="volume-up" size={28} color={Color.White} />
           </TouchableOpacity>
+        ) : (
           <TouchableOpacity
-            onPress={this.props.navigateToImage}
+            onPress={props.toggleAudio}
             style={navStyles.touchableStyleRight}
           >
-            <Icon name="image" size={24} color={Color.White} />
+            <Icon name="volume-off" size={28} color={Color.White} />
           </TouchableOpacity>
-          <TouchableOpacity style={navStyles.touchableStyleRight}>
-            <Icon
-              onPress={this.props.onSearch}
-              name="search"
-              color={Color.White}
-              size={24}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity style={navStyles.touchableStyleRight}>
-            <Icon
-              onPress={() => {
-                this.props.onBookmark(this.props.isBookmark);
-              }}
-              name="bookmark"
-              color={this.props.isBookmark ? Color.Red : Color.White}
-              size={24}
-            />
-          </TouchableOpacity>
-          <SelectContent
-            navigation={this.props.navigation}
-            navStyles={navStyles}
-            iconName={"auto-stories"}
+        )}
+        <TouchableOpacity
+          onPress={props.navigateToVideo}
+          style={navStyles.touchableStyleRight}
+        >
+          <Icon name="videocam" size={24} color={Color.White} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={props.navigateToImage}
+          style={navStyles.touchableStyleRight}
+        >
+          <Icon name="image" size={24} color={Color.White} />
+        </TouchableOpacity>
+        <TouchableOpacity style={navStyles.touchableStyleRight}>
+          <Icon
+            onPress={props.onSearch}
+            name="search"
+            color={Color.White}
+            size={24}
           />
-          <TouchableOpacity style={navStyles.touchableStyleRight}>
-            <Icon
-              onPress={this.props.navigateToSettings}
-              name="settings"
-              color={Color.White}
-              size={24}
-            />
-          </TouchableOpacity>
-        </View>
-        <Animated.View style={[navStyles.title]}>
-          <TouchableOpacity
-            style={navStyles.titleTouchable}
-            onPress={this.props.navigateToSelectionTab}
-          >
-            {bookName && this.props.chapterNumber ? (
-              <Text style={{ fontSize: 18, color: "#fff" }}>
-                {bookName.length > 16
-                  ? bookName.slice(0, 15) + "..."
-                  : bookName}{" "}
-                {this.props.chapterNumber}
-              </Text>
-            ) : null}
-            <Icon name="arrow-drop-down" color={Color.White} size={20} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[navStyles.titleTouchable]}
-            onPress={this.props.navigateToLanguage}
-          >
-            <Text style={navStyles.langVer}>
-              {this.props.language &&
-                this.props.language.charAt(0).toUpperCase() +
-                  this.props.language.slice(1)}{" "}
-              {this.props.versionCode && this.props.versionCode.toUpperCase()}
+        </TouchableOpacity>
+        <TouchableOpacity style={navStyles.touchableStyleRight}>
+          <Icon
+            onPress={() => {
+              props.onBookmark(props.isBookmark);
+            }}
+            name="bookmark"
+            color={props.isBookmark ? Color.Red : Color.White}
+            size={24}
+          />
+        </TouchableOpacity>
+        <SelectContent
+          navigation={props.navigation}
+          navStyles={navStyles}
+          iconName={"auto-stories"}
+        />
+        <TouchableOpacity style={navStyles.touchableStyleRight}>
+          <Icon
+            onPress={props.navigateToSettings}
+            name="settings"
+            color={Color.White}
+            size={24}
+          />
+        </TouchableOpacity>
+      </View>
+      <Animated.View style={[navStyles.title]}>
+        <TouchableOpacity
+          style={navStyles.titleTouchable}
+          onPress={props.navigateToSelectionTab}
+        >
+          {bookName && props.chapterNumber ? (
+            <Text style={{ fontSize: 18, color: "#fff" }}>
+              {bookName.length > 16 ? bookName.slice(0, 15) + "..." : bookName}{" "}
+              {props.chapterNumber}
             </Text>
-            <Icon name="arrow-drop-down" color={Color.White} size={20} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={navStyles.printView}
-            onPress={this.props.createPDF}
-          >
-            <Icon name="print" color={Color.White} size={28} />
-          </TouchableOpacity>
-        </Animated.View>
+          ) : null}
+          <Icon name="arrow-drop-down" color={Color.White} size={20} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[navStyles.titleTouchable]}
+          onPress={props.navigateToLanguage}
+        >
+          <Text style={navStyles.langVer}>
+            {props.language &&
+              props.language.charAt(0).toUpperCase() +
+                props.language.slice(1)}{" "}
+            {props.versionCode && props.versionCode.toUpperCase()}
+          </Text>
+          <Icon name="arrow-drop-down" color={Color.White} size={20} />
+        </TouchableOpacity>
+        <TouchableOpacity style={navStyles.printView} onPress={props.createPDF}>
+          <Icon name="print" color={Color.White} size={28} />
+        </TouchableOpacity>
       </Animated.View>
-    );
-  }
-}
+    </Animated.View>
+  );
+};
 
 const navStyles = StyleSheet.create({
   navbar: {
@@ -159,8 +149,8 @@ const navStyles = StyleSheet.create({
     justifyContent: "center",
     // paddingTop: STATUS_BAR_HEIGHT,
   },
-  printView:{ position: "absolute", right: 0, paddingRight: 8 },
-  langVer:{ fontSize: 18, color: "#fff" },
+  printView: { position: "absolute", right: 0, paddingRight: 8 },
+  langVer: { fontSize: 18, color: "#fff" },
   title: {
     color: "#333333",
     flexDirection: "row",
@@ -212,3 +202,5 @@ const navStyles = StyleSheet.create({
     textAlign: "center",
   },
 });
+
+export default CustomHeader;
