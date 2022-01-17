@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 import { View, Alert } from "react-native";
 import { connect } from "react-redux";
 import SelectionTab from "./routes/index";
@@ -7,32 +7,26 @@ import Spinner from "react-native-loading-spinner-overlay";
 import ReloadButton from "../../components/ReloadButton";
 import { styles } from "./styles";
 
-class ReferenceSelection extends Component {
-  constructor(props) {
-    super(props);
-    this.alertPresent = false;
-  }
+const ReferenceSelection = (props) => {
+  let alertPresent = false;
+  const style = styles(props.colorFile, props.sizeFile);
 
-  // all books to render
-  getBooks() {
-    if (this.props.route.params) {
-      let params = this.props.route.params;
-      this.props.fetchVersionBooks({
+  const getBooks = () => {
+    if (props.route.params) {
+      let params = props.route.params;
+      props.fetchVersionBooks({
         language: params.language,
         versionCode: params.versionCode,
         downloaded: params.downloaded,
         sourceId: params.sourceId,
       });
     }
-  }
-  componentDidMount() {
-    this.getBooks();
-  }
+  };
 
-  errorMessage() {
-    if (!this.alertPresent) {
-      this.alertPresent = true;
-      if (this.props.error !== null) {
+  const errorMessage = () => {
+    if (!alertPresent) {
+      alertPresent = true;
+      if (props.error !== null) {
         Alert.alert(
           "",
           "Check your internet connection",
@@ -40,39 +34,39 @@ class ReferenceSelection extends Component {
             {
               text: "OK",
               onPress: () => {
-                this.alertPresent = false;
+                alertPresent = false;
               },
             },
           ],
           { cancelable: false }
         );
       } else {
-        this.alertPresent = false;
+        alertPresent = false;
       }
     }
-  }
-  // if error message or fetch data not available re-render
-  reloadBooks = () => {
-    this.errorMessage();
-    this.getBooks();
   };
-  render() {
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
-    return this.props.isLoading ? (
-      <Spinner visible={true} textContent={"Loading..."} />
-    ) : this.props.error ? (
-      <View style={this.styles.mainContainerReloadButton}>
-        <ReloadButton
-          styles={this.styles}
-          reloadFunction={this.reloadBooks}
-          message={null}
-        />
-      </View>
-    ) : (
-      <SelectionTab params={this.props.route.params} />
-    );
-  }
-}
+  // if error message or fetch data not available re-render
+  const reloadBooks = () => {
+    errorMessage();
+    getBooks();
+  };
+  useEffect(() => {
+    getBooks();
+  }, []);
+  return props.isLoading ? (
+    <Spinner visible={true} textContent={"Loading..."} />
+  ) : props.error ? (
+    <View style={style.mainContainerReloadButton}>
+      <ReloadButton
+        styles={style}
+        reloadFunction={reloadBooks}
+        message={null}
+      />
+    </View>
+  ) : (
+    <SelectionTab params={props.route.params} />
+  );
+};
 
 const mapStateToProps = (state) => {
   return {

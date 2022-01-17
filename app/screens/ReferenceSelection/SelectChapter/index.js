@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { View } from "react-native";
 
 import SelectionGrid from "../../../components/SelectionGrid/";
@@ -7,105 +7,72 @@ import { connect } from "react-redux";
 import { Icon } from "native-base";
 import { updateVersionBook } from "../../../store/action";
 
-class ChapterSelection extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      chapterData: Array.from(
-        new Array(
-          this.props.route.params ? this.props.route.params.totalChapters : 0
-        ),
-        (x, i) => i + 1
-      ),
-      totalChapters: this.props.route.params
-        ? this.props.route.params.totalChapters
-        : null,
-      selectedBookId: this.props.route.params
-        ? this.props.route.params.selectedBookId
-        : null,
-      selectedBookName: this.props.route.params
-        ? this.props.route.params.selectedBookName
-        : null,
-      selectedChap: this.props.route.params
-        ? this.props.route.params.selectedChapterNumber
-        : null,
-      prevSelectChap: this.props.route.params
-        ? this.props.route.params.selectedChapterNumber
-        : null,
-    };
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
-  }
-  static getDerivedStateFromProps(nextProps, prevState) {
-    return {
-      chapterData: Array.from(
-        new Array(
-          nextProps.route.params ? nextProps.route.params.totalChapters : 0
-        ),
-        (x, i) => i + 1
-      ),
-      totalChapters: nextProps.route.params
-        ? nextProps.route.params.totalChapters
-        : null,
-      selectedBookId: nextProps.route.params
-        ? nextProps.route.params.selectedBookId
-        : null,
-      selectedBookName: nextProps.route.params
-        ? nextProps.route.params.selectedBookName
-        : null,
-      selectedChapterNumber: nextProps.route.params
-        ? nextProps.route.params.selectedChapterNumber
-        : null,
-      prevSelectChap: prevState.selectedChapterNumber,
-    };
-  }
-  onNumPress = (item) => {
-    var chapterNum = item == null ? this.state.selectedChapterNumber : item;
-    let selectedChapter =
-      chapterNum > this.state.totalChapters ? "1" : chapterNum;
-    if (this.props.route.params) {
-      this.props.navigation.navigate("Verses", {
-        selectedBookId: this.state.selectedBookId,
-        selectedBookName: this.state.selectedBookName,
+const ChapterSelection = (props) => {
+  const state = {
+    chapterData: Array.from(
+      new Array(props.route.params ? props.route.params.totalChapters : 0),
+      (x, i) => i + 1
+    ),
+    totalChapters: props.route.params ? props.route.params.totalChapters : null,
+    selectedBookId: props.route.params
+      ? props.route.params.selectedBookId
+      : null,
+    selectedBookName: props.route.params
+      ? props.route.params.selectedBookName
+      : null,
+    selectedChap: props.route.params
+      ? props.route.params.selectedChapterNumber
+      : null,
+    prevSelectChap: props.route.params
+      ? props.route.params.selectedChapterNumber
+      : null,
+  };
+  const style = styles(props.colorFile, props.sizeFile);
+  const onNumPress = (item) => {
+    var chapterNum = item == null ? state.selectedChapterNumber : item;
+    let selectedChapter = chapterNum > state.totalChapters ? "1" : chapterNum;
+    if (props.route.params) {
+      props.navigation.navigate("Verses", {
+        selectedBookId: state.selectedBookId,
+        selectedBookName: state.selectedBookName,
         selectedChapterNumber: selectedChapter,
-        totalChapters: this.state.totalChapters,
+        totalChapters: state.totalChapters,
       });
     }
   };
-  onBack = () => {
-    if (this.props.route.params) {
-      this.props.updateVersionBook({
-        bookId: this.props.route.params.selectedBookId,
-        bookName: this.props.route.params.selectedBookName,
-        chapterNumber: this.state.prevSelectChap,
+  const onBack = () => {
+    if (props.route.params) {
+      props.updateVersionBook({
+        bookId: props.route.params.selectedBookId,
+        bookName: props.route.params.selectedBookName,
+        chapterNumber: state.prevSelectChap,
       });
-      this.props.navigation.navigate("Bible");
+      props.navigation.navigate("Bible");
     }
   };
-  render() {
-    
-    return (
-      <View style={{ flex: 1 }}>
-        <SelectionGrid
-          styles={this.styles}
-          onNumPress={(item, index) => {
-            this.onNumPress(item, index);
-          }}
-          numbers={this.state.chapterData}
-          selectedNumber={this.props.route.params.selectedChapterNumber}
-          blueText={this.props.colorFile.blueText}
-          textColor={this.props.colorFile.textColor}
-        />
-        <Icon
-          type="AntDesign"
-          name="back"
-          onPress={this.onBack}
-          size={64}
-          style={this.styles.chapterIconPos}
-        />
-      </View>
-    );
-  }
-}
+
+  return (
+    <View style={{ flex: 1 }}>
+      <SelectionGrid
+        styles={style}
+        onNumPress={(item, index) => {
+          onNumPress(item, index);
+        }}
+        numbers={state.chapterData}
+        selectedNumber={props.route.params.selectedChapterNumber}
+        blueText={props.colorFile.blueText}
+        textColor={props.colorFile.textColor}
+      />
+      <Icon
+        type="AntDesign"
+        name="back"
+        onPress={onBack}
+        size={64}
+        style={style.chapterIconPos}
+      />
+    </View>
+  );
+};
 const mapStateToProps = (state) => {
   return {
     sizeFile: state.updateStyling.sizeFile,

@@ -2,7 +2,7 @@ import { StyleSheet, Dimensions } from "react-native";
 const width = Dimensions.get("window").width;
 import Color from "../../utils/colorConstants";
 
-export const styles = (colorFile, sizeFile) => {
+export const style = (colorFile, sizeFile) => {
   return StyleSheet.create({
     container: {
       flex: 1,

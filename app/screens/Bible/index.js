@@ -1,4 +1,4 @@
-import React, { Component,Fragment } from "react";
+import React, { Component,Fragment, useEffect,useRef,useState,useCallback } from "react";
 import {
   Text,
   View,
@@ -8,7 +8,7 @@ import {
   Share,
   AppState,
   Animated,
-  StatusBar,Platform
+  Platform
 } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -44,7 +44,7 @@ import SelectBottomTabBar from "../../components/Bible/SelectBottomTabBar";
 import ChapterNdAudio from "../../components/Bible/ChapterNdAudio";
 import ReloadButton from "../../components/ReloadButton";
 import Spinner from "react-native-loading-spinner-overlay";
-import { styles } from "./styles.js";
+import { style} from "./styles.js";
 import { connect } from "react-redux";
 import Commentary from "../StudyHelp/Commentary/";
 import Color from "../../utils/colorConstants";
@@ -58,254 +58,633 @@ import { getHeading, AndroidPermission } from "../../utils/UtilFunctions";
 import RNHTMLtoPDF from "react-native-html-to-pdf";
 import Permission from "../../utils/constants";
 import CustomStatusBar from "../../components/CustomStatusBar";
-const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
+// const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
 const width = Dimensions.get("window").width;
-const NAVBAR_HEIGHT = 64;
+// const NAVBAR_HEIGHT = 64;
 // eslint-disable-next-line no-undef
-const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
+// const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
+const Bible = (props) =>{
+  const [colorFile, setColorFile] = useState(props.colorFile)
+  const [sizeFile, setSizeFile] = useState(props.sizeFile)
+  const [downloadedBook,setDownloadedBook] = useState([])
+  const [audio,setAudio ] = useState(false)
+  const [uid,setUid ] = useState('')
 
-class Bible extends Component {
-  constructor(props) {
-    super(props);
-    const scrollAnim = new Animated.Value(0);
-    const offsetAnim = new Animated.Value(0);
-    this.itemHeights = [];
-    this.arrLayout = [];
-    this.state = {
-      colorFile: this.props.colorFile,
-      sizeFile: this.props.sizeFile,
-      downloadedBook: [],
-      audio: false,
-      uid: this.props.userId,
-      chapterContent: [],
-      chapterHeader: null,
-      error: null,
-      isLoading: false,
-      showBottomBar: false,
-      bookmarksList: [],
-      isBookmark: false,
-      showColorGrid: false,
-      currentVisibleChapter: parseInt(this.props.chapterNumber),
-      bookNumber: this.props.bookNumber,
-      nextContent: null,
-      previousContent: null,
-      selectedReferenceSet: [],
-      verseInLine: this.props.verseInLine,
-      bottomHighlightText: false,
-      HightlightedVerseArray: [],
-      connection_Status: true,
-      message: "",
-      status: false,
-      notesList: [],
-      initializing: true,
-      email: this.props.email,
-      imageUrl: this.props.photo,
-      unAvailableContent: null,
-      userData: "",
-      scrollAnim,
-      offsetAnim,
-      clampedScroll: Animated.diffClamp(
-        Animated.add(
-          scrollAnim.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0, 1],
-            extrapolateLeft: "clamp",
-          }),
-          offsetAnim
-        ),
-        0,
-        NAVBAR_HEIGHT - STATUS_BAR_HEIGHT
-      ),
-    };
+  const [chapterContent,setChapterContent ] = useState([])
+  const [chapterHeader,setChapterHeader ] = useState('')
+  const [error,setError ] = useState('')
 
-    this.getSelectedReferences = this.getSelectedReferences.bind(this);
-    this.alertPresent;
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
-  }
-  _clampedScrollValue = 0;
-  _offsetValue = 0;
-  _scrollValue = 0;
+  const [isLoading,setIsLoading ] = useState(false)
+  const [showBottomBar,setShowBottomBar ] = useState('')
+  const [bookmarksList,setBookmarksList ] = useState([])
+  const [isBookmark,setIsBookmark ] = useState('')
+  const [showColorGrid, setShowColorGrid] = useState('')
+  const [currentVisibleChapter,setCurrentVisibleChapter ] = useState(props.chapterNumber)
+  const [bookNumber,setBookNumber ] = useState('')
+  const [nextContent,setNextContent ] = useState('')
+  const [previousContent,setPreviousContent ] = useState('')
 
-  async componentDidMount() {
-    if (this.state.initializing) {
-      this.setState({ initializing: false });
-    }
-    this.unsubscriber = auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.setState({
-          user: user._user.email, userData: user,
-          isLoading: false,imageUrl: user._user.photoURL,
-          uid: user._user.uid, email: user._user.email
-        },()=>{
-          this.getHighlights();
-          this.getBookMarks();
-          this.getNotes();  
-        });
-        this.props.userInfo({
-          email: user._user.email, uid: user._user.uid,
-          userName: user._user.displayName, phoneNumber: null,
-          photo: user._user.photoURL,
-        });
-      } else {
-        this.props.userInfo({
-          email: null, uid: null,
-          userName: null, phoneNumber: null,
-          photo: null,
-        });
-        this.setState({ 
-          user: null, userData: null,
-          isLoading: false,imageUrl:null,
-          uid: null, email: null,
-         },()=>{
-          this.getHighlights();
-          this.getBookMarks();
-          this.getNotes();
-        });
-      }
-    });
-    this.ZoomTextSize();
-    this.state.scrollAnim.addListener(({ value }) => {
-      const diff = value - this._scrollValue;
-      this._scrollValue = value;
-      this._clampedScrollValue = Math.min(
-        Math.max(this._clampedScrollValue + diff, 0),
-        NAVBAR_HEIGHT - STATUS_BAR_HEIGHT
-      );
-    });
-    this.state.offsetAnim.addListener(({ value }) => {
-      this._offsetValue = value;
-    });
+  const [selectedReferenceSet,setSelectedReferenceSet ] = useState('')
+  const [verseInLine,setVerseInLine ] = useState('')
+  const [bottomHighlightText,setBottomHighlightText ] = useState(false)
+  const [HighlightedVerseArray,setHighlightedVerseArray ] = useState([])
+  const [connection_Status,setConnection_Status ] = useState(true)
+  const [message,setMessage ] = useState('')
+  const [status,setStatus ] = useState('')
+  const [notesList,setNotesList ] = useState([])
+  const [initializing,setInitializing ] = useState(true)
+  const [email,setEmail ] = useState(null)
+  const [arrLayout,setArrLayout ] = useState([])
 
-    this.unsubscribenetinfo = NetInfo.addEventListener(
-      this._handleConnectivityChange
-    );
+  const [imageUrl,setImageUrl ] = useState('')
+  const [unAvailableContent,setUnAvailableContent ] = useState('')
+  const [userData,setUserData ] = useState('')
+  const [scrollAnim,setScrollAnim ] = useState('')
+  const [offsetAnim,setOffsetAnim ] = useState('')
+  const [thumbSize,setThumbSize ] = useState('')
+  const [bookId,setBookId ] = useState('')
+  const [bookName,setBookName ] = useState('')
 
-    AppState.addEventListener("change", this._handleAppStateChange);
-    this.subs = this.props.navigation.addListener("focus", () => {
-      console.log("FOCUS ")
-      this.setState(
-        {
-          isLoading: true,
-          selectedReferenceSet: [],
-          showBottomBar: false,
-          showColorGrid: false,
-          currentVisibleChapter: this.props.chapterNumber,
-          audio: this.props.audio,
-          status: this.props.status,
-        },
-        () => {
-          this.getChapter();
-          this.audioComponentUpdate();
-          this.getHighlights();
-          this.getBookMarks();
-          this.getNotes();
-          if (this.props.books.length == 0) {
-            this.props.fetchVersionBooks({
-              language: this.props.language,
-              versionCode: this.props.versionCode,
-              downloaded: this.props.downloaded,
-              sourceId: this.props.sourceId,
-            });
-          }
-          this.setState({ isLoading: false });
-        }
-      );
-    });
-  }
-
-  componentDidUpdate(prevProps) {
-    if (
-      prevProps.language != this.props.language ||
-      prevProps.sourceId != this.props.sourceId ||
-      prevProps.baseAPI != this.props.baseAPI ||
-      prevProps.bookId != this.props.bookId ||
-      prevProps.chapterNumber != this.props.chapterNumber ||
-      prevProps.books.length != this.props.books.length
-    ) {
-      this.queryBookFromAPI(null);
-      this.audioComponentUpdate();
-      if (this.props.books.length == 0) {
-        this.props.fetchVersionBooks({
-          language: this.props.language,
-          versionCode: this.props.versionCode,
-          downloaded: this.props.downloaded,
-          sourceId: this.props.sourceId,
-        });
-      }
-    }
-    if (prevProps.selectedVerse != this.props.selectedVerse) {
-      this.scrollToVerse(this.props.selectedVerse);
-    }
-  }
-  // check internet connection to fetch api's accordingly
-  _handleConnectivityChange = (state) => {
-    this.setState({
-      connection_Status: state.isConnected == true ? true : false,
-    });
-    if (state.isConnected === true) {
-      this.queryBookFromAPI(null);
-      Toast.show({
-        text: "Online. Now content available.",
-        type: "success",
-        duration: 5000,
-      });
-      if (this.props.books.length == 0) {
-        this.props.fetchVersionBooks({
-          language: this.props.language,
-          versionCode: this.props.versionCode,
-          downloaded: this.props.downloaded,
-          sourceId: this.props.sourceId,
-        });
-      }
-    } else {
-      Toast.show({
-        text: "Offline. Check your internet Connection.",
-        type: "warning",
-        duration: 5000,
-      });
-    }
-  };
-
-  // handle audio status on background, inactive and active state
-  _handleAppStateChange = (currentAppState) => {
+  const styles = style(props.colorFile, props.sizeFile)
+    
+  const _handleAppStateChange = (currentAppState) => {
     if (currentAppState == "background") {
-      this.setState({ status: false });
+      setStatus(false)
     }
     if (currentAppState == "inactive") {
-      this.setState({ status: false });
+      setStatus(false)
     }
     if (currentAppState == "active") {
-      this.setState({ status: true });
+      setStatus(true)
     }
   };
-  // update book name and chapter number onback from referenceSelection page (callback function) also this function is usefull to update only few required values of redux
-  getReference = async (item) => {
-    console.log("REF ", item);
-    this.setState({
-      selectedReferenceSet: [],
-      showBottomBar: false,
-      showColorGrid: false,
+  
+useEffect(() => {
+  AppState.addEventListener('change', _handleAppStateChange);  
+  return () => {
+    AppState.removeEventListener('change', _handleAppStateChange);  
+  }
+}, []);
+
+useEffect(()=>{
+  const subs = props.navigation.addListener('focus', () => {
+console.log("FOCUSED called ")
+    setIsLoading(false)
+    setSelectedReferenceSet([])
+    setShowBottomBar(false)
+    setShowColorGrid(false)
+    setCurrentVisibleChapter(props.chapterNumber)
+    setAudio(props.audio)
+    setStatus(props.status)
+    getChapter()
+    audioComponentUpdate();
+    getHighlights();
+    getBookMarks();
+    getNotes();
+    if(props.books.length == 0) {
+      props.fetchVersionBooks({
+        language: props.language,
+        versionCode: props.versionCode,
+        downloaded: props.downloaded,
+        sourceId: props.sourceId,
+      });
+    }
+    setIsLoading(false);
     });
+  return subs
+},[])
+
+useEffect(()=>{
+  if (initializing) {
+    setInitializing(false)
+  }
+  const unsubscriber = auth().onAuthStateChanged((user) => {
+    if (user) {
+      setUserData(user)
+      setEmail(user._user.email)
+      setIsLoading(false)
+      setUid(user._user.uid)
+      props.userInfo({
+        email: user._user.email, uid: user._user.uid,
+        userName: user._user.displayName, phoneNumber: null,
+        photo: user._user.photoURL,
+      });
+    } else {
+    props.userInfo({
+        email: null, uid: null,
+        userName: null, phoneNumber: null,
+        photo: null,
+      });
+      setUserData(null)
+      setEmail(null)
+      setIsLoading(false)
+      setUid(null)
+    }
+  });
+  return unsubscriber
+},[])
+
+useEffect(()=>{
+  console.log("COMPONENT update ====>")
+    queryBookFromAPI(null);
+    audioComponentUpdate();
+    // scrollToVerse(props.selectedVerse)
+    if (props.books.length == 0) {
+      props.fetchVersionBooks({
+        language: props.language,
+        versionCode: props.versionCode,
+        downloaded: props.downloaded,
+        sourceId: props.sourceId,
+      });
+    }
+},[props.language,props.sourceId,props.baseAPI,props.chapterNumber,props.bookId])
+ // if book downloaded or user want to read downloaded book fetch chapter from local db
+  const getDownloadedContent =async()=> {
+    setIsLoading(true)
+    var content = await DbQueries.queryVersions(
+      props.language,
+      props.versionCode,
+      props.bookId,
+      props.currentVisibleChapter
+    );
+    if (content != null) {
+      setChapterHeader( content[0].chapters[currentVisibleChapter - 1].chapterHeading)
+      setDownloadedBook(content[0].chapters)
+      setChapterContent(content[0].chapters[currentVisibleChapter - 1].verses)
+      setIsLoading(false)
+      setError(null)
+      setPreviousContent(null)
+      setNextContent(null)
+    } else {
+      setIsLoading(false)
+      setChapterContent([])
+      setUnAvailableContent(true)
+    }
+  }
+useEffect(()=>{
+  getChapter()
+},[chapterContent])
+  // fetch chapter on didmount call
+  const  getChapter = async()=> {
+    try {
+      if (props.downloaded) {
+        getDownloadedContent
+      } else {
+        if (props.baseAPI != null) {
+          var content = await vApi.get(
+            "bibles" +
+              "/" +
+             props.sourceId +
+              "/" +
+              "books" +
+              "/" +
+             props.bookId +
+              "/" +
+              "chapter" +
+              "/" +
+              currentVisibleChapter
+          );
+          if (content) {
+            let header = getHeading(content.chapterContent.contents);
+            setChapterHeader(header)
+            setChapterContent( content.chapterContent.contents)
+            setError(null)
+            setIsLoading(false)
+            setCurrentVisibleChapter(currentVisibleChapter)
+            setNextContent(content.next)
+            setPreviousContent(content.previous)
+          }
+        }
+      }
+    } catch (error) {
+      setIsLoading(false)
+      setError(error)
+      setChapterContent([])
+      setUnAvailableContent(true)
+    }
+    setSelectedReferenceSet([])
+    setShowBottomBar(false)
+    setShowColorGrid(false)
+  }
+  const queryBookFromAPI = async(chapterInfo) => {
+    try {
+      console.log("LANGUAGE ",props.language)
+      console.log("SOURCE ID ",props.sourceId)
+      let bookName = null;
+      let bookItem = props.books.filter(
+        (val) => val.bookId == props.bookId
+      );
+      if (bookItem.length > 0) {
+        bookName = bookItem[0].bookName;
+      }
+      let chapterType = typeof chapterInfo;
+      let allData = chapterType == "object" && chapterInfo;
+
+      let chapterNum =
+        chapterType == "boolean" &&
+        (chapterInfo === true
+          ? currentVisibleChapter + 1
+          : currentVisibleChapter - 1);
+      let cNum =
+        chapterType == "boolean"
+          ? parseInt(chapterNum)
+          : allData
+          ? parseInt(allData.chapterId)
+          : props.chapterNumber;
+
+      let bookId = allData ? allData.bibleBookCode : tprops.bookId;
+      let bName = bookName != null ? bookName : props.bookName;
+        setIsLoading(true)
+        setSelectedReferenceSet([])
+        setShowColorGrid(false)
+        setShowBottomBar(false)
+        setCurrentVisibleChapter(cNum)
+        error(null)
+          if (props.downloaded) {
+            if (downloadedBook.length > 0) {
+              setChapterHeader(downloadedBook[currentVisibleChapter - 1].chapterHeading)
+                setIsLoading(false)
+                setChapterContent(downloadedBook[currentVisibleChapter - 1].verses)
+                setCurrentVisibleChapter(currentVisibleChapter)
+                setNextContent(null)
+                setPreviousContent(null)
+            } else {
+              getDownloadedContent();
+            }
+          } else {
+            try {
+              var content = await vApi.get(
+                "bibles" +
+                  "/" +
+                  props.sourceId +
+                  "/" +
+                  "books" +
+                  "/" +
+                  bookId +
+                  "/" +
+                  "chapter" +
+                  "/" +
+                  currentVisibleChapter
+              );
+              if (content) {
+                let header = getHeading(content.chapterContent.contents);
+                setChapterHeader(header)
+                setIsLoading(false)
+                setChapterContent(content.chapterContent.contents)
+                setCurrentVisibleChapter(currentVisibleChapter)
+                setNextContent(content.next)
+                setPreviousContent(content.previous)
+              }
+            } catch (error) {
+              setIsLoading(false)
+              setError(error)
+              setChapterContent([])
+              setUnAvailableContent(true)
+            }
+          }
+      props.updateVersionBook({
+        bookId: bookId,
+        bookName: bName,
+        chapterNumber:
+          parseInt(cNum) > getBookChaptersFromMapping(bookId)
+            ? 1
+            : parseInt(cNum),
+        totalChapters: getBookChaptersFromMapping(bookId),
+      });
+      getHighlights();
+      getNotes();
+      isBookmarked();
+    } catch (error) {
+      setIsLoading(false)
+      setError(error)
+      setChapterContent([])
+      setUnAvailableContent(true)
+    }
+  }
+    getSelectedReferences = (vIndex, chapterNum, vNum, text) => {
+    if (vIndex != -1 && chapterNum != -1 && vNum != -1) {
+      let obj = chapterNum + "_" + vIndex + "_" + vNum + "_" + text;
+      let selectedReferenceSet = [...selectedReferenceSet];
+      var found = false;
+      for (var i = 0; i < selectedReferenceSet.length; i++) {
+        if (selectedReferenceSet[i] == obj) {
+          found = true;
+          selectedReferenceSet.splice(i, 1);
+          break;
+        }
+      }
+      if (!found) {
+        selectedReferenceSet.push(obj);
+      }
+      setSelectedReferenceSet(selectedReferenceSet)
+    }
+  };
+  useEffect(()=>{
+    let selectedCount = selectedReferenceSet.length,
+          highlightCount = 0;
+        if(Object.keys(selectedReferenceSet).length != 0){
+        for (let item of selectedReferenceSet) {
+          let tempVal = item.split("_")
+          for (
+            var i = 0;
+            i <= HighlightedVerseArray.length - 1;
+            i++
+          ) {
+            let regexMatch = /(\d+):([a-zA-Z]+)/;
+            if (HighlightedVerseArray[i]) {
+              let match =
+              HighlightedVerseArray[i].match(regexMatch);
+              if (match) {
+                if (parseInt(match[1]) == parseInt(tempVal[2])) {
+                  highlightCount++;
+                }
+              }
+            }
+          }
+        }
+      }
+        setShowBottomBar(selectedReferenceSet.length > 0 ? true : false)
+        setBottomHighlightText(selectedCount == highlightCount ? false : true)
+        setShowColorGrid(selectedCount == highlightCount ? false : true)
+  },[selectedReferenceSet])
+  const toggleAudio = () => {
+        if (audio) {
+          setStatus(status);
+        } else {
+          Toast.show({
+            text: "No audio for " +props.language + " " + props.bookName,
+            duration: 5000,
+          });
+        }
+      };
+  const audioComponentUpdate = async() =>{
+        let res = await vApi.get("audiobibles");
+        try {
+          if (res.length !== 0) {
+            let data = res.filter((item) => {
+              if (item.language.name == props.language.toLowerCase()) {
+                return item;
+              }
+            });
+            if (data.length != 0) {
+              props.APIAudioURL({
+                audioURL: data[0].audioBibles[0].url,
+                audioFormat: data[0].audioBibles[0].format,
+                audioList: data[0].audioBibles,
+              });
+              setAudio(true)
+            } else {
+              props.APIAudioURL({ audioURL: null, audioFormat: null });
+              setAudio(false)
+
+            }
+          }
+        } catch (error) {
+          setAudio(false)
+        }
+      }
+      // check internet connection to fetch api's accordingly
+     
+// _handleConnectivityChange = (state) => {
+  // setConnection_Status( state.isConnected == true ? true : false)
+//   if (state.isConnected === true) {
+//     queryBookFromAPI(null);
+//     Toast.show({
+//       text: "Online. Now content available.",
+//       type: "success",
+//       duration: 5000,
+//     });
+//     if (props.books.length == 0) {
+//       props.fetchVersionBooks({
+//         language:props.language,
+//         versionCode: props.versionCode,
+//         downloaded: props.downloaded,
+//         sourceId: props.sourceId,
+//       });
+//     }
+//   } else {
+//     Toast.show({
+//       text: "Offline. Check your internet Connection.",
+//       type: "warning",
+//       duration: 5000,
+//     });
+//   }
+// };
+// const  getOffset = (index) => {
+//     var offset = 0;
+//     for (let i = 0; i < index; i++) {
+//       const elementLayout = arrLayout[index];
+//       if (elementLayout && elementLayout.height) {
+//         if (arrLayout[i] != undefined) {
+//           offset += arrLayout[i].height;
+//         }
+//       }
+//     }
+//     return offset;
+//   }
+// const scrollToVerse = (verseNumber) => {
+//     if (arrLayout != undefined) {
+//       let item = arrLayout.filter((i) => i.verseNumber == verseNumber);
+//       if (item.length > 0) {
+//         if (item[0].verseNumber == verseNumber) {
+//           const offset = getOffset(item[0].index);
+//           verseScroll.scrollToOffset({ offset, animated: true });
+//         }
+//       }
+//     }
+//   }
+
+const _keyExtractor = (item,index) => {
+      return index.toString()
+};
+const  onLayout = (event, index, verseNumber) => {
+    arrLayout[index] = {
+      height: event.nativeEvent.layout.height,
+      verseNumber,
+      index,
+    };
+  };
+const  navigateToSelectionTab = () => {
+    setStatus(false)
+    props.navigation.navigate("ReferenceSelection", {
+      getReference: getReference,
+      language: props.language,
+      version: props.versionCode,
+      sourceId: props.sourceId,
+      downloaded: props.downloaded,
+      parallelContent: props.visibleParallelView ? false : true,
+      bookId: props.bookId,
+      bookName: props.bookName,
+      chapterNumber: currentVisibleChapter,
+      totalChapters: props.totalChapters,
+      selectedVerse: props.selectedVerse,
+    });
+  }
+  const navigateToVideo = () => {
+    setStatus(false)
+    props.navigation.navigate("Video", {
+      bookId: props.bookId,
+      bookName: props.bookName,
+    })
+  }
+  const navigateToImage = () => {
+    setStatus(false)
+    props.navigation.navigate("Infographics", {
+      bookId: props.bookId,
+      bookName: props.bookName,
+    });
+  }
+  const navigateToSettings = () => {
+    setStatus(false)
+    props.navigation.navigate("Settings");
+  }
+  const onSearch = () => {
+    props.navigation.navigate("Search");
+  }
+  const navigateToLanguage = () => {
+    setStatus(false)
+    props.navigation.navigate("LanguageList", {
+      updateLangVer: updateLangVer,
+    })
+  }
+  const  downloadPDF = async()=> {
+    setIsLoading(true)
+      var texttohtml = "";
+      chapterContent.forEach((val) => {
+        if (val.verseNumber != undefined && val.verseText != undefined) {
+          texttohtml += `<p>${val.verseNumber} : ${val.verseText}</p>`;
+        }
+      });
+      let header1 = `<h1>${
+        props.language + " " + props.versionCode
+      }</h1>`;
+      let header3 = `<h3>${
+        props.bookName + " " + currentVisibleChapter
+      }</h3>`;
+      let options = {
+        html: `${header1}${header3}<p>${texttohtml}</p>`,
+        fileName: `${
+          "VachanGo_" +
+          props.language +
+          "_" +
+          props.bookId +
+          "_" +
+          currentVisibleChapter
+        }`,
+        // eslint-disable-next-line no-constant-condition
+        directory: "Download" ? "Download" : "Downloads",
+      };
+      setIsLoading(false)
+      await RNHTMLtoPDF.convert(options);
+    setIsLoading(false)
+    Toast.show({ text: "Pdf downloaded.", type: "success", duration: 5000 });
+  }
+  const createPDF_File = async () => {
+    let permissionGranted = await AndroidPermission(
+      Permission.PermissionTypes.WRITE_EXTERNAL_STORAGE
+    );
+    if (permissionGranted) {
+      Alert.alert("", "Do you want to download the pdf for current chapter", [
+        {
+          text: "No",
+          onPress: () => {
+            return;
+          },
+        },
+        { text: "Yes", onPress: () => downloadPDF() },
+      ]);
+    } else {
+      return;
+    }
+  }
+const  closeParallelView = (value)=> {
+    setStatus(false)
+    props.parallelVisibleView({
+      modalVisible: false,
+      visibleParallelView: value,
+    });
+  }
+
+
+  const renderFooter = () => {
+    if (chapterContent.length === 0) {
+      return null;
+    } else {
+      return (
+        <View
+          style={[
+            styles.addToSharefooterComponent,
+            {
+              marginBottom:
+              showColorGrid && bottomHighlightText
+                  ? 32
+                  : 16,
+            },
+          ]}
+        >
+          {
+            <View style={styles.footerView}>
+              {props.revision !== null && props.revision !== "" && (
+                <Text
+                  textBreakStrategy={"simple"}
+                  style={styles.textListFooter}
+                >
+                  <Text style={styles.footerText}>Copyright:</Text>{" "}
+                  {props.revision}
+                </Text>
+              )}
+              {props.license !== null && props.license !== "" && (
+                <Text
+                  textBreakStrategy={"simple"}
+                  style={styles.textListFooter}
+                >
+                  <Text style={styles.footerText}>License:</Text>{" "}
+                  {props.license}
+                </Text>
+              )}
+              {props.technologyPartner !== null &&
+                props.technologyPartner !== "" && (
+                  <Text
+                    textBreakStrategy={"simple"}
+                    style={styles.textListFooter}
+                  >
+                    <Text style={styles.footerText}>
+                      Technology partner:
+                    </Text>{" "}
+                    {props.technologyPartner}
+                  </Text>
+                )}
+            </View>
+          }
+        </View>
+      );
+    }
+  }
+
+//   // update book name and chapter number onback from referenceSelection page (callback function) also this function is usefull to update only few required values of redux
+  const getReference = async (item) => {
+    setSelectedReferenceSet([])
+    setShowBottomBar(false)
+    showColorGrid(false)
     if (item) {
       var time = new Date();
       DbQueries.addHistory(
-        this.props.sourceId,
-        this.props.language,
-        this.props.languageCode,
-        this.props.versionCode,
+        props.sourceId,
+        props.language,
+        props.languageCode,
+        props.versionCode,
         item.bookId,
         item.bookName,
         parseInt(item.chapterNumber),
-        this.props.downloaded,
+        props.downloaded,
         time
       );
-      this.setState({
-        currentVisibleChapter: item.chapterNumber,
-        bookId: item.bookId,
-        bookName: item.bookName,
-      });
-      this.props.updateVerseNumber({ selectedVerse: item.selectedVerse });
-      this.props.updateVersionBook({
+      setCurrentVisibleChapter(item.chapterNumber)
+      setBookId(item.bookId)
+      setBookName(item.bookName)
+     
+      props.updateVerseNumber({ selectedVerse: item.selectedVerse });
+      props.updateVersionBook({
         bookId: item.bookId,
         bookName: item.bookName,
         chapterNumber: parseInt(item.chapterNumber),
@@ -315,18 +694,18 @@ class Bible extends Component {
     } else {
       return;
     }
-  };
-  // update language and version  onback from language list page (callback function) also this function is usefull to update only few required values of redux
-  updateLangVer = async (item) => {
-    this.setState({
-      selectedReferenceSet: [],
-      showBottomBar: false,
-      showColorGrid: false,
-    });
+  }
+//   // update language and version  onback from language list page (callback function) also this function is usefull to update only few required values of redux
+  const updateLangVer = async (item) => {
+    console.log("updateLangVer ====> ")
+    setSelectedReferenceSet([])
+    setShowBottomBar(false)
+    setShowColorGrid(false)
+
     if (item) {
       let bookName = null;
       let bookId = null;
-      let bookItem = item.books.filter((i) => i.bookId == this.props.bookId);
+      let bookItem = item.books.filter((i) => i.bookId == props.bookId);
       if (bookItem.length > 0) {
         bookName = bookItem[0].bookName;
         bookId = bookItem[0].bookId;
@@ -346,11 +725,11 @@ class Bible extends Component {
         }
       }
       let chapterNum =
-        parseInt(this.state.currentVisibleChapter) >
+        parseInt(currentVisibleChapter) >
         getBookChaptersFromMapping(bookId)
           ? 1
-          : parseInt(this.state.currentVisibleChapter);
-      this.props.updateMetadata({
+          : parseInt(currentVisibleChapter);
+      props.updateMetadata({
         copyrightHolder: item.metadata[0].copyrightHolder,
         description: item.metadata[0].description,
         license: item.metadata[0].license,
@@ -359,26 +738,27 @@ class Bible extends Component {
         revision: item.metadata[0].revision,
         versionNameGL: item.metadata[0].versionNameGL,
       });
-      this.props.updateVersion({
+      props.updateVersion({
         language: item.languageName,
         languageCode: item.languageCode,
         versionCode: item.versionCode,
         sourceId: item.sourceId,
         downloaded: item.downloaded,
       });
-      this.props.updateVersionBook({
+      props.updateVersionBook({
         bookId: bookId,
         bookName: bookName,
         chapterNumber: chapterNum,
         totalChapters: getBookChaptersFromMapping(bookId),
       });
-      this.props.fetchVersionBooks({
+      props.fetchVersionBooks({
         language: item.languageName,
         versionCode: item.versionCode,
         downloaded: item.downloaded,
         sourceId: item.sourceId,
       });
-      this.setState({ previousContent: null, nextContent: null });
+      setPreviousContent(null)
+      setNextContent(null)
       var time = new Date();
       DbQueries.addHistory(
         item.sourceId,
@@ -396,388 +776,145 @@ class Bible extends Component {
     }
   };
   // if book downloaded or user want to read downloaded book fetch chapter from local db
-  async getDownloadedContent() {
-    this.setState({ isLoading: true });
-    var content = await DbQueries.queryVersions(
-      this.props.language,
-      this.props.versionCode,
-      this.props.bookId,
-      this.props.currentVisibleChapter
-    );
-    if (content != null) {
-      this.setState({
-        chapterHeader:
-          content[0].chapters[this.state.currentVisibleChapter - 1]
-            .chapterHeading,
-        downloadedBook: content[0].chapters,
-        chapterContent:
-          content[0].chapters[this.state.currentVisibleChapter - 1].verses,
-        isLoading: false,
-        error: null,
-        previousContent: null,
-        nextContent: null,
-      });
-    } else {
-      this.setState({
-        chapterContent: [],
-        unAvailableContent: true,
-        isLoading: false,
-      });
-    }
-  }
 
-  // fetch chapter on didmount call
-  async getChapter() {
-    try {
-      if (this.props.downloaded) {
-        this.getDownloadedContent();
-      } else {
-        if (this.props.baseAPI != null) {
-          var content = await vApi.get(
-            "bibles" +
-              "/" +
-              this.props.sourceId +
-              "/" +
-              "books" +
-              "/" +
-              this.props.bookId +
-              "/" +
-              "chapter" +
-              "/" +
-              this.state.currentVisibleChapter
-          );
-          if (content) {
-            let header = getHeading(content.chapterContent.contents);
-            this.setState({
-              chapterHeader: header,
-              chapterContent: content.chapterContent.contents,
-              error: null,
-              isLoading: false,
-              currentVisibleChapter: this.state.currentVisibleChapter,
-              nextContent: content.next,
-              previousContent: content.previous,
-            });
-          }
-        }
-      }
-    } catch (error) {
-      this.setState({
-        error: error,
-        isLoading: false,
-        chapterContent: [],
-        unAvailableContent: true,
-      });
-    }
-    this.setState({
-      selectedReferenceSet: [],
-      showBottomBar: false,
-      showColorGrid: false,
-    });
-  }
+//   // fetching chapter content on next or prev icon press
 
-  // fetching chapter content on next or prev icon press
-  queryBookFromAPI = (chapterInfo) => {
-    try {
-      let bookName = null;
-      let bookItem = this.props.books.filter(
-        (val) => val.bookId == this.props.bookId
-      );
-      if (bookItem.length > 0) {
-        bookName = bookItem[0].bookName;
-      }
-
-      let chapterType = typeof chapterInfo;
-      let allData = chapterType == "object" && chapterInfo;
-
-      let chapterNum =
-        chapterType == "boolean" &&
-        (chapterInfo === true
-          ? this.state.currentVisibleChapter + 1
-          : this.state.currentVisibleChapter - 1);
-      let cNum =
-        chapterType == "boolean"
-          ? parseInt(chapterNum)
-          : allData
-          ? parseInt(allData.chapterId)
-          : this.props.chapterNumber;
-
-      let bookId = allData ? allData.bibleBookCode : this.props.bookId;
-      let bName = bookName != null ? bookName : this.props.bookName;
-
-      this.setState(
-        {
-          isLoading: true,
-          selectedReferenceSet: [],
-          showColorGrid: false,
-          showBottomBar: false,
-          currentVisibleChapter: cNum,
-          error: null,
-        },
-        async () => {
-          if (this.props.downloaded) {
-            if (this.state.downloadedBook.length > 0) {
-              this.setState({
-                chapterHeader:
-                  this.state.downloadedBook[
-                    this.state.currentVisibleChapter - 1
-                  ].chapterHeading,
-                chapterContent:
-                  this.state.downloadedBook[
-                    this.state.currentVisibleChapter - 1
-                  ].verses,
-                isLoading: false,
-                previousContent: null,
-                nextContent: null,
-              });
-            } else {
-              this.getDownloadedContent();
-            }
-          } else {
-            try {
-              var content = await vApi.get(
-                "bibles" +
-                  "/" +
-                  this.props.sourceId +
-                  "/" +
-                  "books" +
-                  "/" +
-                  bookId +
-                  "/" +
-                  "chapter" +
-                  "/" +
-                  this.state.currentVisibleChapter
-              );
-              if (content) {
-                let header = getHeading(content.chapterContent.contents);
-                this.setState({
-                  chapterHeader: header,
-                  chapterContent: content.chapterContent.contents,
-                  isLoading: false,
-                  currentVisibleChapter: this.state.currentVisibleChapter,
-                  nextContent: content.next,
-                  previousContent: content.previous,
-                });
-              }
-            } catch (error) {
-              this.setState({
-                isLoading: false,
-                error: error,
-                chapterContent: [],
-                unAvailableContent: true,
-              });
-            }
-          }
-        }
-      );
-      this.props.updateVersionBook({
-        bookId: bookId,
-        bookName: bName,
-        chapterNumber:
-          parseInt(cNum) > getBookChaptersFromMapping(bookId)
-            ? 1
-            : parseInt(cNum),
-        totalChapters: getBookChaptersFromMapping(bookId),
-      });
-      this.getHighlights();
-      this.getNotes();
-      this.isBookmarked();
-    } catch (error) {
-      this.setState({
-        isLoading: false,
-        error: error,
-        chapterContent: [],
-        unAvailableContent: true,
-      });
-    }
-  };
-
-  // hide or show the audio component
-  toggleAudio = () => {
-    if (this.state.audio) {
-      this.setState({ status: !this.state.status });
-    } else {
-      Toast.show({
-        text: "No audio for " + this.props.language + " " + this.props.bookName,
-        duration: 5000,
-      });
-    }
-  };
-  // check available book having audio or not
-  async audioComponentUpdate() {
-    let res = await vApi.get("audiobibles");
-    try {
-      if (res.length !== 0) {
-        let data = res.filter((item) => {
-          if (item.language.name == this.props.language.toLowerCase()) {
-            return item;
-          }
-        });
-        if (data.length != 0) {
-          this.props.APIAudioURL({
-            audioURL: data[0].audioBibles[0].url,
-            audioFormat: data[0].audioBibles[0].format,
-            audioList: data[0].audioBibles,
-          });
-          this.setState({ audio: true });
-        } else {
-          this.props.APIAudioURL({ audioURL: null, audioFormat: null });
-          this.setState({ audio: false });
-        }
-      }
-    } catch (error) {
-      this.setState({ audio: false });
-    }
-  }
-  // get highlights from firebase
-  async getHighlights() {
-    if (this.state.connection_Status) {
-      if (this.state.email) {
+//   // get highlights from firebase
+  const getHighlights = async() => {
+    if (connection_Status) {
+      if (email) {
         database()
           .ref(
             "users/" +
-              this.state.uid +
+            uid +
               "/highlights/" +
-              this.props.sourceId +
+            props.sourceId +
               "/" +
-              this.props.bookId +
+            props.bookId +
               "/" +
-              this.state.currentVisibleChapter
+            currentVisibleChapter
           )
           .on("value", (snapshot) => {
             if (snapshot.val() != null) {
               let value = snapshot.val();
-              let HightlightedVerseArray = [];
+              let HighlightedVerseArray = [];
               for (var i = 0; i < value.length; i++) {
                 if (isNaN(value[i])) {
-                  HightlightedVerseArray.push(value[i]);
+                  HighlightedVerseArray.push(value[i]);
                 } else {
                   let addColor = value[i] + ":" + Color.highlightColorA.const;
-                  HightlightedVerseArray.push(addColor);
+                  HighlightedVerseArray.push(addColor);
                 }
-                this.setState({
-                  HightlightedVerseArray,
-                });
+                setHighlightedVerseArray(HighlightedVerseArray)
               }
             } else {
-              this.setState({
-                HightlightedVerseArray: [],
-              });
+              setHighlightedVerseArray([])
             }
           });
       } else {
-        this.setState({
-          HightlightedVerseArray: [],
-        });
+        setHighlightedVerseArray([])
       }
     } else {
-      this.setState({
-        HightlightedVerseArray: [],
-      });
+      setHighlightedVerseArray([])
+     
     }
   }
   // get bookmarks from firebase
-  async getBookMarks() {
-    if (this.state.connection_Status) {
-      if (this.state.email) {
+  const getBookMarks = async() =>{
+    if (connection_Status) {
+      if (email) {
         database()
           .ref(
             "users/" +
-              this.state.uid +
+              uid +
               "/bookmarks/" +
-              this.props.sourceId +
+              props.sourceId +
               "/" +
-              this.props.bookId
+              props.bookId
           )
           .on("value", (snapshot) => {
-            console.log("SNAPSHOT GET BOOKMARKS ",snapshot.val())
             if (snapshot.val() === null) {
-              this.setState({ bookmarksList: [], isBookmark: false });
+              setBookmarksList([])
+              setIsBookmark(false)
             } else {
-              this.setState({ bookmarksList: snapshot.val() }, () =>
-                this.isBookmarked()
-              );
+              setBookmarksList( snapshot.val())
+              isBookmarked()
+              // )
             }
           });
       } else {
-        this.setState({ bookmarksList: [], isBookmark: false });
+        setBookmarksList([])
+        setIsBookmark(false)
       }
     } else {
-      this.setState({ bookmarksList: [], isBookmark: false });
+      setBookmarksList([])
+      setIsBookmark(false)
     }
   }
-  //get notes from firebase
-  getNotes() {
-    if (this.state.connection_Status) {
-      if (this.state.email) {
+//   //get notes from firebase
+const  getNotes=()=> {
+    if (connection_Status) {
+      if (email) {
         database()
           .ref(
             "users/" +
-              this.state.uid +
+            uid +
               "/notes/" +
-              this.props.sourceId +
+            props.sourceId +
               "/" +
-              this.props.bookId +
+            props.bookId +
               "/" +
-              this.state.currentVisibleChapter
+            currentVisibleChapter
           )
           .on("value", (snapshot) => {
-            // this.state.notesList = [];
             if (snapshot.val() === null) {
-              this.setState({ notesList: [] });
+              setNotesList([])
             } else {
-              console.log("snapshot.val() ",snapshot.val())
               if (Array.isArray(snapshot.val())) {
-                this.setState({ notesList: snapshot.val()});
+                setNotesList(snapshot.val())
               } else {
-                this.setState({
-                  notesList: [snapshot.val()],
-                });
+                setNotesList([snapshot.val()])
               }
             }
           });
       } else {
-        this.setState({
-          notesList: [],
-        });
+        setNotesList([])
       }
     } else {
-      this.setState({
-        notesList: [],
-      });
+      setNotesList([])
     }
   }
-  //check chapter is bookmarked
-  isBookmarked = () => {
-    console.log("bookmarked list",this.state.bookmarksList)
-    if (this.state.bookmarksList.length > 0) {
-      let bm = this.state.bookmarksList.includes(this.state.currentVisibleChapter);
-      this.setState({ isBookmark: bm });
+//   //check chapter is bookmarked
+const  isBookmarked = () => {
+    if (bookmarksList.length > 0) {
+      let bm =bookmarksList.includes(currentVisibleChapter);
+      setIsBookmark(bm)
     }else{
-      this.setState({ isBookmark: false });
+      setIsBookmark(false)
     }
-  };
+  }
 
-  //add book mark from header icon
-  onBookmarkPress = (isbookmark) => {
-    console.log("BOOKMARK LIST")
-    if (this.state.connection_Status) {
-      if (this.state.email) {
+//   //add book mark from header icon
+const  onBookmarkPress = (isbookmark) => {
+    if (connection_Status) {
+      if (email) {
         var newBookmarks = isbookmark
-          ? this.state.bookmarksList.filter(
-              (a) => a !== this.state.currentVisibleChapter
+          ? bookmarksList.filter(
+              (a) => a !== currentVisibleChapter
             )
-          : this.state.bookmarksList.concat(this.state.currentVisibleChapter);
+          : bookmarksList.concat(currentVisibleChapter);
         database()
           .ref(
             "users/" +
-              this.state.uid +
+              uid +
               "/bookmarks/" +
-              this.props.sourceId +
+              props.sourceId +
               "/" +
-              this.props.bookId
+              props.bookId
           )
           .set(newBookmarks);
-        this.setState({ bookmarksList: newBookmarks,isBookmark: !isbookmark });
+          setBookmarksList(newBookmarks)
+          setIsBookmark(!isbookmark)
         Toast.show({
           text: isbookmark
             ? "Bookmarked chapter removed"
@@ -786,112 +923,66 @@ class Bible extends Component {
           duration: 5000,
         });
       } else {
-        this.setState({ bookmarksList: [] });
-        this.props.navigation.navigate("Login");
+        setBookmarksList([])
+        props.navigation.navigate("Login");
       }
     } else {
-      this.setState({ bookmarksList: [] });
+      setBookmarksList([])
       Alert.alert("Please check your internet connecion");
     }
   };
-  //selected reference for highlighting verse
-  getSelectedReferences = (vIndex, chapterNum, vNum, text) => {
-    if (vIndex != -1 && chapterNum != -1 && vNum != -1) {
-      let obj = chapterNum + "_" + vIndex + "_" + vNum + "_" + text;
-      let selectedReferenceSet = [...this.state.selectedReferenceSet];
-      var found = false;
-      for (var i = 0; i < selectedReferenceSet.length; i++) {
-        if (selectedReferenceSet[i] == obj) {
-          found = true;
-          selectedReferenceSet.splice(i, 1);
-          break;
-        }
-      }
-      if (!found) {
-        selectedReferenceSet.push(obj);
-      }
-      this.setState({ selectedReferenceSet }, () => {
-        let selectedCount = this.state.selectedReferenceSet.length,
-          highlightCount = 0;
-        for (let item of this.state.selectedReferenceSet) {
-          let tempVal = item.split("_");
-          for (
-            var i = 0;
-            i <= this.state.HightlightedVerseArray.length - 1;
-            i++
-          ) {
-            let regexMatch = /(\d+):([a-zA-Z]+)/;
-            if (this.state.HightlightedVerseArray[i]) {
-              let match =
-                this.state.HightlightedVerseArray[i].match(regexMatch);
-              if (match) {
-                if (parseInt(match[1]) == parseInt(tempVal[2])) {
-                  highlightCount++;
-                }
-              }
-            }
+//   //selected reference for highlighting verse
+
+const  addToNotes = () => {
+    if (connection_Status) {
+      if (email) {
+        let refList = [];
+        let id = props.bookId;
+        let name = props.bookName;
+        var verses = [];
+        if(Object.keys(selectedReferenceSet).length != 0){
+          for (let item of selectedReferenceSet) {
+            let tempVal = item.split("_");
+            const verseNumber = parseInt(tempVal[2]);
+            let refModel = {
+              bookId: id,
+              bookName: name,
+              chapterNumber: parseInt(tempVal[0]),
+              verseNumber: verseNumber,
+              verseText: tempVal[3],
+              versionCode: props.versionCode,
+              languageName: props.language,
+            };
+            refList.push(refModel);
+            verses.push(verseNumber);
           }
         }
-        this.setState({
-          showBottomBar:
-            this.state.selectedReferenceSet.length > 0 ? true : false,
-          bottomHighlightText: selectedCount == highlightCount ? false : true,
-          showColorGrid: selectedCount == highlightCount ? false : true,
-        });
-      });
-    }
-  };
-
-  addToNotes = () => {
-    if (this.state.connection_Status) {
-      if (this.state.email) {
-        let refList = [];
-        let id = this.props.bookId;
-        let name = this.props.bookName;
-        var verses = [];
-        for (let item of this.state.selectedReferenceSet) {
-          let tempVal = item.split("_");
-          const verseNumber = parseInt(tempVal[2]);
-          let refModel = {
-            bookId: id,
-            bookName: name,
-            chapterNumber: parseInt(tempVal[0]),
-            verseNumber: verseNumber,
-            verseText: tempVal[3],
-            versionCode: this.props.versionCode,
-            languageName: this.props.language,
-          };
-          refList.push(refModel);
-          verses.push(verseNumber);
-        }
-        this.props.navigation.navigate("EditNote", {
+        props.navigation.navigate("EditNote", {
           referenceList: refList,
-          notesList: this.state.notesList,
+          notesList: notesList,
           bcvRef: {
             bookId: id,
-            bookName: this.props.bookName,
-            chapterNumber: this.state.currentVisibleChapter,
+            bookName: props.bookName,
+            chapterNumber: currentVisibleChapter,
             verses: verses,
           },
           contentBody: "",
-          onbackNote: this.onbackNote,
+          onbackNote: onbackNote,
           noteIndex: -1,
         });
       } else {
-        this.props.navigation.navigate("Login");
+        props.navigation.navigate("Login");
       }
     } else {
       Alert.alert("Please check internet connection");
     }
-    this.setState({
-      selectedReferenceSet: [],
-      showBottomBar: false,
-      showColorGrid: false,
-    });
-  };
-  onbackNote = () => {};
+    setSelectedReferenceSet([])
+    setShowBottomBar(false)
+    showColorGridfalse(false)
+  }
+//   onbackNote = () => {};
 
-  setHighlightColor = (color) => {
+  const setHighlightColor = (color) => {
     let value = Color.highlightColorA.const;
     switch (color) {
       case Color.highlightColorA.code:
@@ -916,14 +1007,14 @@ class Bible extends Component {
   };
 
   doHighlight = async (color) => {
-    if (this.state.connection_Status) {
-      if (this.state.email) {
-        var array = [...this.state.HightlightedVerseArray];
-        for (let item of this.state.selectedReferenceSet) {
+    if (connection_Status) {
+      if (email) {
+        var array = [...HighlightedVerseArray];
+        if(Object.keys(selectedReferenceSet).length != 0){
+        for (let item of selectedReferenceSet) {
           let tempVal = item.split("_");
-          let selectedColor = this.setHighlightColor(color);
+          let selectedColor = setHighlightColor(color);
           let val = tempVal[2].trim() + ":" + selectedColor;
-
           for (var i = 0; i < array.length; i++) {
             let regexMatch = /(\d+):([a-zA-Z]+)/;
             if (array[i]) {
@@ -931,142 +1022,111 @@ class Bible extends Component {
               if (match) {
                 if (parseInt(match[1]) == parseInt(tempVal[2])) {
                   array.splice(i, 1);
-                  this.setState({ HightlightedVerseArray: array });
+                  setHighlightedVerseArray(array)
                 }
               }
             }
           }
           var index = array.indexOf(val);
           //solve the issue of 2 color on single verse
-          if (this.state.bottomHighlightText) {
+          if (bottomHighlightText) {
             if (index == -1) {
               array.push(val);
             }
-            this.setState({ HightlightedVerseArray: array });
+            setHighlightedVerseArray(array)
           }
         }
+      }
         database()
           .ref(
             "users/" +
-              this.state.uid +
+              uid +
               "/highlights/" +
-              this.props.sourceId +
+              props.sourceId +
               "/" +
-              this.props.bookId +
+              props.bookId +
               "/" +
-              this.state.currentVisibleChapter
+              currentVisibleChapter
           )
           .set(array);
       } else {
-        this.props.navigation.navigate("Login");
+        props.navigation.navigate("Login");
       }
     } else {
       Alert.alert("Please check internet connection");
     }
-    this.setState({
-      selectedReferenceSet: [],
-      showBottomBar: false,
-      showColorGrid: false,
-    });
-  };
+    setSelectedReferenceSet([])
+    setShowBottomBar(false)
+    setShowColorGrid(false)
+  }
 
-  //share verse
+//   //share verse
   addToShare = () => {
     let shareText = "";
-    for (let item of this.state.selectedReferenceSet) {
-      let tempVal = item.split("_");
+    if(Object.keys(selectedReferenceSet).length != 0){
+    for (let item of selectedReferenceSet) {
+      let tempVal = item.split("_")
       let chapterNumber = parseInt(tempVal[0]);
       // let vIndex = parseInt(tempVal[1]);
       let verseNumber = tempVal[2];
       shareText = shareText.concat(
-        this.props.bookName + " " + chapterNumber + ":" + verseNumber + " "
+        props.bookName + " " + chapterNumber + ":" + verseNumber + " "
       );
       shareText = shareText.concat(tempVal[3]);
       shareText = shareText.concat("\n");
     }
+  }
     Share.share({ message: shareText });
-    this.setState({
-      selectedReferenceSet: [],
-      showBottomBar: false,
-      showColorGrid: false,
-    });
-  };
-
-  componentWillUnmount() {
-    var time = new Date();
-    DbQueries.addHistory(
-      this.props.sourceId,
-      this.props.language,
-      this.props.languageCode,
-      this.props.versionCode,
-      this.props.bookId,
-      this.props.bookName,
-      this.state.currentVisibleChapter,
-      this.props.downloaded,
-      time
-    );
-    this.subs && this.subs();
-    this.unsubscriber && this.unsubscriber();
-    this.unsubscribenetinfo && this.unsubscribenetinfo();
-    this.state.scrollAnim.removeAllListeners();
-    this.state.offsetAnim.removeAllListeners();
-    this.props.ToggleAudio({ status: false, audio: false });
-    AppState.removeEventListener("change", this._handleAppStateChange);
+    setSelectedReferenceSet([])
+    setShowBottomBar(false)
+    setShowColorGrid(false)
   }
 
-  // _keyExtractor = (item, index) => item.number;
-  _keyExtractor = (item) => {
-    return this.props.downloaded ? item.number : item.verseNumber;
-  };
-
-  onSearch = () => {
-    this.props.navigation.navigate("Search");
-  };
   changeSizeByOne = (value) => {
-    switch (this.props.sizeMode) {
+    switch (props.sizeMode) {
       case 0: {
         if (value == -1) {
           return;
         } else {
-          this.styles = styles(this.props.colorFile, smallFont);
-          this.props.updateFontSize(1);
+          styles = styles(props.colorFile, smallFont);
+          props.updateFontSize(1);
         }
         break;
       }
       case 1: {
         if (value == -1) {
-          this.styles = styles(this.props.colorFile, extraSmallFont);
-          this.props.updateFontSize(0);
+          styles = styles(props.colorFile, extraSmallFont);
+          props.updateFontSize(0);
         } else {
-          this.styles = styles(this.props.colorFile, mediumFont);
-          this.props.updateFontSize(2);
+          styles = styles(props.colorFile, mediumFont);
+          props.updateFontSize(2);
         }
         break;
       }
       case 2: {
         if (value == -1) {
-          this.styles = styles(this.props.colorFile, smallFont);
-          this.props.updateFontSize(1);
+          styles = styles(props.colorFile, smallFont);
+          props.updateFontSize(1);
         } else {
-          this.styles = styles(this.props.colorFile, largeFont);
-          this.props.updateFontSize(3);
+          styles = styles(props.colorFile, largeFont);
+          props.updateFontSize(3);
         }
         break;
       }
       case 3: {
         if (value == -1) {
-          this.styles = styles(this.props.colorFile, mediumFont);
-          this.props.updateFontSize(2);
+          styles = styles(props.colorFile, mediumFont);
+          props.updateFontSize(2);
         } else {
-          this.styles = styles(this.props.colorFile, extraLargeFont);
-          this.props.updateFontSize(4);
+          styles = styles(props.colorFile, extraLargeFont);
+          props.updateFontSize(4);
         }
         break;
       }
       case 4: {
         if (value == -1) {
-          this.styles = styles(this.props.colorFile, largeFont);
-          this.props.updateFontSize(3);
+          styles = styles(props.colorFile, largeFont);
+          props.updateFontSize(3);
         } else {
           return;
         }
@@ -1074,493 +1134,205 @@ class Bible extends Component {
       }
     }
   };
-  ZoomTextSize = () => {
-    this.gestureResponder = createResponder({
-      // onStartShouldSetResponder: (evt, gestureState) => true,
-      onStartShouldSetResponder: () => true,
-      //onStartShouldSetResponderCapture: (evt, gestureState) => true,
-      onStartShouldSetResponderCapture: () => true,
-      //onMoveShouldSetResponder: (evt, gestureState) => true,
-      onMoveShouldSetResponder: () => true,
-      //onMoveShouldSetResponderCapture: (evt, gestureState) => true,
-      onMoveShouldSetResponderCapture: () => true,
-      //onResponderGrant: (evt, gestureState) => {},
-      onResponderGrant: () => {},
-      //onResponderMove: (evt, gestureState) => {
-      onResponderMove: (gestureState) => {
-        let thumbSize = this.state.thumbSize;
-        if (gestureState.pinch && gestureState.previousPinch) {
-          thumbSize *= gestureState.pinch / gestureState.previousPinch;
-          let currentDate = new Date().getTime();
-          let diff = currentDate - this.pinchTime;
-          if (diff > this.pinchDiff) {
-            if (gestureState.pinch - gestureState.previousPinch > 5) {
-              // large
-              this.changeSizeByOne(1);
-            } else if (gestureState.previousPinch - gestureState.pinch > 5) {
-              // small
-              this.changeSizeByOne(-1);
-            }
-          }
-          this.pinchDiff = diff;
-          this.pinchTime = currentDate;
-        }
-        let { left, top } = this.state;
-        left += gestureState.moveX - gestureState.previousMoveX;
-        top += gestureState.moveY - gestureState.previousMoveY;
-        this.setState({
-          gestureState: {
-            ...gestureState,
-          },
-          left,
-          top,
-          thumbSize,
-        });
-      },
-      onResponderTerminationRequest: () => true,
-      onResponderRelease: (gestureState) => {
-        this.setState({
-          gestureState: {
-            ...gestureState,
-          },
-        });
-      },
-      onResponderTerminate: () => {},
-
-      onResponderSingleTapConfirmed: () => {},
-
-      moveThreshold: 2,
-      debug: false,
-    });
-  };
-  navigateToLanguage = () => {
-    this.setState({ status: false });
-    this.props.navigation.navigate("LanguageList", {
-      updateLangVer: this.updateLangVer,
-    });
-  };
-  navigateToSelectionTab = () => {
-    this.setState({ status: false });
-    this.props.navigation.navigate("ReferenceSelection", {
-      getReference: this.getReference,
-      language: this.props.language,
-      version: this.props.versionCode,
-      sourceId: this.props.sourceId,
-      downloaded: this.props.downloaded,
-      parallelContent: this.props.visibleParallelView ? false : true,
-      bookId: this.props.bookId,
-      bookName: this.props.bookName,
-      chapterNumber: this.state.currentVisibleChapter,
-      totalChapters: this.props.totalChapters,
-      selectedVerse: this.props.selectedVerse,
-    });
-  };
-  navigateToVideo = () => {
-    this.setState({ status: false });
-    this.props.navigation.navigate("Video", {
-      bookId: this.props.bookId,
-      bookName: this.props.bookName,
-    });
-  };
-  navigateToImage = () => {
-    this.setState({ status: false });
-    this.props.navigation.navigate("Infographics", {
-      bookId: this.props.bookId,
-      bookName: this.props.bookName,
-    });
-  };
-  navigateToSettings = () => {
-    this.setState({ status: false });
-    this.props.navigation.navigate("Settings");
-  };
-
-  getOffset(index) {
-    var offset = 0;
-    for (let i = 0; i < index; i++) {
-      const elementLayout = this.arrLayout[index];
-      if (elementLayout && elementLayout.height) {
-        if (this.arrLayout[i] != undefined) {
-          offset += this.arrLayout[i].height;
-        }
-      }
-    }
-    return offset;
-  }
-  scrollToVerse(verseNumber) {
-    if (this.arrLayout != undefined) {
-      let item = this.arrLayout.filter((i) => i.verseNumber == verseNumber);
-      if (item.length > 0) {
-        if (item[0].verseNumber == verseNumber) {
-          const offset = this.getOffset(item[0].index);
-          this.verseScroll.scrollToOffset({ offset, animated: true });
-        }
-      }
-    }
-  }
-
-  closeParallelView(value) {
-    this.setState({ status: false });
-    this.props.parallelVisibleView({
-      modalVisible: false,
-      visibleParallelView: value,
-    });
-  }
-
-  _onScrollEndDrag = () => {
-    this._scrollEndTimer = setTimeout(this._onMomentumScrollEnd, 250);
-  };
-
-  _onMomentumScrollBegin = () => {
-    clearTimeout(this._scrollEndTimer);
-  };
-
-  onLayout = (event, index, verseNumber) => {
-    this.arrLayout[index] = {
-      height: event.nativeEvent.layout.height,
-      verseNumber,
-      index,
-    };
-  };
-
-  _onMomentumScrollEnd = () => {
-    const toValue =
-      this._scrollValue > NAVBAR_HEIGHT &&
-      this._clampedScrollValue > (NAVBAR_HEIGHT - STATUS_BAR_HEIGHT) / 2
-        ? this._offsetValue + NAVBAR_HEIGHT
-        : this._offsetValue - NAVBAR_HEIGHT;
-
-    Animated.timing(this.state.offsetAnim, {
-      toValue,
-      duration: 350,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  downloadPDF() {
-    this.setState({ isLoading: true }, async () => {
-      var texttohtml = "";
-      this.state.chapterContent.forEach((val) => {
-        if (val.verseNumber != undefined && val.verseText != undefined) {
-          texttohtml += `<p>${val.verseNumber} : ${val.verseText}</p>`;
-        }
-      });
-      let header1 = `<h1>${
-        this.props.language + " " + this.props.versionCode
-      }</h1>`;
-      let header3 = `<h3>${
-        this.props.bookName + " " + this.state.currentVisibleChapter
-      }</h3>`;
-      let options = {
-        html: `${header1}${header3}<p>${texttohtml}</p>`,
-        fileName: `${
-          "VachanGo_" +
-          this.props.language +
-          "_" +
-          this.props.bookId +
-          "_" +
-          this.state.currentVisibleChapter
-        }`,
-        // eslint-disable-next-line no-constant-condition
-        directory: "Download" ? "Download" : "Downloads",
-      };
-      this.setState({ isLoading: false });
-      await RNHTMLtoPDF.convert(options);
-    });
-    Toast.show({ text: "Pdf downloaded.", type: "success", duration: 5000 });
-  }
-  createPDF_File = async () => {
-    // this.setState({ isLoading: true }, async () => {
-    let permissionGranted = await AndroidPermission(
-      Permission.PermissionTypes.WRITE_EXTERNAL_STORAGE
-    );
-    console.log("permission ", permissionGranted);
-    if (permissionGranted) {
-      Alert.alert("", "Do you want to download the pdf for current chapter", [
-        {
-          text: "No",
-          onPress: () => {
-            return;
-          },
-        },
-        { text: "Yes", onPress: () => this.downloadPDF() },
-      ]);
-    } else {
-      return;
-    }
-    // })
-  };
-
-  renderFooter = () => {
-    if (this.state.chapterContent.length === 0) {
-      return null;
-    } else {
-      return (
-        <View
-          style={[
-            this.styles.addToSharefooterComponent,
-            {
-              marginBottom:
-                this.state.showColorGrid && this.state.bottomHighlightText
-                  ? 32
-                  : 16,
-            },
-          ]}
-        >
-          {
-            <View style={this.styles.footerView}>
-              {this.props.revision !== null && this.props.revision !== "" && (
-                <Text
-                  textBreakStrategy={"simple"}
-                  style={this.styles.textListFooter}
-                >
-                  <Text style={this.styles.footerText}>Copyright:</Text>{" "}
-                  {this.props.revision}
-                </Text>
-              )}
-              {this.props.license !== null && this.props.license !== "" && (
-                <Text
-                  textBreakStrategy={"simple"}
-                  style={this.styles.textListFooter}
-                >
-                  <Text style={this.styles.footerText}>License:</Text>{" "}
-                  {this.props.license}
-                </Text>
-              )}
-              {this.props.technologyPartner !== null &&
-                this.props.technologyPartner !== "" && (
-                  <Text
-                    textBreakStrategy={"simple"}
-                    style={this.styles.textListFooter}
-                  >
-                    <Text style={this.styles.footerText}>
-                      Technology partner:
-                    </Text>{" "}
-                    {this.props.technologyPartner}
-                  </Text>
-                )}
-            </View>
-          }
-        </View>
-      );
-    }
-  };
-  render() {
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
-    return (
-      <CustomStatusBar>
-      <View style={this.styles.container}>
-        {this.props.visibleParallelView ? (
-          <View
-            style={this.styles.headerView}
-          >
-            <Header style={{ backgroundColor: Color.Blue_Color, height: 40 }}>
-              <Button
-                transparent
-                onPress={() => this.navigateToSelectionTab(true)}
-              >
-                <Title style={{ fontSize: 16 }}>
-                  {this.props.bookName.length > 10
-                    ? this.props.bookName.slice(0, 9) + "..."
-                    : this.props.bookName}{" "}
-                  {this.state.currentVisibleChapter}
-                </Title>
-                <Icon name="arrow-drop-down" color={Color.White} size={20} />
-              </Button>
-            </Header>
-          </View>
-        ) : (
-          <CustomHeader
-            audio={this.state.audio}
-            clampedScroll={this.state.clampedScroll}
-            navigation={this.props.navigation}
-            toggleAudio={this.toggleAudio}
-            navigateToVideo={this.navigateToVideo}
-            navigateToImage={this.navigateToImage}
-            navigateToSettings={this.navigateToSettings}
-            onSearch={this.onSearch}
-            bookName={this.props.bookName}
-            language={this.props.language}
-            versionCode={this.props.versionCode}
-            chapterNumber={this.state.currentVisibleChapter}
-            onBookmark={this.onBookmarkPress}
-            isBookmark={this.state.isBookmark}
-            navigateToSelectionTab={this.navigateToSelectionTab}
-            navigateToLanguage={this.navigateToLanguage}
-            createPDF={this.createPDF_File}
-          />
-        )}
-        {this.state.isLoading && (
-          <Spinner visible={true} textContent={"Loading..."} />
-        )}
-
-        {/** Main View for the single or parrallel View */}
-        <View style={this.styles.singleView}>
-          {/** Single view with only bible text */}
-          <View
-            style={[
-            this.styles.innerContainer,
-            {width: this.props.visibleParallelView ? "50%" : width,
-            }]}
-          >
-            {this.state.unAvailableContent &&
-            this.state.chapterContent.length == 0 ? (
+  console.log("CHAPTER CONTENT ",JSON.stringify(chapterContent))
+      return(
+          <CustomStatusBar>
+          <View style={styles.container}>
+            {props.visibleParallelView ? (
               <View
-                style={this.styles.reloadButtonCenter}
+                style={styles.headerView}
               >
-                <ReloadButton
-                  styles={this.styles}
-                  reloadFunction={() => this.queryBookFromAPI(null)}
-                  message={null}
-                />
+                <Header style={{ backgroundColor: Color.Blue_Color, height: 40 }}>
+                  <Button
+                    transparent
+                    onPress={navigateToSelectionTab(true)}
+                  >
+                    <Title style={{ fontSize: 16 }}>
+                      {props.bookName.length > 10
+                        ? props.bookName.slice(0, 9) + "..."
+                        : props.bookName}{" "}
+                      {currentVisibleChapter}
+                    </Title>
+                    <Icon name="arrow-drop-down" color={Color.White} size={20} />
+                  </Button>
+                </Header>
               </View>
             ) : (
-              <AnimatedFlatlist
-                {...this.gestureResponder}
-                data={this.state.chapterContent}
-                // getItemLayout={this.getItemLayout}
-                ref={(ref) => (this.verseScroll = ref)}
-                contentContainerStyle={
-                  this.state.chapterContent.length === 0
-                    ? this.styles.centerEmptySet
-                    : {
-                        paddingHorizontal: 16,
-                        paddingTop: this.props.visibleParallelView ? 52 : 90,
-                        paddingBottom: 90,
-                      }
-                }
-                extraData={this.state}
-                scrollEventThrottle={1}
-                onMomentumScrollBegin={this._onMomentumScrollBegin}
-                onMomentumScrollEnd={this._onMomentumScrollEnd}
-                onScrollEndDrag={this._onScrollEndDrag}
-                onScroll={Animated.event(
-                  [
-                    {
-                      nativeEvent: {
-                        contentOffset: {
-                          x: this.state.scrollAnim,
-                          y: this.state.scrollAnim,
-                        },
-                      },
-                    },
-                  ],
-                  { useNativeDriver: true }
-                )}
-                showsHorizontalScrollIndicator={false}
-                showsVerticalScrollIndicator={false}
-                renderItem={({ item, index }) => (
-                  <VerseView
-                    // ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
-                    verseData={item}
-                    sectionHeading={getHeading(item.contents)}
-                    chapterHeader={this.state.chapterHeader}
-                    index={index}
-                    onLayout={this.onLayout}
-                    styles={this.styles}
-                    selectedReferences={this.state.selectedReferenceSet}
-                    getSelection={(
-                      verseIndex,
-                      chapterNumber,
-                      verseNumber,
-                      text
-                    ) => {
-                      this.props.visibleParallelView == false &&
-                        this.getSelectedReferences(
-                          verseIndex,
-                          chapterNumber,
-                          verseNumber,
-                          text
-                        );
-                    }}
-                    HightlightedVerse={this.state.HightlightedVerseArray}
-                    notesList={this.state.notesList}
-                    chapterNumber={this.state.currentVisibleChapter}
-                    navigation={this.props.navigation}
-                  />
-                )}
-                keyExtractor={this._keyExtractor}
-                ListFooterComponent={this.renderFooter}
+              <CustomHeader
+                audio={audio}
+                // clampedScroll={clampedScroll}
+                navigation={props.navigation}
+                toggleAudio={toggleAudio}
+                navigateToVideo={navigateToVideo}
+                navigateToImage={navigateToImage}
+                navigateToSettings={navigateToSettings}
+                onSearch={onSearch}
+                bookName={props.bookName}
+                language={props.language}
+                versionCode={props.versionCode}
+                chapterNumber={currentVisibleChapter}
+                onBookmark={onBookmarkPress}
+                isBookmark={isBookmark}
+                navigateToSelectionTab={navigateToSelectionTab}
+                navigateToLanguage={navigateToLanguage}
+                createPDF={createPDF_File}
               />
             )}
-            {this.state.chapterContent.length > 0 && (
-              <View style={{ flex: 1 }}>
-                <ChapterNdAudio
-                  styles={this.styles}
-                  audio={this.state.audio}
-                  currentVisibleChapter={this.state.currentVisibleChapter}
-                  status={
-                    this.props.visibleParallelView ? false : this.state.status
-                  }
-                  visibleParallelView={this.props.visibleParallelView}
-                  languageCode={this.props.languageCode}
-                  versionCode={this.props.versionCode}
-                  bookId={this.props.bookId}
-                  totalChapters={this.props.totalChapters}
-                  showBottomBar={this.state.showBottomBar}
-                  navigation={this.props.navigation}
-                  previousContent={this.state.previousContent}
-                  downloaded={this.props.downloaded}
-                  nextContent={this.state.nextContent}
-                  queryBookFromAPI={this.queryBookFromAPI}
-                />
-                {this.state.showColorGrid &&
-                  this.state.bottomHighlightText &&
-                  this.props.visibleParallelView == false && (
-                    <HighlightColorGrid
-                      styles={this.styles}
-                      bottomHighlightText={this.state.bottomHighlightText}
-                      doHighlight={this.doHighlight}
-                    />
-                  )}
-                {this.props.visibleParallelView == false &&
-                  this.state.showBottomBar && (
-                    <SelectBottomTabBar
-                      showColorGrid={() =>
-                        this.setState({
-                          showColorGrid: !this.state.showColorGrid,
-                        })
-                      }
-                      styles={this.styles}
-                      bottomHighlightText={this.state.bottomHighlightText}
-                      doHighlight={this.doHighlight}
-                      addToNotes={this.addToNotes}
-                      addToShare={this.addToShare}
-                    />
-                  )}
-              </View>
+            {isLoading && (
+              <Spinner visible={true} textContent={"Loading..."} />
             )}
-          </View>
-          {/** 2nd view as  parallelView**/}
-          {this.props.visibleParallelView == true && (
-            <View style={this.styles.parallelView}>
-              {this.props.contentType == "bible" && (
-                <BibleChapter
-                  currentChapter={this.state.currentVisibleChapter}
-                  id={this.props.bookId}
-                  bookName={this.props.bookName}
-                  closeParallelView={(value) => this.closeParallelView(value)}
-                  totalChapters={this.props.totalChapters}
-                  navigation={this.props.navigation}
+    
+            {/** Main View for the single or parrallel View */}
+            <View style={styles.singleView}>
+              {/** Single view with only bible text */}
+              <View
+                style={[
+                styles.innerContainer,
+                {width: props.visibleParallelView ? "50%" : width,
+                }]}
+              >
+                {unAvailableContent &&
+                chapterContent.length == 0 ? (
+                  <View
+                    style={styles.reloadButtonCenter}
+                  >
+                    <ReloadButton
+                      styles={styles}
+                      reloadFunction={() => queryBookFromAPI(null)}
+                      message={null}
+                    />
+                  </View>
+                ) : (
+                <FlatList
+                  data={chapterContent}
+                  renderItem={({ item, index }) => (
+                    <VerseView
+                    verseData={item}
+                    sectionHeading={getHeading(item.contents)}
+                    chapterHeader={chapterHeader}
+                    index={index}
+                    onLayout={onLayout}
+                    styles={styles}
+                    selectedReferences={selectedReferenceSet}
+                    getSelection={(
+                        verseIndex,
+                        chapterNumber,
+                        verseNumber,
+                        text
+                      ) => {
+                        props.visibleParallelView == false &&
+                          getSelectedReferences(
+                            verseIndex,
+                            chapterNumber,
+                            verseNumber,
+                            text
+                          );
+                      }}
+                    HighlightedVerse={HighlightedVerseArray}
+                    notesList={notesList}
+                    chapterNumber={currentVisibleChapter}
+                    navigation={props.navigation}
+                  />
+                  )}
+                  keyExtractor={_keyExtractor}
+                  // ListFooterComponent={renderFooter}
                 />
-              )}
-              {this.props.contentType == "commentary" && (
-                <Commentary
-                  id={this.props.bookId}
-                  bookName={this.props.bookName}
-                  closeParallelView={(value) => this.closeParallelView(value)}
-                  currentVisibleChapter={this.state.currentVisibleChapter}
-                />
+              
+                )}
+                {chapterContent.length > 0 && (
+                  <View style={{ flex: 1 }}>
+                    <ChapterNdAudio
+                      styles={style}
+                      audio={audio}
+                      currentVisibleChapter={currentVisibleChapter}
+                      status={
+                        props.visibleParallelView ? false : status
+                      }
+                      visibleParallelView={props.visibleParallelView}
+                      languageCode={props.languageCode}
+                      versionCode={props.versionCode}
+                      bookId={props.bookId}
+                      totalChapters={props.totalChapters}
+                      showBottomBar={showBottomBar}
+                      navigation={props.navigation}
+                      previousContent={previousContent}
+                      downloaded={props.downloaded}
+                      nextContent={nextContent}
+                      queryBookFromAPI={()=>queryBookFromAPI()}
+                    />
+                    {showColorGrid &&
+                      bottomHighlightText &&
+                      props.visibleParallelView == false && (
+                        <HighlightColorGrid
+                          styles={style}
+                          bottomHighlightText={bottomHighlightText}
+                          doHighlight={doHighlight}
+                        />
+                      )}
+                    {props.visibleParallelView == false &&
+                      showBottomBar && (
+                        <SelectBottomTabBar
+                          showColorGrid={() =>setShowColorGrid(!showColorGrid)}
+                          styles={styles}
+                          bottomHighlightText={bottomHighlightText}
+                          doHighlight={doHighlight}
+                          addToNotes={addToNotes}
+                          addToShare={addToShare}
+                        />
+                      )}
+                  </View>
+                )}
+              </View>
+              {/** 2nd view as  parallelView**/}
+              {props.visibleParallelView == true && (
+                <View style={styles.parallelView}>
+                  {props.contentType == "bible" && (
+                    <BibleChapter
+                      currentChapter={currentVisibleChapter}
+                      id={props.bookId}
+                      bookName={props.bookName}
+                      closeParallelView={(value) => closeParallelView(value)}
+                      totalChapters={props.totalChapters}
+                      navigation={props.navigation}
+                    />
+                  )}
+                  {props.contentType == "commentary" && (
+                    <Commentary
+                      id={props.bookId}
+                      bookName={props.bookName}
+                      closeParallelView={(value) => closeParallelView(value)}
+                      currentVisibleChapter={currentVisibleChapter}
+                    />
+                  )}
+                </View>
               )}
             </View>
-          )}
-        </View>
-      </View>
-      </CustomStatusBar>
-    );
-  }
+          </View>
+          </CustomStatusBar>
+//   <View style={{flex:1}}>
+//     {/* <Text>Hello</Text> */}
+
+// </View>
+  // <View>
+  // <PinchGestureHandler
+  //       onGestureEvent={this.onZoomEvent}
+  //       onHandlerStateChange={this.onZoomStateChange}>
+  //       <Animated.Image
+  //         source={{
+  //           uri:
+  //             'https://miro.medium.com/max/1080/1*7SYuZvH2pZnM0H79V4ttPg.jpeg'
+  //         }}
+  //         style={{
+  //           width: width,
+  //           height: 300,
+  //           transform: [{ scale: this.scale }]
+  //         }}
+  //         resizeMode='contain'
+  //       />
+  //     </PinchGestureHandler>
+  //     </View>
+)
 }
-
-
 const mapStateToProps = (state) => {
   return {
     language: state.updateVersion.language,
@@ -1614,4 +1386,149 @@ const mapDispatchToProps = (dispatch) => {
     updateFontSize: (payload) => dispatch(updateFontSize(payload)),
   };
 };
+// class Bible extends Component {
+//   constructor(props) {
+//     super(props);
+//    
+//       userData: "",
+//       scrollAnim,
+//       offsetAnim,
+//       clampedScroll: Animated.diffClamp(
+//         Animated.add(
+//           scrollAnim.interpolate({
+//             inputRange: [0, 1],
+//             outputRange: [0, 1],
+//             extrapolateLeft: "clamp",
+//           }),
+//           offsetAnim
+//         ),
+//         0,
+//         NAVBAR_HEIGHT - STATUS_BAR_HEIGHT
+//       ),
+//     };
+
+//     this.getSelectedReferences = this.getSelectedReferences.bind(this);
+//     this.alertPresent;
+//     this.styles = styles(this.props.colorFile, this.props.sizeFile);
+//   }
+//   _clampedScrollValue = 0;
+//   _offsetValue = 0;
+//   _scrollValue = 0;
+
+
+//   componentWillUnmount() {
+//     var time = new Date();
+//     DbQueries.addHistory(
+//       this.props.sourceId,
+//       this.props.language,
+//       this.props.languageCode,
+//       this.props.versionCode,
+//       this.props.bookId,
+//       this.props.bookName,
+//       this.state.currentVisibleChapter,
+//       this.props.downloaded,
+//       time
+//     );
+//     this.subs && this.subs();
+//     this.unsubscriber && this.unsubscriber();
+//     this.unsubscribenetinfo && this.unsubscribenetinfo();
+//     this.state.scrollAnim.removeAllListeners();
+//     this.state.offsetAnim.removeAllListeners();
+//     this.props.ToggleAudio({ status: false, audio: false });
+//     AppState.removeEventListener("change", this._handleAppStateChange);
+//   }
+
+//   // _keyExtractor = (item, index) => item.number;
+
+
+//   ZoomTextSize = () => {
+//     this.gestureResponder = createResponder({
+//       // onStartShouldSetResponder: (evt, gestureState) => true,
+//       onStartShouldSetResponder: () => true,
+//       //onStartShouldSetResponderCapture: (evt, gestureState) => true,
+//       onStartShouldSetResponderCapture: () => true,
+//       //onMoveShouldSetResponder: (evt, gestureState) => true,
+//       onMoveShouldSetResponder: () => true,
+//       //onMoveShouldSetResponderCapture: (evt, gestureState) => true,
+//       onMoveShouldSetResponderCapture: () => true,
+//       //onResponderGrant: (evt, gestureState) => {},
+//       onResponderGrant: () => {},
+//       //onResponderMove: (evt, gestureState) => {
+//       onResponderMove: (gestureState) => {
+//         let thumbSize = this.state.thumbSize;
+//         if (gestureState.pinch && gestureState.previousPinch) {
+//           thumbSize *= gestureState.pinch / gestureState.previousPinch;
+//           let currentDate = new Date().getTime();
+//           let diff = currentDate - this.pinchTime;
+//           if (diff > this.pinchDiff) {
+//             if (gestureState.pinch - gestureState.previousPinch > 5) {
+//               // large
+//               this.changeSizeByOne(1);
+//             } else if (gestureState.previousPinch - gestureState.pinch > 5) {
+//               // small
+//               this.changeSizeByOne(-1);
+//             }
+//           }
+//           this.pinchDiff = diff;
+//           this.pinchTime = currentDate;
+//         }
+//         let { left, top } = this.state;
+//         left += gestureState.moveX - gestureState.previousMoveX;
+//         top += gestureState.moveY - gestureState.previousMoveY;
+//         this.setState({
+//           gestureState: {
+//             ...gestureState,
+//           },
+//           left,
+//           top,
+//           thumbSize,
+//         });
+//       },
+//       onResponderTerminationRequest: () => true,
+//       onResponderRelease: (gestureState) => {
+//         this.setState({
+//           gestureState: {
+//             ...gestureState,
+//           },
+//         });
+//       },
+//       onResponderTerminate: () => {},
+
+//       onResponderSingleTapConfirmed: () => {},
+
+//       moveThreshold: 2,
+//       debug: false,
+//     });
+//   };
+
+//   _onScrollEndDrag = () => {
+//     this._scrollEndTimer = setTimeout(this._onMomentumScrollEnd, 250);
+//   };
+
+//   _onMomentumScrollBegin = () => {
+//     clearTimeout(this._scrollEndTimer);
+//   };
+
+//   _onMomentumScrollEnd = () => {
+//     const toValue =
+//       this._scrollValue > NAVBAR_HEIGHT &&
+//       this._clampedScrollValue > (NAVBAR_HEIGHT - STATUS_BAR_HEIGHT) / 2
+//         ? this._offsetValue + NAVBAR_HEIGHT
+//         : this._offsetValue - NAVBAR_HEIGHT;
+
+//     Animated.timing(this.state.offsetAnim, {
+//       toValue,
+//       duration: 350,
+//       useNativeDriver: true,
+//     }).start();
+//   };
+
+
+//   render() {       
+//     );
+//   }
+// }
+
+
+
 export default connect(mapStateToProps, mapDispatchToProps)(Bible);

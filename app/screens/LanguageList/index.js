@@ -1,5 +1,5 @@
 "use strict";
-import React, { Component } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Text, View, TouchableOpacity, Alert } from "react-native";
 import { Accordion } from "native-base";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -22,77 +22,44 @@ import vApi from "../../utils/APIFetch";
 import Color from "../../utils/colorConstants";
 import { getHeading } from "../../utils/UtilFunctions";
 
-class LanguageList extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isLoading: false,
-      text: "",
-      languages: [],
-      startDownload: false,
-      index: -1,
-      language: this.props.language,
-      versionCode: this.props.versionCode,
-      downloaded: this.props.downloaded,
-      sourceId: this.props.sourceId,
-      updateLanguageList: false,
-
-      colorFile: this.props.colorFile,
-      sizeFile: this.props.sizeFile,
-    };
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
-    this.alertPresent = false;
-  }
-  async recallFunc() {
+const LanguageList = (props) => {
+  const [startDownload, setStartDownloaded] = useState(false);
+  const [languages, setLanguages] = useState([]);
+  const updateLanguageList = false;
+  const prevBible = useRef(props.bibleContent).current;
+  const style = styles(props.colorFile, props.sizeFile);
+  let alertPresent = false;
+  const recallFunc = async () => {
     try {
-      await this.props.fetchAllContent();
+      await props.fetchAllContent();
       // BackHandler.addEventListener('hardwareBackPress', this.onBack);
       const scheduledDate = new Date();
       let resolution =
-        Date.parse(scheduledDate) - Date.parse(this.props.langTimeStamp);
+        Date.parse(scheduledDate) - Date.parse(props.langTimeStamp);
       var resolutionTime = resolution / 1000 / 60 / 60 / 24;
       if (resolutionTime > 1) {
         let books = await vApi.get("booknames");
-        let lang = this.props.bibleLanguages[0].content;
+        let lang = props.bibleLanguages[0].content;
         if (books && lang) {
           await DbQueries.deleteLangaugeList();
           await DbQueries.addLangaugeList(lang, books);
           await DbQueries.updateLanguageList();
         }
-        this.props.updateLangList({ langTimeStamp: scheduledDate });
+        props.updateLangList({ langTimeStamp: scheduledDate });
       }
-      await this.fetchLanguages();
+      await fetchLanguages();
     } catch (error) {
       console.log(error.message);
     }
-  }
-
-  async componentDidMount() {
-    await this.recallFunc();
-    this.props.navigation.setOptions({
-      headerLeft: () => (
-        <HeaderBackButton tintColor={Color.White} onPress={this.onBack} />
-      ),
-    });
-  }
-
-  async componentDidUpdate(prevProps) {
-    if (prevProps.bibleContent != this.props.bibleContent) {
-      await this.recallFunc();
-    }
-  }
-  componentWillUnmount() {
-    // BackHandler.removeEventListener('hardwareBackPress', this.onBack);
-  }
-
-  onBack = () => {
+  };
+  const onBack = () => {
     let updateSourceId = false;
     let updatedObj = {};
-    let lanVer = this.state.languages;
-    if (this.state.updateLanguageList) {
+    let lanVer = languages;
+    if (updateLanguageList) {
       for (var i = 0; i < lanVer.length; i++) {
         for (var j = 0; j < lanVer[i].versionModels.length; j++) {
-          if (lanVer[i].versionModels[j].sourceId == this.props.sourceId) {
+          if (lanVer[i].versionModels[j].sourceId == props.sourceId) {
             updateSourceId = true;
             updatedObj = {
               sourceId: lanVer[i].versionModels[j].sourceId,
@@ -108,10 +75,10 @@ class LanguageList extends Component {
       }
       if (updateSourceId) {
         if (Object.keys(updatedObj).length > 0) {
-          this.props.route.params.updateLangVer(updatedObj);
+          props.route.params.updateLangVer(updatedObj);
         }
       } else {
-        this.props.route.params.updateLangVer({
+        props.route.params.updateLangVer({
           sourceId: lanVer[0].versionModels[0].sourceId,
           languageName: lanVer[0].languageName,
           languageCode: lanVer[0].languageCode,
@@ -123,13 +90,13 @@ class LanguageList extends Component {
         //can add alert for showing user that previous version you were reading not available set a default one
       }
     }
-    this.props.navigation.dispatch(CommonActions.goBack());
+    props.navigation.dispatch(CommonActions.goBack());
   };
-  errorMessage = () => {
-    if (!this.alertPresent) {
-      this.alertPresent = true;
-      if (this.state.languages.length == 0) {
-        this.fetchLanguages();
+  const errorMessage = () => {
+    if (!alertPresent) {
+      alertPresent = true;
+      if (languages.length == 0) {
+        fetchLanguages();
         Alert.alert(
           "",
           "Check your internet connection",
@@ -137,24 +104,24 @@ class LanguageList extends Component {
             {
               text: "OK",
               onPress: () => {
-                this.alertPresent = false;
+                alertPresent = false;
               },
             },
           ],
           { cancelable: false }
         );
       } else {
-        this.alertPresent = false;
+        alertPresent = false;
       }
     }
   };
   //refetch data if internet connection lost
-  updateData = () => {
-    this.props.fetchAllContent();
-    this.errorMessage();
+  const updateData = () => {
+    props.fetchAllContent();
+    errorMessage();
   };
 
-  async getLangList(languages, books) {
+  const getLangList = async (languages, books) => {
     var lanVer = [];
     if (languages && books) {
       for (var i = 0; i < languages.length; i++) {
@@ -185,15 +152,15 @@ class LanguageList extends Component {
       }
       return lanVer;
     }
-  }
-  async fetchLanguages() {
+  };
+  const fetchLanguages = async () => {
     var lanVer = [];
     const languageList = await DbQueries.getLangaugeList();
     try {
       if (languageList == null) {
         let books = await vApi.get("booknames");
-        let languages = this.props.bibleLanguages[0].content;
-        lanVer = await this.getLangList(languages, books);
+        let languages = props.bibleLanguages[0].content;
+        lanVer = await getLangList(languages, books);
         DbQueries.addLangaugeList(languages, books);
       } else {
         for (var i = 0; i < languageList.length; i++) {
@@ -209,17 +176,14 @@ class LanguageList extends Component {
               var textB = b.languageName.toUpperCase();
               return textA.localeCompare(textB);
             });
-      this.setState({
-        languages: res,
-      });
+      setLanguages(res);
     } catch (error) {
       console.log(error.message);
     }
-  }
-
-  downloadBible = async (langName, verCode, books, sourceId) => {
+  };
+  const downloadBible = async (langName, verCode, books, sourceId) => {
     try {
-      this.setState({ startDownload: true });
+      setStartDownloaded(true);
       let bookModels = [];
       let content = await vApi.get(
         "bibles" + "/" + parseInt(sourceId) + "/" + "json"
@@ -232,16 +196,16 @@ class LanguageList extends Component {
             bookId: books[i].bookId,
             bookName: books[i].bookName,
             bookNumber: books[i].bookNumber,
-            chapters: this.getChapters(content.bibleContent, books[i].bookId),
+            chapters: getChapters(content.bibleContent, books[i].bookId),
             section: getBookSectionFromMapping(books[i].bookId),
           });
         }
       }
       await DbQueries.addNewVersion(langName, verCode, bookModels, sourceId);
-      await this.fetchLanguages();
-      this.setState({ startDownload: false });
+      await fetchLanguages();
+      setStartDownloaded(false);
     } catch (error) {
-      this.setState({ startDownload: false });
+      setStartDownloaded(false);
       Alert.alert(
         "",
         "Something went wrong. Try Again",
@@ -258,8 +222,7 @@ class LanguageList extends Component {
     }
   };
 
-  // this function is calling in downloadbible function
-  getChapters = (content, bookId) => {
+  const getChapters = (content, bookId) => {
     try {
       let chapterModels = [];
       // let chapterHeading = null;
@@ -296,7 +259,7 @@ class LanguageList extends Component {
     }
   };
   // this is useful for reusing code as this page is calling at other places
-  navigateTo(
+  const navigateTo = (
     langName,
     langCode,
     booklist,
@@ -304,10 +267,10 @@ class LanguageList extends Component {
     sourceId,
     metadata,
     downloaded
-  ) {
-    if (this.props.route.params.updateLangVer) {
+  ) => {
+    if (props.route.params.updateLangVer) {
       //call back fucntion to update perticular values on back
-      this.props.route.params.updateLangVer({
+      props.route.params.updateLangVer({
         sourceId: sourceId,
         languageName: langName,
         languageCode: langCode,
@@ -316,7 +279,7 @@ class LanguageList extends Component {
         books: booklist,
         metadata: metadata,
       });
-      this.props.navigation.pop();
+      props.navigation.pop();
     } else {
       // for downloading bible from settings page no need to navigate
       if (langName.toLowerCase() === "english") {
@@ -332,18 +295,24 @@ class LanguageList extends Component {
         }
       }
     }
-  }
-  deleteBible(languageName, languageCode, versionCode, sourceId, downloaded) {
+  };
+  const deleteBible = (
+    languageName,
+    languageCode,
+    versionCode,
+    sourceId,
+    downloaded
+  ) => {
     DbQueries.deleteBibleVersion(
       languageName,
       versionCode,
       sourceId,
       downloaded
     );
-    this.fetchLanguages();
-  }
+    fetchLanguages();
+  };
 
-  _renderHeader = (item) => {
+  const _renderHeader = (item) => {
     return (
       <View
         style={{
@@ -353,25 +322,21 @@ class LanguageList extends Component {
           alignItems: "center",
         }}
       >
-        <Text style={this.styles.headerText}>{item.languageName}</Text>
-        <Icon
-          style={this.styles.iconStyle}
-          name={"keyboard-arrow-down"}
-          size={24}
-        />
+        <Text style={style.headerText}>{item.languageName}</Text>
+        <Icon style={style.iconStyle} name={"keyboard-arrow-down"} size={24} />
       </View>
     );
   };
-  _renderContent = (item) => {
+  const _renderContent = (item) => {
     return (
       <View>
         {/*Content under the header of the Expandable List Item*/}
         {item.versionModels.map((element, index) => (
           <TouchableOpacity
             key={index}
-            style={this.styles.listContainer}
+            style={style.listContainer}
             onPress={() => {
-              this.navigateTo(
+              navigateTo(
                 item.languageName,
                 item.languageCode,
                 item.bookNameList,
@@ -383,15 +348,10 @@ class LanguageList extends Component {
             }}
           >
             <View>
-              <Text
-                style={[
-                  this.styles.text,
-                  { marginLeft: 8, fontWeight: "bold" },
-                ]}
-              >
+              <Text style={[style.text, { marginLeft: 8, fontWeight: "bold" }]}>
                 {element.versionCode}{" "}
               </Text>
-              <Text style={[this.styles.text, { marginLeft: 8 }]}>
+              <Text style={[style.text, { marginLeft: 8 }]}>
                 {element.versionName}
               </Text>
             </View>
@@ -399,11 +359,11 @@ class LanguageList extends Component {
               {element.downloaded === true ? (
                 item.languageName.toLowerCase() === "english" ? null : (
                   <Icon
-                    style={[this.styles.iconStyle, { marginRight: 8 }]}
+                    style={[style.iconStyle, { marginRight: 8 }]}
                     name="delete"
                     size={24}
                     onPress={() => {
-                      this.deleteBible(
+                      deleteBible(
                         item.languageName,
                         item.languageCode,
                         element.versionCode,
@@ -415,11 +375,11 @@ class LanguageList extends Component {
                 )
               ) : item.languageName.toLowerCase() === "english" ? null : (
                 <Icon
-                  style={[this.styles.iconStyle, { marginRight: 12 }]}
+                  style={[style.iconStyle, { marginRight: 12 }]}
                   name="file-download"
                   size={24}
                   onPress={() => {
-                    this.downloadBible(
+                    downloadBible(
                       item.languageName,
                       element.versionCode,
                       item.bookNameList,
@@ -434,38 +394,48 @@ class LanguageList extends Component {
       </View>
     );
   };
-  render() {
-    return (
-      <View style={this.styles.MainContainer}>
-        {this.props.isLoading ? (
-          <Spinner visible={true} textContent={"Loading..."} />
-        ) : null}
-        {this.state.startDownload ? (
-          <Spinner visible={true} textContent={"DOWNLOADING BIBLE..."} />
-        ) : null}
-        {this.state.languages.length == 0 ? (
-          <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          >
-            <ReloadButton
-              reloadFunction={this.updateData}
-              styles={this.styles}
-              message={null}
-            />
-          </View>
-        ) : (
-          <Accordion
-            dataArray={this.state.languages}
-            animation={true}
-            expanded={[0]}
-            renderHeader={this._renderHeader}
-            renderContent={this._renderContent}
+
+  useEffect(async () => {
+    await recallFunc();
+    props.navigation.setOptions({
+      headerLeft: () => (
+        <HeaderBackButton tintColor={Color.White} onPress={onBack} />
+      ),
+    });
+    if (prevBible != props.bibleContent) {
+      await recallFunc();
+    }
+  }, [prevBible]);
+  return (
+    <View style={style.MainContainer}>
+      {props.isLoading ? (
+        <Spinner visible={true} textContent={"Loading..."} />
+      ) : null}
+      {startDownload ? (
+        <Spinner visible={true} textContent={"DOWNLOADING BIBLE..."} />
+      ) : null}
+      {languages.length == 0 ? (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ReloadButton
+            reloadFunction={updateData}
+            styles={style}
+            message={null}
           />
-        )}
-      </View>
-    );
-  }
-}
+        </View>
+      ) : (
+        <Accordion
+          dataArray={languages}
+          animation={true}
+          expanded={[0]}
+          renderHeader={_renderHeader}
+          renderContent={_renderContent}
+        />
+      )}
+    </View>
+  );
+};
 
 const mapStateToProps = (state) => {
   return {

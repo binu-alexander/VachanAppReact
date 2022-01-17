@@ -24,16 +24,16 @@ export default class CustomHeader extends Component {
       ? this.props.bookName.charAt(0).toUpperCase() +
         this.props.bookName.slice(1)
       : this.props.bookName;
-    const navbarTranslate = this.props.clampedScroll.interpolate({
-      inputRange: [0, NAVBAR_HEIGHT],
-      outputRange: [0, -NAVBAR_HEIGHT],
-      extrapolate: "clamp",
-    });
+    // const navbarTranslate = this.props.clampedScroll.interpolate({
+    //   inputRange: [0, NAVBAR_HEIGHT],
+    //   outputRange: [0, -NAVBAR_HEIGHT],
+    //   extrapolate: "clamp",
+    // });
     return (
       <Animated.View
         style={[
           navStyles.navbar,
-          { transform: [{ translateY: navbarTranslate }] },
+          // { transform: [{ translateY: navbarTranslate }] },
         ]}
       >
         <View style={navStyles.headerRightStyle}>
