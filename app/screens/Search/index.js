@@ -301,7 +301,6 @@ const Search = (props) => {
       </View>
     );
   };
-
   const searchedData = ({ item }) => {
     return (
       <TouchableOpacity

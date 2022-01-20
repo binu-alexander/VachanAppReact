@@ -15,7 +15,7 @@ const SelectionTab = (props) => {
     ? props.params.chapterNumber
     : null;
   const selectedVerse = props.params ? props.params.selectedVerse : null;
-
+console.log("REFERENCE SELECTION ",props.params)
   return (
     <Tab.Navigator
       initialRouteName="Books"

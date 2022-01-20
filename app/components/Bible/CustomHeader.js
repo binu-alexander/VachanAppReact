@@ -19,17 +19,17 @@ const CustomHeader = (props) => {
   let bookName = !isNaN(props.bookName.charAt(0))
     ? props.bookName.charAt(0).toUpperCase() + props.bookName.slice(1)
     : props.bookName;
-  const navbarTranslate = props.clampedScroll.interpolate({
-    inputRange: [0, NAVBAR_HEIGHT],
-    outputRange: [0, -NAVBAR_HEIGHT],
-    extrapolate: "clamp",
-  });
+  // const navbarTranslate = props.clampedScroll.interpolate({
+  //   inputRange: [0, NAVBAR_HEIGHT],
+  //   outputRange: [0, -NAVBAR_HEIGHT],
+  //   extrapolate: "clamp",
+  // });
 
   return (
     <Animated.View
       style={[
         navStyles.navbar,
-        { transform: [{ translateY: navbarTranslate }] },
+        // { transform: [{ translateY: navbarTranslate }] },
       ]}
     >
       <View style={navStyles.headerRightStyle}>

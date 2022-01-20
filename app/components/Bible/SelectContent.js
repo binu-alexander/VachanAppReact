@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Text,
@@ -28,11 +28,31 @@ const SelectContent = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   let alertPresent = false;
   let style = styles(props.colorFile, props.sizeFile);
+  const innerContent = (item, v, parallel) => {
+    console.log("Hi inner content");
+    setModalVisible(false);
+    props.parallelVisibleView({
+      modalVisible: false,
+      visibleParallelView: parallel,
+    });
+    props.selectContent({
+      parallelLanguage: {
+        languageName: item.languageName,
+        versionCode: v.versionCode,
+        sourceId: v.sourceId,
+      },
+      parallelMetaData: v.metaData[0],
+    });
+    props.updateContentType({
+      parallelContentType: contentType,
+    });
+  };
   const _renderHeader = (item, expanded) => {
     var value = expanded && item.contentType;
     if (value) {
       contentType = value;
     }
+
     return (
       <View>
         {props.displayContent == "commentary" ? (
@@ -106,24 +126,7 @@ const SelectContent = (props) => {
         contentType == props.displayContent && (
           <TouchableOpacity
             style={style.selectionInnerContent}
-            onPress={() => {
-              setModalVisible(false);
-              props.parallelVisibleView({
-                modalVisible: false,
-                visibleParallelView: false,
-              });
-              props.selectContent({
-                parallelLanguage: {
-                  languageName: item.languageName,
-                  versionCode: v.versionCode,
-                  sourceId: v.sourceId,
-                },
-                parallelMetaData: v.metaData[0],
-              });
-              props.updateContentType({
-                parallelContentType: contentType,
-              });
-            }}
+            onPress={() => innerContent(item, v, false)}
           >
             <Text style={style.selectionHeaderModal}>{v.versionName}</Text>
             <Text style={style.selectionHeaderModal}>{v.versionCode}</Text>
@@ -132,24 +135,7 @@ const SelectContent = (props) => {
       ) : (
         <TouchableOpacity
           style={style.selectionInnerContent}
-          onPress={() => {
-            setModalVisible(false);
-            props.parallelVisibleView({
-              modalVisible: false,
-              visibleParallelView: true,
-            });
-            props.selectContent({
-              parallelLanguage: {
-                languageName: item.languageName,
-                versionCode: v.versionCode,
-                sourceId: v.sourceId,
-              },
-              parallelMetaData: v.metaData[0],
-            });
-            props.updateContentType({
-              parallelContentType: contentType,
-            });
-          }}
+          onPress={() => innerContent(item, v, true)}
         >
           <Text style={style.selectionHeaderModal}>{v.versionName}</Text>
           <Text style={style.selectionHeaderModal}>{v.versionCode}</Text>
@@ -213,16 +199,12 @@ const SelectContent = (props) => {
         animationType="fade"
         transparent={true}
         visible={modalVisible}
-        onPress={() => {
-          setModalVisible(!modalVisible);
-        }}
+        onPress={() => setModalVisible(!modalVisible)}
       >
         <View>
           <TouchableWithoutFeedback
             style={style.modalContainer}
-            onPressOut={() => {
-              setModalVisible(false);
-            }}
+            onPressOut={() => setModalVisible(false)}
           >
             <View
               style={{ height: "80%", width: "70%", alignSelf: "flex-end" }}

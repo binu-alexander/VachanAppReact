@@ -75,10 +75,10 @@ const VerseView = (props) => {
     let verseNumber = props.downloaded
       ? props.verseData.number
       : props.verseData.verseNumber;
-    for (var i = 0; i <= props.HightlightedVerse.length; i++) {
-      if (props.HightlightedVerse[i]) {
+    for (var i = 0; i <= props.HighlightedVerse.length; i++) {
+      if (props.HighlightedVerse[i]) {
         let regexMatch = /(\d+):([a-zA-Z]+)/;
-        let match = props.HightlightedVerse[i].match(regexMatch);
+        let match = props.HighlightedVerse[i].match(regexMatch);
         if (match) {
           if (parseInt(match[1]) == verseNumber) {
             return getColor(match[2]);
