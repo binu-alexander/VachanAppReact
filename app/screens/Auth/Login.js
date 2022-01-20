@@ -22,13 +22,12 @@ import {
 // import { AccessToken, LoginManager, LoginButton } from 'react-native-fbsdk';
 import { styles } from "./styles.js";
 import Color from "../../utils/colorConstants";
-import CustomStatusBar from "../../components/CustomStatusBar";
-import { CommonActions } from "@react-navigation/native";
+// import CustomStatusBar from "../../components/CustomStatusBar";
+// import { CommonActions } from "@react-navigation/native";
 
 const Login = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const [user,setUser]=useState("")
   const [isLoading, setIsLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(true);
   const style = styles(props.colorFile, props.sizeFile);

@@ -1,4 +1,4 @@
-import React, { Component,Fragment, useEffect,useRef,useState,useCallback } from "react";
+import React, {useEffect,useRef,useState } from "react";
 import {
   Text,
   View,
@@ -58,14 +58,14 @@ import { getHeading, AndroidPermission } from "../../utils/UtilFunctions";
 import RNHTMLtoPDF from "react-native-html-to-pdf";
 import Permission from "../../utils/constants";
 import CustomStatusBar from "../../components/CustomStatusBar";
-// const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
+const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
 const width = Dimensions.get("window").width;
-// const NAVBAR_HEIGHT = 64;
+const NAVBAR_HEIGHT = 64;
 // eslint-disable-next-line no-undef
-// const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
+const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
 const Bible = (props) =>{
-  const [colorFile, setColorFile] = useState(props.colorFile)
-  const [sizeFile, setSizeFile] = useState(props.sizeFile)
+  // const [colorFile, setColorFile] = useState(props.colorFile)
+  // const [sizeFile, setSizeFile] = useState(props.sizeFile)
   const [downloadedBook,setDownloadedBook] = useState([])
   const [audio,setAudio ] = useState(false)
   const [uid,setUid ] = useState('')
@@ -80,31 +80,46 @@ const Bible = (props) =>{
   const [isBookmark,setIsBookmark ] = useState('')
   const [showColorGrid, setShowColorGrid] = useState('')
   const [currentVisibleChapter,setCurrentVisibleChapter ] = useState(props.chapterNumber)
-  const [bookNumber,setBookNumber ] = useState('')
   const [nextContent,setNextContent ] = useState('')
   const [previousContent,setPreviousContent ] = useState('')
 
-  const [selectedReferenceSet,setSelectedReferenceSet ] = useState('')
-  const [verseInLine,setVerseInLine ] = useState('')
+  const [selectedReferenceSet,setSelectedReferenceSet ] = useState([])
   const [bottomHighlightText,setBottomHighlightText ] = useState(false)
   const [HighlightedVerseArray,setHighlightedVerseArray ] = useState([])
   const [connection_Status,setConnection_Status ] = useState(true)
-  const [message,setMessage ] = useState('')
+  // const [message,setMessage ] = useState('')
   const [status,setStatus ] = useState('')
   const [notesList,setNotesList ] = useState([])
   const [initializing,setInitializing ] = useState(true)
   const [email,setEmail ] = useState(null)
   const [arrLayout,setArrLayout ] = useState([])
 
-  const [imageUrl,setImageUrl ] = useState('')
   const [unAvailableContent,setUnAvailableContent ] = useState('')
   const [userData,setUserData ] = useState('')
-  const [scrollAnim,setScrollAnim ] = useState('')
-  const [offsetAnim,setOffsetAnim ] = useState('')
-  const [thumbSize,setThumbSize ] = useState('')
   const [bookId,setBookId ] = useState('')
   const [bookName,setBookName ] = useState('')
+  const position = useRef(new Animated.ValueXY()).current;
+  const offsetAnim = useRef(new Animated.Value(0)).current
+  const scrollAnim = useRef(new Animated.Value(0)).current
+  let _clampedScrollValue = useRef(new Animated.Value(0)).current
 
+  let _offsetValue = 0
+  let _scrollValue = 0
+  let gestureResponder ,_scrollEndTimer
+  const clampedScroll= Animated.diffClamp(
+        Animated.add(
+          scrollAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 1],
+            extrapolateLeft: "clamp",
+          }),
+          offsetAnim
+        ),
+        0,
+        NAVBAR_HEIGHT - STATUS_BAR_HEIGHT
+      )
+
+  
   const styles = style(props.colorFile, props.sizeFile)
     
   const _handleAppStateChange = (currentAppState) => {
@@ -119,85 +134,7 @@ const Bible = (props) =>{
     }
   };
   
-useEffect(() => {
-  AppState.addEventListener('change', _handleAppStateChange);  
-  return () => {
-    AppState.removeEventListener('change', _handleAppStateChange);  
-  }
-}, []);
 
-useEffect(()=>{
-  const subs = props.navigation.addListener('focus', () => {
-console.log("FOCUSED called ")
-    setIsLoading(false)
-    setSelectedReferenceSet([])
-    setShowBottomBar(false)
-    setShowColorGrid(false)
-    setCurrentVisibleChapter(props.chapterNumber)
-    setAudio(props.audio)
-    setStatus(props.status)
-    getChapter()
-    audioComponentUpdate();
-    getHighlights();
-    getBookMarks();
-    getNotes();
-    if(props.books.length == 0) {
-      props.fetchVersionBooks({
-        language: props.language,
-        versionCode: props.versionCode,
-        downloaded: props.downloaded,
-        sourceId: props.sourceId,
-      });
-    }
-    setIsLoading(false);
-    });
-  return subs
-},[])
-
-useEffect(()=>{
-  if (initializing) {
-    setInitializing(false)
-  }
-  const unsubscriber = auth().onAuthStateChanged((user) => {
-    if (user) {
-      setUserData(user)
-      setEmail(user._user.email)
-      setIsLoading(false)
-      setUid(user._user.uid)
-      props.userInfo({
-        email: user._user.email, uid: user._user.uid,
-        userName: user._user.displayName, phoneNumber: null,
-        photo: user._user.photoURL,
-      });
-    } else {
-    props.userInfo({
-        email: null, uid: null,
-        userName: null, phoneNumber: null,
-        photo: null,
-      });
-      setUserData(null)
-      setEmail(null)
-      setIsLoading(false)
-      setUid(null)
-    }
-  });
-  return unsubscriber
-},[])
-
-useEffect(()=>{
-  console.log("COMPONENT update ====>")
-    queryBookFromAPI(null);
-    audioComponentUpdate();
-    // scrollToVerse(props.selectedVerse)
-    if (props.books.length == 0) {
-      props.fetchVersionBooks({
-        language: props.language,
-        versionCode: props.versionCode,
-        downloaded: props.downloaded,
-        sourceId: props.sourceId,
-      });
-    }
-},[props.language,props.sourceId,props.baseAPI,props.chapterNumber,props.bookId])
  // if book downloaded or user want to read downloaded book fetch chapter from local db
   const getDownloadedContent =async()=> {
     setIsLoading(true)
@@ -221,9 +158,8 @@ useEffect(()=>{
       setUnAvailableContent(true)
     }
   }
-useEffect(()=>{
-  getChapter()
-},[chapterContent])
+// getSelectedReferences
+
   // fetch chapter on didmount call
   const  getChapter = async()=> {
     try {
@@ -262,9 +198,9 @@ useEffect(()=>{
       setChapterContent([])
       setUnAvailableContent(true)
     }
-    setSelectedReferenceSet([])
-    setShowBottomBar(false)
-    setShowColorGrid(false)
+    // setSelectedReferenceSet([])
+    // setShowBottomBar(false)
+    // setShowColorGrid(false)
   }
   const queryBookFromAPI = async(chapterInfo) => {
     try {
@@ -295,9 +231,9 @@ useEffect(()=>{
       let bookId = allData ? allData.bibleBookCode : tprops.bookId;
       let bName = bookName != null ? bookName : props.bookName;
         setIsLoading(true)
-        setSelectedReferenceSet([])
-        setShowColorGrid(false)
-        setShowBottomBar(false)
+        // setSelectedReferenceSet([])
+        // setShowColorGrid(false)
+        // setShowBottomBar(false)
         setCurrentVisibleChapter(cNum)
         error(null)
           if (props.downloaded) {
@@ -361,30 +297,21 @@ useEffect(()=>{
       setUnAvailableContent(true)
     }
   }
-    getSelectedReferences = (vIndex, chapterNum, vNum, text) => {
+  const getSelectedReferences = (vIndex, chapterNum, vNum, text) => {
     if (vIndex != -1 && chapterNum != -1 && vNum != -1) {
       let obj = chapterNum + "_" + vIndex + "_" + vNum + "_" + text;
-      let selectedReferenceSet = [...selectedReferenceSet];
-      var found = false;
-      for (var i = 0; i < selectedReferenceSet.length; i++) {
-        if (selectedReferenceSet[i] == obj) {
-          found = true;
-          selectedReferenceSet.splice(i, 1);
-          break;
-        }
+      // let selectedReferenceSet = [...selectedReferenceSet];
+      // var found = false;
+      var found = selectedReferenceSet.indexOf(obj)
+      if (found != -1) {
+      selectedReferenceSet.splice(found, 1);
+      }else{
+      selectedReferenceSet.push(obj);
       }
-      if (!found) {
-        selectedReferenceSet.push(obj);
-      }
-      setSelectedReferenceSet(selectedReferenceSet)
-    }
-  };
-  useEffect(()=>{
-    let selectedCount = selectedReferenceSet.length,
+        let selectedCount = selectedReferenceSet.length,
           highlightCount = 0;
-        if(Object.keys(selectedReferenceSet).length != 0){
         for (let item of selectedReferenceSet) {
-          let tempVal = item.split("_")
+          let tempVal = item.split("_");
           for (
             var i = 0;
             i <= HighlightedVerseArray.length - 1;
@@ -393,7 +320,7 @@ useEffect(()=>{
             let regexMatch = /(\d+):([a-zA-Z]+)/;
             if (HighlightedVerseArray[i]) {
               let match =
-              HighlightedVerseArray[i].match(regexMatch);
+                HighlightedVerseArray[i].match(regexMatch);
               if (match) {
                 if (parseInt(match[1]) == parseInt(tempVal[2])) {
                   highlightCount++;
@@ -402,11 +329,11 @@ useEffect(()=>{
             }
           }
         }
-      }
         setShowBottomBar(selectedReferenceSet.length > 0 ? true : false)
         setBottomHighlightText(selectedCount == highlightCount ? false : true)
         setShowColorGrid(selectedCount == highlightCount ? false : true)
-  },[selectedReferenceSet])
+    }
+  }
   const toggleAudio = () => {
         if (audio) {
           setStatus(status);
@@ -445,31 +372,31 @@ useEffect(()=>{
       }
       // check internet connection to fetch api's accordingly
      
-// _handleConnectivityChange = (state) => {
-  // setConnection_Status( state.isConnected == true ? true : false)
-//   if (state.isConnected === true) {
-//     queryBookFromAPI(null);
-//     Toast.show({
-//       text: "Online. Now content available.",
-//       type: "success",
-//       duration: 5000,
-//     });
-//     if (props.books.length == 0) {
-//       props.fetchVersionBooks({
-//         language:props.language,
-//         versionCode: props.versionCode,
-//         downloaded: props.downloaded,
-//         sourceId: props.sourceId,
-//       });
-//     }
-//   } else {
-//     Toast.show({
-//       text: "Offline. Check your internet Connection.",
-//       type: "warning",
-//       duration: 5000,
-//     });
-//   }
-// };
+const _handleConnectivityChange = (state) => {
+  setConnection_Status( state.isConnected == true ? true : false)
+  if (state.isConnected === true) {
+    queryBookFromAPI(null);
+    Toast.show({
+      text: "Online. Now content available.",
+      type: "success",
+      duration: 5000,
+    });
+    if (props.books.length == 0) {
+      props.fetchVersionBooks({
+        language:props.language,
+        versionCode: props.versionCode,
+        downloaded: props.downloaded,
+        sourceId: props.sourceId,
+      });
+    }
+  } else {
+    Toast.show({
+      text: "Offline. Check your internet Connection.",
+      type: "warning",
+      duration: 5000,
+    });
+  }
+};
 // const  getOffset = (index) => {
 //     var offset = 0;
 //     for (let i = 0; i < index; i++) {
@@ -504,6 +431,26 @@ const  onLayout = (event, index, verseNumber) => {
       index,
     };
   };
+  const  _onMomentumScrollEnd = () => {
+    const toValue =
+      _scrollValue > NAVBAR_HEIGHT &&
+      _clampedScrollValue > (NAVBAR_HEIGHT - STATUS_BAR_HEIGHT) / 2
+        ? _offsetValue + NAVBAR_HEIGHT
+        : _offsetValue - NAVBAR_HEIGHT;
+
+    Animated.timing(offsetAnim, {
+      toValue,
+      duration: 350,
+      useNativeDriver: true,
+    }).start();
+  };
+_onScrollEndDrag = () => {
+  _scrollEndTimer = setTimeout(_onMomentumScrollEnd(), 250);
+};
+const  _onMomentumScrollBegin = () => {
+    clearTimeout(_scrollEndTimer)
+  };
+
 const  navigateToSelectionTab = () => {
     setStatus(false)
     props.navigation.navigate("ReferenceSelection", {
@@ -520,6 +467,52 @@ const  navigateToSelectionTab = () => {
       selectedVerse: props.selectedVerse,
     });
   }
+  const ZoomTextSize = () => { 
+    gestureResponder = React.useRef(createResponder({
+    onStartShouldSetResponder: () => true,
+      //onStartShouldSetResponderCapture: (evt, gestureState) => true,
+      onStartShouldSetResponderCapture: () => true,
+      //onMoveShouldSetResponder: (evt, gestureState) => true,
+      onMoveShouldSetResponder: () => true,
+      //onMoveShouldSetResponderCapture: (evt, gestureState) => true,
+      onMoveShouldSetResponderCapture: () => true,
+      //onResponderGrant: (evt, gestureState) => {},
+      onResponderGrant: () => {},
+    // onStartShouldSetPanResponder: (evt, gestureState) => true,
+    onResponderMove: (evt, gestureState) => {
+      let thumbSize = 10;
+        if (gestureState.pinch && gestureState.previousPinch) {
+          thumbSize *= gestureState.pinch / gestureState.previousPinch;
+          let currentDate = new Date().getTime();
+          var pinchTime = new Date().getTime()
+          let diff = currentDate - pinchTime
+          var pinchDiff = null
+          if (diff > pinchDiff) {
+            if (gestureState.pinch - gestureState.previousPinch > 5) {
+              // large
+            changeSizeByOne(1);
+            } else if (gestureState.previousPinch - gestureState.pinch > 5) {
+              // small
+            changeSizeByOne(-1);
+            }
+          }
+          pinchDiff = diff
+          pinchTime = currentDate;
+        }
+        let left,top
+         left += gestureState.moveX - gestureState.previousMoveX;
+         top += gestureState.moveY - gestureState.previousMoveY;
+        
+      position.setValue({x: gestureState.dx, y: gestureState.dy});
+    },
+    onResponderTerminationRequest: () => true,
+    onResponderRelease: (gestureState) => {},
+    onResponderTerminate: (gestureState) => {},
+    onResponderSingleTapConfirmed: () => {},
+    moveThreshold: 2,
+    debug: false,
+  })).current, []}
+
   const navigateToVideo = () => {
     setStatus(false)
     props.navigation.navigate("Video", {
@@ -597,15 +590,18 @@ const  navigateToSelectionTab = () => {
       return;
     }
   }
-const  closeParallelView = (value)=> {
+const  closeParallel = (value)=> {
+  console.log("VALUE........ ",value)
+  if(value){
     setStatus(false)
-    props.parallelVisibleView({
-      modalVisible: false,
-      visibleParallelView: value,
-    });
+    // props.parallelVisibleView({
+    //   modalVisible: false,
+    //   visibleParallelView: value,
+    // })
+  }
   }
 
-
+// console.log("visibleParallelView ",props.visibleParallelView)
   const renderFooter = () => {
     if (chapterContent.length === 0) {
       return null;
@@ -665,7 +661,7 @@ const  closeParallelView = (value)=> {
   const getReference = async (item) => {
     setSelectedReferenceSet([])
     setShowBottomBar(false)
-    showColorGrid(false)
+    setShowColorGrid(false)
     if (item) {
       var time = new Date();
       DbQueries.addHistory(
@@ -978,7 +974,7 @@ const  addToNotes = () => {
     }
     setSelectedReferenceSet([])
     setShowBottomBar(false)
-    showColorGridfalse(false)
+    setShowColorGrid(false)
   }
 //   onbackNote = () => {};
 
@@ -1081,7 +1077,6 @@ const  addToNotes = () => {
     setShowBottomBar(false)
     setShowColorGrid(false)
   }
-
   changeSizeByOne = (value) => {
     switch (props.sizeMode) {
       case 0: {
@@ -1134,7 +1129,110 @@ const  addToNotes = () => {
       }
     }
   };
-  console.log("CHAPTER CONTENT ",JSON.stringify(chapterContent))
+  useEffect(() => {
+    var time = new Date()
+    ZoomTextSize
+    if (initializing) {
+      setInitializing(false)
+    }
+    const appstate = AppState.addEventListener('change', _handleAppStateChange);  
+    const netInfo = NetInfo.addEventListener(_handleConnectivityChange);
+    const scrollListner = scrollAnim.addListener(({ value }) => {
+      const diff = value - _scrollValue;
+      _scrollValue = value;
+      _clampedScrollValue = Math.min(
+        Math.max(_clampedScrollValue + diff, 0),
+        NAVBAR_HEIGHT - STATUS_BAR_HEIGHT
+      )
+    })
+    const offsetAnimListner = offsetAnim.addListener(({ value }) => {
+      _offsetValue = value
+    })
+     
+    const unsubscriber = auth().onAuthStateChanged((user) => {
+      if (user) {
+        setUserData(user)
+        setEmail(user._user.email)
+        setIsLoading(false)
+        setUid(user._user.uid)
+        props.userInfo({
+          email: user._user.email, uid: user._user.uid,
+          userName: user._user.displayName, phoneNumber: null,
+          photo: user._user.photoURL,
+        });
+      } else {
+      props.userInfo({
+          email: null, uid: null,
+          userName: null, phoneNumber: null,
+          photo: null,
+        });
+        setUserData(null)
+        setEmail(null)
+        setIsLoading(false)
+        setUid(null)
+      }
+    })
+    const subs = props.navigation.addListener('focus', () => {
+      console.log("FOCUSED called ")
+          setIsLoading(false)
+          setSelectedReferenceSet([])
+          setShowBottomBar(false)
+          setShowColorGrid(false)
+          setCurrentVisibleChapter(props.chapterNumber)
+          setAudio(props.audio)
+          setStatus(props.status)
+          getChapter()
+          audioComponentUpdate();
+          getHighlights();
+          getBookMarks();
+          getNotes();
+          if(props.books.length == 0) {
+            props.fetchVersionBooks({
+              language: props.language,
+              versionCode: props.versionCode,
+              downloaded: props.downloaded,
+              sourceId: props.sourceId,
+            });
+          }
+          setIsLoading(false);
+          });
+    return () => {
+      DbQueries.addHistory(
+        props.sourceId,
+        props.language,
+        props.languageCode,
+        props.versionCode,
+        props.bookId,
+        props.bookName,
+        currentVisibleChapter,
+        props.downloaded,
+        time)
+      appstate
+      netInfo
+      offsetAnimListner
+      subs
+      scrollListner
+      unsubscriber
+    }
+  }, [])
+  
+  useEffect(()=>{
+    console.log("COMPONENT update ====>")
+      // queryBookFromAPI(null)
+      audioComponentUpdate();
+      // scrollToVerse(props.selectedVerse)
+      if (props.books.length == 0) {
+        props.fetchVersionBooks({
+          language: props.language,
+          versionCode: props.versionCode,
+          downloaded: props.downloaded,
+          sourceId: props.sourceId,
+        });
+      }
+  },[props.language,props.sourceId,props.baseAPI,props.chapterNumber,props.bookId])
+  useEffect(()=>{
+    getChapter()
+  },[chapterContent])
       return(
           <CustomStatusBar>
           <View style={styles.container}>
@@ -1160,7 +1258,7 @@ const  addToNotes = () => {
             ) : (
               <CustomHeader
                 audio={audio}
-                // clampedScroll={clampedScroll}
+                clampedScroll={clampedScroll}
                 navigation={props.navigation}
                 toggleAudio={toggleAudio}
                 navigateToVideo={navigateToVideo}
@@ -1203,8 +1301,29 @@ const  addToNotes = () => {
                     />
                   </View>
                 ) : (
-                <FlatList
+                <AnimatedFlatlist
+                {...gestureResponder}
                   data={chapterContent}
+                  scrollEventThrottle={1}
+                  onMomentumScrollBegin={_onMomentumScrollBegin}
+                  onMomentumScrollEnd={_onMomentumScrollEnd}
+                  onScrollEndDrag={_onScrollEndDrag}
+                  onScroll={Animated.event(
+                    [
+                      {
+                        nativeEvent: {
+                          contentOffset: {
+                            x:scrollAnim,
+                            y:scrollAnim,
+                          },
+                        },
+                      },
+                    ],
+                    { useNativeDriver: true }
+                  )}
+                  showsHorizontalScrollIndicator={false}
+                  showsVerticalScrollIndicator={false}
+
                   renderItem={({ item, index }) => (
                     <VerseView
                     verseData={item}
@@ -1235,7 +1354,7 @@ const  addToNotes = () => {
                   />
                   )}
                   keyExtractor={_keyExtractor}
-                  // ListFooterComponent={renderFooter}
+                  ListFooterComponent={renderFooter}
                 />
               
                 )}
@@ -1258,7 +1377,7 @@ const  addToNotes = () => {
                       previousContent={previousContent}
                       downloaded={props.downloaded}
                       nextContent={nextContent}
-                      queryBookFromAPI={()=>queryBookFromAPI()}
+                      queryBookFromAPI={()=>queryBookFromAPI(null)}
                     />
                     {showColorGrid &&
                       bottomHighlightText &&
@@ -1291,7 +1410,7 @@ const  addToNotes = () => {
                       currentChapter={currentVisibleChapter}
                       id={props.bookId}
                       bookName={props.bookName}
-                      closeParallelView={(value) => closeParallelView(value)}
+                      closeParallelView={closeParallel}
                       totalChapters={props.totalChapters}
                       navigation={props.navigation}
                     />
@@ -1300,37 +1419,16 @@ const  addToNotes = () => {
                     <Commentary
                       id={props.bookId}
                       bookName={props.bookName}
-                      closeParallelView={(value) => closeParallelView(value)}
+                      closeParallelView={closeParallel}
                       currentVisibleChapter={currentVisibleChapter}
                     />
                   )}
                 </View>
-              )}
+               )} 
             </View>
           </View>
           </CustomStatusBar>
-//   <View style={{flex:1}}>
-//     {/* <Text>Hello</Text> */}
 
-// </View>
-  // <View>
-  // <PinchGestureHandler
-  //       onGestureEvent={this.onZoomEvent}
-  //       onHandlerStateChange={this.onZoomStateChange}>
-  //       <Animated.Image
-  //         source={{
-  //           uri:
-  //             'https://miro.medium.com/max/1080/1*7SYuZvH2pZnM0H79V4ttPg.jpeg'
-  //         }}
-  //         style={{
-  //           width: width,
-  //           height: 300,
-  //           transform: [{ scale: this.scale }]
-  //         }}
-  //         resizeMode='contain'
-  //       />
-  //     </PinchGestureHandler>
-  //     </View>
 )
 }
 const mapStateToProps = (state) => {
@@ -1386,149 +1484,5 @@ const mapDispatchToProps = (dispatch) => {
     updateFontSize: (payload) => dispatch(updateFontSize(payload)),
   };
 };
-// class Bible extends Component {
-//   constructor(props) {
-//     super(props);
-//    
-//       userData: "",
-//       scrollAnim,
-//       offsetAnim,
-//       clampedScroll: Animated.diffClamp(
-//         Animated.add(
-//           scrollAnim.interpolate({
-//             inputRange: [0, 1],
-//             outputRange: [0, 1],
-//             extrapolateLeft: "clamp",
-//           }),
-//           offsetAnim
-//         ),
-//         0,
-//         NAVBAR_HEIGHT - STATUS_BAR_HEIGHT
-//       ),
-//     };
-
-//     this.getSelectedReferences = this.getSelectedReferences.bind(this);
-//     this.alertPresent;
-//     this.styles = styles(this.props.colorFile, this.props.sizeFile);
-//   }
-//   _clampedScrollValue = 0;
-//   _offsetValue = 0;
-//   _scrollValue = 0;
-
-
-//   componentWillUnmount() {
-//     var time = new Date();
-//     DbQueries.addHistory(
-//       this.props.sourceId,
-//       this.props.language,
-//       this.props.languageCode,
-//       this.props.versionCode,
-//       this.props.bookId,
-//       this.props.bookName,
-//       this.state.currentVisibleChapter,
-//       this.props.downloaded,
-//       time
-//     );
-//     this.subs && this.subs();
-//     this.unsubscriber && this.unsubscriber();
-//     this.unsubscribenetinfo && this.unsubscribenetinfo();
-//     this.state.scrollAnim.removeAllListeners();
-//     this.state.offsetAnim.removeAllListeners();
-//     this.props.ToggleAudio({ status: false, audio: false });
-//     AppState.removeEventListener("change", this._handleAppStateChange);
-//   }
-
-//   // _keyExtractor = (item, index) => item.number;
-
-
-//   ZoomTextSize = () => {
-//     this.gestureResponder = createResponder({
-//       // onStartShouldSetResponder: (evt, gestureState) => true,
-//       onStartShouldSetResponder: () => true,
-//       //onStartShouldSetResponderCapture: (evt, gestureState) => true,
-//       onStartShouldSetResponderCapture: () => true,
-//       //onMoveShouldSetResponder: (evt, gestureState) => true,
-//       onMoveShouldSetResponder: () => true,
-//       //onMoveShouldSetResponderCapture: (evt, gestureState) => true,
-//       onMoveShouldSetResponderCapture: () => true,
-//       //onResponderGrant: (evt, gestureState) => {},
-//       onResponderGrant: () => {},
-//       //onResponderMove: (evt, gestureState) => {
-//       onResponderMove: (gestureState) => {
-//         let thumbSize = this.state.thumbSize;
-//         if (gestureState.pinch && gestureState.previousPinch) {
-//           thumbSize *= gestureState.pinch / gestureState.previousPinch;
-//           let currentDate = new Date().getTime();
-//           let diff = currentDate - this.pinchTime;
-//           if (diff > this.pinchDiff) {
-//             if (gestureState.pinch - gestureState.previousPinch > 5) {
-//               // large
-//               this.changeSizeByOne(1);
-//             } else if (gestureState.previousPinch - gestureState.pinch > 5) {
-//               // small
-//               this.changeSizeByOne(-1);
-//             }
-//           }
-//           this.pinchDiff = diff;
-//           this.pinchTime = currentDate;
-//         }
-//         let { left, top } = this.state;
-//         left += gestureState.moveX - gestureState.previousMoveX;
-//         top += gestureState.moveY - gestureState.previousMoveY;
-//         this.setState({
-//           gestureState: {
-//             ...gestureState,
-//           },
-//           left,
-//           top,
-//           thumbSize,
-//         });
-//       },
-//       onResponderTerminationRequest: () => true,
-//       onResponderRelease: (gestureState) => {
-//         this.setState({
-//           gestureState: {
-//             ...gestureState,
-//           },
-//         });
-//       },
-//       onResponderTerminate: () => {},
-
-//       onResponderSingleTapConfirmed: () => {},
-
-//       moveThreshold: 2,
-//       debug: false,
-//     });
-//   };
-
-//   _onScrollEndDrag = () => {
-//     this._scrollEndTimer = setTimeout(this._onMomentumScrollEnd, 250);
-//   };
-
-//   _onMomentumScrollBegin = () => {
-//     clearTimeout(this._scrollEndTimer);
-//   };
-
-//   _onMomentumScrollEnd = () => {
-//     const toValue =
-//       this._scrollValue > NAVBAR_HEIGHT &&
-//       this._clampedScrollValue > (NAVBAR_HEIGHT - STATUS_BAR_HEIGHT) / 2
-//         ? this._offsetValue + NAVBAR_HEIGHT
-//         : this._offsetValue - NAVBAR_HEIGHT;
-
-//     Animated.timing(this.state.offsetAnim, {
-//       toValue,
-//       duration: 350,
-//       useNativeDriver: true,
-//     }).start();
-//   };
-
-
-//   render() {       
-//     );
-//   }
-// }
-
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(Bible);

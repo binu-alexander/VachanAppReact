@@ -222,6 +222,7 @@ export const style = (colorFile, sizeFile) => {
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
+      padding:8
     },
     parallelView: {
       flex: 1,

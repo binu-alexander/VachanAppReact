@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Text,
@@ -23,50 +23,64 @@ import { connect } from "react-redux";
 import Color from "../../utils/colorConstants";
 
 var contentType = "";
-class SelectContent extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isExpanded: false,
-      modalVisible: false,
-    };
-    this.alertPresent = false;
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
-    this.alertPresent = false;
-  }
 
-  _renderHeader = (item, expanded) => {
+const SelectContent = (props) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  let alertPresent = false;
+  let style = styles(props.colorFile, props.sizeFile);
+  
+  const innerContent = (item,v,parallel)=>{
+    setModalVisible(false)
+    console.log("Hi inner content ",parallel,modalVisible)
+    props.parallelVisibleView({
+      modalVisible: false,
+      visibleParallelView: modalVisible == true && parallel  ,
+    })
+    props.selectContent({
+      parallelLanguage: {
+        languageName: item.languageName,
+        versionCode: v.versionCode,
+        sourceId: v.sourceId,
+      },
+      parallelMetaData: v.metaData[0],
+    })
+    props.updateContentType({
+      parallelContentType: contentType,
+    })
+  }
+  const _renderHeader = (item, expanded) => {
     var value = expanded && item.contentType;
     if (value) {
       contentType = value;
     }
+
     return (
       <View>
-        {this.props.displayContent == "commentary" ? (
-          item.contentType == this.props.displayContent && (
-            <View style={this.styles.accordionHeader}>
-              <Text style={this.styles.accordionHeaderText}>
+        {props.displayContent == "commentary" ? (
+          item.contentType == props.displayContent && (
+            <View style={style.accordionHeader}>
+              <Text style={style.accordionHeaderText}>
                 {" "}
-                {item.contentType == this.props.displayContent &&
+                {item.contentType == props.displayContent &&
                   item.contentType.charAt(0).toUpperCase() +
                     item.contentType.slice(1)}
               </Text>
               <Icon
-                style={this.styles.iconStyleSelection}
+                style={style.iconStyleSelection}
                 name="keyboard-arrow-down"
                 size={24}
               />
             </View>
           )
         ) : (
-          <View style={this.styles.accordionHeader}>
-            <Text style={this.styles.accordionHeaderText}>
+          <View style={style.accordionHeader}>
+            <Text style={style.accordionHeaderText}>
               {" "}
               {item.contentType.charAt(0).toUpperCase() +
                 item.contentType.slice(1)}
             </Text>
             <Icon
-              style={this.styles.iconStyleSelection}
+              style={style.iconStyleSelection}
               name="keyboard-arrow-down"
               size={24}
             />
@@ -75,31 +89,29 @@ class SelectContent extends Component {
       </View>
     );
   };
-  _renderHeaderInner = (item) => {
+
+  const _renderHeaderInner = (item) => {
     return (
       <View>
-        {this.props.displayContent == "commentary" ? (
-          contentType == this.props.displayContent && (
-            <View style={this.styles.headerInner}>
-              <Text style={this.styles.selectionHeaderModal}>
+        {props.displayContent == "commentary" ? (
+          contentType == props.displayContent && (
+            <View style={style.headerInner}>
+              <Text style={style.selectionHeaderModal}>
                 {" "}
                 {item.languageName}
               </Text>
               <Icon
-                style={this.styles.iconStyleSelection}
+                style={style.iconStyleSelection}
                 name="keyboard-arrow-down"
                 size={24}
               />
             </View>
           )
         ) : (
-          <View style={this.styles.headerInner}>
-            <Text style={this.styles.selectionHeaderModal}>
-              {" "}
-              {item.languageName}
-            </Text>
+          <View style={style.headerInner}>
+            <Text style={style.selectionHeaderModal}> {item.languageName}</Text>
             <Icon
-              style={this.styles.iconStyleSelection}
+              style={style.iconStyleSelection}
               name="keyboard-arrow-down"
               size={24}
             />
@@ -109,90 +121,52 @@ class SelectContent extends Component {
     );
   };
 
-  _renderContentInner = (item) => {
+  const _renderContentInner = (item) => {
     return item.versionModels.map((v) =>
-      this.props.displayContent == "commentary" ? (
-        contentType == this.props.displayContent && (
+      props.displayContent == "commentary" ? (
+        contentType == props.displayContent && (
           <TouchableOpacity
-            style={this.styles.selectionInnerContent}
-            onPress={() => {
-              this.setState({ modalVisible: false });
-              this.props.parallelVisibleView({
-                modalVisible: false,
-                visibleParallelView: false,
-              });
-              this.props.selectContent({
-                parallelLanguage: {
-                  languageName: item.languageName,
-                  versionCode: v.versionCode,
-                  sourceId: v.sourceId,
-                },
-                parallelMetaData: v.metaData[0],
-              });
-              this.props.updateContentType({
-                parallelContentType: contentType,
-              });
-            }}
+            style={style.selectionInnerContent}
+            onPress={()=>innerContent(item,v,false)}
           >
-            <Text style={this.styles.selectionHeaderModal}>
-              {v.versionName}
-            </Text>
-            <Text style={this.styles.selectionHeaderModal}>
-              {v.versionCode}
-            </Text>
+            <Text style={style.selectionHeaderModal}>{v.versionName}</Text>
+            <Text style={style.selectionHeaderModal}>{v.versionCode}</Text>
           </TouchableOpacity>
         )
       ) : (
         <TouchableOpacity
-          style={this.styles.selectionInnerContent}
-          onPress={() => {
-            this.setState({ modalVisible: false });
-            this.props.parallelVisibleView({
-              modalVisible: false,
-              visibleParallelView: true,
-            });
-            this.props.selectContent({
-              parallelLanguage: {
-                languageName: item.languageName,
-                versionCode: v.versionCode,
-                sourceId: v.sourceId,
-              },
-              parallelMetaData: v.metaData[0],
-            });
-            this.props.updateContentType({
-              parallelContentType: contentType,
-            });
-          }}
+          style={style.selectionInnerContent}
+          onPress={()=>innerContent(item,v,true)}
         >
-          <Text style={this.styles.selectionHeaderModal}>{v.versionName}</Text>
-          <Text style={this.styles.selectionHeaderModal}>{v.versionCode}</Text>
+          <Text style={style.selectionHeaderModal}>{v.versionName}</Text>
+          <Text style={style.selectionHeaderModal}>{v.versionCode}</Text>
         </TouchableOpacity>
       )
     );
   };
 
-  _renderContent = (item) => {
+  const _renderContent = (item) => {
     return (
       <Accordion
         dataArray={item.content}
         animation={true}
         expanded={[0]}
-        renderHeader={this._renderHeaderInner}
-        renderContent={this._renderContentInner}
+        renderHeader={_renderHeaderInner}
+        renderContent={_renderContentInner}
       />
     );
   };
 
-  errorMessage() {
+  const errorMessage = () => {
     // if(this.props.netConnection){
-    if (!this.alertPresent) {
-      this.alertPresent = true;
+    if (!alertPresent) {
+      alertPresent = true;
       if (
-        this.props.error ||
-        this.props.availableContents.length == 0 ||
-        this.props.availableContents.length == 0
+        props.error ||
+        props.availableContents.length == 0 ||
+        props.availableContents.length == 0
       ) {
-        this.setState({ modalVisible: false });
+        setModalVisible(false);
         Alert.alert(
           "",
           "Check your internet connection",
@@ -200,98 +174,91 @@ class SelectContent extends Component {
             {
               text: "OK",
               onPress: () => {
-                this.alertPresent = false;
+                alertPresent = false;
               },
             },
           ],
           { cancelable: false }
         );
-        this.props.fetchAllContent();
+        props.fetchAllContent();
       } else {
-        this.setState({ modalVisible: !this.state.modalVisible });
-        this.alertPresent = false;
+        setModalVisible(!modalVisible);
+        alertPresent = false;
       }
     }
     // }else{
     //   Alert.alert("", "Check your internet connection", [{ text: 'OK', onPress: () => { this.alertPresent = false } }], { cancelable: false });
     // }
-  }
-  onPressModal = () => {
-    this.errorMessage();
   };
-  render() {
-    console.log(" PROPS ", this.props.availableContents);
-    this.styles = styles(this.props.colorFile, this.props.sizeFile);
-    return (
-      <View>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={this.state.modalVisible}
-          onPress={() => {
-            this.setState({ modalVisible: !this.state.modalVisible });
+  const onPressModal = () => {
+    errorMessage();
+  };
+
+  return (
+    <View>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onPress={() => setModalVisible(!modalVisible)}
+      >
+        <View>
+          <TouchableWithoutFeedback
+            style={style.modalContainer}
+            onPressOut={() =>  setModalVisible(false)}
+          >
+            <View
+              style={{ height: "80%", width: "70%", alignSelf: "flex-end" }}
+            >
+              <Card style={{ marginTop: 40 }}>
+                {props.availableContents.length > 0 && (
+                  <Accordion
+                    dataArray={props.availableContents}
+                    animation={true}
+                    expanded={[0]}
+                    renderHeader={_renderHeader}
+                    renderContent={_renderContent}
+                  />
+                )}
+              </Card>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </Modal>
+      <TouchableOpacity
+        onPress={onPressModal}
+        style={props.navStyles.touchableStyleRight}
+      >
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "row",
           }}
         >
-          <View>
-            <TouchableWithoutFeedback
-              style={this.styles.modalContainer}
-              onPressOut={() => {
-                this.setState({ modalVisible: false });
+          {props.title ? (
+            <Text
+              style={{
+                color: Color.White,
+                fontSize: 18,
+                fontWeight: "normal",
               }}
             >
-              <View
-                style={{ height: "80%", width: "70%", alignSelf: "flex-end" }}
-              >
-                <Card style={{ marginTop: 40 }}>
-                  {this.props.availableContents.length > 0 && (
-                    <Accordion
-                      dataArray={this.props.availableContents}
-                      animation={true}
-                      expanded={[0]}
-                      renderHeader={this._renderHeader}
-                      renderContent={this._renderContent}
-                    />
-                  )}
-                </Card>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </Modal>
-        <TouchableOpacity
-          onPress={this.onPressModal}
-          style={this.props.navStyles.touchableStyleRight}
-        >
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "row",
-            }}
-          >
-            {this.props.title ? (
-              <Text
-                style={{
-                  color: Color.White,
-                  fontSize: 18,
-                  fontWeight: "normal",
-                }}
-              >
-                {this.props.title}
-              </Text>
-            ) : null}
-            {this.props.iconName ? (
-              <MaterialCommunityIcons
-                name={this.props.iconName}
-                color={Color.White}
-                size={26}
-              />
-            ) : null}
-          </View>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-}
+              {props.title}
+            </Text>
+          ) : null}
+          {props.iconName ? (
+            <MaterialCommunityIcons
+              name={props.iconName}
+              color={Color.White}
+              size={26}
+            />
+          ) : null}
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 const mapStateToProps = (state) => {
   return {

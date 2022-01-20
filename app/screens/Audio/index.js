@@ -21,9 +21,9 @@ const Audio = (props) => {
   const emptyMessageNavigation = () => {
     this.props.navigation.navigate("Bible");
   };
-  const renderItem = ({ item }) => {
+  const renderItem = ({ item,index }) => {
     return (
-      <Card>
+      <Card key={index}>
         <CardItem style={styles.cardItemStyle}>
           <TouchableOpacity
             style={styles.audioView}

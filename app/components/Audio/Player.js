@@ -1,99 +1,83 @@
-import React, { Component } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import Controls from "./Controls";
 import Video from "react-native-video";
 import { connect } from "react-redux";
 import { ToggleAudio } from "../../store/action";
 
-class Player extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      paused: true,
-      totalLength: 1,
-      currentPosition: 0,
-      selectedTrack: 0,
-      audioFile: null,
-      repeatOn: false,
-      shuffleOn: false,
-    };
-  }
+const Player = (props) => {
+  const [paused, setPaused] = useState(true);
+  const [totalLength, setTotalLength] = useState(1);
+  const [currentPosition, setCurrentPosition] = useState(0);
+  const [repeatOn, setRepeatOn] = useState(false);
+  const [shuffleOn, setShuffleOn] = useState(false);
+  const refs = useRef();
+  const adioRef = useRef();
+  let loadStart;
+  let onEnd;
+  let videoError;
 
-  componentDidMount() {
-    this.setState({
-      paused: !this.props.audio,
-    });
-  }
-  setDuration(data) {
-    this.setState({ totalLength: Math.floor(data.duration) });
-  }
+  const setDuration = (data) => {
+    setTotalLength(Math.floor(data.duration));
+  };
 
-  setTime(data) {
-    this.setState({ currentPosition: Math.floor(data.currentTime) });
-  }
+  const setTime = (data) => {
+    setCurrentPosition(Math.floor(data.currentTime));
+  };
 
-  seek(time) {
-    time = Math.round(time);
-    this.refs.audioElement && this.refs.audioElement.seek(time);
-    this.setState({
-      currentPosition: time,
-      paused: false,
-    });
-  }
+  const onBack = () => {
+    refs.audioElement.seek(currentPosition - 5);
+  };
 
-  onBack() {
-    this.refs.audioElement.seek(this.state.currentPosition - 5);
-  }
+  const onForward = () => {
+    refs.audioElement.seek(currentPosition + 5);
+  };
 
-  onForward() {
-    this.refs.audioElement.seek(this.state.currentPosition + 5);
-  }
+  useEffect(() => {
+    setPaused(!props.audio);
+  }, []);
 
-  render() {
-    const audiourl =
-      this.props.audioURL +
-      this.props.bookId +
-      "/" +
-      this.props.chapter +
-      "." +
-      this.props.audioFormat;
-    return (
-      <View style={{ flex: 1 }}>
-        {this.props.audioURL && (
-          <View style={this.props.styles.audiocontainer}>
-            <Controls
-              styles={this.props.styles}
-              onPressRepeat={() =>
-                this.setState({ repeatOn: !this.state.repeatOn })
-              }
-              repeatOn={this.state.repeatOn}
-              onPressShuffle={() =>
-                this.setState({ shuffleOn: !this.state.shuffleOn })
-              }
-              onPressPlay={() => this.setState({ paused: false })}
-              onPressPause={() => this.setState({ paused: true })}
-              onBack={this.onBack.bind(this)}
-              onForward={this.onForward.bind(this)}
-              paused={this.state.paused}
-            />
-            <Video
-              source={{ uri: audiourl }} // Can be a URL or a local file.
-              ref="audioElement"
-              paused={this.state.paused} // Pauses playback entirely.
-              resizeMode="cover" // Fill the whole screen at aspect ratio.
-              repeat={false} // Repeat forever.
-              onLoadStart={this.loadStart} // Callback when video starts to load
-              onLoad={this.setDuration.bind(this)} // Callback when video loads
-              onProgress={this.setTime.bind(this)} // Callback every ~250ms with currentTime
-              onEnd={this.onEnd} // Callback when playback finishes
-              onError={this.videoError} // Callback when video cannot be loaded
-            />
-          </View>
-        )}
-      </View>
-    );
-  }
-}
+  const audiourl =
+    props.audioURL +
+    props.bookId +
+    "/" +
+    props.chapter +
+    "." +
+    props.audioFormat;
+
+  console.log(audiourl, props.audioURL, "hhh");
+  return (
+    <View style={{ flex: 1 }}>
+      {props.audioURL && (
+        <View style={props.styles.audiocontainer}>
+          <Controls
+            styles={props.styles}
+            onPressRepeat={() => setRepeatOn(!repeatOn)}
+            repeatOn={repeatOn}
+            onPressShuffle={() => setShuffleOn(!shuffleOn)}
+            onPressPlay={() => setPaused(false)}
+            onPressPause={() => setPaused(true)}
+            onBack={onBack}
+            onForward={onForward}
+            paused={paused}
+          />
+          <Video
+            source={{ uri: audiourl }} // Can be a URL or a local file.
+            ref={adioRef}
+            paused={paused} // Pauses playback entirely.
+            resizeMode="cover" // Fill the whole screen at aspect ratio.
+            repeat={false} // Repeat forever.
+            onLoadStart={loadStart} // Callback when video starts to load
+            onLoad={setDuration} // Callback when video loads
+            onProgress={setTime} // Callback every ~250ms with currentTime
+            onEnd={onEnd} // Callback when playback finishes
+            onError={videoError} // Callback when video cannot be loaded
+          />
+        </View>
+      )}
+    </View>
+  );
+};
 
 const mapStateToProps = (state) => {
   return {

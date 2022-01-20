@@ -5,31 +5,7 @@ import Login from "./Login";
 // import { styles } from "./styles.js";
 import ProfilePage from "./ProfilePage";
 
-// class Auth extends Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       user: this.props.email,
-//       imageUrl: this.props.photo,
-//       userData: "",
-//       isLoading: false,
-//     };
-//     this.styles = styles(this.props.colorFile, this.props.sizeFile);
-//   }
-//   render() {
-//     if (this.props.email) {
-//       return <ProfilePage navigation={this.props.navigation} />;
-//     } else {
-//       return <Login navigation={this.props.navigation} />;
-//     }
-//   }
-// }
-
 const Auth = (props) => {
-  // const user = props.email;
-  // const imageUrl = props.photo;
-  // const userData = "";
-  // const style = styles(props.colorFile, props.sizeFile);
   return props.email ? (
     <ProfilePage navigation={props.navigation} />
   ) : (

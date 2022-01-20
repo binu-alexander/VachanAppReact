@@ -14,14 +14,6 @@ const BookMarks = (props) => {
   const [bookmarksList, setBookmarksList] = useState([]);
   const [message, setMessage] = useState("");
   const email = props.email;
-  // BookMarks.getDerivedStateFromProps = (props, state) => {
-  //   if (props.email !== state.email) {
-  //     return {
-  //       email: props.email,
-  //     };
-  //   }
-  //   return null;
-  // };
   const style = styles(props.colorFile, props.sizeFile);
   const prevBooks = useRef(props.books).current;
   const fecthBookmarks = () => {
