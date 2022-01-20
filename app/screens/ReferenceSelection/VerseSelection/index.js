@@ -34,25 +34,16 @@ const SelectVerse = (props) => {
     setVersesData(versesArray);
   };
   const onNumPress = (item) => {
-    console.log("selectedBookId,selectedBookName,selectedChapternumber 2",selectedBookId,selectedBookName,selectedChapterNumber)
-
-
-    if(selectedBookId && selectedChapterNumber){
-      console.log("props.route.params ",props.route.params)
-      if (props.route.params) {
-        props.route.params.getReference({
-          bookId: selectedBookId,
-          bookName: selectedBookName,
-          chapterNumber: selectedChapterNumber,
-          totalChapters: totalChapters,
-          selectedVerse: item ? item : 1,
-        });
-        props.navigation.navigate("Bible");
-      } 
-    }else{
-      console.log("selectedBookId ",selectedBookId)
+    if (props.route.params) {
+      props.route.params.getReference({
+        bookId: selectedBookId,
+        bookName: selectedBookName,
+        chapterNumber: selectedChapterNumber,
+        totalChapters: totalChapters,
+        selectedVerse: item ? item : 1,
+      });
+      props.navigation.navigate("Bible");
     }
-
   };
 
   useEffect(() => {

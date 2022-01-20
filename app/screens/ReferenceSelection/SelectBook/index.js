@@ -20,40 +20,51 @@ import Spinner from "react-native-loading-spinner-overlay";
 import Color from "../../../utils/colorConstants";
 const width = Dimensions.get("window").width;
 
+//OT- old-testment
+//NT- new-testment
 const SelectBook = (props) => {
   const [activeTab, setActiveTab] = useState(true);
   const [NTSize, setNTSize] = useState(0);
   const [OTSize, setOTSize] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const prevBooks = useRef(props.books).current;
   // console.log("PREV BOOKS ",prevBooks)
   let viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 100,
     waitForInteraction: true,
   }).current;
-  const flatlistRef = useRef()
+  const flatlistRef = useRef();
   const style = styles(props.colorFile, props.sizeFile);
   const toggleButton = (value) => {
-    console.log("button toggle ",value)
+    console.log("button toggle ", value);
     setActiveTab(value);
+    if (value === false) {
       flatlistRef.current.scrollToIndex({
-        index:value === false ?  OTSize : 0,  
+        index: OTSize,
         viewPosition: 0,
         animated: false,
         viewOffset: 0,
       });
+    } else {
+      flatlistRef.current.scrollToIndex({
+        index: 0,
+        viewPosition: 0,
+        animated: false,
+        viewOffset: 0,
+      });
+    }
   };
   const getItemLayout = (data, index) => ({
     length: 48,
     offset: 48 * index,
     index,
   });
-  const navigateTo = (item) => {
+  const navigateTo = (items) => {
     // console.log("ITEM ",item)
+    console.log(items.bookId, items.bookName, items.numOfChapters, "gg");
     props.navigation.navigate("Chapters", {
-      selectedBookId: item.bookId,
-      selectedBookName: item.bookName,
-      totalChapters: item.numOfChapters,
+      selectedBookId: items.bookId,
+      selectedBookName: items.bookName,
+      totalChapters: items.numOfChapters,
     });
   };
   const getOTSize = () => {
@@ -100,7 +111,7 @@ const SelectBook = (props) => {
       getNTSize();
       selectTab();
     }
-  },[]);
+  }, [prevBooks, props.books, setActiveTab]);
   const selectTab = () => {
     let bookData = null;
     let bookIndex = -1;
@@ -112,7 +123,7 @@ const SelectBook = (props) => {
         }
       }
       if (bookData && bookIndex != -1) {
-        if (bookData.bookNumber >= 40) {
+        if (bookData.bookNumber > 40) {
           setActiveTab(false);
         } else {
           setActiveTab(true);
@@ -126,26 +137,26 @@ const SelectBook = (props) => {
               animated: false,
               viewOffset: 0,
             });
-          } 
+          }
         });
       }
     }
   };
 
-  const renderItem = ( {item} ) => {
+  const renderItem = ({ item }) => {
     return (
-      <TouchableOpacity onPress={(item) => navigateTo(item)}>
+      <TouchableOpacity onPress={() => navigateTo(item)}>
         <View style={style.bookList}>
           <Text
             style={[
               style.textStyle,
               {
                 fontWeight:
-                  item.bookId == props.route.params.selectedBookId
+                  item.bookId === props.route.params.selectedBookId
                     ? "bold"
                     : "normal",
                 color:
-                  item.bookId == props.route.params.selectedBookId
+                  item.bookId === props.route.params.selectedBookId
                     ? props.colorFile.blueText
                     : props.colorFile.textColor,
               },
@@ -162,19 +173,18 @@ const SelectBook = (props) => {
       </TouchableOpacity>
     );
   };
-  
   const onViewableItemsChanged = useRef((viewableItems) => {
     if (viewableItems.length > 0) {
-      if (viewableItems[0].index < OTSize) {
+      if (viewableItems[0].index <= OTSize) {
         // toggel to OT
-        setActiveTab(true);
+        setActiveTab(activeTab);
       } else {
         // toggle to NT
-        setActiveTab(false);
+        setActiveTab(!activeTab);
       }
     }
-  })
-
+  });
+  console.log(activeTab, "books data");
   return (
     <View style={style.container}>
       {props.isLoading ? (
@@ -192,7 +202,7 @@ const SelectBook = (props) => {
                   activeTab ? style.activeBgColor : style.inactiveBgColor,
                   style.segmentButton,
                 ]}
-                onPress={()=>toggleButton(true)}
+                onPress={() => toggleButton(true)}
               >
                 <Text
                   style={
@@ -213,7 +223,7 @@ const SelectBook = (props) => {
                   !activeTab ? style.activeBgColor : style.inactiveBgColor,
                   style.segmentButton,
                 ]}
-                onPress={()=>toggleButton(false)}
+                onPress={() => toggleButton(false)}
               >
                 <Text
                   active={!activeTab}
@@ -230,7 +240,7 @@ const SelectBook = (props) => {
           <FlatList
             ref={flatlistRef}
             data={props.books}
-            getItemLayout={(data, index)=>getItemLayout(data, index)}
+            getItemLayout={(data, index) => getItemLayout(data, index)}
             renderItem={renderItem}
             extraData={style}
             keyExtractor={(item) => item.bookNumber}
