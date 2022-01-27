@@ -232,9 +232,9 @@ const BibleChapter = (props) => {
           <Icon name="arrow-drop-down" color={Color.White} size={20} />
         </Button>
         <Right style={{ position: "absolute", right: 4 }}>
-          {/* <Button transparent onPress={()=>props.closeParallelView(false)}>
+          <Button transparent onPress={()=>props.closeParallelView(false)}>
             <Icon name="cancel" color={Color.White} size={20} />
-          </Button> */}
+          </Button>
         </Right>
       </Header>
       {loading && <Spinner visible={true} textContent={"Loading..."} />}

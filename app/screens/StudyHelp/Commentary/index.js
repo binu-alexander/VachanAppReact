@@ -206,9 +206,9 @@ const Commentary = (props) => {
           </Title>
         </Body>
         <Right>
-          {/* <Button transparent onPress={()=>props.closeParallelView(false)}>
+          <Button transparent onPress={()=>props.closeParallelView(false)}>
             <Icon name="cancel" color={Color.White} size={20} />
-          </Button> */}
+          </Button>
         </Right>
       </Header>
 

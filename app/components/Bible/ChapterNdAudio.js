@@ -16,7 +16,7 @@ const ChapterNdAudio = ({
                         styles.bottomBarParallelPrevView : styles.bottomBarPosition]}>
                         <Icon name={'chevron-left'} color={Color.Blue_Color} size={visibleParallelView ? 16 : 32}
                             style={styles.bottomBarChevrontIcon}
-                            onPress={() => queryBookFromAPI(downloaded ? false : previousContent)}
+                            onPress={()=>queryBookFromAPI(downloaded ? false : previousContent)}
                         />
                     </View>
             }
@@ -38,7 +38,7 @@ const ChapterNdAudio = ({
                         styles.bottomBarNextParallelView : styles.bottomBarPosition]}>
                         <Icon name={'chevron-right'} color={Color.Blue_Color} size={visibleParallelView ? 16 : 32}
                             style={styles.bottomBarChevrontIcon}
-                            onPress={() => queryBookFromAPI(downloaded ? true : nextContent)}
+                            onPress={()=>queryBookFromAPI(downloaded ? true : nextContent)}
                         />
                     </View>
             }
