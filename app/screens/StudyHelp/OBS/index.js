@@ -72,7 +72,6 @@ const OBS = (props) => {
     fetch(Github_URL + langCode + "/content/" + bsIndex + ".md")
       .then((response) => response.text())
       .then((json) => {
-        console.log(json, "hhhh");
         setObsData(json);
       })
       .catch((error) => {

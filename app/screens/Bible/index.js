@@ -1213,7 +1213,7 @@ const Bible = (props) => {
   ]);
   useEffect(() => {
     getChapter();
-  }, [chapterContent]);
+  }, [props.sourceId, props.bookId, currentVisibleChapter]);
   return (
     <CustomStatusBar>
       <View style={style.container}>
@@ -1344,7 +1344,7 @@ const Bible = (props) => {
                   previousContent={previousContent}
                   downloaded={props.downloaded}
                   nextContent={nextContent}
-                  queryBookFromAPI={() => queryBookFromAPI(null)}
+                  queryBookFromAPI={queryBookFromAPI}
                 />
                 {showColorGrid &&
                   bottomHighlightText &&

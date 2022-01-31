@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 import AppNavigator from "./app/routes/";
 import { NavigationContainer } from "@react-navigation/native";
 import SplashScreen from "react-native-splash-screen";
@@ -16,19 +16,13 @@ import {
 import { Alert, Linking } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import database from "@react-native-firebase/database";
-import { NativeBaseProvider, Text, Box, Root } from "native-base";
+import { Root } from "native-base";
+const App = (props) => {
+  const sourceId = props.sourceId;
+  let isConnected;
+  let unsubscribenetinfo;
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isloading: false,
-      signedIn: false,
-      checkedSignIn: false,
-    };
-  }
-
-  checkUpdateNeeded = async () => {
+  const checkUpdateNeeded = async () => {
     let latestVersion = await VersionCheck.getLatestVersion();
     let currentVersion = await VersionCheck.getCurrentVersion();
     VersionCheck.needUpdate({
@@ -58,70 +52,68 @@ class App extends Component {
     });
   };
 
-  async componentDidMount() {
+  const _handleConnectionChange = () => {
+    if (isConnected === true) {
+      if (props.baseAPI == null) {
+        database()
+          .ref("/apiBaseUrl/")
+          .on("value", (snapshot) => {
+            props.APIBaseURL(snapshot.val());
+          });
+      }
+      if (props.allBooks.length == 0 || props.books.length == 0) {
+        props.fetchAllBooks();
+        props.fetchVersionBooks({
+          language: props.language,
+          versionCode: props.versionCode,
+          downloaded: props.downloaded,
+          sourceId: sourceId,
+        });
+      }
+      if (
+        props.allLanguages.length == 0 ||
+        props.contentLanguages.length == 0
+      ) {
+        props.fetchVersionLanguage();
+        props.fetchAllContent();
+      }
+    }
+  };
+
+  useEffect(() => {
     setTimeout(() => {
       SplashScreen.hide();
     }, 400);
     database()
       .ref("/apiBaseUrl/")
       .on("value", (snapshot) => {
-        this.props.APIBaseURL(snapshot.val());
-        this.props.fetchVersionLanguage();
-        this.props.fetchAllContent();
-        this.props.fetchAllBooks();
-        this.props.fetchVersionBooks({
-          language: this.props.language,
-          versionCode: this.props.versionCode,
-          downloaded: this.props.downloaded,
-          sourceId: this.state.sourceId,
+        props.APIBaseURL(snapshot.val());
+        props.fetchVersionLanguage();
+        props.fetchAllContent();
+        props.fetchAllBooks();
+        props.fetchVersionBooks({
+          language: props.language,
+          versionCode: props.versionCode,
+          downloaded: props.downloaded,
+          sourceId: sourceId,
         });
       });
-    this.checkUpdateNeeded();
-    this.unsubscribenetinfo = NetInfo.addEventListener(
-      this._handleConnectionChange
-    );
-  }
+    checkUpdateNeeded();
+    unsubscribenetinfo = NetInfo.addEventListener(_handleConnectionChange);
+    return () => {
+      unsubscribenetinfo && unsubscribenetinfo();
+    };
+  }, []);
 
-  _handleConnectionChange = (state) => {
-    if (state.isConnected === true) {
-      if (this.props.baseAPI == null) {
-        database()
-          .ref("/apiBaseUrl/")
-          .on("value", (snapshot) => {
-            this.props.APIBaseURL(snapshot.val());
-          });
-      }
-      if (this.props.allBooks.length == 0 || this.props.books.length == 0) {
-        this.props.fetchAllBooks();
-        this.props.fetchVersionBooks({
-          language: this.props.language,
-          versionCode: this.props.versionCode,
-          downloaded: this.props.downloaded,
-          sourceId: this.state.sourceId,
-        });
-      }
-      if (
-        this.props.allLanguages.length == 0 ||
-        this.props.contentLanguages.length == 0
-      ) {
-        this.props.fetchVersionLanguage();
-        this.props.fetchAllContent();
-      }
-    }
-  };
-  componentWillUnmount() {
-    this.unsubscribenetinfo && this.unsubscribenetinfo();
-  }
-  render() {
-    return (
-      <Root>
-        <NavigationContainer>
-          <AppNavigator />
-        </NavigationContainer>
-      </Root>
-    );
-  }
-}
+  return (
+    <Root>
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+    </Root>
+  );
+};
+
 const mapStateToProps = (state) => {
   return {
     language: state.updateVersion.language,
