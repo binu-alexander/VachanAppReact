@@ -11,8 +11,8 @@ const Player = (props) => {
   const [currentPosition, setCurrentPosition] = useState(0);
   const [repeatOn, setRepeatOn] = useState(false);
   const [shuffleOn, setShuffleOn] = useState(false);
-  const refs = useRef();
-  const adioRef = useRef();
+  const refs = useRef()
+  // const adioRef = useRef();
   let loadStart;
   let onEnd;
   let videoError;
@@ -26,11 +26,11 @@ const Player = (props) => {
   };
 
   const onBack = () => {
-    refs.audioElement.seek(currentPosition - 5);
+    refs.current.seek(currentPosition - 5);
   };
 
   const onForward = () => {
-    refs.audioElement.seek(currentPosition + 5);
+    refs.current.seek(currentPosition + 5);
   };
 
   useEffect(() => {
@@ -63,7 +63,7 @@ const Player = (props) => {
           />
           <Video
             source={{ uri: audiourl }} // Can be a URL or a local file.
-            ref={adioRef}
+            ref={refs}
             paused={paused} // Pauses playback entirely.
             resizeMode="cover" // Fill the whole screen at aspect ratio.
             repeat={false} // Repeat forever.

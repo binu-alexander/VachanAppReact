@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { Text, Alert } from "react-native";
 import { connect } from "react-redux";
 import { selectContent, parallelVisibleView } from "../../store/action/";
@@ -7,7 +7,24 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Color from "../../utils/colorConstants";
 
 const VerseView = (props) => {
-  const [unableSelection, setUnableSelection] = useState(false);
+  const preHighlightArr = useRef(props.highlightedVerse).current;
+  let verseNumber = props.downloaded
+  ? props.verseData.number
+  : props.verseData.verseNumber;
+let verseText = props.downloaded
+  ? props.verseData.text
+  : props.verseData.verseText;
+let sectionHeading = props.downloaded
+  ? props.verseData.section
+  : props.sectionHeading;
+let obj =
+  props.chapterNumber +
+  "_" +
+  props.index +
+  "_" +
+  verseNumber +
+  "_" +
+  verseText;
   const onPress = () => {
     let verseNumber = props.downloaded
       ? props.verseData.number
@@ -21,12 +38,11 @@ const VerseView = (props) => {
       verseNumber,
       verseText
     );
-    setUnableSelection(false);
   };
 
-  const has = (selectedReferences, obj) => {
-    for (var i = 0; i < selectedReferences.length; i++) {
-      if (selectedReferences[i] == obj) {
+  const isSelect = () => {
+    for (var i = 0; i < props.selectedReferences.length; i++) {
+      if (props.selectedReferences[i] == obj) {
         if (props.visibleParallelView) {
           props.parallelVisibleView({
             modalVisible: false,
@@ -38,6 +54,24 @@ const VerseView = (props) => {
           );
         }
         return true;
+      }
+    }
+    return false;
+  };
+  
+  const isHighlight = () => {
+    let verseNumber = props.downloaded
+      ? props.verseData.number
+      : props.verseData.verseNumber;
+    for (var i = 0; i <= props.highlightedVerse.length; i++) {
+      if (props.highlightedVerse[i]) {
+        let regexMatch = /(\d+):([a-zA-Z]+)/;
+        let match = props.highlightedVerse[i].match(regexMatch);
+        if (match) {
+          if (parseInt(match[1]) == verseNumber) {
+            return getColor(match[2]);
+          }
+        }
       }
     }
     return false;
@@ -71,23 +105,6 @@ const VerseView = (props) => {
     }
     return value;
   };
-  const isHighlight = () => {
-    let verseNumber = props.downloaded
-      ? props.verseData.number
-      : props.verseData.verseNumber;
-    for (var i = 0; i <= props.HighlightedVerse.length; i++) {
-      if (props.HighlightedVerse[i]) {
-        let regexMatch = /(\d+):([a-zA-Z]+)/;
-        let match = props.HighlightedVerse[i].match(regexMatch);
-        if (match) {
-          if (parseInt(match[1]) == verseNumber) {
-            return getColor(match[2]);
-          }
-        }
-      }
-    }
-    return false;
-  };
   const isNoted = () => {
     var arr = [];
     for (var i = 0; i <= props.notesList.length - 1; i++) {
@@ -108,6 +125,7 @@ const VerseView = (props) => {
       return false;
     }
   };
+ 
   const goToNote = (verse_num) => {
     props.navigation.navigate("Notes", {
       chapterNumber: props.chapterNumber,
@@ -115,27 +133,12 @@ const VerseView = (props) => {
       verseNumber: verse_num,
     });
   };
-
-  let verseNumber = props.downloaded
-    ? props.verseData.number
-    : props.verseData.verseNumber;
-  let verseText = props.downloaded
-    ? props.verseData.text
-    : props.verseData.verseText;
-  let sectionHeading = props.downloaded
-    ? props.verseData.section
-    : props.sectionHeading;
-  let obj =
-    props.chapterNumber +
-    "_" +
-    props.index +
-    "_" +
-    verseNumber +
-    "_" +
-    verseText;
-  let isSelect = has(props.selectedReferences, obj);
-  let isHighlights = isHighlight();
-  let isNote = isNoted();
+// useEffect(()=>{
+// // console.log(" props.HighlightedVerse  ..",props.highlightedVerse)
+// isHighlight()
+// isSelect()
+// },[...props.highlightedVerse])
+  // console.log(" props.highlightedVerse.length ",props.highlightedVerse,isHighlight() ? verseNumber : null)
   if (verseNumber == 1 && typeof verseNumber != "undefined") {
     return (
       <Text
@@ -150,9 +153,7 @@ const VerseView = (props) => {
         ) : null}
 
         <Text
-          onPress={() => {
-            onPress();
-          }}
+          onPress={onPress}
         >
           <Text style={props.styles.verseChapterNumber}>
             {props.chapterNumber}{" "}
@@ -160,21 +161,21 @@ const VerseView = (props) => {
           <Text
             style={[
               props.styles.textHighlight,
-              isSelect && isHighlights
+              isSelect() && isHighlight()
                 ? {
-                    backgroundColor: isHighlights,
+                    backgroundColor: isHighlight(),
                     textDecorationLine: "underline",
                   }
-                : !isSelect && !isHighlights
+                : !isSelect() && !isHighlight()
                 ? props.styles.textHighlight
-                : !isSelect && isHighlights
-                ? { backgroundColor: isHighlights }
+                : !isSelect() && isHighlight()
+                ? { backgroundColor: isHighlight() }
                 : { textDecorationLine: "underline" },
             ]}
           >
             {getResultText(verseText)}
           </Text>
-          {isNote ? (
+          {isNoted() ? (
             <Icon
               onPress={() => goToNote(verseNumber)}
               name="note-outline"
@@ -195,9 +196,7 @@ const VerseView = (props) => {
       <Text
         textBreakStrategy={"simple"}
         style={props.styles.textStyle}
-        onPress={() => {
-          onPress();
-        }}
+        onPress={onPress}
         onLayout={(event) => props.onLayout(event, props.index, verseNumber)}
       >
         <Text textBreakStrategy={"simple"}>
@@ -208,21 +207,21 @@ const VerseView = (props) => {
             textBreakStrategy={"simple"}
             style={[
               props.styles.textHighlight,
-              isSelect && isHighlights
+              isSelect() && isHighlight()
                 ? {
-                    backgroundColor: isHighlights,
+                    backgroundColor: isHighlight(),
                     textDecorationLine: "underline",
                   }
-                : !isSelect && !isHighlights
+                : !isSelect() && !isHighlight()
                 ? props.styles.textHighlight
-                : !isSelect && isHighlights
-                ? { backgroundColor: isHighlights }
+                : !isSelect() && isHighlight()
+                ? { backgroundColor: isHighlight() }
                 : { textDecorationLine: "underline" },
             ]}
           >
             {getResultText(verseText)}
           </Text>
-          {isNote ? (
+          {isNoted() ? (
             <Icon
               onPress={() => goToNote(verseNumber)}
               name="note-outline"

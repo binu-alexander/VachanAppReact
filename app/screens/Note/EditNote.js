@@ -259,14 +259,18 @@ const EditNote = (props) => {
   const noteIndex = props.route.params ? props.route.params.noteIndex : null;
   const noteObject = props.route.params ? props.route.params.notesList : null;
   const bcvRef = props.route.params ? props.route.params.bcvRef : null;
-  const [contentBody, setContentBody] = useState(
-    props.route.params ? props.route.params.contentBody : null
-  );
+  let bodyData = props.route.params ? props.route.params.contentBody : ""
+  const [contentBody, setContentBody] = useState(bodyData);
+  const [editorData, setEditorData] = useState('');
+
   const _editor = React.createRef();
   const style = styles(props.colorFile, props.sizeFile);
 
-  const saveNote = async () => {
-    var time = Date.now();
+  const saveNote = () => {
+    console.log("CONTENT BODU ",contentBody)
+    console.log("EDITOR DAATA ",editorData)
+
+    var time = Date.now()
     var firebaseRef = database().ref(
       "users/" + props.uid + "/notes/" + props.sourceId + "/" + bcvRef.bookId
     );
@@ -383,13 +387,15 @@ const EditNote = (props) => {
   const handleGetHtml = () => {
     _editor.current?.getHtml().then((res) => {
       console.log("Html :", res);
+
     });
   };
 
   const onHtmlChange = (html) => {
-    console.log("html ", html);
-    setContentBody(html.html);
-  };
+    console.log("on html change ",html.html)
+    setContentBody(html.html)
+    setEditorData("hello")
+  }
 
   useEffect(() => {
     props.navigation.setOptions({
@@ -405,11 +411,8 @@ const EditNote = (props) => {
           Note
         </Text>
       ),
-      headerLeft: () => (
-        <HeaderBackButton tintColor={Color.White} onPress={() => onBack()} />
-      ),
-      headerRight: () => (
-        <TouchableOpacity style={{ margin: 8 }} onPress={() => saveNote()}>
+      headerLeft: () => <HeaderBackButton tintColor={Color.White} onPress={()=>onBack()} />,
+      headerRight: () => <TouchableOpacity style={{ margin: 8 }} onPress={()=>saveNote()}>
           <Text
             style={{
               fontSize: 16,
@@ -421,9 +424,22 @@ const EditNote = (props) => {
             Save
           </Text>
         </TouchableOpacity>
-      ),
+      ,
     });
-  }, []);
+  }, [contentBody])
+useEffect(()=>{
+console.log(" content body ",contentBody)
+},[contentBody])
+  handleTextChange = (data) => {
+    console.log("handleTextChange ....",data)
+    // setContentBody(data)
+    // setEditorData(data)
+  }
+  // handleSelectionChange = async (data) => {
+
+  // }
+  // console.log("DATA ....",contentBody)
+
   return (
     <View style={style.containerEditNote}>
       <View style={style.subContainer}>
@@ -441,7 +457,7 @@ const EditNote = (props) => {
         style={style.editorInput}
         ref={_editor}
         // onSelectionChange={handleSelectionChange}
-        // onTextChange={handleTextChange}
+        onTextChange={handleTextChange}
         onHtmlChange={onHtmlChange}
         quill={{
           placeholder: "Enter your note here",

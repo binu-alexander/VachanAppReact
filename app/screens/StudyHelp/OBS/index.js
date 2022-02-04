@@ -72,7 +72,6 @@ const OBS = (props) => {
     fetch(Github_URL + langCode + "/content/" + bsIndex + ".md")
       .then((response) => response.text())
       .then((json) => {
-        console.log(json, "hhhh");
         setObsData(json);
       })
       .catch((error) => {
@@ -117,13 +116,16 @@ const OBS = (props) => {
     mdFileFetch();
   };
   useEffect(() => {
-    fetchLangList();
-    if (prevStory != storyList) {
       let selectedStoryIndex = bsIndex.replace(/^0+/, "");
       _dropdown_2.select(parseInt(selectedStoryIndex - 1));
-    }
-  }, [langCode, defaultStory, defaultStory, bsIndex, obsData]);
-  console.log(langCode, defaultLanguage, defaultStory, storyList, "codelan");
+  }, [...storyList]);
+  useEffect(()=>{
+    fetchLangList()
+  },[])
+  useEffect(()=>{
+    bibleStoryList();
+    mdFileFetch();
+  },[langCode,defaultLanguage,bsIndex])
   return (
     <View style={style.container}>
       <View style={style.dropdownView}>

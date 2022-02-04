@@ -10,6 +10,8 @@ import ReloadButton from "../../../components/ReloadButton";
 import HTML from "react-native-render-html";
 import vApi from "../../../utils/APIFetch";
 import securityVaraibles from "../../../../securityVaraibles";
+import fetchCommentaryReducer from "../../../store/reducer/apiFetchReducer/vachanAPIFetch";
+import { cos } from "react-native-reanimated";
 
 const commentaryKey = securityVaraibles.COMMENTARY_KEY
   ? "?key=" + securityVaraibles.COMMENTARY_KEY
@@ -18,10 +20,10 @@ const commentaryKey = securityVaraibles.COMMENTARY_KEY
 const Commentary = (props) => {
   const [error, setError] = useState(null);
   const [bookNameList, setBookNameList] = useState([]);
+  const [bookName, setBookName] = useState(props.bookName);
+
   const style = styles(props.colorFile, props.sizeFile);
   let alertPresent = false;
-  const prevBookId = useRef(props.bookId).current;
-  const prevCurrentVisibleChapter = useRef(props.currentVisibleChapter).current;
   const fetchBookName = async () => {
     try {
       let response = await vApi.get("booknames");
@@ -31,7 +33,6 @@ const Commentary = (props) => {
       setBookNameList([]);
     }
   };
-  console.log("heyyyyyy i am parallel");
   const errorMessage = () => {
     if (!alertPresent) {
       alertPresent = true;
@@ -136,7 +137,7 @@ const Commentary = (props) => {
       </View>
     );
   };
-  useEffect(() => {
+  const fetchCommentary = ()=>{
     if (props.parallelLanguage) {
       let url =
         "commentaries/" +
@@ -149,47 +150,38 @@ const Commentary = (props) => {
       console.log("URL UPDATE ", url);
       props.vachanAPIFetch(url);
       fetchBookName();
+      updateBookName()
     }
-    if (
-      props.bookId != prevBookId ||
-      prevCurrentVisibleChapter != props.currentVisibleChapter
-    ) {
-      if (props.parallelLanguage) {
-        const url =
-          "commentaries/" +
-          props.parallelLanguage.sourceId +
-          "/" +
-          props.bookId +
-          "/" +
-          props.currentVisibleChapter +
-          commentaryKey;
-        props.vachanAPIFetch(url);
-        fetchBookName();
-      }
-    }
+  }
+  useEffect(()=>{
+    fetchCommentary()
+  },[])
+  useEffect(() => {
+        fetchCommentary()
   }, [
     props.bookId,
-    prevBookId,
-    prevCurrentVisibleChapter,
     props.currentVisibleChapter,
   ]);
-  var bookName = null;
-  if (bookNameList) {
-    for (var i = 0; i <= bookNameList.length - 1; i++) {
-      let parallelLanguage = props.parallelLanguage &&
-        props.parallelLanguage.languageName.toLowerCase();
-      if (bookNameList[i].language.name === parallelLanguage) {
-        for (var j = 0; j <= bookNameList[i].bookNames.length - 1; j++) {
-          var bId = bookNameList[i].bookNames[j].book_code;
-          if (bId == props.bookId) {
-            bookName = bookNameList[i].bookNames[j].short;
+  const updateBookName=()=>{
+    if (bookNameList) {
+      for (var i = 0; i <= bookNameList.length - 1; i++) {
+        let parallelLanguage = props.parallelLanguage &&
+          props.parallelLanguage.languageName.toLowerCase();
+        if (bookNameList[i].language.name === parallelLanguage) {
+          for (var j = 0; j <= bookNameList[i].bookNames.length - 1; j++) {
+            var bId = bookNameList[i].bookNames[j].book_code;
+            if (bId == props.bookId) {
+              let bookName = bookNameList[i].bookNames[j].short;
+              setBookName(bookName)
+            }
           }
         }
       }
+    } else {
+      return;
     }
-  } else {
-    return;
   }
+  
   return (
     <View style={style.container}>
       <Header
@@ -249,8 +241,10 @@ const mapStateToProps = (state) => {
     versionCode: state.updateVersion.versionCode,
     sourceId: state.updateVersion.sourceId,
     downloaded: state.updateVersion.downloaded,
-    bookId: state.updateVersion.bookId,
-    bookName: state.updateVersion.bookName,
+    prevBookId: state.updateVersion.bookId,
+    prevBookName: state.updateVersion.bookName,
+    prevChapterNumber: state.updateVersion.chapterNumber,
+
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
     contentType: state.updateVersion.contentType,
