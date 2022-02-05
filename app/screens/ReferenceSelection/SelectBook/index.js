@@ -173,7 +173,6 @@ const SelectBook = (props) => {
       </TouchableOpacity>
     );
   };
-
   const onViewableItemsChanged = useRef((viewableItems) => {
     if (viewableItems.length > 0) {
       if (viewableItems[0].index <= OTSize) {

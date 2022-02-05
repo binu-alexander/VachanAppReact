@@ -40,11 +40,13 @@ const Login = (props) => {
         .signInWithEmailAndPassword(email, password)
         .then(() => {
           //removed res from this then
+          console.log("HI")
           props.userLogedIn({ pasLogedIn: true, googleLogIn: false });
-          props.navigation.navigate("Bible");
           setIsLoading(false);
+          props.navigation.navigate("Bible");
         })
         .catch((error) => {
+          // console.log("ERROR")
           if (error.code === "auth/user-not-found") {
             Alert.alert("User not found");
           }
@@ -69,7 +71,6 @@ const Login = (props) => {
       const data = await GoogleSignin.signIn();
       if (data) {
         setIsLoading(true);
-        async () => {
           const credential = auth.GoogleAuthProvider.credential(
             data.idToken,
             data.accessToken
@@ -79,9 +80,9 @@ const Login = (props) => {
           props.userLogedIn({ pasLogedIn: false, googleLogIn: true });
           setIsLoading(false);
           props.navigation.navigate("Bible");
-        };
       }
     } catch (error) {
+      console.log("error",error)
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
         Alert.alert("Signin Cancelled");
@@ -94,6 +95,7 @@ const Login = (props) => {
       } else {
         // some other error happened
       }
+      setIsLoading(false);
     }
   };
   // const _signInFacebook = () => {

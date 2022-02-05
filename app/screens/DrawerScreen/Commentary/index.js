@@ -6,7 +6,6 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  // Dimensions,
 } from "react-native";
 import { connect } from "react-redux";
 import {
@@ -26,446 +25,9 @@ import constants from "../../../utils/constants";
 import ModalDropdown from "react-native-modal-dropdown";
 import { getBookChaptersFromMapping } from "../../../utils/UtilFunctions";
 
-// const height = Dimensions.get("window").height;
-
 const commentaryKey = securityVaraibles.COMMENTARY_KEY
   ? "?key=" + securityVaraibles.COMMENTARY_KEY
   : "";
-
-// class DrawerCommentary extends Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       commentary: [],
-//       totalChapters: Array.from(
-//         new Array(getBookChaptersFromMapping(this.props.bookId)),
-//         (x, i) => (i + 1).toString()
-//       ),
-//       chapterNumber: this.props.chapterNumber,
-//       error: null,
-//       bookName: this.props.bookName,
-//       bookId: this.props.bookId,
-//       bookNameList: [],
-//       dropDownList: [],
-//       bookResponse: [],
-//       parallelMetaData: this.props.parallelMetaData,
-//       parallelLanguage: this.props.parallelLanguage,
-//       selectedBookIndex: -1,
-//       selectedBook: this.props.bookName,
-//     };
-//     this.styles = styles(this.props.colorFile, this.props.sizeFile);
-//     this.alertPresent = false;
-//   }
-
-//   async fetchBookName() {
-//     try {
-//       const response = await vApi.get("booknames");
-//       console.log("Response bookname ", response);
-//       this.setState({ bookResponse: response }, () => {
-//         this.updateBookName();
-//       });
-//     } catch (error) {
-//       this.setState({ error: error, bookNameList: [], bookResponse: [] });
-//     }
-//   }
-//   updateBookName() {
-//     let res = this.state.bookResponse;
-//     if (res.length > 0) {
-//       var bookNameList = [];
-//       var dropDownList = [];
-//       if (res) {
-//         for (var i = 0; i <= res.length - 1; i++) {
-//           let parallelLanguage =
-//             this.state.parallelLanguage.languageName.toLowerCase();
-//           if (res[i].language.name === parallelLanguage) {
-//             var bookList = res[i].bookNames.sort(function (a, b) {
-//               return a.book_id - b.book_id;
-//             });
-//             for (var j = 0; j <= bookList.length - 1; j++) {
-//               let bId = bookList[j].book_code;
-//               let bName = bookList[j].short;
-//               let bNumber = bookList[j].book_id;
-//               if (bId == this.state.bookId) {
-//                 this.setState({ bookName: bName, bookId: bId });
-//               }
-//               bookNameList.push({
-//                 bookName: bName,
-//                 bookId: bId,
-//                 bookNumber: bNumber,
-//               });
-//               dropDownList.push(bName);
-//             }
-//           }
-//         }
-//         this.setState({ bookNameList, dropDownList });
-//       } else {
-//         return;
-//       }
-//     }
-//   }
-
-//   onSelectBook = (index, val) => {
-//     var bookId = null;
-//     this.state.bookNameList.forEach((item) => {
-//       if (item.bookName == val) {
-//         bookId = item.bookId;
-//       }
-//     });
-//     this.setState(
-//       {
-//         bookId,
-//         totalChapters: Array.from(
-//           new Array(getBookChaptersFromMapping(bookId)),
-//           (x, i) => (i + 1).toString()
-//         ),
-//       },
-//       () => {
-//         let selectedNumber =
-//           this.state.totalChapters.length < this.state.chapterNumber
-//             ? "1"
-//             : this.state.chapterNumber;
-//         this._dropdown_2.select(parseInt(selectedNumber) - 1);
-//         this.setState(
-//           {
-//             chapterNumber: selectedNumber,
-//             selectedBookIndex: index,
-//             selectedBook: val,
-//             bookName: val,
-//           },
-//           () => {
-//             this.commentaryUpdate();
-//           }
-//         );
-//       }
-//     );
-//   };
-
-//   onSelectChapter = (index, value) => {
-//     this.setState({ chapterNumber: parseInt(value) }, () => {
-//       this.commentaryUpdate();
-//     });
-//   };
-//   commentaryUpdate() {
-//     let url =
-//       "commentaries/" +
-//       this.state.parallelLanguage.sourceId +
-//       "/" +
-//       this.state.bookId +
-//       "/" +
-//       this.state.chapterNumber +
-//       commentaryKey;
-//     this.props.vachanAPIFetch(url);
-//   }
-//   fetchCommentary() {
-//     let commentary = [];
-//     this.props.availableContents.forEach((element) => {
-//       if (element.contentType == "commentary") {
-//         element.content.forEach((lang) => {
-//           if (lang.languageName == this.props.language) {
-//             commentary = lang;
-//           }
-//         });
-//       }
-//     });
-//     if (Object.keys(commentary).length > 0) {
-//       this.setState(
-//         {
-//           parallelMetaData: commentary.versionModels[0].metaData[0],
-//           parallelLanguage: {
-//             languageName: commentary.languageName,
-//             versionCode: commentary.versionModels[0].versionCode,
-//             sourceId: commentary.versionModels[0].sourceId,
-//           },
-//         },
-//         () => {
-//           this.commentaryUpdate();
-//           this.props.selectContent({
-//             parallelLanguage: this.state.parallelLanguage,
-//             parallelMetaData: this.state.parallelMetaData,
-//           });
-//         }
-//       );
-//     } else {
-//       this.setState(
-//         {
-//           parallelMetaData: constants.defaultCommentaryMd,
-//           parallelLanguage: constants.defaultCommentary,
-//         },
-//         () => {
-//           this.commentaryUpdate();
-//           this.props.selectContent({
-//             parallelLanguage: constants.defaultCommentary,
-//             parallelMetaData: constants.defaultCommentaryMd,
-//           });
-//         }
-//       );
-//     }
-//   }
-
-//   componentDidMount() {
-//     this.props.navigation.setOptions({
-//       // headerTitle: () => <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff' }}>Commentary</Text>,
-//       headerRight: () => (
-//         <View
-//           style={{
-//             paddingHorizontal: 10,
-//             justifyContent: "center",
-//             alignItems: "center",
-//             flexDirection: "row",
-//           }}
-//         >
-//           <SelectContent
-//             navigation={this.props.navigation}
-//             navStyles={navStyles}
-//             iconName={"arrow-drop-down"}
-//             title={this.state.parallelLanguage.languageName}
-//             displayContent="commentary"
-//           />
-//         </View>
-//       ),
-//     });
-//     this.fetchBookName();
-//     this.fetchCommentary();
-//   }
-
-//   componentDidUpdate(prevProps, prevState) {
-//     if (
-//       prevProps.parallelLanguage.sourceId !==
-//       this.props.parallelLanguage.sourceId
-//     ) {
-//       this.setState(
-//         {
-//           parallelLanguage: this.props.parallelLanguage,
-//           parallelMetaData: this.props.parallelMetaData,
-//         },
-//         async () => {
-//           this.props.navigation.setOptions({
-//             headerRight: () => (
-//               <View style={this.styles.headerView}>
-//                 <SelectContent
-//                   navigation={this.props.navigation}
-//                   navStyles={navStyles}
-//                   iconName={"arrow-drop-down"}
-//                   title={this.state.parallelLanguage.languageName}
-//                   displayContent="commentary"
-//                 />
-//               </View>
-//             ),
-//           });
-//           this.commentaryUpdate();
-//           this.updateBookName();
-//         }
-//       );
-//     }
-//     console.log(
-//       "prev state ,",
-//       prevState.dropDownList[0],
-//       this.state.dropDownList[0]
-//     );
-//     if (prevState.dropDownList[0] != this.state.dropDownList[0]) {
-//       console.log("not ,");
-//       if (this.state.selectedBookIndex == -1) {
-//         this.state.dropDownList.forEach((b, index) => {
-//           if (this.state.bookName == b) {
-//             console.log("BOOK NAME ", b);
-//             this.onSelectBook(index, b);
-//             // this._dropdown_1.select(index)
-//           }
-//         });
-//       } else {
-//         this._dropdown_1.select(this.state.selectedBookIndex);
-//       }
-//     }
-//   }
-
-//   errorMessage() {
-//     if (!this.alertPresent) {
-//       this.alertPresent = true;
-//       if (this.props.error || this.state.error) {
-//         Alert.alert(
-//           "",
-//           "Check your internet connection",
-//           [
-//             {
-//               text: "OK",
-//               onPress: () => {
-//                 this.alertPresent = false;
-//               },
-//             },
-//           ],
-//           { cancelable: false }
-//         );
-//         if (this.props.parallelLanguage) {
-//           this.commentaryUpdate();
-//         }
-//       } else {
-//         this.alertPresent = false;
-//       }
-//     }
-//   }
-//   updateData = () => {
-//     this.errorMessage();
-//   };
-
-//   renderItem = ({ item }) => {
-//     return (
-//       <View style={{ padding: 10 }}>
-//         {item.verse &&
-//           (item.verse == 0 ? (
-//             <Text style={this.styles.commentaryHeading}>Chapter Intro</Text>
-//           ) : (
-//             <Text style={this.styles.commentaryHeading}>
-//               Verse Number : {item.verse}
-//             </Text>
-//           ))}
-//         <HTML
-//           baseFontStyle={this.styles.textString}
-//           tagsStyles={{ p: this.styles.textString }}
-//           html={item.text}
-//         />
-//       </View>
-//     );
-//   };
-//   ListHeaderComponent = () => {
-//     return (
-//       <View>
-//         {this.props.commentaryContent &&
-//         this.props.commentaryContent.bookIntro ? (
-//           <View style={this.styles.cardItemBackground}>
-//             <Text style={this.styles.commentaryHeading}>Book Intro</Text>
-//             <HTML
-//               baseFontStyle={this.styles.textString}
-//               tagsStyles={{ p: this.styles.textString }}
-//               html={
-//                 this.props.commentaryContent &&
-//                 this.props.commentaryContent.bookIntro
-//               }
-//             />
-//           </View>
-//         ) : null}
-//       </View>
-//     ); 
-//   };
-//   renderFooter = () => {
-//     var metadata = this.state.parallelMetaData;
-//     console.log("FOOTER ", this.state.parallelMetaData);
-//     return (
-//       <View style={{ paddingVertical: 20 }}>
-//         {this.props.commentaryContent &&
-//           this.props.commentaryContent.commentaries &&
-//           this.props.parallelMetaData && (
-//             <View style={this.styles.centerContainer}>
-//               {metadata?.revision !== null && metadata?.revision !== "" && (
-//                 <Text
-//                   textBreakStrategy={"simple"}
-//                   style={this.styles.metaDataText}
-//                 >
-//                   <Text>Copyright:</Text> {metadata?.revision}
-//                 </Text>
-//               )}
-//               {metadata?.copyrightHolder !== null &&
-//                 metadata?.copyrightHolder !== "" && (
-//                   <Text
-//                     textBreakStrategy={"simple"}
-//                     style={this.styles.metaDataText}
-//                   >
-//                     <Text>License:</Text> {metadata?.copyrightHolder}
-//                   </Text>
-//                 )}
-//               {metadata?.license !== null && metadata?.license !== "" && (
-//                 <Text
-//                   textBreakStrategy={"simple"}
-//                   style={this.styles.metaDataText}
-//                 >
-//                   <Text>Technology partner:</Text> {metadata?.license}
-//                 </Text>
-//               )}
-//             </View>
-//           )}
-//       </View>
-//     );
-//   };
-
-//   render() {
-//     return (
-//       <View style={this.styles.container}>
-//         {this.props.error ? (
-//           <View
-//             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-//           >
-//             <ReloadButton
-//               styles={this.styles}
-//               reloadFunction={this.updateData}
-//               message={null}
-//             />
-//           </View>
-//         ) : this.props.parallelLanguage == undefined ? null : (
-//           <View style={{ flex: 1 }}>
-//             <View style={this.styles.dropdownPosition}>
-//               <TouchableOpacity
-//                 onPress={() => {
-//                   this._dropdown_1 && this._dropdown_1.show();
-//                 }}
-//                 style={this.styles.dropdownView}
-//               >
-//                 <ModalDropdown
-//                   ref={(el) => (this._dropdown_1 = el)}
-//                   options={this.state.dropDownList}
-//                   onSelect={this.onSelectBook}
-//                   style={{ paddingRight: 20 }}
-//                   defaultValue={this.state.bookName}
-//                   isFullWidth={true}
-//                   dropdownStyle={this.styles.dropdownSize}
-//                   dropdownTextStyle={{ fontSize: 18 }}
-//                   textStyle={this.styles.dropdownText}
-//                 />
-//                 <Icon
-//                   name="arrow-drop-down"
-//                   color={this.props.colorFile.iconColor}
-//                   size={20}
-//                 />
-//               </TouchableOpacity>
-//               <TouchableOpacity
-//                 onPress={() => {
-//                   this._dropdown_2 && this._dropdown_2.show();
-//                 }}
-//                 style={this.styles.dropdownView}
-//               >
-//                 <ModalDropdown
-//                   ref={(el) => (this._dropdown_2 = el)}
-//                   options={this.state.totalChapters}
-//                   onSelect={this.onSelectChapter}
-//                   defaultValue={this.state.chapterNumber}
-//                   isFullWidth={true}
-//                   dropdownStyle={this.styles.dropdownSize}
-//                   dropdownTextStyle={{ fontSize: 18 }}
-//                   textStyle={this.styles.dropdownText}
-//                 />
-//                 <Icon
-//                   name="arrow-drop-down"
-//                   color={this.props.colorFile.iconColor}
-//                   size={20}
-//                 />
-//               </TouchableOpacity>
-//             </View>
-//             <FlatList
-//               data={
-//                 this.props.commentaryContent &&
-//                 this.props.commentaryContent.commentaries
-//               }
-//               showsVerticalScrollIndicator={false}
-//               contentContainerStyle={{ flexGrow: 1, margin: 16 }}
-//               renderItem={this.renderItem}
-//               // ListFooterComponent={<View style={this.styles.listFooter}></View>}
-//               ListHeaderComponent={this.ListHeaderComponent}
-//               ListFooterComponent={this.renderFooter}
-//             />
-//           </View>
-//         )}
-//       </View>
-//     );
-//   }
-// }
 
 const DrawerCommentary = (props) => {
   // const [commentary, setCommentary] = useState([]);
@@ -501,15 +63,15 @@ const DrawerCommentary = (props) => {
     try {
       const response = await vApi.get("booknames");
       setBookResponse(response);
-      updateBookName();
+      updateBookName(response);
     } catch (error) {
       setError(error);
-      setBookNameList([bookNameList]);
-      setBookResponse([bookResponse]);
+      setBookNameList([]);
+      setBookResponse([]);
     }
   };
-  const updateBookName = () => {
-    let res = bookResponse;
+  const updateBookName = (bookRes) => {
+    let res = bookRes == null ? bookResponse : bookRes;
     if (res.length > 0) {
       let bookNameLists = [];
       let dropDownLists = [];
@@ -546,7 +108,7 @@ const DrawerCommentary = (props) => {
     }
   };
 
-  console.log(dropDownList, "drop");
+  // console.log(dropDownList, "drop");
   const onSelectBook = (index, val) => {
     let bookId = null;
     bookNameList.forEach((item) => {
@@ -715,8 +277,9 @@ const DrawerCommentary = (props) => {
       </View>
     );
   };
-
   useEffect(() => {
+    fetchBookName();
+    fetchCommentary();
     props.navigation.setOptions({
       // headerTitle: () => <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff' }}>Commentary</Text>,
       headerRight: () => (
@@ -738,44 +301,52 @@ const DrawerCommentary = (props) => {
         </View>
       ),
     });
-    fetchBookName();
-    fetchCommentary();
-    console.log(prevParallelLanguage, props.parallelLanguage, "use");
-    if (prevParallelLanguage.sourceId != props.parallelLanguage.sourceId) {
-      setParallelLanguage(props.parallelLanguage);
-      setParallelMetaData(props.parallelMetaData);
-      props.navigation.setOptions({
-        headerRight: () => (
-          <View style={style.headerView}>
-            <SelectContent
-              navigation={props.navigation}
-              navStyles={navStyles}
-              iconName={"arrow-drop-down"}
-              title={parallelLanguage.languageName}
-              displayContent="commentary"
-            />
-          </View>
-        ),
+  }, []);
+  useEffect(() => {
+    setParallelLanguage(props.parallelLanguage);
+    setParallelMetaData(props.parallelMetaData);
+    props.navigation.setOptions({
+      headerRight: () => (
+        <View style={style.headerView}>
+          <SelectContent
+            navigation={props.navigation}
+            navStyles={navStyles}
+            iconName={"arrow-drop-down"}
+            title={props.parallelLanguage.languageName}
+            displayContent="commentary"
+          />
+        </View>
+      ),
+    });
+  }, [
+    parallelLanguage.sourceId,
+    parallelLanguage.languageName,
+    props.parallelLanguage.languageName,
+    props.parallelLanguage.sourceId,
+  ]);
+  useEffect(() => {
+    commentaryUpdate();
+    updateBookName();
+  }, [
+    JSON.stringify(props.commentaryContent),
+    parallelLanguage.sourceId,
+    chapterNumber,
+    bookId,
+  ]);
+  useEffect(() => {
+    if (selectedBookIndex == -1) {
+      dropDownList.forEach((b, index) => {
+        if (bookName == b) {
+          console.log("BOOK NAME ", b);
+          onSelectBook(index, b);
+          // this._dropdown_1.select(index)
+        }
       });
-      commentaryUpdate();
-      updateBookName();
+    } else {
+      _dropdown_1.select(selectedBookIndex);
     }
-    console.log("prev state ,", prevDropDownList[0], dropDownList[0]);
-    if (prevDropDownList[0] != dropDownList[0]) {
-      if (selectedBookIndex == -1) {
-        dropDownList.forEach((b, index) => {
-          if (bookName == b) {
-            console.log("BOOK NAME ", b);
-            onSelectBook(index, b);
-            // this._dropdown_1.select(index)
-          }
-        });
-      } else {
-        _dropdown_1.select(selectedBookIndex);
-      }
-    }
-  }, [chapterNumber, bookId, prevParallelLanguage]);
-  console.log(parallelLanguage.sourceId, parallelLanguage);
+  }, [JSON.stringify(dropDownList), selectedBookIndex]);
+
   return (
     <View style={style.container}>
       {props.error ? (

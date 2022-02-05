@@ -13,12 +13,14 @@ import vApi from "../../utils/APIFetch";
 import { getHeading } from "../../utils/UtilFunctions";
 
 const BibleChapter = (props) => {
+  const bShortName = props.bookName != null &&
+  (props.bookName.length > 10 ? props.bookName.slice(0, 9) + "..." : props.bookName);
   const [currentParallelViewChapter, setCurrentParallelViewChapter] = useState(
-    props.currentParallelViewChapter
+    props.currentChapter
   );
   const [bookName, setBookName] = useState(props.bookName);
   const [bookNameList, setBookNameList] = useState([]);
-  const [shortbookName, setShortbookName] = useState(null);
+  const [shortbookName, setShortbookName] = useState(bShortName);
   const [totalChapters, setTotalChapters] = useState(props.totalChapters);
   const [error, setError] = useState(false);
   const [message, setMessage] = useState(null);
@@ -44,7 +46,7 @@ const BibleChapter = (props) => {
         for (var i = 0; i <= response.length - 1; i++) {
           if (response[i].language.name === parallelLanguage) {
             for (var j = 0; j <= response[i].bookNames.length - 1; j++) {
-              if (this.state.bookId != null) {
+              if (bookId != null) {
                 if (response[i].bookNames[j].book_code == bookId) {
                   bukName = response[i].bookNames[j].short;
                 }
@@ -95,12 +97,13 @@ const BibleChapter = (props) => {
   const queryParallelBible = async (val, bkId) => {
     try {
       if (props.parallelLanguage) {
-        let currentParallelViewChapters =
-          val == null ? currentParallelViewChapters : val;
+        let chapter =
+          val == null ? currentParallelViewChapter : val;
         let bookIds = bkId == null ? bookId : bkId;
+        console.log(" BIBLE Book id",bookIds)
         setLoading(true);
-        setCurrentParallelViewChapter(currentParallelViewChapters);
         setBookId(bookIds);
+        setCurrentParallelViewChapter(chapter);
         updateBook();
         let url =
           "bibles" +
@@ -109,12 +112,13 @@ const BibleChapter = (props) => {
           "/" +
           "books" +
           "/" +
-          bookId +
+          bookIds +
           "/" +
           "chapter" +
           "/" +
-          currentParallelViewChapter;
+          chapter;
         let response = await vApi.get(url);
+
         if (response.chapterContent) {
           let chapterContent = response.chapterContent.contents;
           let totalVerse = response.chapterContent.contents.length;
@@ -153,7 +157,7 @@ const BibleChapter = (props) => {
     try {
       setTotalChapters(item.totalChapters);
       queryParallelBible(item.chapterNumber, item.bookId);
-      updateBook();
+      updateBook()
     } catch (error) {
       setError(true);
       setMessage(null);
@@ -213,6 +217,10 @@ const BibleChapter = (props) => {
       });
     };
   }, []);
+  useEffect(()=>{
+    updateBook()
+    queryParallelBible(null, null);
+  },[bookId])
   return (
     <View style={style.container}>
       <Header
@@ -232,7 +240,7 @@ const BibleChapter = (props) => {
           <Icon name="arrow-drop-down" color={Color.White} size={20} />
         </Button>
         <Right style={{ position: "absolute", right: 4 }}>
-          <Button transparent onPress={() => props.closeParallelView(false)}>
+          <Button transparent onPress={()=>props.closeParallelView(false)}>
             <Icon name="cancel" color={Color.White} size={20} />
           </Button>
         </Right>
@@ -242,7 +250,7 @@ const BibleChapter = (props) => {
         <View style={style.centerReloadButton}>
           <ReloadButton
             styles={style}
-            reloadFunction={queryParallelBible}
+            reloadFunction={()=>queryParallelBible(null,null)}
             message={message}
           />
         </View>
@@ -360,8 +368,7 @@ const BibleChapter = (props) => {
                   color={Color.Blue_Color}
                   size={16}
                   style={style.bottomBarChevrontIcon}
-                  onPress={() =>
-                    queryParallelBible(
+                  onPress={() =>  queryParallelBible(
                       PpeviousContent.chapterId,
                       PpeviousContent.bibleBookCode
                     )
@@ -378,8 +385,7 @@ const BibleChapter = (props) => {
                   color={Color.Blue_Color}
                   size={16}
                   style={style.bottomBarChevrontIcon}
-                  onPress={() =>
-                    queryParallelBible(
+                  onPress={() =>  queryParallelBible(
                       pNextContent.chapterId,
                       pNextContent.bibleBookCode
                     )

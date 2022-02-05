@@ -2,7 +2,7 @@ import { StyleSheet, Dimensions } from "react-native";
 const width = Dimensions.get("window").width;
 import Color from "../../utils/colorConstants";
 
-export const styles = (colorFile, sizeFile) => {
+export const style = (colorFile, sizeFile) => {
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -139,11 +139,11 @@ export const styles = (colorFile, sizeFile) => {
       color: colorFile.chevronIconColor,
     },
     playButton: {
-      height: 56,
-      width: 56,
-      alignItems: "center",
-      flexDirection: "row",
-      justifyContent: "center",
+        height: 56,
+        width: 56,
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'center',
     },
     bottomBarAudioCenter: {
       borderRadius: 32,
@@ -222,6 +222,7 @@ export const styles = (colorFile, sizeFile) => {
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
+      // padding:8
     },
     parallelView: {
       flex: 1,
@@ -246,13 +247,14 @@ export const styles = (colorFile, sizeFile) => {
       color: colorFile.textColor,
       textAlign: "center",
     },
-    headerView: { position: "absolute", top: 0, zIndex: 2, width: "50%" },
-    innerContainer: { flex: 1, flexDirection: "column" },
-    reloadButtonCenter: {
+    headerView:{ position: "absolute", top: 0, zIndex: 2, width: "50%" },
+    innerContainer:{flex: 1,
+    flexDirection: "column"},
+    reloadButtonCenter:{
       flex: 1,
       flexDirection: "column",
       justifyContent: "center",
       alignItems: "center",
-    },
+    }
   });
 };

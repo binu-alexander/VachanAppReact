@@ -110,11 +110,11 @@ const DrawerScreen = (props) => {
           </TouchableOpacity>
         ))}
         {/*for appstore app*/}
-        <Text style={style.versionText}>
+        {/* <Text style={style.versionText}>
           APP VERSION {state.currentVersion}
-        </Text>
+        </Text> */}
         {/*//for tesing */}
-        {/* <Text style={this.styles.versionText}>APP VERSION 1.3.2-alpha.5</Text> */}
+        <Text style={styles.versionText}>APP VERSION 1.3.4-alpha.4</Text>
       </ScrollView>
     </View>
   );

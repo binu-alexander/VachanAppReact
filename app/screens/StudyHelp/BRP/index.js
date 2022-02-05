@@ -459,6 +459,13 @@ const BRP = (props) => {
         }
       }
     }
+    console.log(
+      " bookId,word,chapterNumber,bookName ",
+      bookId,
+      words,
+      chapterNumber,
+      bookName
+    );
     if (bookNumber && bookName) {
       props.updateVersionBook({
         bookId: bookId,
@@ -520,9 +527,9 @@ const BRP = (props) => {
                 }}
               >
                 <ModalDropdown
-                  options={planList}
+                  options={planLists}
                   onSelect={onSelect}
-                  defaultValue={planList.length > 0 ? planList[0] : ""}
+                  defaultValue={planLists.length > 0 ? planLists[0] : ""}
                   isFullWidth={true}
                   dropdownStyle={{
                     padding: 10,
@@ -544,10 +551,10 @@ const BRP = (props) => {
               </TouchableOpacity>
             ),
           });
-          fetch(GIT_BASE_API + "bible_reading_plans/" + manifestData[0].file)
+          fetch(GIT_BASE_API + "bible_reading_plans/" + json[0].file)
             .then((response) => response.json())
-            .then((json) => {
-              setReadingPlan(json);
+            .then((readingPlan) => {
+              setReadingPlan(readingPlan);
               loadItems();
               laodMonthItem({ dateString: selectedDate });
             });
@@ -630,19 +637,21 @@ const BRP = (props) => {
     setSelectedDate(selectedDates);
     setCurrentMonth(currentMonths);
     fetchPlan();
-    if (
-      prevBooks.length != props.books.length ||
-      Object.keys(prevItems).length != Object.keys(items).length
-    ) {
-      props.fetchVersionBooks({
-        language: props.languageName,
-        versionCode: props.versionCode,
-        downloaded: props.downloaded,
-        sourceId: props.sourceId,
-      });
-      fetchPlan();
-    }
-  }, [selectedDate, planList, setPlanList, currentMonth]);
+  }, []);
+  useEffect(() => {
+    fetchPlan();
+  }, [selectedDate, currentMonth]);
+  useEffect(() => {
+    props.fetchVersionBooks({
+      language: props.languageName,
+      versionCode: props.versionCode,
+      downloaded: props.downloaded,
+      sourceId: props.sourceId,
+    });
+  }, [JSON.stringify(props.books)]);
+  useEffect(() => {
+    loadItems();
+  }, [JSON.stringify(readingPlan), planSelected]);
 
   const themeStyle = {
     calendarBackground: props.colorFile.backgroundColor, //agenda background

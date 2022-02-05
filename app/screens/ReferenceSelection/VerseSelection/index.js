@@ -7,22 +7,15 @@ import { connect } from "react-redux";
 import { styles } from "./styles";
 
 const SelectVerse = (props) => {
-  const selectedBookId = props.route.params
-    ? props.route.params.selectedBookId
-    : null;
-  const selectedBookName = props.route.params
-    ? props.route.params.selectedBookName
-    : null;
-
-  const selectedChapterNumber = props.route.params
-    ? props.route.params.selectedChapterNumber
-    : null;
-  const totalChapters = props.route.params
-    ? props.route.params.totalChapters
-    : null;
+  const selectedBookId = props.route.params ? props.route.params.selectedBookId : null;
+  const selectedBookName = props.route.params  ? props.route.params.selectedBookName : null;
+  const selectedChapterNumber = props.route.params ? props.route.params.selectedChapterNumber : null;
+  const totalChapters = props.route.params ? props.route.params.totalChapters : null;
   const [versesData, setVersesData] = useState([]);
   const prevData = useRef(versesData).current;
   const style = styles(props.colorFile, props.sizeFile);
+  console.log("selectedBookId,selectedBookName,selectedChapternumber 1",selectedBookId,selectedBookName,selectedChapterNumber)
+
   const fectchVerses = async () => {
     let versesArray = [];
     const url =
@@ -34,6 +27,7 @@ const SelectVerse = (props) => {
       selectedChapterNumber +
       "/verses";
     let verses = await vApi.get(url);
+    console.log("VERSE DATA ",verses)
     if (verses) {
       verses.map((item) => versesArray.push(item.verse.number));
     }
