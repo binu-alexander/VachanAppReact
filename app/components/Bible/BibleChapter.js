@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Text, View, ScrollView, Alert } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import Spinner from "react-native-loading-spinner-overlay";
-import { fetchVersionBooks, selectContent } from "../../store/action";
+import { fetchVersionBooks, selectContent,parallelVisibleView } from "../../store/action";
 import { styles } from "./styles";
 import { connect } from "react-redux";
 import { getResultText } from "../../utils/UtilFunctions";
@@ -221,6 +221,13 @@ const BibleChapter = (props) => {
     updateBook()
     queryParallelBible(null, null);
   },[bookId])
+  
+  closeParallelView = (value)=>{
+    props.parallelVisibleView({
+      modalVisible: false,
+      visibleParallelView: value,
+    })
+  }
   return (
     <View style={style.container}>
       <Header
@@ -240,7 +247,7 @@ const BibleChapter = (props) => {
           <Icon name="arrow-drop-down" color={Color.White} size={20} />
         </Button>
         <Right style={{ position: "absolute", right: 4 }}>
-          <Button transparent onPress={()=>props.closeParallelView(false)}>
+          <Button transparent onPress={()=>closeParallelView(false)}>
             <Icon name="cancel" color={Color.White} size={20} />
           </Button>
         </Right>
@@ -409,6 +416,7 @@ const mapStateToProps = (state) => {
     versionCode: state.updateVersion.versionCode,
     sourceId: state.updateVersion.sourceId,
     downloaded: state.updateVersion.downloaded,
+    totalChapters: state.updateVersion.totalChapters,
     bookId: state.updateVersion.bookId,
     bookName: state.updateVersion.bookName,
     parallelLanguage: state.selectContent.parallelLanguage,
@@ -420,6 +428,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
     selectContent: (payload) => dispatch(selectContent(payload)),
+    parallelVisibleView: (payload) => dispatch(parallelVisibleView(payload)),
   };
 };
 

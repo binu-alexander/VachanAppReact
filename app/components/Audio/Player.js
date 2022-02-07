@@ -86,6 +86,9 @@ const mapStateToProps = (state) => {
     audioURL: state.updateVersion.audioURL,
     audioFormat: state.updateVersion.audioFormat,
     audio: state.audio.audio,
+    bookId: state.updateVersion.bookId,
+    languageCode: state.updateVersion.languageCode,
+    versionCode: state.updateVersion.versionCode,
   };
 };
 const mapDispatchToProps = (dispatch) => {

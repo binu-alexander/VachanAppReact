@@ -4,12 +4,17 @@ import {
   Animated,
   TouchableOpacity,
   StyleSheet,
+  Alert,
   Text,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import Color from "../../utils/colorConstants";
 import SelectContent from "./SelectContent";
-
+import RNHTMLtoPDF from "react-native-html-to-pdf";
+import Permission from "../../utils/constants";
+import { connect } from "react-redux";
+import { AndroidPermission } from "../../utils/UtilFunctions";
+import {  Toast } from "native-base";
 const NAVBAR_HEIGHT = 80;
 // const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
 // const HEADER_MIN_HEIGHT = 0;
@@ -26,8 +31,70 @@ const CustomHeader = (props) => {
     inputRange: [0, NAVBAR_HEIGHT],
     outputRange: [0, -NAVBAR_HEIGHT],
     extrapolate: "clamp",
-  });
-
+  })
+  const navigateToVideo=()=>{
+    props.navigation.navigate("Video", {
+      bookId: props.bookId,
+      bookName: props.bookName,
+    });
+  }
+  const navigateToImage = () => {
+    // setStatus(false);
+    props.navigation.navigate("Infographics", {
+      bookId: props.bookId,
+      bookName: props.bookName,
+    });
+  };
+  const navigateToSettings = () => {
+    // setStatus(false);
+    props.navigation.navigate("Settings");
+  };
+  const downloadPDF = async () => {
+    // setIsLoading(true);
+    var texttohtml = "";
+    props.chapterContent.forEach((val) => {
+      if (val.verseNumber != undefined && val.verseText != undefined) {
+        texttohtml += `<p>${val.verseNumber} : ${val.verseText}</p>`;
+      }
+    })
+    let header1 = `<h1>${props.language + " " + props.versionCode}</h1>`;
+    let header3 = `<h3>${props.bookName + " " + props.chapterNumber}</h3>`;
+    let options = {
+      html: `${header1}${header3}<p>${texttohtml}</p>`,
+      fileName: `${
+        "VachanGo_" +
+        props.language +
+        "_" +
+        props.bookId +
+        "_" +
+        props.chapterNumber
+      }`,
+      // eslint-disable-next-line no-constant-condition
+      directory: "Download" ? "Download" : "Downloads",
+    };
+    await RNHTMLtoPDF.convert(options);
+    Toast.show({ text: "Pdf downloaded.", type: "success", duration: 5000 });
+    // setIsLoading(false);
+  
+  };
+  const createPDF = async () => {
+    let permissionGranted = await AndroidPermission(
+      Permission.PermissionTypes.WRITE_EXTERNAL_STORAGE
+    );
+    if (permissionGranted) {
+      Alert.alert("", "Do you want to download the pdf for current chapter", [
+        {
+          text: "No",
+          onPress: () => {
+            return;
+          },
+        },
+        { text: "Yes", onPress: () => downloadPDF() },
+      ]);
+    } else {
+      return;
+    }
+  }
   return (
     <Animated.View
       style={[
@@ -60,20 +127,20 @@ const CustomHeader = (props) => {
           </TouchableOpacity>
         )}
         <TouchableOpacity
-          onPress={props.navigateToVideo}
+          onPress={navigateToVideo}
           style={navStyles.touchableStyleRight}
         >
           <Icon name="videocam" size={24} color={Color.White} />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={props.navigateToImage}
+          onPress={navigateToImage}
           style={navStyles.touchableStyleRight}
         >
           <Icon name="image" size={24} color={Color.White} />
         </TouchableOpacity>
         <TouchableOpacity style={navStyles.touchableStyleRight}>
           <Icon
-            onPress={props.onSearch}
+            onPress={()=>{props.navigation.navigate("Search")}}
             name="search"
             color={Color.White}
             size={24}
@@ -96,7 +163,7 @@ const CustomHeader = (props) => {
         />
         <TouchableOpacity style={navStyles.touchableStyleRight}>
           <Icon
-            onPress={props.navigateToSettings}
+            onPress={navigateToSettings}
             name="settings"
             color={Color.White}
             size={24}
@@ -128,7 +195,7 @@ const CustomHeader = (props) => {
           </Text>
           <Icon name="arrow-drop-down" color={Color.White} size={20} />
         </TouchableOpacity>
-        <TouchableOpacity style={navStyles.printView} onPress={props.createPDF}>
+        <TouchableOpacity style={navStyles.printView} onPress={createPDF}>
           <Icon name="print" color={Color.White} size={28} />
         </TouchableOpacity>
       </Animated.View>
@@ -205,5 +272,19 @@ const navStyles = StyleSheet.create({
     textAlign: "center",
   },
 });
+const mapStateToProps = (state) => {
+  return {
+    language: state.updateVersion.language,
+    languageCode: state.updateVersion.languageCode,
+    versionCode: state.updateVersion.versionCode,
 
-export default CustomHeader;
+    chapterNumber: state.updateVersion.chapterNumber,
+    totalChapters: state.updateVersion.totalChapters,
+    bookName: state.updateVersion.bookName,
+    bookId: state.updateVersion.bookId,
+
+  };
+};
+
+
+export default connect(mapStateToProps)(CustomHeader);

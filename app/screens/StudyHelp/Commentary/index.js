@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { FlatList, Alert, Text, View } from "react-native";
 import { connect } from "react-redux";
 import { Body, Header, Right, Title, Button } from "native-base";
-import { vachanAPIFetch, fetchVersionBooks } from "../../../store/action/index";
+import { vachanAPIFetch, fetchVersionBooks,parallelVisibleView } from "../../../store/action/index";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { styles } from "./styles";
 import Color from "../../../utils/colorConstants";
@@ -181,7 +181,12 @@ const Commentary = (props) => {
       return;
     }
   }
-  
+  closeParallelView = (value)=>{
+    props.parallelVisibleView({
+      modalVisible: false,
+      visibleParallelView: value,
+    })
+  }
   return (
     <View style={style.container}>
       <Header
@@ -198,7 +203,7 @@ const Commentary = (props) => {
           </Title>
         </Body>
         <Right>
-          <Button transparent onPress={()=>props.closeParallelView(false)}>
+          <Button transparent onPress={()=>closeParallelView(false)}>
             <Icon name="cancel" color={Color.White} size={20} />
           </Button>
         </Right>
@@ -240,18 +245,13 @@ const mapStateToProps = (state) => {
     language: state.updateVersion.language,
     versionCode: state.updateVersion.versionCode,
     sourceId: state.updateVersion.sourceId,
-    downloaded: state.updateVersion.downloaded,
-    prevBookId: state.updateVersion.bookId,
-    prevBookName: state.updateVersion.bookName,
-    prevChapterNumber: state.updateVersion.chapterNumber,
-
+    bookId: state.updateVersion.bookId,
+    bookName: state.updateVersion.bookName,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-    contentType: state.updateVersion.contentType,
     books: state.versionFetch.versionBooks,
     commentaryContent: state.vachanAPIFetch.apiData,
     error: state.vachanAPIFetch.error,
-    baseAPI: state.updateVersion.baseAPI,
     parallelLanguage: state.selectContent.parallelLanguage,
     parallelMetaData: state.selectContent.parallelMetaData,
   };
@@ -260,6 +260,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     vachanAPIFetch: (payload) => dispatch(vachanAPIFetch(payload)),
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
+    parallelVisibleView: (payload) => dispatch(parallelVisibleView(payload)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Commentary);
