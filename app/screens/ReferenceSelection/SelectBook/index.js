@@ -1,10 +1,4 @@
-import React, {
-  Component,
-  createRef,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Text,
   View,

@@ -2,7 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { FlatList, Alert, Text, View } from "react-native";
 import { connect } from "react-redux";
 import { Body, Header, Right, Title, Button } from "native-base";
-import { vachanAPIFetch, fetchVersionBooks } from "../../../store/action/index";
+import {
+  vachanAPIFetch,
+  fetchVersionBooks,
+  parallelVisibleView,
+} from "../../../store/action/index";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { styles } from "./styles";
 import Color from "../../../utils/colorConstants";
@@ -10,8 +14,8 @@ import ReloadButton from "../../../components/ReloadButton";
 import HTML from "react-native-render-html";
 import vApi from "../../../utils/APIFetch";
 import securityVaraibles from "../../../../securityVaraibles";
-import fetchCommentaryReducer from "../../../store/reducer/apiFetchReducer/vachanAPIFetch";
-import { cos } from "react-native-reanimated";
+// import fetchCommentaryReducer from "../../../store/reducer/apiFetchReducer/vachanAPIFetch";
+// import { cos } from "react-native-reanimated";
 
 const commentaryKey = securityVaraibles.COMMENTARY_KEY
   ? "?key=" + securityVaraibles.COMMENTARY_KEY
@@ -137,7 +141,7 @@ const Commentary = (props) => {
       </View>
     );
   };
-  const fetchCommentary = ()=>{
+  const fetchCommentary = () => {
     if (props.parallelLanguage) {
       let url =
         "commentaries/" +
@@ -150,29 +154,27 @@ const Commentary = (props) => {
       console.log("URL UPDATE ", url);
       props.vachanAPIFetch(url);
       fetchBookName();
-      updateBookName()
+      updateBookName();
     }
-  }
-  useEffect(()=>{
-    fetchCommentary()
-  },[])
+  };
   useEffect(() => {
-        fetchCommentary()
-  }, [
-    props.bookId,
-    props.currentVisibleChapter,
-  ]);
-  const updateBookName=()=>{
+    fetchCommentary();
+  }, []);
+  useEffect(() => {
+    fetchCommentary();
+  }, [props.bookId, props.currentVisibleChapter]);
+  const updateBookName = () => {
     if (bookNameList) {
       for (var i = 0; i <= bookNameList.length - 1; i++) {
-        let parallelLanguage = props.parallelLanguage &&
+        let parallelLanguage =
+          props.parallelLanguage &&
           props.parallelLanguage.languageName.toLowerCase();
         if (bookNameList[i].language.name === parallelLanguage) {
           for (var j = 0; j <= bookNameList[i].bookNames.length - 1; j++) {
             var bId = bookNameList[i].bookNames[j].book_code;
             if (bId == props.bookId) {
               let bookName = bookNameList[i].bookNames[j].short;
-              setBookName(bookName)
+              setBookName(bookName);
             }
           }
         }
@@ -180,8 +182,13 @@ const Commentary = (props) => {
     } else {
       return;
     }
-  }
-  
+  };
+  const closeParallelView = (value) => {
+    props.parallelVisibleView({
+      modalVisible: false,
+      visibleParallelView: value,
+    });
+  };
   return (
     <View style={style.container}>
       <Header
@@ -198,7 +205,7 @@ const Commentary = (props) => {
           </Title>
         </Body>
         <Right>
-          <Button transparent onPress={()=>props.closeParallelView(false)}>
+          <Button transparent onPress={() => closeParallelView(false)}>
             <Icon name="cancel" color={Color.White} size={20} />
           </Button>
         </Right>
@@ -240,18 +247,13 @@ const mapStateToProps = (state) => {
     language: state.updateVersion.language,
     versionCode: state.updateVersion.versionCode,
     sourceId: state.updateVersion.sourceId,
-    downloaded: state.updateVersion.downloaded,
-    prevBookId: state.updateVersion.bookId,
-    prevBookName: state.updateVersion.bookName,
-    prevChapterNumber: state.updateVersion.chapterNumber,
-
+    bookId: state.updateVersion.bookId,
+    bookName: state.updateVersion.bookName,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-    contentType: state.updateVersion.contentType,
     books: state.versionFetch.versionBooks,
     commentaryContent: state.vachanAPIFetch.apiData,
     error: state.vachanAPIFetch.error,
-    baseAPI: state.updateVersion.baseAPI,
     parallelLanguage: state.selectContent.parallelLanguage,
     parallelMetaData: state.selectContent.parallelMetaData,
   };
@@ -260,6 +262,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     vachanAPIFetch: (payload) => dispatch(vachanAPIFetch(payload)),
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
+    parallelVisibleView: (payload) => dispatch(parallelVisibleView(payload)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Commentary);

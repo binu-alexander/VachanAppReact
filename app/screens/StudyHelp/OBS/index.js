@@ -23,7 +23,6 @@ const OBS = (props) => {
   const [defaultLanguage, setDefaultLanguage] = useState("");
   const [defaultStory, setDefaultStory] = useState([]);
   const [storyList, setStoryList] = useState([]);
-  const prevStory = useRef(storyList).current;
   const [bsIndex, setBsIndex] = useState("01");
   let _dropdown_1 = createRef();
   let _dropdown_2 = createRef();
@@ -116,16 +115,16 @@ const OBS = (props) => {
     mdFileFetch();
   };
   useEffect(() => {
-      let selectedStoryIndex = bsIndex.replace(/^0+/, "");
-      _dropdown_2.select(parseInt(selectedStoryIndex - 1));
+    let selectedStoryIndex = bsIndex.replace(/^0+/, "");
+    _dropdown_2.select(parseInt(selectedStoryIndex - 1));
   }, [...storyList]);
-  useEffect(()=>{
-    fetchLangList()
-  },[])
-  useEffect(()=>{
+  useEffect(() => {
+    fetchLangList();
+  }, []);
+  useEffect(() => {
     bibleStoryList();
     mdFileFetch();
-  },[langCode,defaultLanguage,bsIndex])
+  }, [langCode, defaultLanguage, bsIndex, defaultStory]);
   return (
     <View style={style.container}>
       <View style={style.dropdownView}>

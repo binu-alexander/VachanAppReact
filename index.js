@@ -1,28 +1,32 @@
-import 'react-native-gesture-handler';
-import React, {Component} from 'react';
-import createSagaMiddleware from 'redux-saga';
-import {AppRegistry} from 'react-native';
+import "react-native-gesture-handler";
+import React, { Component } from "react";
+import createSagaMiddleware from "redux-saga";
+import { AppRegistry } from "react-native";
 import { Provider } from "react-redux";
-import { persistStore } from 'redux-persist';
-import { PersistGate } from 'redux-persist/es/integration/react';
-import App from './App';
-import rootSaga from './app/store/saga/';
-import { typography } from './app/utils/typography';
-import store from './app/store/';
+import { persistStore } from "redux-persist";
+import { PersistGate } from "redux-persist/es/integration/react";
+import App from "./App";
+import rootSaga from "./app/store/saga/";
+import { typography } from "./app/utils/typography";
+import store from "./app/store/";
+import BibleScreenContextProvider from "./app/BibleContext/bibleScreen";
 
-const persistor = persistStore(store)
+const persistor = persistStore(store);
 
-typography()
+typography();
 
-class RNRedux extends Component{
- 
-    render(){
-    return <Provider store={store}>
-            <PersistGate persistor={persistor}>
-              <App/>   
-            </PersistGate>
-            </Provider>
-    }
+class RNRedux extends Component {
+  render() {
+    return (
+      <Provider store={store}>
+        <PersistGate persistor={persistor}>
+          <BibleScreenContextProvider>
+            <App />
+          </BibleScreenContextProvider>
+        </PersistGate>
+      </Provider>
+    );
+  }
 }
 
-AppRegistry.registerComponent('VachanGo', () => RNRedux ) ;
+AppRegistry.registerComponent("VachanGo", () => RNRedux);

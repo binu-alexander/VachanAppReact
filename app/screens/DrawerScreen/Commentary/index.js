@@ -51,8 +51,6 @@ const DrawerCommentary = (props) => {
   );
   const [selectedBookIndex, setSelectedBookIndex] = useState(-1);
   const [selectedBook, setSelectedBook] = useState(props.bookName);
-  const prevParallelLanguage = useRef(props.parallelLanguage).current;
-  const prevDropDownList = useRef(dropDownList).current;
   let _dropdown_1;
   let _dropdown_2;
 
