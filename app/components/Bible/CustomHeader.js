@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useContext} from "react";
 import {
   View,
   Animated,
@@ -16,49 +16,53 @@ import { connect } from "react-redux";
 import { AndroidPermission } from "../../utils/UtilFunctions";
 import {  Toast } from "native-base";
 const NAVBAR_HEIGHT = 80;
+import {bibleContext} from '../../screens/Bible'
 // const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
 // const HEADER_MIN_HEIGHT = 0;
 // const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 const CustomHeader = (props) => {
+  const [{audio,clampedScroll,navigation,toggleAudio,
+    currentVisibleChapter,chapterContent,onBookmarkPress,isBookmark,navigateToSelectionTab,navigateToLanguage}] = useContext(bibleContext);
+  console.log("Context Value ",audio)
   // console.log("BOOK NAME ",props.bookName)
   let bookName = !isNaN(props.bookName.charAt(0))
   ? props.bookName.charAt(0).toUpperCase() +
     props.bookName.slice(1)
   : props.bookName;
  
-  const navbarTranslate = props.clampedScroll.interpolate({
+  const navbarTranslate = clampedScroll.interpolate({
     inputRange: [0, NAVBAR_HEIGHT],
     outputRange: [0, -NAVBAR_HEIGHT],
     extrapolate: "clamp",
   })
   const navigateToVideo=()=>{
-    props.navigation.navigate("Video", {
+    navigation.navigate("Video", {
       bookId: props.bookId,
       bookName: props.bookName,
     });
   }
   const navigateToImage = () => {
     // setStatus(false);
-    props.navigation.navigate("Infographics", {
+    navigation.navigate("Infographics", {
       bookId: props.bookId,
       bookName: props.bookName,
     });
   };
   const navigateToSettings = () => {
     // setStatus(false);
-    props.navigation.navigate("Settings");
+    navigation.navigate("Settings");
   };
   const downloadPDF = async () => {
     // setIsLoading(true);
     var texttohtml = "";
-    props.chapterContent.forEach((val) => {
+    chapterContent.forEach((val) => {
       if (val.verseNumber != undefined && val.verseText != undefined) {
         texttohtml += `<p>${val.verseNumber} : ${val.verseText}</p>`;
       }
     })
     let header1 = `<h1>${props.language + " " + props.versionCode}</h1>`;
-    let header3 = `<h3>${props.bookName + " " + props.chapterNumber}</h3>`;
+    let header3 = `<h3>${props.bookName + " " + currentVisibleChapter}</h3>`;
     let options = {
       html: `${header1}${header3}<p>${texttohtml}</p>`,
       fileName: `${
@@ -67,7 +71,7 @@ const CustomHeader = (props) => {
         "_" +
         props.bookId +
         "_" +
-        props.chapterNumber
+        currentVisibleChapter
       }`,
       // eslint-disable-next-line no-constant-condition
       directory: "Download" ? "Download" : "Downloads",
@@ -106,21 +110,21 @@ const CustomHeader = (props) => {
         <TouchableOpacity
           style={navStyles.touchableStyleRight}
           onPress={() => {
-            props.navigation.toggleDrawer();
+            navigation.toggleDrawer();
           }}
         >
           <Icon name="menu" color={Color.White} size={28} />
         </TouchableOpacity>
         {props.audio ? (
           <TouchableOpacity
-            onPress={props.toggleAudio}
+            onPress={toggleAudio}
             style={navStyles.touchableStyleRight}
           >
             <Icon name="volume-up" size={28} color={Color.White} />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
-            onPress={props.toggleAudio}
+            onPress={toggleAudio}
             style={navStyles.touchableStyleRight}
           >
             <Icon name="volume-off" size={28} color={Color.White} />
@@ -140,7 +144,7 @@ const CustomHeader = (props) => {
         </TouchableOpacity>
         <TouchableOpacity style={navStyles.touchableStyleRight}>
           <Icon
-            onPress={()=>{props.navigation.navigate("Search")}}
+            onPress={()=>{navigation.navigate("Search")}}
             name="search"
             color={Color.White}
             size={24}
@@ -149,7 +153,7 @@ const CustomHeader = (props) => {
         <TouchableOpacity style={navStyles.touchableStyleRight}>
           <Icon
             onPress={() => {
-              props.onBookmark(props.isBookmark);
+              onBookmarkPress(isBookmark);
             }}
             name="bookmark"
             color={props.isBookmark ? Color.Red : Color.White}
@@ -157,7 +161,7 @@ const CustomHeader = (props) => {
           />
         </TouchableOpacity>
         <SelectContent
-          navigation={props.navigation}
+          navigation={navigation}
           navStyles={navStyles}
           iconName={"auto-stories"}
         />
@@ -173,19 +177,19 @@ const CustomHeader = (props) => {
       <Animated.View style={[navStyles.title]}>
         <TouchableOpacity
           style={navStyles.titleTouchable}
-          onPress={props.navigateToSelectionTab}
+          onPress={navigateToSelectionTab}
         >
-          {bookName && props.chapterNumber ? (
+          {bookName && currentVisibleChapter ? (
             <Text style={{ fontSize: 18, color: "#fff" }}>
               {bookName.length > 16 ? bookName.slice(0, 15) + "..." : bookName}{" "}
-              {props.chapterNumber}
+              {currentVisibleChapter}
             </Text>
           ) : null}
           <Icon name="arrow-drop-down" color={Color.White} size={20} />
         </TouchableOpacity>
         <TouchableOpacity
           style={[navStyles.titleTouchable]}
-          onPress={props.navigateToLanguage}
+          onPress={navigateToLanguage}
         >
           <Text style={navStyles.langVer}>
             {props.language &&
@@ -278,7 +282,6 @@ const mapStateToProps = (state) => {
     languageCode: state.updateVersion.languageCode,
     versionCode: state.updateVersion.versionCode,
 
-    chapterNumber: state.updateVersion.chapterNumber,
     totalChapters: state.updateVersion.totalChapters,
     bookName: state.updateVersion.bookName,
     bookId: state.updateVersion.bookId,

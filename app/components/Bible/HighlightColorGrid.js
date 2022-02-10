@@ -1,10 +1,9 @@
 import React, { useContext } from "react";
 import { FlatList, TouchableOpacity, View, Dimensions } from "react-native";
-import { BibleScreenContext } from "../../BibleContext/bibleScreen";
 const width = Dimensions.get("screen").width;
-
+import { bibleContext } from '../../screens/Bible'
 const HighlightColorGrid = () => {
-  const { doHighlight } = useContext(BibleScreenContext);
+  const [{styles,doHighlight}] = useContext(bibleContext);
   return (
     <View style={{ flex: 1 }}>
       <View

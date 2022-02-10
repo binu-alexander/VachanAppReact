@@ -9,7 +9,6 @@ import App from "./App";
 import rootSaga from "./app/store/saga/";
 import { typography } from "./app/utils/typography";
 import store from "./app/store/";
-import BibleScreenContextProvider from "./app/BibleContext/bibleScreen";
 
 const persistor = persistStore(store);
 
@@ -20,9 +19,7 @@ class RNRedux extends Component {
     return (
       <Provider store={store}>
         <PersistGate persistor={persistor}>
-          <BibleScreenContextProvider>
             <App />
-          </BibleScreenContextProvider>
         </PersistGate>
       </Provider>
     );

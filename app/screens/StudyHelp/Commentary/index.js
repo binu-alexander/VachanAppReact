@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState,useContext } from "react";
 import { FlatList, Alert, Text, View } from "react-native";
 import { connect } from "react-redux";
 import { Body, Header, Right, Title, Button } from "native-base";
@@ -14,6 +14,7 @@ import ReloadButton from "../../../components/ReloadButton";
 import HTML from "react-native-render-html";
 import vApi from "../../../utils/APIFetch";
 import securityVaraibles from "../../../../securityVaraibles";
+import { bibleContext } from "../../Bible";
 // import fetchCommentaryReducer from "../../../store/reducer/apiFetchReducer/vachanAPIFetch";
 // import { cos } from "react-native-reanimated";
 
@@ -22,6 +23,7 @@ const commentaryKey = securityVaraibles.COMMENTARY_KEY
   : "";
 
 const Commentary = (props) => {
+  const [{ currentVisibleChapter }] = useContext(bibleContext);
   const [error, setError] = useState(null);
   const [bookNameList, setBookNameList] = useState([]);
   const [bookName, setBookName] = useState(props.bookName);
@@ -61,7 +63,7 @@ const Commentary = (props) => {
             "/" +
             props.bookId +
             "/" +
-            props.currentVisibleChapter +
+            currentVisibleChapter +
             commentaryKey;
           props.vachanAPIFetch(url);
         }
@@ -149,7 +151,7 @@ const Commentary = (props) => {
         "/" +
         props.bookId +
         "/" +
-        props.currentVisibleChapter +
+        currentVisibleChapter +
         commentaryKey;
       console.log("URL UPDATE ", url);
       props.vachanAPIFetch(url);
@@ -162,7 +164,7 @@ const Commentary = (props) => {
   }, []);
   useEffect(() => {
     fetchCommentary();
-  }, [props.bookId, props.currentVisibleChapter]);
+  }, [props.bookId, currentVisibleChapter]);
   const updateBookName = () => {
     if (bookNameList) {
       for (var i = 0; i <= bookNameList.length - 1; i++) {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import { Text, View, ScrollView, Alert } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -11,13 +11,13 @@ import Color from "../../utils/colorConstants";
 import ReloadButton from "../ReloadButton";
 import vApi from "../../utils/APIFetch";
 import { getHeading } from "../../utils/UtilFunctions";
-
+import { bibleContext } from "../../screens/Bible";
 const BibleChapter = (props) => {
+  const [{ currentVisibleChapter,navigation }] = useContext(bibleContext);
+  console.log("current chapter in bible ",currentVisibleChapter)
   const bShortName = props.bookName != null &&
   (props.bookName.length > 10 ? props.bookName.slice(0, 9) + "..." : props.bookName);
-  const [currentParallelViewChapter, setCurrentParallelViewChapter] = useState(
-    props.currentChapter
-  );
+  const [currentParallelViewChapter, setCurrentParallelViewChapter] = useState( currentVisibleChapter );
   const [bookName, setBookName] = useState(props.bookName);
   const [bookNameList, setBookNameList] = useState([]);
   const [shortbookName, setShortbookName] = useState(bShortName);
@@ -189,7 +189,7 @@ const BibleChapter = (props) => {
 
   const goToSelectionTab = () => {
     if (props.parallelLanguage) {
-      props.navigation.navigate("ReferenceSelection", {
+      navigation.navigate("ReferenceSelection", {
         getReference: getRef,
         parallelContent: true,
         bookId: bookId,
