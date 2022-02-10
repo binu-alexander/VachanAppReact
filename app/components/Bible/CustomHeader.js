@@ -17,19 +17,16 @@ import { AndroidPermission } from "../../utils/UtilFunctions";
 import {  Toast } from "native-base";
 const NAVBAR_HEIGHT = 80;
 import {bibleContext} from '../../screens/Bible'
-// const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
-// const HEADER_MIN_HEIGHT = 0;
-// const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 const CustomHeader = (props) => {
   const [{audio,clampedScroll,navigation,toggleAudio,
     currentVisibleChapter,chapterContent,onBookmarkPress,isBookmark,navigateToSelectionTab,navigateToLanguage}] = useContext(bibleContext);
-  console.log("Context Value ",audio)
   // console.log("BOOK NAME ",props.bookName)
   let bookName = !isNaN(props.bookName.charAt(0))
   ? props.bookName.charAt(0).toUpperCase() +
     props.bookName.slice(1)
   : props.bookName;
+  console.log("Context Value ",props.bookName)
  
   const navbarTranslate = clampedScroll.interpolate({
     inputRange: [0, NAVBAR_HEIGHT],
@@ -115,7 +112,7 @@ const CustomHeader = (props) => {
         >
           <Icon name="menu" color={Color.White} size={28} />
         </TouchableOpacity>
-        {props.audio ? (
+        {audio ? (
           <TouchableOpacity
             onPress={toggleAudio}
             style={navStyles.touchableStyleRight}

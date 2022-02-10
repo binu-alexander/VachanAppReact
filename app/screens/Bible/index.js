@@ -14,8 +14,7 @@ import NetInfo from "@react-native-community/netinfo";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import DbQueries from "../../utils/dbQueries";
 import {
-  APIAudioURL, ToggleAudio,fetchVersionBooks, selectContent,
-  parallelVisibleView,updateNetConnection, userInfo,  updateVersionBook,
+  APIAudioURL,fetchVersionBooks, userInfo,  updateVersionBook,
   updateVerseNumber, updateFontSize, updateVersion,updateMetadata,
 } from "../../store/action/";
 import { getBookChaptersFromMapping } from "../../utils/UtilFunctions";
@@ -49,6 +48,9 @@ const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
 export const bibleContext = createContext()
 
 const Bible = (props) => {
+  const {language,languageCode,versionCode,sourceId,downloaded,
+    contentType,baseAPI,chapterNumber,totalChapters,bookName,bookId,
+    selectedVerse,sizeFile,colorFile,books,visibleParallelView} = props
   const [downloadedBook, setDownloadedBook] = useState([]);
   const [audio, setAudio] = useState(false);
   const [chapterContent, setChapterContent] = useState([]);
@@ -59,7 +61,7 @@ const Bible = (props) => {
   const [showBottomBar, setShowBottomBar] = useState("");
   const [bookmarksList, setBookmarksList] = useState([]);
   const [isBookmark, setIsBookmark] = useState("");
-  const [currentVisibleChapter, setCurrentVisibleChapter] = useState( props.chapterNumber);
+  const [currentVisibleChapter, setCurrentVisibleChapter] = useState(chapterNumber);
   const [bottomHighlightText, setBottomHighlightText] = useState(false);
   const [nextContent, setNextContent] = useState("");
   const [previousContent, setPreviousContent] = useState("");
@@ -75,11 +77,10 @@ const Bible = (props) => {
   const [email, setEmail] = useState(props.email);
   const [uid, setUid] = useState(props.userId);
 
-  const position = useRef(new Animated.ValueXY()).current;
+  
   const offsetAnim = useRef(new Animated.Value(0)).current;
   const scrollAnim = useRef(new Animated.Value(0)).current;
   let _clampedScrollValue = useRef(new Animated.Value(0)).current;
-
   let _offsetValue = 0;
   let _scrollValue = 0;
   let gestureResponder;
@@ -96,7 +97,7 @@ const Bible = (props) => {
     NAVBAR_HEIGHT - STATUS_BAR_HEIGHT
   );
 
-  const styles = style(props.colorFile, props.sizeFile);
+  const styles = style(colorFile, sizeFile);
 
   const _handleAppStateChange = (currentAppState) => {
     let status =currentAppState == "background" ? false : (currentAppState = "inactive" ? false : true);
@@ -105,11 +106,9 @@ const Bible = (props) => {
   // if book downloaded or user want to read downloaded book fetch chapter from local db
   const getDownloadedContent = async () => {
     setIsLoading(true);
-    var content = await DbQueries.queryVersions( props.language, props.versionCode, props.bookId, props.currentVisibleChapter );
+    var content = await DbQueries.queryVersions( language, versionCode, bookId, currentVisibleChapter );
     if (content != null) {
-      setChapterHeader(
-        content[0].chapters[currentVisibleChapter - 1].chapterHeading
-      );
+      setChapterHeader(content[0].chapters[currentVisibleChapter - 1].chapterHeading  );
       setDownloadedBook(content[0].chapters);
       setChapterContent(content[0].chapters[currentVisibleChapter - 1].verses);
       setIsLoading(false);
@@ -125,7 +124,6 @@ const Bible = (props) => {
   // fetch chapter on didmount call
   const getChapter = async () => {
     try {
-      const { baseAPI, sourceId, bookId, chapterNumber, downloaded } = props;
       if (downloaded) {
         getDownloadedContent;
       } else {
@@ -152,11 +150,13 @@ const Bible = (props) => {
       setUnAvailableContent(true);
     }
   };
+  console.log("AUDIO ",audio,status)
+  console.log("AUDIO ",props.audio,status)
+
   const queryBookFromAPI = async (chapterInfo) => {
     try {
-      const { downloaded,language, versionCode, sourceId, books, fetchVersionBooks, } = props;
+      const {  fetchVersionBooks,updateVersionBook } = props;
       if (books.length > 0) {
-        const { bookId, bookName, books, chapterNumber, updateVersionBook } = props;
         setChapterHeader([]);
         setChapterContent([]);
         setIsLoading(true);
@@ -263,7 +263,7 @@ const Bible = (props) => {
       setStatus(!status);
     } else {
       Toast.show({
-        text: "No audio for " + props.language + " " + props.bookName,
+        text: "No audio for " + language + " " + bookName,
         duration: 5000,
       });
     }
@@ -273,7 +273,7 @@ const Bible = (props) => {
     try {
       if (res.length !== 0) {
         let data = res.filter((item) => {
-          if (item.language.name == props.language.toLowerCase()) {
+          if (item.language.name == language.toLowerCase()) {
             return item;
           }
         });
@@ -300,13 +300,11 @@ const Bible = (props) => {
         type: "success",
         duration: 5000,
       });
-      if (props.books.length == 0) {
+      if (books.length == 0) {
         props.fetchVersionBooks({
-          language: props.language,
-          versionCode: props.versionCode,
-          downloaded: props.downloaded,
-          sourceId: props.sourceId,
-        });
+          language: language,versionCode: versionCode,
+          downloaded: downloaded, sourceId: sourceId,
+        })
       }
     } else {
       setReloadMessage("Offline. Check your internet Connection.");
@@ -317,39 +315,35 @@ const Bible = (props) => {
       });
     }
   };
-  // const  getOffset = (index) => {
-  //     var offset = 0;
-  //     for (let i = 0; i < index; i++) {
-  //       const elementLayout = arrLayout[index];
-  //       if (elementLayout && elementLayout.height) {
-  //         if (arrLayout[i] != undefined) {
-  //           offset += arrLayout[i].height;
-  //         }
-  //       }
-  //     }
-  //     return offset;
-  //   }
-  // const scrollToVerse = (verseNumber) => {
-  //     if (arrLayout != undefined) {
-  //       let item = arrLayout.filter((i) => i.verseNumber == verseNumber);
-  //       if (item.length > 0) {
-  //         if (item[0].verseNumber == verseNumber) {
-  //           const offset = getOffset(item[0].index);
-  //           verseScroll.scrollToOffset({ offset, animated: true });
-  //         }
-  //       }
-  //     }
-  //   }
+  const  getOffset = (index) => {
+      var offset = 0;
+      for (let i = 0; i < index; i++) {
+        const elementLayout = arrLayout[index];
+        if (elementLayout && elementLayout.height) {
+          if (arrLayout[i] != undefined) {
+            offset += arrLayout[i].height;
+          }
+        }
+      }
+      return offset;
+    }
+  const scrollToVerse = (verseNumber) => {
+      if (arrLayout != undefined) {
+        let item = arrLayout.filter((i) => i.verseNumber == verseNumber);
+        if (item.length > 0) {
+          if (item[0].verseNumber == verseNumber) {
+            const offset = getOffset(item[0].index);
+            verseScroll.scrollToOffset({ offset, animated: true });
+          }
+        }
+      }
+    }
 
   const navigateToSelectionTab = () => {
     setStatus(false);
-    const { language, versionCode,sourceId,downloaded,  visibleParallelView,bookId, bookName, totalChapters, selectedVerse} = props;
     props.navigation.navigate("ReferenceSelection", {
-      getReference: getReference,language: language,version: versionCode,
-      sourceId: sourceId,downloaded: downloaded,
-      parallelContent: visibleParallelView ? false : true,
-      bookId: bookId,bookName: bookName, chapterNumber: currentVisibleChapter,
-      totalChapters: totalChapters, selectedVerse: selectedVerse,
+      getReference: getReference, chapterNumber: currentVisibleChapter,
+      // parallelContent: visibleParallelView ? false : true,
     });
   };
 
@@ -363,14 +357,14 @@ const Bible = (props) => {
     setShowBottomBar(false);
     setShowColorGrid(false);
     if (item) {
+      console.log("chapter number ",item)
       setCurrentVisibleChapter(item.chapterNumber);
-      const {  updateVerseNumber, updateVersionBook, sourceId, language, languageCode, versionCode, downloaded, } = props;
       // updateBookChapterRef()
       var time = new Date();
       DbQueries.addHistory( sourceId, language, languageCode,  versionCode, item.bookId, item.bookName, parseInt(item.chapterNumber), downloaded, time  );
       //it is calling on book,chapter,verse selection screens also, so redux action payload is passing from this screen, if we set it in reference selection it will do changes which is not required for parallel bible(reusing in parallel bible )
-      updateVerseNumber({ selectedVerse: item.selectedVerse });
-      updateVersionBook({ bookId: item.bookId, bookName: item.bookName, chapterNumber: parseInt(item.chapterNumber),totalChapters: item.totalChapters,
+      props.updateVerseNumber({ selectedVerse: item.selectedVerse });
+      props.updateVersionBook({ bookId: item.bookId, bookName: item.bookName, chapterNumber: parseInt(item.chapterNumber),totalChapters: item.totalChapters,
       });
       // this.scrollToVerse(item.selectedVerse)
     } else {
@@ -383,17 +377,16 @@ const Bible = (props) => {
     setShowBottomBar(false);
     setShowColorGrid(false);
     const {  updateMetadata,updateVersion, updateVersionBook,  fetchVersionBooks,  } = props;
-    updateLangVersion( updateMetadata, updateVersion, updateVersionBook, fetchVersionBooks,  item );
+    updateLangVersion( updateMetadata, updateVersion, updateVersionBook, fetchVersionBooks,currentVisibleChapter,item );
     setPreviousContent(null);
     setNextContent(null);
   };
   //   // get highlights from firebase
   const getHighlights = () => {
-    console.log("connecttion highlights", connection_Status, email, uid);
     if (connection_Status) {
       if (email && uid) {
         database()
-          .ref( "users/" +  uid + "/highlights/" +  props.sourceId + "/" + props.bookId + "/" +  currentVisibleChapter )
+          .ref( "users/" +  uid + "/highlights/" +  sourceId + "/" + bookId + "/" +  currentVisibleChapter )
           .on("value", (snapshot) => {
             if (snapshot.val() != null) {
               let value = snapshot.val();
@@ -420,10 +413,9 @@ const Bible = (props) => {
   };
   // get bookmarks from firebase
   const getBookMarks = () => {
-    // console.log("connecttion ",connection_Status,email)
     if (connection_Status) {
       if (email && uid) {
-        database().ref(  "users/" + uid + "/bookmarks/" + props.sourceId + "/" + props.bookId )
+        database().ref(  "users/" + uid + "/bookmarks/" + sourceId + "/" + bookId )
           .on("value", (snapshot) => {
             if (snapshot.val() === null) {
               setBookmarksList([]);
@@ -446,10 +438,9 @@ const Bible = (props) => {
   };
   // get notes from firebase
   const getNotes = () => {
-    // console.log("connecttion ",connection_Status,email)
     if (connection_Status) {
       if (email && uid) {
-        database().ref( "users/" + uid + "/notes/" +props.sourceId + "/" + props.bookId + "/" + currentVisibleChapter )
+        database().ref( "users/" + uid + "/notes/" +sourceId + "/" + bookId + "/" + currentVisibleChapter )
           .on("value", (snapshot) => {
             if (snapshot.val() === null) {
               setNotesList([]);
@@ -473,7 +464,7 @@ const Bible = (props) => {
     if (connection_Status) {
       if (email && uid) {
         var newBookmarks = isbookmark  ? bookmarksList.filter((a) => a !== currentVisibleChapter) : bookmarksList.concat(currentVisibleChapter);
-        database().ref("users/" + uid + "/bookmarks/" + props.sourceId + "/" + props.bookId)
+        database().ref("users/" + uid + "/bookmarks/" + sourceId + "/" + bookId)
           .set(newBookmarks);
         setBookmarksList(newBookmarks);
         setIsBookmark(!isbookmark);
@@ -497,9 +488,9 @@ const Bible = (props) => {
           for (let item of selectedReferenceSet) {
             let tempVal = item.split("_");
             const verseNumber = parseInt(tempVal[2]);
-            let refModel = { bookId: props.bookId, bookName: props.bookName,
+            let refModel = { bookId: bookId, bookName: bookName,
               chapterNumber: parseInt(tempVal[0]), verseNumber: verseNumber,  verseText: tempVal[3],
-              versionCode: props.versionCode, languageName: props.language,
+              versionCode: versionCode, languageName: language,
             };
             refList.push(refModel);
             verses.push(verseNumber);
@@ -509,7 +500,7 @@ const Bible = (props) => {
           referenceList: refList,
           notesList: notesList,
           bcvRef: {
-            bookId: props.bookId, bookName: props.bookName,
+            bookId: bookId, bookName: bookName,
             chapterNumber: currentVisibleChapter, verses: verses,
           },
           contentBody: "",
@@ -559,7 +550,7 @@ const Bible = (props) => {
           }
         }
         database()
-          .ref( "users/" + uid + "/highlights/" + props.sourceId +  "/" + props.bookId + "/" +  currentVisibleChapter)
+          .ref( "users/" + uid + "/highlights/" + sourceId +  "/" + bookId + "/" +  currentVisibleChapter)
           .set(array);
       } else {
         props.navigation.navigate("Login");
@@ -577,11 +568,11 @@ const Bible = (props) => {
     if (Object.keys(selectedReferenceSet).length != 0) {
       for (let item of selectedReferenceSet) {
         let tempVal = item.split("_");
-        let chapterNumber = parseInt(tempVal[0]);
+        let cNumber = parseInt(tempVal[0]);
         // let vIndex = parseInt(tempVal[1]);
         let verseNumber = tempVal[2];
         shareText = shareText.concat(
-          props.bookName + " " + chapterNumber + ":" + verseNumber + " "
+          bookName + " " + cNumber + ":" + verseNumber + " "
         );
         shareText = shareText.concat(tempVal[3]);
         shareText = shareText.concat("\n");
@@ -593,9 +584,9 @@ const Bible = (props) => {
     setShowColorGrid(false);
   };
   changeSizeByOne = (value) => {
-    const { updateFontSize, colorFile } = props;
+    const { updateFontSize} = props;
     changeSizeOnPinch(value, updateFontSize, colorFile, styles);
-  };
+  }
   useEffect(() => {
     setIsLoading(true);
     var time = new Date();
@@ -636,7 +627,7 @@ const Bible = (props) => {
       setSelectedReferenceSet([]);
       setShowBottomBar(false);
       setShowColorGrid(false);
-      setCurrentVisibleChapter(props.chapterNumber);
+      setCurrentVisibleChapter(chapterNumber);
       setAudio(props.audio);
       setStatus(props.status);
       getChapter();
@@ -644,16 +635,16 @@ const Bible = (props) => {
       getHighlights();
       getBookMarks();
       getNotes();
-      if (props.books.length == 0) {
+      if (books.length == 0) {
         props.fetchVersionBooks({
-          language: props.language, versionCode: props.versionCode,
-          downloaded: props.downloaded,sourceId: props.sourceId,
+          language: language, versionCode: versionCode,
+          downloaded: downloaded,sourceId: sourceId,
         });
       }
     });
     setIsLoading(false);
     return () => {
-      DbQueries.addHistory( props.sourceId, props.language, props.languageCode,  props.versionCode, props.bookId,props.bookName,currentVisibleChapter,  props.downloaded,  time );
+      DbQueries.addHistory( sourceId, language, languageCode,  versionCode,bookId,bookName,currentVisibleChapter, downloaded,  time );
       appstate;
       netInfo;
       offsetAnimListner;
@@ -664,14 +655,15 @@ const Bible = (props) => {
   }, []);
   useEffect(() => {
     queryBookFromAPI(null);
-    if (props.books.length == 0) {
+    audioComponentUpdate()
+    if (books.length == 0) {
       props.fetchVersionBooks({
-        language: props.language, versionCode: props.versionCode,
-        downloaded: props.downloaded, sourceId: props.sourceId,
+        language: language, versionCode: versionCode,
+        downloaded: downloaded, sourceId: sourceId,
       });
     }
   }, [
-    props.language,  props.sourceId, props.baseAPI, props.visibleParallelView, props.chapterNumber,
+    language, sourceId, baseAPI, visibleParallelView, currentVisibleChapter,bookId,bookName
   ]);
   return (
     <CustomStatusBar>
@@ -687,14 +679,14 @@ const Bible = (props) => {
       addToNotes, addToShare, getSelectedReferences
       }]}>
       <View style={styles.container}>
-        {props.visibleParallelView ? (
+        {visibleParallelView ? (
           <View style={styles.headerView}>
             <Header style={{ backgroundColor: Color.Blue_Color, height: 40 }}>
               <Button transparent onPress={() => navigateToSelectionTab(true)}>
                 <Title style={{ fontSize: 16 }}>
-                  {props.bookName.length > 10
-                    ? props.bookName.slice(0, 9) + "..."
-                    : props.bookName}{" "}
+                  {bookName.length > 10
+                    ? bookName.slice(0, 9) + "..."
+                    : bookName}{" "}
                   {currentVisibleChapter}
                 </Title>
                 <Icon name="arrow-drop-down" color={Color.White} size={20} />
@@ -711,7 +703,7 @@ const Bible = (props) => {
           <View
             style={[
               styles.innerContainer,
-              { width: props.visibleParallelView ? "50%" : width },
+              { width: visibleParallelView ? "50%" : width },
             ]}
           >
             {unAvailableContent && chapterContent.length == 0 ? (
@@ -730,23 +722,23 @@ const Bible = (props) => {
                 <ChapterNdAudio />
                 {showColorGrid &&
                   bottomHighlightText &&
-                  props.visibleParallelView == false && (
+                  visibleParallelView == false && (
                     <HighlightColorGrid
                     />
                   )}
-                {props.visibleParallelView == false && showBottomBar && (
+                {visibleParallelView == false && showBottomBar && (
                   <SelectBottomTabBar />
                 )}
               </View>
             )}
           </View>
           {/** 2nd view as  parallelView**/}
-          {props.visibleParallelView == true && (
+          {visibleParallelView == true && (
             <View style={styles.parallelView}>
-              {props.contentType == "bible" && (
+              {contentType == "bible" && (
                 <BibleChapter/>
               )}
-              {props.contentType == "commentary" && (
+              {contentType == "commentary" && (
                 <Commentary />
               )}
             </View>
@@ -771,20 +763,12 @@ const mapStateToProps = (state) => {
     bookName: state.updateVersion.bookName,
     bookId: state.updateVersion.bookId,
     selectedVerse: state.updateVersion.selectedVerse,
-    revision: state.updateVersion.revision,
-    license: state.updateVersion.license,
-    technologyPartner: state.updateVersion.technologyPartner,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-    sizeMode: state.updateStyling.sizeMode,
-    colorMode: state.updateStyling.colorMode,
     email: state.userInfo.email,
     userId: state.userInfo.uid,
     books: state.versionFetch.versionBooks,
-    parallelContentType: state.updateVersion.parallelContentType,
     visibleParallelView: state.selectContent.visibleParallelView,
-    parallelLanguage: state.selectContent.parallelLanguage,
-    parallelMetaData: state.selectContent.parallelMetaData,
     audio: state.audio.audio,
     status: state.audio.status,
   };
@@ -797,11 +781,7 @@ const mapDispatchToProps = (dispatch) => {
     userInfo: (payload) => dispatch(userInfo(payload)),
     fetchVersionBooks: (payload) => dispatch(fetchVersionBooks(payload)),
     updateMetadata: (payload) => dispatch(updateMetadata(payload)),
-    updateNetConnection: (payload) => dispatch(updateNetConnection(payload)),
     APIAudioURL: (payload) => dispatch(APIAudioURL(payload)),
-    ToggleAudio: (payload) => dispatch(ToggleAudio(payload)),
-    selectContent: (payload) => dispatch(selectContent(payload)),
-    parallelVisibleView: (payload) => dispatch(parallelVisibleView(payload)),
     updateFontSize: (payload) => dispatch(updateFontSize(payload)),
   };
 };

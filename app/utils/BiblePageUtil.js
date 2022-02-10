@@ -3,8 +3,9 @@ const state = store.getState()
 import DbQueries from "./dbQueries"
 import { extraSmallFont, smallFont, mediumFont, largeFont, extraLargeFont, } from "./dimens.js";
 import Color from "./colorConstants";
+import { getBookChaptersFromMapping } from "./UtilFunctions";
 
-export function updateLangVersion(setMetadata,setVersion,setVersionBook,setVersionBooks,item){
+export function updateLangVersion(setMetadata,setVersion,setVersionBook,setVersionBooks,currentVisibleChapter,item){
       if (item) {
       let bookName = null;
       let bookId = null;

@@ -5,7 +5,6 @@ import VerseView from "./VerseView";
 import { bibleContext } from "./index";
 import { getHeading } from "../../utils/UtilFunctions";
 import { connect } from "react-redux";
-
 const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
 const NAVBAR_HEIGHT = 64;
 const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
@@ -26,7 +25,6 @@ const AnimatedVerseList = (props)=> {
           index,
         };
       };
-
     const _keyExtractor = (item, index) => {
         return index.toString();
     };
@@ -51,50 +49,55 @@ const AnimatedVerseList = (props)=> {
     const _onMomentumScrollBegin = () => {
       clearTimeout(_scrollEndTimer);
     };
-   
-    // const ZoomTextSize = () => {
-    //   (gestureResponder = React.useRef(
-    //     createResponder({
-    //       onStartShouldSetResponder: () => true,
-    //       onStartShouldSetResponderCapture: () => true,
-    //       onMoveShouldSetResponder: () => true,
-    //       onMoveShouldSetResponderCapture: () => true,
-    //       onResponderGrant: () => {},
-    //       onResponderMove: (evt, gestureState) => {
-    //         let thumbSize = 10;
-    //         if (gestureState.pinch && gestureState.previousPinch) {
-    //           thumbSize *= gestureState.pinch / gestureState.previousPinch;
-    //           let currentDate = new Date().getTime();
-    //           var pinchTime = new Date().getTime();
-    //           let diff = currentDate - pinchTime;
-    //           var pinchDiff = null;
-    //           if (diff > pinchDiff) {
-    //             if (gestureState.pinch - gestureState.previousPinch > 5) {
-    //               // large
-    //               changeSizeByOne(1);
-    //             } else if (gestureState.previousPinch - gestureState.pinch > 5) {
-    //               // small
-    //               changeSizeByOne(-1);
-    //             }
-    //           }
-    //           pinchDiff = diff;
-    //           pinchTime = currentDate;
-    //         }
-    //         left += gestureState.moveX - gestureState.previousMoveX;
-    //         top += gestureState.moveY - gestureState.previousMoveY;
+    changeSizeByOne = (value) => {
+      changeSizeOnPinch(value, props.updateFontSize, props.colorFile, styles);
+    }
+    const ZoomTextSize = () => {
+      (gestureResponder = React.useRef(
+        createResponder({
+          onStartShouldSetResponder: () => true,
+          onStartShouldSetResponderCapture: () => true,
+          onMoveShouldSetResponder: () => true,
+          onMoveShouldSetResponderCapture: () => true,
+          onResponderGrant: () => {},
+          onResponderMove: (evt, gestureState) => {
+            let thumbSize = 10;
+            if (gestureState.pinch && gestureState.previousPinch) {
+              thumbSize *= gestureState.pinch / gestureState.previousPinch;
+              let currentDate = new Date().getTime();
+              var pinchTime = new Date().getTime();
+              let diff = currentDate - pinchTime;
+              var pinchDiff = null;
+              if (diff > pinchDiff) {
+                if (gestureState.pinch - gestureState.previousPinch > 5) {
+                  // large
+                  changeSizeByOne(1);
+                } else if (gestureState.previousPinch - gestureState.pinch > 5) {
+                  // small
+                  changeSizeByOne(-1);
+                }
+              }
+              pinchDiff = diff;
+              pinchTime = currentDate;
+            }
+            left += gestureState.moveX - gestureState.previousMoveX;
+            top += gestureState.moveY - gestureState.previousMoveY;
   
-    //         position.setValue({ x: gestureState.dx, y: gestureState.dy });
-    //       },
-    //       onResponderTerminationRequest: () => true,
-    //       onResponderRelease: (gestureState) => {},
-    //       onResponderTerminate: (gestureState) => {},
-    //       onResponderSingleTapConfirmed: () => {},
-    //       moveThreshold: 2,
-    //       debug: false,
-    //     })
-    //   ).current),
-    //     [];
-    // };
+            position.setValue({ x: gestureState.dx, y: gestureState.dy });
+          },
+          onResponderTerminationRequest: () => true,
+          onResponderRelease: (gestureState) => {},
+          onResponderTerminate: (gestureState) => {},
+          onResponderSingleTapConfirmed: () => {},
+          moveThreshold: 2,
+          debug: false,
+        })
+      ).current),
+        [];
+    };
+    useEffect(()=>{
+      ZoomTextSize
+    },[])
     const renderFooter = () => {
       if (chapterContent.length === 0) {
         return null;
@@ -144,7 +147,7 @@ const AnimatedVerseList = (props)=> {
     }  
     return(
     <AnimatedFlatlist
-    // {...gestureResponder}
+    {...gestureResponder}
     data={chapterContent}
     // ref={(ref) => (this.verseScroll = ref)}
     contentContainerStyle={
@@ -214,8 +217,13 @@ const mapStateToProps = (state) => {
     license: state.updateVersion.license,
     technologyPartner: state.updateVersion.technologyPartner,
     visibleParallelView: state.selectContent.visibleParallelView,
-
+    colorFile: state.updateStyling.colorFile,
+    sizeFile: state.updateStyling.sizeFile,
   };
 };
-
-export default connect(mapStateToProps, null)(AnimatedVerseList);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateFontSize: (payload) => dispatch(updateFontSize(payload)),
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(AnimatedVerseList);

@@ -12,15 +12,15 @@ const ReferenceSelection = (props) => {
   const style = styles(props.colorFile, props.sizeFile);
 
   const getBooks = () => {
-    if (props.route.params) {
-      let params = props.route.params;
+    // if (props.route.params) {
+      // let params = props.route.params;
       props.fetchVersionBooks({
-        language: params.language,
-        versionCode: params.versionCode,
-        downloaded: params.downloaded,
-        sourceId: params.sourceId,
+        language: props.language,
+        versionCode: props.versionCode,
+        downloaded: props.downloaded,
+        sourceId: props.sourceId,
       });
-    }
+    // }
   };
 
   const errorMessage = () => {

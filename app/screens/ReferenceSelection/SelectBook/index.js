@@ -96,6 +96,11 @@ const SelectBook = (props) => {
     }
     setNTSize(count);
   };
+  useEffect(()=>{
+    getOTSize();
+    getNTSize();
+    selectTab();
+  },[])
   useEffect(() => {
     getOTSize();
     getNTSize();
