@@ -1,4 +1,4 @@
-import React,{useContext} from "react";
+import React, { useContext } from "react";
 import {
   View,
   Animated,
@@ -14,31 +14,42 @@ import RNHTMLtoPDF from "react-native-html-to-pdf";
 import Permission from "../../utils/constants";
 import { connect } from "react-redux";
 import { AndroidPermission } from "../../utils/UtilFunctions";
-import {  Toast } from "native-base";
+import { Toast } from "native-base";
 const NAVBAR_HEIGHT = 80;
-import {bibleContext} from '../../screens/Bible'
+import { bibleContext } from "../../screens/Bible";
 
 const CustomHeader = (props) => {
-  const [{audio,clampedScroll,navigation,toggleAudio,
-    currentVisibleChapter,chapterContent,onBookmarkPress,isBookmark,navigateToSelectionTab,navigateToLanguage}] = useContext(bibleContext);
+  const [
+    {
+      audio,
+      clampedScroll,
+      navigation,
+      toggleAudio,
+      currentVisibleChapter,
+      chapterContent,
+      onBookmarkPress,
+      isBookmark,
+      navigateToSelectionTab,
+      navigateToLanguage,
+    },
+  ] = useContext(bibleContext);
   // console.log("BOOK NAME ",props.bookName)
   let bookName = !isNaN(props.bookName.charAt(0))
-  ? props.bookName.charAt(0).toUpperCase() +
-    props.bookName.slice(1)
-  : props.bookName;
-  console.log("Context Value ",props.bookName)
- 
+    ? props.bookName.charAt(0).toUpperCase() + props.bookName.slice(1)
+    : props.bookName;
+  console.log("Context Value ", props.bookName);
+
   const navbarTranslate = clampedScroll.interpolate({
     inputRange: [0, NAVBAR_HEIGHT],
     outputRange: [0, -NAVBAR_HEIGHT],
     extrapolate: "clamp",
-  })
-  const navigateToVideo=()=>{
+  });
+  const navigateToVideo = () => {
     navigation.navigate("Video", {
       bookId: props.bookId,
       bookName: props.bookName,
     });
-  }
+  };
   const navigateToImage = () => {
     // setStatus(false);
     navigation.navigate("Infographics", {
@@ -57,7 +68,7 @@ const CustomHeader = (props) => {
       if (val.verseNumber != undefined && val.verseText != undefined) {
         texttohtml += `<p>${val.verseNumber} : ${val.verseText}</p>`;
       }
-    })
+    });
     let header1 = `<h1>${props.language + " " + props.versionCode}</h1>`;
     let header3 = `<h3>${props.bookName + " " + currentVisibleChapter}</h3>`;
     let options = {
@@ -76,7 +87,6 @@ const CustomHeader = (props) => {
     await RNHTMLtoPDF.convert(options);
     Toast.show({ text: "Pdf downloaded.", type: "success", duration: 5000 });
     // setIsLoading(false);
-  
   };
   const createPDF = async () => {
     let permissionGranted = await AndroidPermission(
@@ -95,7 +105,7 @@ const CustomHeader = (props) => {
     } else {
       return;
     }
-  }
+  };
   return (
     <Animated.View
       style={[
@@ -141,7 +151,9 @@ const CustomHeader = (props) => {
         </TouchableOpacity>
         <TouchableOpacity style={navStyles.touchableStyleRight}>
           <Icon
-            onPress={()=>{navigation.navigate("Search")}}
+            onPress={() => {
+              navigation.navigate("Search");
+            }}
             name="search"
             color={Color.White}
             size={24}
@@ -282,9 +294,7 @@ const mapStateToProps = (state) => {
     totalChapters: state.updateVersion.totalChapters,
     bookName: state.updateVersion.bookName,
     bookId: state.updateVersion.bookId,
-
   };
 };
-
 
 export default connect(mapStateToProps)(CustomHeader);

@@ -10,6 +10,7 @@ const Audio = (props) => {
   const styles = style(props.colorFile, props.sizeFile);
   const [allAudioBooks, setAllAudioBooks] = useState([]);
   const navigateToBible = (bId, bookName, chapterNum) => {
+    console.log("hello");
     props.updateVersionBook({
       bookId: bId,
       bookName: bookName,
@@ -19,11 +20,12 @@ const Audio = (props) => {
     props.navigation.navigate("Bible");
   };
   const emptyMessageNavigation = () => {
-    this.props.navigation.navigate("Bible");
+    props.navigation.navigate("Bible");
   };
-  const renderItem = ({ item,index }) => {
+  const renderItem = ({ item }) => {
+    console.log(item);
     return (
-      <Card key={index}>
+      <Card key={item.numOfChapters}>
         <CardItem style={styles.cardItemStyle}>
           <TouchableOpacity
             style={styles.audioView}
@@ -44,13 +46,13 @@ const Audio = (props) => {
     const audioBooks = props.audioList && props.audioList[0].books;
     const arrayBooks = audioBooks && Object.keys(audioBooks);
     const allBooks = books.map((code) => code);
-    let allAudioBooks = [];
+    let allAudioBook = [];
     if (arrayBooks != undefined) {
       for (var i = 0; i < arrayBooks.length; i++) {
         let temp = allBooks.find((item) => item.bookId === arrayBooks[i]);
-        allAudioBooks.push(temp);
+        allAudioBook.push(temp);
       }
-      setAllAudioBooks(allAudioBooks);
+      setAllAudioBooks(allAudioBook);
     }
   }, []);
 

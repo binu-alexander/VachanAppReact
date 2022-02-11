@@ -20,14 +20,15 @@ const OBS = (props) => {
   const [langCode, setLangCode] = useState(props.langCode);
   const [obsData, setObsData] = useState(null);
   const [obsLang, setObsLang] = useState([]);
-  const [defaultLanguage, setDefaultLanguage] = useState("");
-  const [defaultStory, setDefaultStory] = useState([]);
+  const [defaultLanguage, setDefaultLanguage] = useState(props.languageName);
+  const [defaultStory, setDefaultStory] = useState(storyList);
   const [storyList, setStoryList] = useState([]);
   const [bsIndex, setBsIndex] = useState("01");
   let _dropdown_1 = createRef();
   let _dropdown_2 = createRef();
   const style = styles(props.colorFile, props.sizeFile);
 
+  console.log(props.languageName, defaultLanguage);
   const fetchGitData = async (url) => {
     const data = await fetch(Github_URL + url);
     const res = await data.json();
@@ -117,14 +118,14 @@ const OBS = (props) => {
   useEffect(() => {
     let selectedStoryIndex = bsIndex.replace(/^0+/, "");
     _dropdown_2.select(parseInt(selectedStoryIndex - 1));
-  }, [...storyList]);
+  }, [...storyList, defaultStory]);
   useEffect(() => {
     fetchLangList();
   }, []);
   useEffect(() => {
     bibleStoryList();
     mdFileFetch();
-  }, [langCode, defaultLanguage, bsIndex, defaultStory]);
+  }, [langCode, defaultLanguage, bsIndex]);
   return (
     <View style={style.container}>
       <View style={style.dropdownView}>

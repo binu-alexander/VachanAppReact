@@ -16,11 +16,11 @@ import {
   updateFontSize,
   updateVersion,
   updateMetadata,
-} from "../store/action/";
+} from "../store/action";
 
-export const BibleScreenContext = createContext();
+export const BibleContext = createContext();
 
-const BibleScreenContextProvider = (props) => {
+const BibleContextProvider = (props) => {
   const [showColorGrid, setShowColorGrid] = useState("");
   const [bottomHighlightText, setBottomHighlightText] = useState(false);
   const [highlightedVerseArray, setHighlightedVerseArray] = useState([]);
@@ -32,7 +32,7 @@ const BibleScreenContextProvider = (props) => {
   const [currentVisibleChapter, setCurrentVisibleChapter] = useState(
     props.chapterNumber
   );
-  console.log(props, "navigartion");
+  const [stackNavigation, setStackNavigation] = useState("");
   const doHighlight = (color) => {
     if (connection_Status) {
       if (email && uid) {
@@ -86,9 +86,9 @@ const BibleScreenContextProvider = (props) => {
     setShowBottomBar(false);
     setShowColorGrid(false);
   };
-
+  console.log(stackNavigation, "navi");
   return (
-    <BibleScreenContext.Provider
+    <BibleContext.Provider
       value={{
         showColorGrid,
         setShowColorGrid,
@@ -109,10 +109,12 @@ const BibleScreenContextProvider = (props) => {
         currentVisibleChapter,
         setCurrentVisibleChapter,
         doHighlight,
+        stackNavigation,
+        setStackNavigation,
       }}
     >
       {props.children}
-    </BibleScreenContext.Provider>
+    </BibleContext.Provider>
   );
 };
 const mapStateToProps = (state) => {
@@ -166,4 +168,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(BibleScreenContextProvider);
+)(BibleContextProvider);

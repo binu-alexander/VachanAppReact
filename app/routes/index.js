@@ -42,6 +42,7 @@ import BRP from "../screens/StudyHelp/BRP/";
 
 import Color from "../utils/colorConstants";
 import Audio from "../screens/Audio";
+import BibleWrapper from "../screens/Bible/BibleWrapper";
 
 const DrawerStack = createDrawerNavigator();
 const NavStack = createStackNavigator();
@@ -66,7 +67,7 @@ function NavStackScreen() {
     >
       <NavStack.Screen
         name="Bible"
-        component={Bible}
+        component={BibleWrapper}
         options={{
           headerBackTitleVisible: false,
           headerShown: false,
