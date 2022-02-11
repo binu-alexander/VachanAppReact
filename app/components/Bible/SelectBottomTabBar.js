@@ -1,12 +1,16 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { BibleScreenContext } from "../../BibleContext/bibleScreen";
 import Color from "../../utils/colorConstants";
-import { bibleContext } from "../../screens/Bible";
 
-const SelectBottomTabBar = () => {
-  const [{ styles, doHighlight,showColorGrid,addToNotes,addToShare }] = useContext(bibleContext);
+const SelectBottomTabBar = ({
+  styles,
+  bottomHighlightText,
+  showColorGrid,
+  doHighlight,
+  addToNotes,
+  addToShare,
+}) => {
   return (
     <View style={styles.bottomBar}>
       <View style={styles.bottomOption}>

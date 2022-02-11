@@ -1,9 +1,8 @@
-import React, { useContext } from "react";
+import React from "react";
 import { FlatList, TouchableOpacity, View, Dimensions } from "react-native";
 const width = Dimensions.get("screen").width;
-import { bibleContext } from '../../screens/Bible'
-const HighlightColorGrid = () => {
-  const [{styles,doHighlight}] = useContext(bibleContext);
+
+const HighlightColorGrid = (props) => {
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -20,7 +19,7 @@ const HighlightColorGrid = () => {
           data={["#fffe00", "#5dff79", "#56f3ff", "#ffcaf7", "#ffc66f"]}
           numColumns={5}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => doHighlight(item)}>
+            <TouchableOpacity onPress={() => props.doHighlight(item)}>
               <View
                 style={{
                   backgroundColor: item,

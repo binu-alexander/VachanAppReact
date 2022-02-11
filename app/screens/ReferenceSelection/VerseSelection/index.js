@@ -12,13 +12,22 @@ const SelectVerse = (props) => {
   const selectedChapterNumber = props.route.params ? props.route.params.selectedChapterNumber : null;
   const totalChapters = props.route.params ? props.route.params.totalChapters : null;
   const [versesData, setVersesData] = useState([]);
+  const prevData = useRef(versesData).current;
   const style = styles(props.colorFile, props.sizeFile);
+  console.log("selectedBookId,selectedBookName,selectedChapternumber 1",selectedBookId,selectedBookName,selectedChapterNumber)
 
   const fectchVerses = async () => {
     let versesArray = [];
-    const url = "bibles/" + props.sourceId + "/books/" + selectedBookId +  "/chapters/" + selectedChapterNumber +  "/verses";
+    const url =
+      "bibles/" +
+      props.sourceId +
+      "/books/" +
+      selectedBookId +
+      "/chapters/" +
+      selectedChapterNumber +
+      "/verses";
     let verses = await vApi.get(url);
-    // console.log("VERSE DATA ",verses)
+    console.log("VERSE DATA ",verses)
     if (verses) {
       verses.map((item) => versesArray.push(item.verse.number));
     }
@@ -36,12 +45,13 @@ const SelectVerse = (props) => {
       props.navigation.navigate("Bible");
     }
   };
-useEffect(()=>{
-  fectchVerses()
-},[])
+
   useEffect(() => {
-    fectchVerses()
-  }, [...versesData])
+    fectchVerses();
+    if (prevData != versesData) {
+      fectchVerses();
+    }
+  }, [prevData, versesData]);
   return (
     <View style={{ flex: 1 }}>
       <SelectionGrid

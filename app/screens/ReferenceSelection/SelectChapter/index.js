@@ -10,12 +10,10 @@ import { updateVersionBook } from "../../../store/action";
 const ChapterSelection = (props) => {
   const state = {
     chapterData: Array.from(
-      new Array(props.route.params
-        ? props.route.params.totalChapters : 0),
+      new Array(props.route.params ? props.route.params.totalChapters : 0),
       (x, i) => i + 1
     ),
-    totalChapters: props.route.params
-    ? props.route.params.totalChapters : null,
+    totalChapters: props.route.params ? props.route.params.totalChapters : null,
     selectedBookId: props.route.params
       ? props.route.params.selectedBookId
       : null,

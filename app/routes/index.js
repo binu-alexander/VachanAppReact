@@ -1,7 +1,7 @@
 // all of our routes
 // import { createStackNavigator, createDrawerNavigator, createSwitchNavigator, createAppContainer } from 'react-navigation'
 import React, { Component } from "react";
-import { Platform } from "react-native";
+import {Platform} from 'react-native';
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import About from "../screens/About/";
@@ -79,9 +79,9 @@ function NavStackScreen() {
       <NavStack.Screen
         name="DrawerScreen"
         component={DrawerScreen}
-        options={{
-          headerBackTitleVisible: false,
-        }}
+          options={{
+            headerBackTitleVisible: false,
+          }}
       />
       <NavStack.Screen
         name="LanguageList"
@@ -106,17 +106,13 @@ function NavStackScreen() {
           },
         }}
       />
-      <NavStack.Screen
-        name="Search"
-        component={Search}
-        options={{ headerBackTitleVisible: false }}
-      />
+      <NavStack.Screen name="Search" component={Search} options={{headerBackTitleVisible: false,}} />
       <NavStack.Screen
         name="About"
         component={About}
         options={{
           headerBackTitle: "About Us",
-          headerTitle: Platform.OS === "android" ? "About Us" : null,
+          headerTitle:Platform.OS === 'android' ?  "About Us" : null,
         }}
       />
       <NavStack.Screen
@@ -124,7 +120,7 @@ function NavStackScreen() {
         component={Settings}
         options={{
           headerBackTitle: "Settings",
-          headerTitle: Platform.OS === "android" ? "Settings" : null,
+          headerTitle: Platform.OS === 'android' ? "Settings" : null,
         }}
       />
       <NavStack.Screen
@@ -132,7 +128,7 @@ function NavStackScreen() {
         component={Notes}
         options={{
           headerBackTitle: "Notes",
-          headerTitle: Platform.OS === "android" ? "Notes" : null,
+          headerTitle: Platform.OS === 'android' ? "Notes" :null,
         }}
       />
       <NavStack.Screen name="EditNote" component={EditNote} options={{}} />
@@ -141,7 +137,7 @@ function NavStackScreen() {
         component={Highlights}
         options={{
           headerBackTitle: "Highlights",
-          headerTitle: Platform.OS === "android" ? "Highlights" : null,
+          headerTitle: Platform.OS === 'android' ? "Highlights" : null,
         }}
       />
       <NavStack.Screen
@@ -149,7 +145,7 @@ function NavStackScreen() {
         component={History}
         options={{
           headerBackTitle: "History",
-          headerTitle: Platform.OS === "android" ? "History" : null,
+          headerTitle: Platform.OS === 'android' ? "History" : null,
         }}
       />
       <NavStack.Screen
@@ -165,7 +161,7 @@ function NavStackScreen() {
         component={Dictionary}
         options={{
           headerBackTitle: "Dictionary",
-          headerTitle: Platform.OS === "android" ? "Dictionary" : null,
+          headerTitle: Platform.OS === 'android' ? "Dictionary" : null,
         }}
       />
       <NavStack.Screen
@@ -173,7 +169,7 @@ function NavStackScreen() {
         component={DictionaryWords}
         options={{
           headerBackTitle: "Dictionary words",
-          headerTitle: Platform.OS === "android" ? "Dictionary words" : null,
+          headerTitle: Platform.OS === 'android' ? "Dictionary words" : null,
         }}
       />
       <NavStack.Screen
@@ -181,20 +177,20 @@ function NavStackScreen() {
         component={Infographics}
         options={{
           headerBackTitle: "Infographics",
-          headerTitle: Platform.OS === "android" ? "Infographics" : null,
+          headerTitle: Platform.OS === 'android' ? "Infographics" : null,
         }}
       />
       <NavStack.Screen
         name="InfographicsImage"
         component={InfographicsImage}
-        options={{ headerBackTitleVisible: false }}
+        options={{headerBackTitleVisible: false,}}
       />
       <NavStack.Screen
         name="Reset"
         component={Reset}
         options={{
           headerBackTitle: "Forgot Passsword ?",
-          headerTitle: Platform.OS === "android" ? "Forgot Passsword ?" : null,
+          headerTitle:Platform.OS === 'android' ? "Forgot Passsword ?" : null,
         }}
       />
       <NavStack.Screen
@@ -238,7 +234,7 @@ function NavStackScreen() {
         component={Bookmarks}
         options={{
           headerBackTitle: "Bookmarks",
-          headerTitle: Platform.OS === "android" ? "Bookmarks" : null,
+          headerTitle:Platform.OS === 'android' ? "Bookmarks" : null,
         }}
       />
       <NavStack.Screen
@@ -246,7 +242,7 @@ function NavStackScreen() {
         component={Audio}
         options={{
           headerBackTitle: "Audio",
-          headerTitle: Platform.OS === "android" ? "Audio" : null,
+          headerTitle:Platform.OS === 'android' ? "Audio" : null,
         }}
       />
       <NavStack.Screen
@@ -254,7 +250,7 @@ function NavStackScreen() {
         component={Video}
         options={{
           headerBackTitle: "Video",
-          headerTitle: Platform.OS === "android" ? "Video" : null,
+          headerTitle:Platform.OS === 'android' ? "Video" : null,
         }}
       />
       <DrawerStack.Screen
@@ -262,7 +258,7 @@ function NavStackScreen() {
         component={BRP}
         options={{
           headerBackTitle: "Reading Plans",
-          headerTitle: Platform.OS === "android" ? "Reading Plans" : null,
+          headerTitle:Platform.OS === 'android' ? "Reading Plans" : null,
         }}
       />
       <DrawerStack.Screen
@@ -270,16 +266,16 @@ function NavStackScreen() {
         component={DrawerCommentary}
         options={{
           headerBackTitle: "Commentary",
-          headerTitle: Platform.OS === "android" ? "Commentary" : null,
+          headerTitle:Platform.OS === 'android' ? "Commentary" : null,
         }}
       />
-
+      
       <NavStack.Screen
         name="OBS"
         component={OBS}
         options={{
           headerBackTitle: "Bible Stories ",
-          headerTitle: Platform.OS === "android" ? "Bible Stories" : null,
+          headerTitle:Platform.OS === 'android' ? "Bible Stories" : null,
         }}
       />
       <NavStack.Screen name="PlayVideo" component={PlayVideo} options={{}} />
@@ -288,7 +284,7 @@ function NavStackScreen() {
         component={Help}
         options={{
           headerBackTitle: "Help",
-          headerTitle: Platform.OS === "android" ? "Help" : null,
+          headerTitle:Platform.OS === 'android' ? "Help" : null,
         }}
       />
       <NavStack.Screen
@@ -296,7 +292,7 @@ function NavStackScreen() {
         component={Hints}
         options={{
           headerBackTitle: "Hints",
-          headerTitle: Platform.OS === "android" ? "Hints" : null,
+          headerTitle:Platform.OS === 'android' ? "Hints" : null,
         }}
       />
       <NavStack.Screen
@@ -304,7 +300,7 @@ function NavStackScreen() {
         component={Feedback}
         options={{
           headerBackTitle: "Feedback",
-          headerTitle: Platform.OS === "android" ? "Feedback" : null,
+          headerTitle:Platform.OS === 'android' ? "Feedback" : null,
         }}
       />
     </NavStack.Navigator>

@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  Component,
+  createRef,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   Text,
   View,
@@ -96,11 +102,6 @@ const SelectBook = (props) => {
     }
     setNTSize(count);
   };
-  useEffect(()=>{
-    getOTSize();
-    getNTSize();
-    selectTab();
-  },[])
   useEffect(() => {
     getOTSize();
     getNTSize();
