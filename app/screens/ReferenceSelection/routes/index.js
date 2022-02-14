@@ -4,17 +4,15 @@ import SelectBook from "../SelectBook/";
 import SelectChapter from "../SelectChapter";
 import Color from "../../../utils/colorConstants";
 import SelectVerse from "../VerseSelection";
-
+import { connect } from "react-redux";
 const Tab = createMaterialTopTabNavigator();
 const SelectionTab = (props) => {
-  const selectedBookId = props.params ? props.params.bookId : null;
-  const selectedBookName = props.params ? props.params.bookName : null;
-  const totalChapters = props.params ? props.params.totalChapters : null;
+  const selectedBookId = props.bookId ? props.bookId : null;
+  const selectedBookName = props.bookName ? props.bookName : null;
+  const totalChapters = props.totalChapters ? props.totalChapters : null;
   const selectedChapterIndex = 0;
-  const selectedChapterNumber = props.params
-    ? props.params.chapterNumber
-    : null;
-  const selectedVerse = props.params ? props.params.selectedVerse : null;
+  const selectedChapterNumber = props.params ? props.params.chapterNumber  : null;
+  const selectedVerse = props.selectedVerse ? props.selectedVerse : null;
 console.log("REFERENCE SELECTION ",props.params)
   return (
     <Tab.Navigator
@@ -84,4 +82,25 @@ console.log("REFERENCE SELECTION ",props.params)
     </Tab.Navigator>
   );
 };
-export default SelectionTab;
+
+const mapStateToProps = (state) => {
+  return {
+    bookName: state.updateVersion.bookName,
+    bookId: state.updateVersion.bookId,
+    language: state.updateVersion.language,
+    languageCode: state.updateVersion.languageCode,
+    versionCode: state.updateVersion.versionCode,
+    sourceId: state.updateVersion.sourceId,
+    downloaded: state.updateVersion.downloaded,
+    chapterNumber: state.updateVersion.chapterNumber,
+    books: state.versionFetch.versionBooks,
+    error: state.versionFetch.error,
+    isLoading: state.versionFetch.loading,
+    selectedVerse: state.updateVersion.selectedVerse,
+    sizeFile: state.updateStyling.sizeFile,
+    totalChapters: state.updateVersion.totalChapters,
+    colorFile: state.updateStyling.colorFile,
+  };
+};
+
+export default connect(mapStateToProps, null)(SelectionTab);

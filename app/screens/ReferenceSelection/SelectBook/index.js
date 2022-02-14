@@ -1,10 +1,4 @@
-import React, {
-  Component,
-  createRef,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Text,
   View,
@@ -102,6 +96,11 @@ const SelectBook = (props) => {
     }
     setNTSize(count);
   };
+  useEffect(()=>{
+    getOTSize();
+    getNTSize();
+    selectTab();
+  },[])
   useEffect(() => {
     getOTSize();
     getNTSize();
@@ -111,7 +110,7 @@ const SelectBook = (props) => {
       getNTSize();
       selectTab();
     }
-  }, [prevBooks, props.books, setActiveTab]);
+  }, [prevBooks, setActiveTab]);
   const selectTab = () => {
     let bookData = null;
     let bookIndex = -1;

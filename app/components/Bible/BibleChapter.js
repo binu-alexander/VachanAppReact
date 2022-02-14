@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Text, View, ScrollView, Alert } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import Spinner from "react-native-loading-spinner-overlay";
-import { fetchVersionBooks, selectContent,parallelVisibleView } from "../../store/action";
+import { fetchVersionBooks, selectContent, parallelVisibleView } from "../../store/action";
 import { styles } from "./styles";
 import { connect } from "react-redux";
 import { getResultText } from "../../utils/UtilFunctions";
@@ -11,13 +11,13 @@ import Color from "../../utils/colorConstants";
 import ReloadButton from "../ReloadButton";
 import vApi from "../../utils/APIFetch";
 import { getHeading } from "../../utils/UtilFunctions";
-
+import { BibleContext } from "../../screens/Bible";
 const BibleChapter = (props) => {
+  const [{ currentVisibleChapter, navigation }] = useContext(BibleContext);
+  console.log("current chapter in bible ", currentVisibleChapter)
   const bShortName = props.bookName != null &&
-  (props.bookName.length > 10 ? props.bookName.slice(0, 9) + "..." : props.bookName);
-  const [currentParallelViewChapter, setCurrentParallelViewChapter] = useState(
-    props.currentChapter
-  );
+    (props.bookName.length > 10 ? props.bookName.slice(0, 9) + "..." : props.bookName);
+  const [currentParallelViewChapter, setCurrentParallelViewChapter] = useState(currentVisibleChapter);
   const [bookName, setBookName] = useState(props.bookName);
   const [bookNameList, setBookNameList] = useState([]);
   const [shortbookName, setShortbookName] = useState(bShortName);
@@ -100,7 +100,7 @@ const BibleChapter = (props) => {
         let chapter =
           val == null ? currentParallelViewChapter : val;
         let bookIds = bkId == null ? bookId : bkId;
-        console.log(" BIBLE Book id",bookIds)
+        console.log(" BIBLE Book id", bookIds)
         setLoading(true);
         setBookId(bookIds);
         setCurrentParallelViewChapter(chapter);
@@ -189,7 +189,7 @@ const BibleChapter = (props) => {
 
   const goToSelectionTab = () => {
     if (props.parallelLanguage) {
-      props.navigation.navigate("ReferenceSelection", {
+      navigation.navigate("ReferenceSelection", {
         getReference: getRef,
         parallelContent: true,
         bookId: bookId,
@@ -217,12 +217,12 @@ const BibleChapter = (props) => {
       });
     };
   }, []);
-  useEffect(()=>{
+  useEffect(() => {
     updateBook()
     queryParallelBible(null, null);
-  },[bookId])
-  
-  closeParallelView = (value)=>{
+  }, [bookId])
+
+  closeParallelView = (value) => {
     props.parallelVisibleView({
       modalVisible: false,
       visibleParallelView: value,
@@ -247,7 +247,7 @@ const BibleChapter = (props) => {
           <Icon name="arrow-drop-down" color={Color.White} size={20} />
         </Button>
         <Right style={{ position: "absolute", right: 4 }}>
-          <Button transparent onPress={()=>closeParallelView(false)}>
+          <Button transparent onPress={() => closeParallelView(false)}>
             <Icon name="cancel" color={Color.White} size={20} />
           </Button>
         </Right>
@@ -257,7 +257,7 @@ const BibleChapter = (props) => {
         <View style={style.centerReloadButton}>
           <ReloadButton
             styles={style}
-            reloadFunction={()=>queryParallelBible(null,null)}
+            reloadFunction={() => queryParallelBible(null, null)}
             message={message}
           />
         </View>
@@ -359,7 +359,7 @@ const BibleChapter = (props) => {
             style={{
               justifyContent:
                 currentParallelViewChapter != 1 &&
-                (currentParallelViewChapter == currentParallelViewChapter) !=
+                  (currentParallelViewChapter == currentParallelViewChapter) !=
                   totalChapters
                   ? "center"
                   : "space-around",
@@ -367,35 +367,35 @@ const BibleChapter = (props) => {
             }}
           >
             {PpeviousContent &&
-            Object.keys(PpeviousContent).length > 0 &&
-            PpeviousContent.constructor === Object ? (
+              Object.keys(PpeviousContent).length > 0 &&
+              PpeviousContent.constructor === Object ? (
               <View style={style.bottomBarParallelPrevView}>
                 <Icon
                   name={"chevron-left"}
                   color={Color.Blue_Color}
                   size={16}
                   style={style.bottomBarChevrontIcon}
-                  onPress={() =>  queryParallelBible(
-                      PpeviousContent.chapterId,
-                      PpeviousContent.bibleBookCode
-                    )
+                  onPress={() => queryParallelBible(
+                    PpeviousContent.chapterId,
+                    PpeviousContent.bibleBookCode
+                  )
                   }
                 />
               </View>
             ) : null}
             {pNextContent &&
-            Object.keys(pNextContent).length > 0 &&
-            pNextContent.constructor === Object ? (
+              Object.keys(pNextContent).length > 0 &&
+              pNextContent.constructor === Object ? (
               <View style={style.bottomBarNextParallelView}>
                 <Icon
                   name={"chevron-right"}
                   color={Color.Blue_Color}
                   size={16}
                   style={style.bottomBarChevrontIcon}
-                  onPress={() =>  queryParallelBible(
-                      pNextContent.chapterId,
-                      pNextContent.bibleBookCode
-                    )
+                  onPress={() => queryParallelBible(
+                    pNextContent.chapterId,
+                    pNextContent.bibleBookCode
+                  )
                   }
                 />
               </View>
