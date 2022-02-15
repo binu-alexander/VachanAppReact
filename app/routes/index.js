@@ -11,6 +11,7 @@ import Notes from "../screens/Note/index";
 import EditNote from "../screens/Note/EditNote";
 import Highlights from "../screens/Highlights/";
 import History from "../screens/History/";
+import BibleWrapper from "../screens/Bible/BibleWrapper";
 
 import Commentary from "../screens/StudyHelp/Commentary/";
 import DrawerCommentary from "../screens/DrawerScreen/Commentary/";
@@ -42,7 +43,6 @@ import BRP from "../screens/StudyHelp/BRP/";
 
 import Color from "../utils/colorConstants";
 import Audio from "../screens/Audio";
-import BibleWrapper from "../screens/Bible/BibleWrapper";
 
 const DrawerStack = createDrawerNavigator();
 const NavStack = createStackNavigator();

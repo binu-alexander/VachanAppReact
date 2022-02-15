@@ -132,12 +132,10 @@ const HighLights = (props) => {
       setHightlightedVerseArray(HightlightedVerseArray);
       return;
     }
-
     let value =
       item.verseNumber &&
       item.verseNumber !== "undefined" &&
       item.verseNumber.map((e, index) => {
-        console.log("e ", e);
         let verse = String(e).split(":", 1);
         return (
           <TouchableOpacity
@@ -173,7 +171,6 @@ const HighLights = (props) => {
       fetchHighlights();
     }
   }, [prevBooks, props.books, HightlightedVerseArray]);
-  console.log(HightlightedVerseArray, message, prevBooks, "high");
   return (
     <View style={style.container}>
       {isLoading ? (

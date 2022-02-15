@@ -1,15 +1,15 @@
-import React,{useContext} from 'react';
+import React, { useContext } from 'react';
 import { View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Player from '../Audio/Player'
 import Color from '../../utils/colorConstants'
 import { connect } from "react-redux";
-import { bibleContext } from '../../screens/Bible';
+import { BibleContext } from '../../screens/Bible';
 
 const ChapterNdAudio = (props) => {
-    const [{audio, currentVisibleChapter,styles,status,queryBookFromAPI,nextContent,previousContent,showBottomBar}] = useContext(bibleContext);
-  
-    return(
+    const [{ audio, currentVisibleChapter, styles, status, queryBookFromAPI, nextContent, previousContent, showBottomBar }] = useContext(BibleContext);
+
+    return (
         <View style={{ justifyContent: (currentVisibleChapter != 1 && currentVisibleChapter == currentVisibleChapter != props.totalChapters) ? 'center' : 'space-around', alignItems: 'center' }}>
             {
                 ((currentVisibleChapter == 1 && props.downloaded == true) || (previousContent && Object.keys(previousContent).length == 0 && previousContent.constructor === Object)) ? null :
@@ -17,7 +17,7 @@ const ChapterNdAudio = (props) => {
                         styles.bottomBarParallelPrevView : styles.bottomBarPosition]}>
                         <Icon name={'chevron-left'} color={Color.Blue_Color} size={props.visibleParallelView ? 16 : 32}
                             style={styles.bottomBarChevrontIcon}
-                            onPress={()=>queryBookFromAPI(props.downloaded ? false : previousContent)}
+                            onPress={() => queryBookFromAPI(props.downloaded ? false : previousContent)}
                         />
                     </View>
             }
@@ -36,22 +36,22 @@ const ChapterNdAudio = (props) => {
                         styles.bottomBarNextParallelView : styles.bottomBarPosition]}>
                         <Icon name={'chevron-right'} color={Color.Blue_Color} size={props.visibleParallelView ? 16 : 32}
                             style={styles.bottomBarChevrontIcon}
-                            onPress={()=>queryBookFromAPI(props.downloaded ? true : nextContent)}
+                            onPress={() => queryBookFromAPI(props.downloaded ? true : nextContent)}
                         />
                     </View>
             }
         </View>
     )
 }
-    const mapStateToProps = (state) => {
-        return {
-          totalChapters: state.updateVersion.totalChapters,
-          downloaded: state.updateVersion.downloaded,
-          visibleParallelView: state.selectContent.visibleParallelView,
-        };
-      };
-      
-      
+const mapStateToProps = (state) => {
+    return {
+        totalChapters: state.updateVersion.totalChapters,
+        downloaded: state.updateVersion.downloaded,
+        visibleParallelView: state.selectContent.visibleParallelView,
+    };
+};
+
+
 export default connect(mapStateToProps)(ChapterNdAudio);
 
 

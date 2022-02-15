@@ -16,7 +16,7 @@ import { connect } from "react-redux";
 import { AndroidPermission } from "../../utils/UtilFunctions";
 import { Toast } from "native-base";
 const NAVBAR_HEIGHT = 80;
-import { bibleContext } from "../../screens/Bible";
+import { BibleContext } from "../../screens/Bible";
 
 const CustomHeader = (props) => {
   const [
@@ -27,18 +27,15 @@ const CustomHeader = (props) => {
       toggleAudio,
       currentVisibleChapter,
       chapterContent,
-      onBookmarkPress,
       isBookmark,
       navigateToSelectionTab,
       navigateToLanguage,
+      onBookmarkPress,
     },
-  ] = useContext(bibleContext);
-  // console.log("BOOK NAME ",props.bookName)
+  ] = useContext(BibleContext);
   let bookName = !isNaN(props.bookName.charAt(0))
     ? props.bookName.charAt(0).toUpperCase() + props.bookName.slice(1)
     : props.bookName;
-  console.log("Context Value ", props.bookName);
-
   const navbarTranslate = clampedScroll.interpolate({
     inputRange: [0, NAVBAR_HEIGHT],
     outputRange: [0, -NAVBAR_HEIGHT],
@@ -165,7 +162,7 @@ const CustomHeader = (props) => {
               onBookmarkPress(isBookmark);
             }}
             name="bookmark"
-            color={props.isBookmark ? Color.Red : Color.White}
+            color={isBookmark ? Color.Red : Color.White}
             size={24}
           />
         </TouchableOpacity>

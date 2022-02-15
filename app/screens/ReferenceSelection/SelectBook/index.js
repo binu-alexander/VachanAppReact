@@ -110,7 +110,7 @@ const SelectBook = (props) => {
       getNTSize();
       selectTab();
     }
-  }, [prevBooks, props.books, setActiveTab]);
+  }, [prevBooks, setActiveTab]);
   const selectTab = () => {
     let bookData = null;
     let bookIndex = -1;
