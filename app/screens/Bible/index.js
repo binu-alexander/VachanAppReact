@@ -5,7 +5,7 @@ import React, {
   createContext,
   useContext,
 } from "react";
-import { Alert, Share, AppState, Animated, Platform } from "react-native";
+import { AppState, Animated, Platform } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 
 import DbQueries from "../../utils/dbQueries";
@@ -22,16 +22,13 @@ import {
 import { getBookChaptersFromMapping } from "../../utils/UtilFunctions";
 import { style } from "./style.js";
 import { connect } from "react-redux";
-import Color from "../../utils/colorConstants";
 import { Toast } from "native-base";
 import auth from "@react-native-firebase/auth";
-import database from "@react-native-firebase/database";
 import vApi from "../../utils/APIFetch";
 import { getHeading } from "../../utils/UtilFunctions";
 import {
   updateLangVersion,
   changeSizeOnPinch,
-  setHighlightColor,
 } from "../../utils/BiblePageUtil";
 import BibleMainComponent from "../../components/Bible/BibleMainComponent";
 import { LoginContext } from "./BibleWrapper";
@@ -65,36 +62,41 @@ const Bible = (props) => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [reloadMessage, setReloadMessage] = useState("Loading...");
-  const [showBottomBar, setShowBottomBar] = useState("");
-  const [bottomHighlightText, setBottomHighlightText] = useState(false);
+  // const [showBottomBar, setShowBottomBar] = useState("");
+  // const [bottomHighlightText, setBottomHighlightText] = useState(false);
   const [nextContent, setNextContent] = useState("");
   const [previousContent, setPreviousContent] = useState("");
-  const [selectedReferenceSet, setSelectedReferenceSet] = useState([]);
+  // const [selectedReferenceSet, setSelectedReferenceSet] = useState([]);
   const [status, setStatus] = useState("");
   const [initializing, setInitializing] = useState(true);
   const [arrLayout, setArrLayout] = useState([]);
   const [unAvailableContent, setUnAvailableContent] = useState("");
-  const [showColorGrid, setShowColorGrid] = useState("");
+  // const [showColorGrid, setShowColorGrid] = useState("");
 
   const {
     currentVisibleChapter,
     setCurrentVisibleChapter,
-    connection_Status,
+    selectedReferenceSet,
+    setSelectedReferenceSet,
     setConnection_Status,
     getNotes,
     notesList,
-    bookmarksList,
-    setBookmarksList,
     isBookmark,
-    setIsBookmark,
+    onBookmarkPress,
     getBookMarks,
-    email,
     setEmail,
-    uid,
     setUid,
     highlightedVerseArray,
-    setHighlightedVerseArray,
+    showBottomBar,
+    setShowBottomBar,
+    setShowColorGrid,
+    showColorGrid,
     getHighlights,
+    doHighlight,
+    addToShare,
+    addToNotes,
+    getSelectedReferences,
+    bottomHighlightText, setBottomHighlightText
   } = useContext(LoginContext);
   const offsetAnim = useRef(new Animated.Value(0)).current;
   const scrollAnim = useRef(new Animated.Value(0)).current;
@@ -158,16 +160,16 @@ const Bible = (props) => {
         if (baseAPI != null) {
           var content = await vApi.get(
             "bibles" +
-              "/" +
-              sourceId +
-              "/" +
-              "books" +
-              "/" +
-              bookId +
-              "/" +
-              "chapter" +
-              "/" +
-              currentVisibleChapter
+            "/" +
+            sourceId +
+            "/" +
+            "books" +
+            "/" +
+            bookId +
+            "/" +
+            "chapter" +
+            "/" +
+            currentVisibleChapter
           );
           if (content) {
             setReloadMessage("Loading....");
@@ -237,16 +239,16 @@ const Bible = (props) => {
           try {
             var content = await vApi.get(
               "bibles" +
-                "/" +
-                sId +
-                "/" +
-                "books" +
-                "/" +
-                bId +
-                "/" +
-                "chapter" +
-                "/" +
-                cNum
+              "/" +
+              sId +
+              "/" +
+              "books" +
+              "/" +
+              bId +
+              "/" +
+              "chapter" +
+              "/" +
+              cNum
             );
             if (content) {
               let header = getHeading(content.chapterContent.contents);
@@ -291,42 +293,7 @@ const Bible = (props) => {
       setUnAvailableContent(true);
     }
   };
-  const getSelectedReferences = (vIndex, chapterNum, vNum, text) => {
-    if (vIndex != -1 && chapterNum != -1 && vNum != -1) {
-      let obj = chapterNum + "_" + vIndex + "_" + vNum + "_" + text;
-      let selectedReferences = [...selectedReferenceSet];
-      var found = false;
-      for (var i = 0; i < selectedReferences.length; i++) {
-        if (selectedReferences[i] == obj) {
-          found = true;
-          selectedReferences.splice(i, 1);
-        }
-      }
-      if (!found) {
-        selectedReferences.push(obj);
-      }
-      let selectedCount = selectedReferences.length,
-        highlightCount = 0;
-      for (let item of selectedReferences) {
-        let tempVal = item.split("_");
-        for (var i = 0; i <= highlightedVerseArray.length - 1; i++) {
-          let regexMatch = /(\d+)\:([a-zA-Z]+)/;
-          if (highlightedVerseArray[i]) {
-            let match = highlightedVerseArray[i].match(regexMatch);
-            if (match) {
-              if (parseInt(match[1]) == parseInt(tempVal[2])) {
-                highlightCount++;
-              }
-            }
-          }
-        }
-      }
-      setSelectedReferenceSet(selectedReferences);
-      setShowBottomBar(selectedReferences.length > 0 ? true : false);
-      setBottomHighlightText(selectedCount == highlightCount ? false : true);
-      setShowColorGrid(selectedCount == highlightCount ? false : true);
-    }
-  };
+
   const toggleAudio = () => {
     if (audio) {
       setStatus(!status);
@@ -390,29 +357,7 @@ const Bible = (props) => {
       });
     }
   };
-  // const  getOffset = (index) => {
-  //     var offset = 0;
-  //     for (let i = 0; i < index; i++) {
-  //       const elementLayout = arrLayout[index];
-  //       if (elementLayout && elementLayout.height) {
-  //         if (arrLayout[i] != undefined) {
-  //           offset += arrLayout[i].height;
-  //         }
-  //       }
-  //     }
-  //     return offset;
-  //   }
-  // const scrollToVerse = (verseNumber) => {
-  //     if (arrLayout != undefined) {
-  //       let item = arrLayout.filter((i) => i.verseNumber == verseNumber);
-  //       if (item.length > 0) {
-  //         if (item[0].verseNumber == verseNumber) {
-  //           const offset = getOffset(item[0].index);
-  //           verseScroll.scrollToOffset({ offset, animated: true });
-  //         }
-  //       }
-  //     }
-  //   }
+
 
   const navigateToSelectionTab = () => {
     setStatus(false);
@@ -482,204 +427,8 @@ const Bible = (props) => {
     setPreviousContent(null);
     setNextContent(null);
   };
-  //   // get highlights from firebase
-  // const getHighlights = () => {
-  //   if (connection_Status) {
-  //     if (email && uid) {
-  //       database()
-  //         .ref(
-  //           "users/" +
-  //             uid +
-  //             "/highlights/" +
-  //             sourceId +
-  //             "/" +
-  //             bookId +
-  //             "/" +
-  //             currentVisibleChapter
-  //         )
-  //         .on("value", (snapshot) => {
-  //           if (snapshot.val() != null) {
-  //             let value = snapshot.val();
-  //             let VerseArray = [];
-  //             for (var i = 0; i < value.length; i++) {
-  //               if (isNaN(value[i])) {
-  //                 VerseArray.push(value[i]);
-  //               } else {
-  //                 let addColor = value[i] + ":" + Color.highlightColorA.const;
-  //                 VerseArray.push(addColor);
-  //               }
-  //               setHighlightedVerseArray(VerseArray);
-  //             }
-  //           } else {
-  //             setHighlightedVerseArray([]);
-  //           }
-  //         });
-  //     } else {
-  //       setHighlightedVerseArray([]);
-  //     }
-  //   } else {
-  //     setHighlightedVerseArray([]);
-  //   }
-  // };
-  // get bookmarks from firebase
-  // const BookmarkfromList = () => {
-  //   if (bookmarksList.length > 0) {
-  //       let bm = bookmarksList.includes(currentVisibleChapter)
-  //       setIsBookmark(bm)
-  //   }
-  //   setIsBookmark(false)
-  // }
-  // get notes from firebase
-  //   //add book mark from header icon
-  const onBookmarkPress = (isbookmark) => {
-    if (connection_Status) {
-      if (email && uid) {
-        var newBookmarks = isbookmark
-          ? bookmarksList.filter((a) => a !== currentVisibleChapter)
-          : bookmarksList.concat(currentVisibleChapter);
-        database()
-          .ref("users/" + uid + "/bookmarks/" + sourceId + "/" + bookId)
-          .set(newBookmarks);
-        setBookmarksList(newBookmarks);
-        setIsBookmark(!isbookmark);
-        Toast.show({
-          text: isbookmark
-            ? "Bookmarked chapter removed"
-            : "Chapter bookmarked",
-          type: isbookmark ? "default" : "success",
-          duration: 5000,
-        });
-      } else {
-        setBookmarksList([]);
-        props.navigation.navigate("Login");
-      }
-    } else {
-      setBookmarksList([]);
-      Alert.alert("Please check your internet connecion");
-    }
-  };
-  console.log(highlightedVerseArray, "hhh");
-  //   //selected reference for highlighting verse
-  const addToNotes = () => {
-    if (connection_Status) {
-      if (email) {
-        let refList = [];
-        var verses = [];
-        if (Object.keys(selectedReferenceSet).length != 0) {
-          for (let item of selectedReferenceSet) {
-            let tempVal = item.split("_");
-            const verseNumber = parseInt(tempVal[2]);
-            let refModel = {
-              bookId: bookId,
-              bookName: bookName,
-              chapterNumber: parseInt(tempVal[0]),
-              verseNumber: verseNumber,
-              verseText: tempVal[3],
-              versionCode: versionCode,
-              languageName: language,
-            };
-            refList.push(refModel);
-            verses.push(verseNumber);
-          }
-        }
-        props.navigation.navigate("EditNote", {
-          referenceList: refList,
-          notesList: notesList,
-          bcvRef: {
-            bookId: bookId,
-            bookName: bookName,
-            chapterNumber: currentVisibleChapter,
-            verses: verses,
-          },
-          contentBody: "",
-          onbackNote: onbackNote,
-          noteIndex: -1,
-        });
-      } else {
-        props.navigation.navigate("Login");
-      }
-    } else {
-      Alert.alert("Please check internet connection");
-    }
-    setSelectedReferenceSet([]);
-    setShowBottomBar(false);
-    setShowColorGrid(false);
-  };
-  const onbackNote = () => {};
-  const doHighlight = (color) => {
-    if (connection_Status) {
-      if (email && uid) {
-        let array = [...highlightedVerseArray];
-        if (Object.keys(selectedReferenceSet).length != 0) {
-          for (let item of selectedReferenceSet) {
-            let tempVal = item.split("_");
-            let selectedColor = setHighlightColor(color);
-            let val = tempVal[2].trim() + ":" + selectedColor;
-            for (var i = 0; i < array.length; i++) {
-              let regexMatch = /(\d+):([a-zA-Z]+)/;
-              if (array[i]) {
-                let match = array[i].match(regexMatch);
-                if (match) {
-                  if (parseInt(match[1]) == parseInt(tempVal[2])) {
-                    array.splice(i, 1);
-                    setHighlightedVerseArray(array);
-                  }
-                }
-              }
-            }
-            var index = array.indexOf(val);
-            //solve the issue of 2 color on single verse
-            if (bottomHighlightText) {
-              if (index == -1) {
-                array.push(val);
-              }
-              setHighlightedVerseArray(array);
-            }
-          }
-        }
-        database()
-          .ref(
-            "users/" +
-              uid +
-              "/highlights/" +
-              sourceId +
-              "/" +
-              bookId +
-              "/" +
-              currentVisibleChapter
-          )
-          .set(array);
-      } else {
-        props.navigation.navigate("Login");
-      }
-    } else {
-      Alert.alert("Please check internet connection");
-    }
-    setSelectedReferenceSet([]);
-    setShowBottomBar(false);
-    setShowColorGrid(false);
-  };
-  //   //share verse
-  const addToShare = () => {
-    let shareText = "";
-    if (Object.keys(selectedReferenceSet).length != 0) {
-      for (let item of selectedReferenceSet) {
-        let tempVal = item.split("_");
-        let cNumber = parseInt(tempVal[0]);
-        // let vIndex = parseInt(tempVal[1]);
-        let verseNumber = tempVal[2];
-        shareText = shareText.concat(
-          bookName + " " + cNumber + ":" + verseNumber + " "
-        );
-        shareText = shareText.concat(tempVal[3]);
-        shareText = shareText.concat("\n");
-      }
-    }
-    Share.share({ message: shareText });
-    setSelectedReferenceSet([]);
-    setShowBottomBar(false);
-    setShowColorGrid(false);
-  };
+
+
   changeSizeByOne = (value) => {
     const { updateFontSize } = props;
     changeSizeOnPinch(value, updateFontSize, colorFile, styles);
@@ -790,43 +539,42 @@ const Bible = (props) => {
   ]);
   return (
     <BibleContext.Provider
-      value={[
-        {
-          audio,
-          clampedScroll,
-          _clampedScrollValue,
-          showBottomBar,
-          navigation: props.navigation,
-          currentVisibleChapter,
-          chapterContent,
-          isBookmark,
-          IconFloatingStyle: styles.IconFloatingStyle,
-          reloadMessage,
-          previousContent,
-          nextContent,
-          bottomHighlightText,
-          showColorGrid,
-          selectedReferenceSet,
-          highlightedVerseArray,
-          notesList,
-          styles,
-          status,
-          chapterHeader,
-          scrollAnim,
-          offsetAnim,
-          unAvailableContent,
-          isLoading,
-          setShowColorGrid,
-          navigateToSelectionTab,
-          navigateToLanguage,
-          queryBookFromAPI,
-          onBookmarkPress,
-          toggleAudio,
-          doHighlight,
-          addToNotes,
-          addToShare,
-          getSelectedReferences,
-        },
+      value={[{
+        audio,
+        clampedScroll,
+        _clampedScrollValue,
+        showBottomBar,
+        navigation: props.navigation,
+        currentVisibleChapter,
+        chapterContent,
+        isBookmark,
+        IconFloatingStyle: styles.IconFloatingStyle,
+        reloadMessage,
+        previousContent,
+        nextContent,
+        bottomHighlightText,
+        showColorGrid,
+        selectedReferenceSet,
+        highlightedVerseArray,
+        notesList,
+        styles,
+        status,
+        chapterHeader,
+        scrollAnim,
+        offsetAnim,
+        unAvailableContent,
+        isLoading,
+        setShowColorGrid,
+        navigateToSelectionTab,
+        navigateToLanguage,
+        queryBookFromAPI,
+        onBookmarkPress,
+        toggleAudio,
+        doHighlight,
+        addToNotes,
+        addToShare,
+        getSelectedReferences,
+      },
       ]}
     >
       <BibleMainComponent />
