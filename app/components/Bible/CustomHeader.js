@@ -16,23 +16,25 @@ import { connect } from "react-redux";
 import { AndroidPermission } from "../../utils/UtilFunctions";
 import { Toast } from "native-base";
 const NAVBAR_HEIGHT = 80;
-import { BibleContext } from "../../screens/Bible";
+import { BibleMainContext } from "../../screens/Bible";
+import { BibleContext } from "../../context/BibleContextProvider";
+import { LoginData } from "../../context/LoginDataProvider";
 
 const CustomHeader = (props) => {
-  const [
-    {
-      audio,
-      clampedScroll,
-      navigation,
-      toggleAudio,
-      currentVisibleChapter,
-      chapterContent,
-      isBookmark,
-      navigateToSelectionTab,
-      navigateToLanguage,
-      onBookmarkPress,
-    },
-  ] = useContext(BibleContext);
+  const [{
+    clampedScroll,
+    navigation,
+    chapterContent,
+  },
+  ] = useContext(BibleMainContext);
+
+  const {
+    currentVisibleChapter,
+    isBookmark,
+    onBookmarkPress,
+  } = useContext(LoginData);
+  const { navigateToLanguage,
+    navigateToSelectionTab, toggleAudio, audio } = useContext(BibleContext)
   let bookName = !isNaN(props.bookName.charAt(0))
     ? props.bookName.charAt(0).toUpperCase() + props.bookName.slice(1)
     : props.bookName;
@@ -70,14 +72,13 @@ const CustomHeader = (props) => {
     let header3 = `<h3>${props.bookName + " " + currentVisibleChapter}</h3>`;
     let options = {
       html: `${header1}${header3}<p>${texttohtml}</p>`,
-      fileName: `${
-        "VachanGo_" +
+      fileName: `${"VachanGo_" +
         props.language +
         "_" +
         props.bookId +
         "_" +
         currentVisibleChapter
-      }`,
+        }`,
       // eslint-disable-next-line no-constant-condition
       directory: "Download" ? "Download" : "Downloads",
     };
@@ -200,7 +201,7 @@ const CustomHeader = (props) => {
           <Text style={navStyles.langVer}>
             {props.language &&
               props.language.charAt(0).toUpperCase() +
-                props.language.slice(1)}{" "}
+              props.language.slice(1)}{" "}
             {props.versionCode && props.versionCode.toUpperCase()}
           </Text>
           <Icon name="arrow-drop-down" color={Color.White} size={20} />

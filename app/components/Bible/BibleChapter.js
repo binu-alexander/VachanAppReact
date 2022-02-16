@@ -11,9 +11,14 @@ import Color from "../../utils/colorConstants";
 import ReloadButton from "../ReloadButton";
 import vApi from "../../utils/APIFetch";
 import { getHeading } from "../../utils/UtilFunctions";
-import { BibleContext } from "../../screens/Bible";
+import { BibleMainContext } from "../../screens/Bible";
+import { LoginData } from "../../context/LoginDataProvider";
 const BibleChapter = (props) => {
-  const [{ currentVisibleChapter, navigation }] = useContext(BibleContext);
+  const [{ navigation }] = useContext(BibleMainContext);
+  const {
+    currentVisibleChapter,
+  } = useContext(LoginData);
+
   console.log("current chapter in bible ", currentVisibleChapter)
   const bShortName = props.bookName != null &&
     (props.bookName.length > 10 ? props.bookName.slice(0, 9) + "..." : props.bookName);

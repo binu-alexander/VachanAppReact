@@ -2,9 +2,10 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import { FlatList, Animated, View, Text } from "react-native";
 import { createResponder } from "react-native-gesture-responder";
 import VerseView from "./VerseView";
-import { bibleContext } from "./index";
 import { getHeading } from "../../utils/UtilFunctions";
+import { BibleMainContext } from ".";
 import { connect } from "react-redux";
+import { LoginData } from "../../contextProvider/GetLoginData";
 const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
 const NAVBAR_HEIGHT = 64;
 const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
@@ -14,25 +15,25 @@ const AnimatedVerseList = (props) => {
   let _offsetValue = 0;
   let _scrollValue = 0;
   let gestureResponder, _scrollEndTimer;
-
-  const [
-    {
-      currentVisibleChapter,
-      chapterContent,
-      styles,
-      notesList,
-      navigation,
-      showColorGrid,
-      _clampedScrollValue,
-      scrollAnim,
-      offsetAnim,
-      getSelectedReferences,
-      selectedReferenceSet,
-      highlightedVerseArray,
-      chapterHeader,
-      bottomHighlightText,
-    },
-  ] = useContext(bibleContext);
+  const [{
+    chapterContent,
+    styles,
+    navigation,
+    _clampedScrollValue,
+    scrollAnim,
+    offsetAnim,
+    chapterHeader,
+  },
+  ] = useContext(BibleMainContext);
+  const {
+    currentVisibleChapter,
+    selectedReferenceSet,
+    notesList,
+    highlightedVerseArray,
+    showColorGrid,
+    getSelectedReferences,
+    bottomHighlightText,
+  } = useContext(LoginData);
 
   const onLayout = (event, index, verseNumber) => {
     arrLayout[index] = {
@@ -48,7 +49,7 @@ const AnimatedVerseList = (props) => {
   const _onMomentumScrollEnd = () => {
     const toValue =
       _scrollValue > NAVBAR_HEIGHT &&
-      _clampedScrollValue > (NAVBAR_HEIGHT - STATUS_BAR_HEIGHT) / 2
+        _clampedScrollValue > (NAVBAR_HEIGHT - STATUS_BAR_HEIGHT) / 2
         ? _offsetValue + NAVBAR_HEIGHT
         : _offsetValue - NAVBAR_HEIGHT;
 
@@ -75,7 +76,7 @@ const AnimatedVerseList = (props) => {
         onStartShouldSetResponderCapture: () => true,
         onMoveShouldSetResponder: () => true,
         onMoveShouldSetResponderCapture: () => true,
-        onResponderGrant: () => {},
+        onResponderGrant: () => { },
         onResponderMove: (evt, gestureState) => {
           let thumbSize = 10;
           if (gestureState.pinch && gestureState.previousPinch) {
@@ -102,9 +103,9 @@ const AnimatedVerseList = (props) => {
           position.setValue({ x: gestureState.dx, y: gestureState.dy });
         },
         onResponderTerminationRequest: () => true,
-        onResponderRelease: (gestureState) => {},
-        onResponderTerminate: (gestureState) => {},
-        onResponderSingleTapConfirmed: () => {},
+        onResponderRelease: (gestureState) => { },
+        onResponderTerminate: (gestureState) => { },
+        onResponderSingleTapConfirmed: () => { },
         moveThreshold: 2,
         debug: false,
       })
@@ -170,10 +171,10 @@ const AnimatedVerseList = (props) => {
         chapterContent.length === 0
           ? styles.centerEmptySet
           : {
-              paddingHorizontal: 16,
-              paddingTop: props.visibleParallelView ? 52 : 90,
-              paddingBottom: 90,
-            }
+            paddingHorizontal: 16,
+            paddingTop: props.visibleParallelView ? 52 : 90,
+            paddingBottom: 90,
+          }
       }
       scrollEventThrottle={1}
       onMomentumScrollBegin={_onMomentumScrollBegin}

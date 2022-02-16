@@ -1,10 +1,13 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useEffect, useContext, useRef } from "react";
 import { FlatList, Animated, View, Text } from "react-native";
 import { createResponder } from "react-native-gesture-responder";
 import VerseView from "../../screens/Bible/VerseView";
-import { BibleContext } from "../../screens/Bible/index";
 import { getHeading } from "../../utils/UtilFunctions";
 import { connect } from "react-redux";
+import { changeSizeOnPinch } from "../../utils/BiblePageUtil";
+import { LoginData } from "../../context/LoginDataProvider";
+import { BibleMainContext } from "../../screens/Bible/index";
+
 const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
 const NAVBAR_HEIGHT = 64;
 const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
@@ -15,8 +18,16 @@ const AnimatedVerseList = (props) => {
   let _scrollValue = 0;
   let gestureResponder, _scrollEndTimer;
 
-  const [{ currentVisibleChapter, chapterContent, styles, notesList, navigation, showColorGrid, _clampedScrollValue, scrollAnim, offsetAnim,
-    getSelectedReferences, selectedReferenceSet, highlightedVerseArray, chapterHeader, bottomHighlightText }] = useContext(BibleContext);
+  const [{ chapterContent, styles, navigation, _clampedScrollValue, scrollAnim, offsetAnim, chapterHeader }] = useContext(BibleMainContext);
+  const {
+    currentVisibleChapter,
+    selectedReferenceSet,
+    notesList,
+    highlightedVerseArray,
+    showColorGrid,
+    getSelectedReferences,
+    bottomHighlightText,
+  } = useContext(LoginData);
 
   const onLayout = (event, index, verseNumber) => {
     arrLayout[index] = {

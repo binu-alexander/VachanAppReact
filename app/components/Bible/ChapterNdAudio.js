@@ -4,11 +4,17 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import Player from '../Audio/Player'
 import Color from '../../utils/colorConstants'
 import { connect } from "react-redux";
-import { BibleContext } from '../../screens/Bible';
+import { BibleMainContext } from '../../screens/Bible';
+import { BibleContext } from '../../context/BibleContextProvider';
+import { LoginData } from '../../context/LoginDataProvider';
 
 const ChapterNdAudio = (props) => {
-    const [{ audio, currentVisibleChapter, styles, status, queryBookFromAPI, nextContent, previousContent, showBottomBar }] = useContext(BibleContext);
-
+    const [{ styles, queryBookFromAPI, }] = useContext(BibleMainContext);
+    const {
+        currentVisibleChapter,
+        showBottomBar,
+    } = useContext(LoginData);
+    const { status, previousContent, audio, nextContent } = useContext(BibleContext)
     return (
         <View style={{ justifyContent: (currentVisibleChapter != 1 && currentVisibleChapter == currentVisibleChapter != props.totalChapters) ? 'center' : 'space-around', alignItems: 'center' }}>
             {

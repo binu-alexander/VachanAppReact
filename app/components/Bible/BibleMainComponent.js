@@ -12,27 +12,31 @@ import { Header, Button, Title, Toast } from "native-base";
 import HighlightColorGrid from "./HighlightColorGrid";
 import CustomStatusBar from "../CustomStatusBar";
 import Commentary from "../../screens/DrawerScreen/Commentary/index";
-import { BibleContext } from "../../screens/Bible";
+import { BibleContext } from "../../context/BibleContextProvider";
+import { BibleMainContext } from "../../screens/Bible";
 import AnimatedVerseList from "./AnimatedVerseList";
 import { connect } from "react-redux";
+import { LoginData } from "../../context/LoginDataProvider";
 const width = Dimensions.get("window").width;
+
 const BibleMainComponent = (props) => {
   const { contentType, bookName, visibleParallelView } = props;
-  const [
-    {
-      currentVisibleChapter,
-      styles,
-      chapterContent,
-      showBottomBar,
-      showColorGrid,
-      queryBookFromAPI,
-      bottomHighlightText,
-      unAvailableContent,
-      reloadMessage,
-      navigateToSelectionTab,
-      isLoading,
-    },
-  ] = useContext(BibleContext);
+  const [{
+    styles,
+    chapterContent,
+    queryBookFromAPI,
+    unAvailableContent,
+    reloadMessage,
+    isLoading },
+  ] = useContext(BibleMainContext);
+  const {
+    currentVisibleChapter,
+    showBottomBar,
+    showColorGrid,
+    bottomHighlightText,
+  } = useContext(LoginData);
+
+  const { navigateToSelectionTab } = useContext(BibleContext)
   return (
     <CustomStatusBar>
       <View style={styles.container}>

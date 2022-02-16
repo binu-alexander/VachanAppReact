@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { FlatList, TouchableOpacity, View, Dimensions } from "react-native";
 const width = Dimensions.get("screen").width;
-import { BibleContext } from '../../screens/Bible'
+import { BibleMainContext } from "../../screens/Bible";
 const HighlightColorGrid = () => {
-  const [{ styles, doHighlight }] = useContext(BibleContext);
+  const [{ doHighlight }] = useContext(BibleMainContext);
   return (
     <View style={{ flex: 1 }}>
       <View

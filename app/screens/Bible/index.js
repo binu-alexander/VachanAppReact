@@ -19,24 +19,20 @@ import {
   updateVersion,
   updateMetadata,
 } from "../../store/action/";
+import { Toast } from "native-base";
 import { getBookChaptersFromMapping } from "../../utils/UtilFunctions";
 import { style } from "./style.js";
 import { connect } from "react-redux";
-import { Toast } from "native-base";
 import auth from "@react-native-firebase/auth";
 import vApi from "../../utils/APIFetch";
 import { getHeading } from "../../utils/UtilFunctions";
-import {
-  updateLangVersion,
-  changeSizeOnPinch,
-} from "../../utils/BiblePageUtil";
 import BibleMainComponent from "../../components/Bible/BibleMainComponent";
-import { LoginContext } from "./BibleWrapper";
-
+import { LoginData } from "../../context/LoginDataProvider";
+import { BibleContext } from "../../context/BibleContextProvider";
 const NAVBAR_HEIGHT = 64;
 // eslint-disable-next-line no-undef
 const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
-export const BibleContext = createContext();
+export const BibleMainContext = createContext();
 
 const Bible = (props) => {
   const {
@@ -45,7 +41,6 @@ const Bible = (props) => {
     versionCode,
     sourceId,
     downloaded,
-    contentType,
     baseAPI,
     chapterNumber,
     bookName,
@@ -56,54 +51,40 @@ const Bible = (props) => {
     visibleParallelView,
   } = props;
   const [downloadedBook, setDownloadedBook] = useState([]);
-  const [audio, setAudio] = useState(false);
+
   const [chapterContent, setChapterContent] = useState([]);
   const [chapterHeader, setChapterHeader] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [reloadMessage, setReloadMessage] = useState("Loading...");
-  // const [showBottomBar, setShowBottomBar] = useState("");
-  // const [bottomHighlightText, setBottomHighlightText] = useState(false);
-  const [nextContent, setNextContent] = useState("");
-  const [previousContent, setPreviousContent] = useState("");
-  // const [selectedReferenceSet, setSelectedReferenceSet] = useState([]);
-  const [status, setStatus] = useState("");
+
   const [initializing, setInitializing] = useState(true);
-  const [arrLayout, setArrLayout] = useState([]);
   const [unAvailableContent, setUnAvailableContent] = useState("");
-  // const [showColorGrid, setShowColorGrid] = useState("");
 
   const {
     currentVisibleChapter,
     setCurrentVisibleChapter,
-    selectedReferenceSet,
     setSelectedReferenceSet,
-    setConnection_Status,
     getNotes,
-    notesList,
-    isBookmark,
-    onBookmarkPress,
     getBookMarks,
+    setConnection_Status,
+    connection_Status,
     setEmail,
     setUid,
-    highlightedVerseArray,
-    showBottomBar,
     setShowBottomBar,
     setShowColorGrid,
-    showColorGrid,
     getHighlights,
-    doHighlight,
-    addToShare,
-    addToNotes,
-    getSelectedReferences,
-    bottomHighlightText, setBottomHighlightText
-  } = useContext(LoginContext);
+  } = useContext(LoginData);
+  const {
+    setStatus, status,
+    setPreviousContent,
+    _handleAppStateChange, audioComponentUpdate, setAudio,
+    setNextContent, } = useContext(BibleContext)
   const offsetAnim = useRef(new Animated.Value(0)).current;
   const scrollAnim = useRef(new Animated.Value(0)).current;
   let _clampedScrollValue = useRef(new Animated.Value(0)).current;
   let _offsetValue = 0;
   let _scrollValue = 0;
-  let gestureResponder;
   const clampedScroll = Animated.diffClamp(
     Animated.add(
       scrollAnim.interpolate({
@@ -119,12 +100,31 @@ const Bible = (props) => {
 
   const styles = style(colorFile, sizeFile);
 
-  const _handleAppStateChange = (currentAppState) => {
-    let status =
-      currentAppState == "background"
-        ? false
-        : (currentAppState = "inactive" ? false : true);
-    setStatus(status);
+  const _handleConnectivityChange = (state) => {
+    setConnection_Status(state.isConnected == true ? true : false);
+    if (state.isConnected === true) {
+      queryBookFromAPI(null);
+      Toast.show({
+        text: "Online. Now content available.",
+        type: "success",
+        duration: 5000,
+      });
+      if (books.length == 0) {
+        props.fetchVersionBooks({
+          language: language,
+          versionCode: versionCode,
+          downloaded: downloaded,
+          sourceId: sourceId,
+        });
+      }
+    } else {
+      setReloadMessage("Offline. Check your internet Connection.");
+      Toast.show({
+        text: "Offline. Check your internet Connection.",
+        type: "warning",
+        duration: 5000,
+      });
+    }
   };
   // if book downloaded or user want to read downloaded book fetch chapter from local db
   const getDownloadedContent = async () => {
@@ -158,19 +158,8 @@ const Bible = (props) => {
         getDownloadedContent;
       } else {
         if (baseAPI != null) {
-          var content = await vApi.get(
-            "bibles" +
-            "/" +
-            sourceId +
-            "/" +
-            "books" +
-            "/" +
-            bookId +
-            "/" +
-            "chapter" +
-            "/" +
-            currentVisibleChapter
-          );
+          let url = "bibles" + "/" + sourceId + "/" + "books" + "/" + bookId + "/" + "chapter" + "/" + currentVisibleChapter
+          var content = await vApi.get(url);
           if (content) {
             setReloadMessage("Loading....");
             setIsLoading(true);
@@ -236,20 +225,9 @@ const Bible = (props) => {
             getDownloadedContent();
           }
         } else {
+          let url = "bibles" + "/" + sId + "/" + "books" + "/" + bId + "/" + "chapter" + "/" + cNum
           try {
-            var content = await vApi.get(
-              "bibles" +
-              "/" +
-              sId +
-              "/" +
-              "books" +
-              "/" +
-              bId +
-              "/" +
-              "chapter" +
-              "/" +
-              cNum
-            );
+            var content = await vApi.get(url);
             if (content) {
               let header = getHeading(content.chapterContent.contents);
               setIsLoading(false);
@@ -294,145 +272,6 @@ const Bible = (props) => {
     }
   };
 
-  const toggleAudio = () => {
-    if (audio) {
-      setStatus(!status);
-    } else {
-      Toast.show({
-        text: "No audio for " + language + " " + bookName,
-        duration: 5000,
-      });
-    }
-  };
-  const audioComponentUpdate = async () => {
-    let res = await vApi.get("audiobibles");
-    try {
-      if (res.length !== 0) {
-        let data = res.filter((item) => {
-          if (item.language.name == language.toLowerCase()) {
-            return item;
-          }
-        });
-        if (data.length != 0) {
-          props.APIAudioURL({
-            audioURL: data[0].audioBibles[0].url,
-            audioFormat: data[0].audioBibles[0].format,
-            audioList: data[0].audioBibles,
-          });
-          setAudio(true);
-        } else {
-          props.APIAudioURL({ audioURL: null, audioFormat: null });
-          setAudio(false);
-        }
-      }
-    } catch (error) {
-      setAudio(false);
-    }
-  };
-
-  // check internet connection to fetch api's accordingly
-  const _handleConnectivityChange = (state) => {
-    setConnection_Status(state.isConnected == true ? true : false);
-    if (state.isConnected === true) {
-      queryBookFromAPI(null);
-      Toast.show({
-        text: "Online. Now content available.",
-        type: "success",
-        duration: 5000,
-      });
-      if (books.length == 0) {
-        props.fetchVersionBooks({
-          language: language,
-          versionCode: versionCode,
-          downloaded: downloaded,
-          sourceId: sourceId,
-        });
-      }
-    } else {
-      setReloadMessage("Offline. Check your internet Connection.");
-      Toast.show({
-        text: "Offline. Check your internet Connection.",
-        type: "warning",
-        duration: 5000,
-      });
-    }
-  };
-
-
-  const navigateToSelectionTab = () => {
-    setStatus(false);
-    props.navigation.navigate("ReferenceSelection", {
-      getReference: getReference,
-      chapterNumber: currentVisibleChapter,
-      // parallelContent: visibleParallelView ? false : true,
-    });
-  };
-
-  const navigateToLanguage = () => {
-    setStatus(false);
-    props.navigation.navigate("LanguageList", { updateLangVer: updateLangVer });
-  };
-  //   // update book name and chapter number onback from referenceSelection page (callback function) also this function is usefull to update only few required values of redux
-  const getReference = async (item) => {
-    setSelectedReferenceSet([]);
-    setShowBottomBar(false);
-    setShowColorGrid(false);
-    if (item) {
-      setCurrentVisibleChapter(item.chapterNumber);
-      // updateBookChapterRef()
-      var time = new Date();
-      DbQueries.addHistory(
-        sourceId,
-        language,
-        languageCode,
-        versionCode,
-        item.bookId,
-        item.bookName,
-        parseInt(item.chapterNumber),
-        downloaded,
-        time
-      );
-      //it is calling on book,chapter,verse selection screens also, so redux action payload is passing from this screen, if we set it in reference selection it will do changes which is not required for parallel bible(reusing in parallel bible )
-      props.updateVerseNumber({ selectedVerse: item.selectedVerse });
-      props.updateVersionBook({
-        bookId: item.bookId,
-        bookName: item.bookName,
-        chapterNumber: parseInt(item.chapterNumber),
-        totalChapters: item.totalChapters,
-      });
-      // this.scrollToVerse(item.selectedVerse)
-    } else {
-      return;
-    }
-  };
-  // update language and version  onback from language list page (callback function) also this function is usefull to update only few required values of redux
-  const updateLangVer = async (item) => {
-    setSelectedReferenceSet([]);
-    setShowBottomBar(false);
-    setShowColorGrid(false);
-    const {
-      updateMetadata,
-      updateVersion,
-      updateVersionBook,
-      fetchVersionBooks,
-    } = props;
-    updateLangVersion(
-      updateMetadata,
-      updateVersion,
-      updateVersionBook,
-      fetchVersionBooks,
-      currentVisibleChapter,
-      item
-    );
-    setPreviousContent(null);
-    setNextContent(null);
-  };
-
-
-  changeSizeByOne = (value) => {
-    const { updateFontSize } = props;
-    changeSizeOnPinch(value, updateFontSize, colorFile, styles);
-  };
   useEffect(() => {
     setIsLoading(true);
     var time = new Date();
@@ -538,25 +377,15 @@ const Bible = (props) => {
     bookId,
   ]);
   return (
-    <BibleContext.Provider
+    <BibleMainContext.Provider
       value={[{
-        audio,
         clampedScroll,
         _clampedScrollValue,
-        showBottomBar,
         navigation: props.navigation,
         currentVisibleChapter,
         chapterContent,
-        isBookmark,
         IconFloatingStyle: styles.IconFloatingStyle,
         reloadMessage,
-        previousContent,
-        nextContent,
-        bottomHighlightText,
-        showColorGrid,
-        selectedReferenceSet,
-        highlightedVerseArray,
-        notesList,
         styles,
         status,
         chapterHeader,
@@ -564,21 +393,12 @@ const Bible = (props) => {
         offsetAnim,
         unAvailableContent,
         isLoading,
-        setShowColorGrid,
-        navigateToSelectionTab,
-        navigateToLanguage,
         queryBookFromAPI,
-        onBookmarkPress,
-        toggleAudio,
-        doHighlight,
-        addToNotes,
-        addToShare,
-        getSelectedReferences,
       },
       ]}
     >
       <BibleMainComponent />
-    </BibleContext.Provider>
+    </BibleMainContext.Provider >
   );
 };
 const mapStateToProps = (state) => {
