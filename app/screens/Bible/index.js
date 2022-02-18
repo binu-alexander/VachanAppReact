@@ -68,12 +68,12 @@ const Bible = (props) => {
     getNotes,
     getBookMarks,
     setConnection_Status,
-    connection_Status,
     setEmail,
     setUid,
     setShowBottomBar,
     setShowColorGrid,
     getHighlights,
+    highlightedVerseArray
   } = useContext(LoginData);
   const {
     setStatus, status,
@@ -324,9 +324,9 @@ const Bible = (props) => {
       setStatus(props.status);
       getChapter();
       audioComponentUpdate();
-      getHighlights();
-      getBookMarks();
-      getNotes();
+      getHighlights()
+      getBookMarks()
+      getNotes()
       if (books.length == 0) {
         props.fetchVersionBooks({
           language: language,
@@ -376,6 +376,7 @@ const Bible = (props) => {
     currentVisibleChapter,
     bookId,
   ]);
+
   return (
     <BibleMainContext.Provider
       value={[{

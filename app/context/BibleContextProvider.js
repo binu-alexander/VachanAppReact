@@ -23,7 +23,6 @@ import vApi from "../utils/APIFetch";
 export const BibleContext = createContext();
 
 const BibleContextProvider = (props) => {
-
   const [status, setStatus] = useState("");
   const [nextContent, setNextContent] = useState("");
   const [previousContent, setPreviousContent] = useState("");
@@ -44,7 +43,7 @@ const BibleContextProvider = (props) => {
   const navigateToLanguage = () => {
     setStatus(false);
     props.navigation.navigate("LanguageList", { updateLangVer: updateLangVer });
-  };
+  }
   const getReference = async (item) => {
     setSelectedReferenceSet([]);
     setShowBottomBar(false);
@@ -152,8 +151,7 @@ const BibleContextProvider = (props) => {
         setStatus, status,
         setPreviousContent, previousContent,
         setNextContent, nextContent, _handleAppStateChange, toggleAudio, audioComponentUpdate, audio, setAudio
-      }}
-    >
+      }}>
       {props.children}
     </BibleContext.Provider>
   );

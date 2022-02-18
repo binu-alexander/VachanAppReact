@@ -27,7 +27,6 @@ const ProfilePage = (props) => {
         phoneNumber: null,
         photo: null,
       });
-      // this.setState({ user: null });
       props.navigation.navigate("Bible");
     } catch (error) {
       console.log(error.message);

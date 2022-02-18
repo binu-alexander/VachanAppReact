@@ -6,6 +6,7 @@ import { getHeading } from "../../utils/UtilFunctions";
 import { BibleMainContext } from ".";
 import { connect } from "react-redux";
 import { LoginData } from "../../contextProvider/GetLoginData";
+import { changeSizeOnPinch } from "../../utils/BiblePageUtil";
 const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
 const NAVBAR_HEIGHT = 64;
 const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
@@ -194,14 +195,13 @@ const AnimatedVerseList = (props) => {
       showsVerticalScrollIndicator={false}
       renderItem={({ item, index }) => (
         <VerseView
-          // ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
+          ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
           verseData={item}
           sectionHeading={getHeading(item.contents)}
           chapterHeader={chapterHeader}
           index={index}
           onLayout={onLayout}
           styles={styles}
-          selectedReferences={selectedReferenceSet}
           getSelection={(verseIndex, chapterNumber, verseNumber, text) => {
             props.visibleParallelView == false &&
               getSelectedReferences(
@@ -211,9 +211,6 @@ const AnimatedVerseList = (props) => {
                 text
               );
           }}
-          highlightedVerse={highlightedVerseArray}
-          notesList={notesList}
-          chapterNumber={currentVisibleChapter}
           navigation={navigation}
         />
       )}

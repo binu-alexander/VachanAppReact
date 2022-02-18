@@ -1,49 +1,55 @@
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { Text, Alert } from "react-native";
 import { connect } from "react-redux";
 import { selectContent, parallelVisibleView } from "../../store/action/";
 import { getResultText } from "../../utils/UtilFunctions";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Color from "../../utils/colorConstants";
-
+import { LoginData } from "../../context/LoginDataProvider";
 const VerseView = (props) => {
-  const preHighlightArr = useRef(props.highlightedVerse).current;
-  let verseNumber = props.downloaded
-  ? props.verseData.number
-  : props.verseData.verseNumber;
-let verseText = props.downloaded
-  ? props.verseData.text
-  : props.verseData.verseText;
-let sectionHeading = props.downloaded
-  ? props.verseData.section
-  : props.sectionHeading;
-let obj =
-  props.chapterNumber +
-  "_" +
-  props.index +
-  "_" +
-  verseNumber +
-  "_" +
-  verseText;
+  const {
+    currentVisibleChapter,
+    selectedReferenceSet,
+    notesList,
+    highlightedVerseArray,
+  } = useContext(LoginData);
+  const { downloaded, verseData, index, visibleParallelView, bookId, styles, chapterHeader } = props
+  let verseNumber = downloaded
+    ? verseData.number
+    : verseData.verseNumber;
+  let verseText = downloaded
+    ? verseData.text
+    : verseData.verseText;
+  let sectionHeading = downloaded
+    ? verseData.section
+    : props.sectionHeading;
+  let obj =
+    currentVisibleChapter +
+    "_" +
+    index +
+    "_" +
+    verseNumber +
+    "_" +
+    verseText;
   const onPress = () => {
-    let verseNumber = props.downloaded
-      ? props.verseData.number
-      : props.verseData.verseNumber;
-    let verseText = props.downloaded
-      ? props.verseData.text
-      : props.verseData.verseText;
+    let verseNumber = downloaded
+      ? verseData.number
+      : verseData.verseNumber;
+    let verseText = downloaded
+      ? verseData.text
+      : verseData.verseText;
     props.getSelection(
-      props.index,
-      props.chapterNumber,
+      index,
+      currentVisibleChapter,
       verseNumber,
       verseText
     );
   };
 
   const isSelect = () => {
-    for (var i = 0; i < props.selectedReferences.length; i++) {
-      if (props.selectedReferences[i] == obj) {
-        if (props.visibleParallelView) {
+    for (var i = 0; i < selectedReferenceSet.length; i++) {
+      if (selectedReferenceSet[i] == obj) {
+        if (visibleParallelView) {
           props.parallelVisibleView({
             modalVisible: false,
             visibleParallelView: false,
@@ -58,15 +64,16 @@ let obj =
     }
     return false;
   };
-  
+
   const isHighlight = () => {
-    let verseNumber = props.downloaded
-      ? props.verseData.number
-      : props.verseData.verseNumber;
-    for (var i = 0; i <= props.highlightedVerse.length; i++) {
-      if (props.highlightedVerse[i]) {
+    let verseNumber = downloaded
+      ? verseData.number
+      : verseData.verseNumber;
+
+    for (var i = 0; i <= highlightedVerseArray.length; i++) {
+      if (highlightedVerseArray[i]) {
         let regexMatch = /(\d+):([a-zA-Z]+)/;
-        let match = props.highlightedVerse[i].match(regexMatch);
+        let match = highlightedVerseArray[i].match(regexMatch);
         if (match) {
           if (parseInt(match[1]) == verseNumber) {
             return getColor(match[2]);
@@ -107,17 +114,17 @@ let obj =
   };
   const isNoted = () => {
     var arr = [];
-    for (var i = 0; i <= props.notesList.length - 1; i++) {
-      for (var j = 0; j <= props.notesList[i].verses.length - 1; j++) {
-        var index = arr.indexOf(props.notesList[i].verses[j]);
+    for (var i = 0; i <= notesList.length - 1; i++) {
+      for (var j = 0; j <= notesList[i].verses.length - 1; j++) {
+        var index = arr.indexOf(notesList[i].verses[j]);
         if (index == -1) {
-          arr.push(props.notesList[i].verses[j]);
+          arr.push(notesList[i].verses[j]);
         }
       }
     }
-    let verseNumber = props.downloaded
-      ? props.verseData.number
-      : props.verseData.verseNumber;
+    let verseNumber = downloaded
+      ? verseData.number
+      : verseData.verseNumber;
     var value = arr.filter((v) => v == verseNumber);
     if (value[0]) {
       return true;
@@ -125,52 +132,52 @@ let obj =
       return false;
     }
   };
- 
+
   const goToNote = (verse_num) => {
     props.navigation.navigate("Notes", {
-      chapterNumber: props.chapterNumber,
-      bookId: props.bookId,
+      chapterNumber: currentVisibleChapter,
+      bookId: bookId,
       verseNumber: verse_num,
     });
   };
-// useEffect(()=>{
-// // console.log(" props.HighlightedVerse  ..",props.highlightedVerse)
-// isHighlight()
-// isSelect()
-// },[...props.highlightedVerse])
-  // console.log(" props.highlightedVerse.length ",props.highlightedVerse,isHighlight() ? verseNumber : null)
+  // useEffect(() => {
+  //   // console.log(" highlightedVerseArray  ..",highlightedVerseArray)
+  //   isHighlight()
+  //   isSelect()
+  // })
+  // console.log(" highlightedVerseArray.length ",highlightedVerseArray,isHighlight() ? verseNumber : null)
   if (verseNumber == 1 && typeof verseNumber != "undefined") {
     return (
       <Text
-        style={props.styles.textStyle}
-        onLayout={(event) => props.onLayout(event, props.index, verseNumber)}
-        // onLayout={(event) => console.log(event, "event verse")}
+        style={styles.textStyle}
+        onLayout={(event) => props.onLayout(event, index, verseNumber)}
+      // onLayout={(event) => console.log(event, "event verse")}
       >
-        {props.chapterHeader ? (
-          <Text style={props.styles.sectionHeading}>
-            {props.chapterHeader} {"\n"}
+        {chapterHeader ? (
+          <Text style={styles.sectionHeading}>
+            {chapterHeader} {"\n"}
           </Text>
         ) : null}
 
         <Text
           onPress={onPress}
         >
-          <Text style={props.styles.verseChapterNumber}>
-            {props.chapterNumber}{" "}
+          <Text style={styles.verseChapterNumber}>
+            {currentVisibleChapter}{" "}
           </Text>
           <Text
             style={[
-              props.styles.textHighlight,
+              styles.textHighlight,
               isSelect() && isHighlight()
                 ? {
-                    backgroundColor: isHighlight(),
-                    textDecorationLine: "underline",
-                  }
+                  backgroundColor: isHighlight(),
+                  textDecorationLine: "underline",
+                }
                 : !isSelect() && !isHighlight()
-                ? props.styles.textHighlight
-                : !isSelect() && isHighlight()
-                ? { backgroundColor: isHighlight() }
-                : { textDecorationLine: "underline" },
+                  ? styles.textHighlight
+                  : !isSelect() && isHighlight()
+                    ? { backgroundColor: isHighlight() }
+                    : { textDecorationLine: "underline" },
             ]}
           >
             {getResultText(verseText)}
@@ -185,7 +192,7 @@ let obj =
           ) : null}
         </Text>
         {sectionHeading ? (
-          <Text style={props.styles.sectionHeading}>
+          <Text style={styles.sectionHeading}>
             {"\n"} {sectionHeading}
           </Text>
         ) : null}
@@ -195,28 +202,28 @@ let obj =
     return (
       <Text
         textBreakStrategy={"simple"}
-        style={props.styles.textStyle}
+        style={styles.textStyle}
         onPress={onPress}
-        onLayout={(event) => props.onLayout(event, props.index, verseNumber)}
+        onLayout={(event) => props.onLayout(event, index, verseNumber)}
       >
         <Text textBreakStrategy={"simple"}>
-          <Text textBreakStrategy={"simple"} style={props.styles.verseNumber}>
+          <Text textBreakStrategy={"simple"} style={styles.verseNumber}>
             {verseNumber}{" "}
           </Text>
           <Text
             textBreakStrategy={"simple"}
             style={[
-              props.styles.textHighlight,
+              styles.textHighlight,
               isSelect() && isHighlight()
                 ? {
-                    backgroundColor: isHighlight(),
-                    textDecorationLine: "underline",
-                  }
+                  backgroundColor: isHighlight(),
+                  textDecorationLine: "underline",
+                }
                 : !isSelect() && !isHighlight()
-                ? props.styles.textHighlight
-                : !isSelect() && isHighlight()
-                ? { backgroundColor: isHighlight() }
-                : { textDecorationLine: "underline" },
+                  ? styles.textHighlight
+                  : !isSelect() && isHighlight()
+                    ? { backgroundColor: isHighlight() }
+                    : { textDecorationLine: "underline" },
             ]}
           >
             {getResultText(verseText)}
@@ -233,7 +240,7 @@ let obj =
         {sectionHeading ? (
           <Text
             textBreakStrategy={"simple"}
-            style={props.styles.sectionHeading}
+            style={styles.sectionHeading}
           >
             {"\n"} {sectionHeading}
           </Text>

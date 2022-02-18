@@ -1,9 +1,9 @@
 import React, { createContext, useState } from "react";
 import { connect } from "react-redux";
-
+import { Share } from 'react-native';
 import database from "@react-native-firebase/database";
 import Color from "../utils/colorConstants";
-
+import { setHighlightColor } from "../utils/BiblePageUtil";
 export const LoginData = createContext();
 
 // try with add login data provider here
@@ -20,8 +20,7 @@ const LoginDataProvider = (props) => {
     const [showBottomBar, setShowBottomBar] = useState("");
     const [bottomHighlightText, setBottomHighlightText] = useState(false);
     const [showColorGrid, setShowColorGrid] = useState("");
-    const sourceId = props.sourceId;
-    const bookId = props.bookId;
+    const { bookName, bookId, sourceId, versionCode, language } = props
     // check internet connection to fetch api's accordingly
 
     const getNotes = () => {
@@ -192,37 +191,43 @@ const LoginDataProvider = (props) => {
         setShowBottomBar(false);
         setShowColorGrid(false);
     };
+    const onbackNote = () => { }
     const doHighlight = (color) => {
         if (connection_Status) {
             if (email && uid) {
-                let array = [...highlightedVerseArray];
+                let array = [...highlightedVerseArray]
                 if (Object.keys(selectedReferenceSet).length != 0) {
                     for (let item of selectedReferenceSet) {
                         let tempVal = item.split("_");
                         let selectedColor = setHighlightColor(color);
                         let val = tempVal[2].trim() + ":" + selectedColor;
+
                         for (var i = 0; i < array.length; i++) {
                             let regexMatch = /(\d+):([a-zA-Z]+)/;
                             if (array[i]) {
                                 let match = array[i].match(regexMatch);
                                 if (match) {
                                     if (parseInt(match[1]) == parseInt(tempVal[2])) {
-                                        array.splice(i, 1);
+                                        array.splice(i, 1)
+                                        console.log("ARRAY 1...", array)
                                         setHighlightedVerseArray(array);
                                     }
                                 }
                             }
                         }
-                        var index = array.indexOf(val);
+                        let index = array.indexOf(val);
+                        console.log(" Index Highlight ", index)
                         //solve the issue of 2 color on single verse
                         if (bottomHighlightText) {
                             if (index == -1) {
                                 array.push(val);
                             }
+                            console.log("ARRAY 2...", array)
                             setHighlightedVerseArray(array);
                         }
                     }
                 }
+                console.log("ARRAY 3...", array)
                 database()
                     .ref(
                         "users/" +
@@ -239,12 +244,13 @@ const LoginDataProvider = (props) => {
                 props.navigation.navigate("Login");
             }
         } else {
-            Alert.alert("Please check internet connection");
+            Alert.alert("Please check internet connection ");
         }
         setSelectedReferenceSet([]);
         setShowBottomBar(false);
         setShowColorGrid(false);
     };
+    console.log("Highlighted verse array ", highlightedVerseArray)
     const addToShare = () => {
         let shareText = "";
         if (Object.keys(selectedReferenceSet).length != 0) {
@@ -301,6 +307,7 @@ const LoginDataProvider = (props) => {
             setShowColorGrid(selectedCount == highlightCount ? false : true);
         }
     }
+
     // const  getOffset = (index) => {
     //     var offset = 0;
     //     for (let i = 0; i < index; i++) {
@@ -367,7 +374,8 @@ const mapStateToProps = (state) => {
         sourceId: state.updateVersion.sourceId,
         chapterNumber: state.updateVersion.chapterNumber,
         email: state.userInfo.email,
-        userId: state.userInfo.uid, bookName: state.updateVersion.bookName,
+        userId: state.userInfo.uid,
+        bookName: state.updateVersion.bookName,
         bookId: state.updateVersion.bookId,
         language: state.updateVersion.language,
         languageCode: state.updateVersion.languageCode,

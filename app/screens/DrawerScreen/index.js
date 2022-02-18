@@ -14,9 +14,7 @@ import { fetchVersionBooks } from "../../store/action/";
 import VersionCheck from "react-native-version-check";
 
 const DrawerScreen = (props) => {
-  const [state, setState] = useState({
-    currentVersion: "1.0.0",
-  });
+  const [currentVersion, setCurrentVersion] = useState("1.0.0")
   // let unsubscriber = null;
   const style = styles(props.colorFile, props.sizeFile);
   useEffect(async () => {
@@ -29,7 +27,7 @@ const DrawerScreen = (props) => {
         sourceId: props.sourceId,
       });
     }
-    setState({ currentVersion });
+    setCurrentVersion(currentVersion);
   }, []);
   const iconName = [
     {
@@ -111,7 +109,7 @@ const DrawerScreen = (props) => {
         ))}
         {/*for appstore app*/}
         {/* <Text style={style.versionText}>
-          APP VERSION {state.currentVersion}
+          APP VERSION {currentVersion}
         </Text> */}
         {/*//for tesing */}
         <Text style={styles.versionText}>APP VERSION 1.3.4-alpha.4</Text>

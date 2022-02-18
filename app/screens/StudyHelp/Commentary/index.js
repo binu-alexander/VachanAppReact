@@ -14,7 +14,7 @@ import ReloadButton from "../../../components/ReloadButton";
 import HTML from "react-native-render-html";
 import vApi from "../../../utils/APIFetch";
 import securityVaraibles from "../../../../securityVaraibles";
-import { BibleMainContext } from "../../Bible";
+import { LoginData } from "../../../context/LoginDataProvider";
 // import fetchCommentaryReducer from "../../../store/reducer/apiFetchReducer/vachanAPIFetch";
 // import { cos } from "react-native-reanimated";
 
@@ -23,7 +23,7 @@ const commentaryKey = securityVaraibles.COMMENTARY_KEY
   : "";
 
 const Commentary = (props) => {
-  const [{ currentVisibleChapter }] = useContext(BibleMainContext);
+  const { currentVisibleChapter } = useContext(LoginData);
   const [error, setError] = useState(null);
   const [bookNameList, setBookNameList] = useState([]);
   const [bookName, setBookName] = useState(props.bookName);
