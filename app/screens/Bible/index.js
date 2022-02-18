@@ -74,12 +74,18 @@ const Bible = (props) => {
     setShowBottomBar,
     setShowColorGrid,
     getHighlights,
+    stackNavigation,
+    setStackNavigation,
   } = useContext(LoginData);
   const {
-    setStatus, status,
+    setStatus,
+    status,
     setPreviousContent,
-    _handleAppStateChange, audioComponentUpdate, setAudio,
-    setNextContent, } = useContext(BibleContext)
+    _handleAppStateChange,
+    audioComponentUpdate,
+    setAudio,
+    setNextContent,
+  } = useContext(BibleContext);
   const offsetAnim = useRef(new Animated.Value(0)).current;
   const scrollAnim = useRef(new Animated.Value(0)).current;
   let _clampedScrollValue = useRef(new Animated.Value(0)).current;
@@ -158,7 +164,18 @@ const Bible = (props) => {
         getDownloadedContent;
       } else {
         if (baseAPI != null) {
-          let url = "bibles" + "/" + sourceId + "/" + "books" + "/" + bookId + "/" + "chapter" + "/" + currentVisibleChapter
+          let url =
+            "bibles" +
+            "/" +
+            sourceId +
+            "/" +
+            "books" +
+            "/" +
+            bookId +
+            "/" +
+            "chapter" +
+            "/" +
+            currentVisibleChapter;
           var content = await vApi.get(url);
           if (content) {
             setReloadMessage("Loading....");
@@ -184,7 +201,7 @@ const Bible = (props) => {
       setUnAvailableContent(true);
     }
   };
-
+  console.log(stackNavigation, "jjj");
   const queryBookFromAPI = async (chapterInfo) => {
     try {
       const { fetchVersionBooks, updateVersionBook } = props;
@@ -225,7 +242,18 @@ const Bible = (props) => {
             getDownloadedContent();
           }
         } else {
-          let url = "bibles" + "/" + sId + "/" + "books" + "/" + bId + "/" + "chapter" + "/" + cNum
+          let url =
+            "bibles" +
+            "/" +
+            sId +
+            "/" +
+            "books" +
+            "/" +
+            bId +
+            "/" +
+            "chapter" +
+            "/" +
+            cNum;
           try {
             var content = await vApi.get(url);
             if (content) {
@@ -273,6 +301,7 @@ const Bible = (props) => {
   };
 
   useEffect(() => {
+    setStackNavigation(props.navigation);
     setIsLoading(true);
     var time = new Date();
     if (initializing) {
@@ -378,27 +407,28 @@ const Bible = (props) => {
   ]);
   return (
     <BibleMainContext.Provider
-      value={[{
-        clampedScroll,
-        _clampedScrollValue,
-        navigation: props.navigation,
-        currentVisibleChapter,
-        chapterContent,
-        IconFloatingStyle: styles.IconFloatingStyle,
-        reloadMessage,
-        styles,
-        status,
-        chapterHeader,
-        scrollAnim,
-        offsetAnim,
-        unAvailableContent,
-        isLoading,
-        queryBookFromAPI,
-      },
+      value={[
+        {
+          clampedScroll,
+          _clampedScrollValue,
+          navigation: props.navigation,
+          currentVisibleChapter,
+          chapterContent,
+          IconFloatingStyle: styles.IconFloatingStyle,
+          reloadMessage,
+          styles,
+          status,
+          chapterHeader,
+          scrollAnim,
+          offsetAnim,
+          unAvailableContent,
+          isLoading,
+          queryBookFromAPI,
+        },
       ]}
     >
       <BibleMainComponent />
-    </BibleMainContext.Provider >
+    </BibleMainContext.Provider>
   );
 };
 const mapStateToProps = (state) => {

@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { FlatList, TouchableOpacity, View, Dimensions } from "react-native";
+import LoginDataProvider from "../../context/LoginDataProvider";
 const width = Dimensions.get("screen").width;
 import { BibleMainContext } from "../../screens/Bible";
 const HighlightColorGrid = () => {
