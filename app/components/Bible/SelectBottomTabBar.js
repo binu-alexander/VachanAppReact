@@ -8,6 +8,7 @@ const SelectBottomTabBar = () => {
   const [{ styles }] = useContext(BibleMainContext);
   const {
     showColorGrid,
+    setShowColorGrid,
     doHighlight,
     addToShare,
     addToNotes,
@@ -18,8 +19,7 @@ const SelectBottomTabBar = () => {
     <View style={styles.bottomBar}>
       <View style={styles.bottomOption}>
         <TouchableOpacity
-          onPress={bottomHighlightText == true ? showColorGrid : doHighlight}
-        >
+          onPress={() => { bottomHighlightText == true ? setShowColorGrid(!showColorGrid) : doHighlight() }}>
           <Text style={styles.bottomOptionText}>
             {bottomHighlightText == true ? "HIGHLIGHT" : "REMOVE HIGHLIGHT"}
           </Text>

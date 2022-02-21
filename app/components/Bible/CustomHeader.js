@@ -21,17 +21,20 @@ import { BibleContext } from "../../context/BibleContextProvider";
 import { LoginData } from "../../context/LoginDataProvider";
 
 const CustomHeader = (props) => {
-  const [{ clampedScroll, navigation, chapterContent }] =
-    useContext(BibleMainContext);
+  const [{
+    clampedScroll,
+    navigation,
+    chapterContent,
+  },
+  ] = useContext(BibleMainContext);
 
   const {
     currentVisibleChapter,
     isBookmark,
     onBookmarkPress,
-    stackNavigation,
   } = useContext(LoginData);
-  const { navigateToLanguage, navigateToSelectionTab, toggleAudio, audio } =
-    useContext(BibleContext);
+  const { navigateToLanguage,
+    navigateToSelectionTab, toggleAudio, audio } = useContext(BibleContext)
   let bookName = !isNaN(props.bookName.charAt(0))
     ? props.bookName.charAt(0).toUpperCase() + props.bookName.slice(1)
     : props.bookName;
@@ -41,21 +44,21 @@ const CustomHeader = (props) => {
     extrapolate: "clamp",
   });
   const navigateToVideo = () => {
-    stackNavigation.navigate("Video", {
+    navigation.navigate("Video", {
       bookId: props.bookId,
       bookName: props.bookName,
     });
   };
   const navigateToImage = () => {
     // setStatus(false);
-    stackNavigation.navigate("Infographics", {
+    navigation.navigate("Infographics", {
       bookId: props.bookId,
       bookName: props.bookName,
     });
   };
   const navigateToSettings = () => {
     // setStatus(false);
-    stackNavigation.navigate("Settings");
+    navigation.navigate("Settings");
   };
   const downloadPDF = async () => {
     // setIsLoading(true);
@@ -69,14 +72,13 @@ const CustomHeader = (props) => {
     let header3 = `<h3>${props.bookName + " " + currentVisibleChapter}</h3>`;
     let options = {
       html: `${header1}${header3}<p>${texttohtml}</p>`,
-      fileName: `${
-        "VachanGo_" +
+      fileName: `${"VachanGo_" +
         props.language +
         "_" +
         props.bookId +
         "_" +
         currentVisibleChapter
-      }`,
+        }`,
       // eslint-disable-next-line no-constant-condition
       directory: "Download" ? "Download" : "Downloads",
     };
@@ -148,7 +150,7 @@ const CustomHeader = (props) => {
         <TouchableOpacity style={navStyles.touchableStyleRight}>
           <Icon
             onPress={() => {
-              stackNavigation.navigate("Search");
+              navigation.navigate("Search");
             }}
             name="search"
             color={Color.White}
@@ -199,7 +201,7 @@ const CustomHeader = (props) => {
           <Text style={navStyles.langVer}>
             {props.language &&
               props.language.charAt(0).toUpperCase() +
-                props.language.slice(1)}{" "}
+              props.language.slice(1)}{" "}
             {props.versionCode && props.versionCode.toUpperCase()}
           </Text>
           <Icon name="arrow-drop-down" color={Color.White} size={20} />

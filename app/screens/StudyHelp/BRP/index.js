@@ -28,12 +28,12 @@ const BRP = (props) => {
   const [calendarOpened, setCalendarOpened] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentMonth, setCurrentMonth] = useState("");
-  var today = new Date();
+  var today = new Date()
   var dd = String(today.getDate()).padStart(2, "0");
   var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
   var currentMonths;
-
-  const style = styles(props.colorFile, props.sizeFile);
+  const { languageName, versionCode, downloaded, colorFile, sizeFile, sourceId } = props
+  const style = styles(colorFile, sizeFile);
   let agenda = useRef().current;
   const laodMonthItem = (day) => {
     if (Object.keys(items).length > 0) {
@@ -54,14 +54,16 @@ const BRP = (props) => {
       for (var i = 0; i < readingPlans.length; i++) {
         let planDate = currentYear + "-" + readingPlans[i].date;
         if (!item[planDate]) {
-          item[planDate] = [];
+          item[planDate] = []
           // readingPlan[i].reading.forEach((val) => {
           //   var words = val.ref.split(" ")
           //   var regmatch = val.text.split(" ")
-          //   if (this.props.books) {
-          //     var book = this.props.books.find((book) => words[0] == book.bookId)
+          //   console.log("WORDS ", words)
+          //   if (props.books) {
+          //     var book = props.books.find((book) => words[0] == book.bookId)
           //     if (book) {
           //       if (regmatch) {
+          //         console.log("BOOK NAME ", book.bookName)
           //         val['native_name'] = book.bookName + " " + regmatch[regmatch.length - 1]
           //       }
           //     }
@@ -70,7 +72,7 @@ const BRP = (props) => {
           item[planDate].push({
             reading: readingPlans[i].reading,
             height: Math.max(50, Math.floor(Math.random() * 80)),
-          });
+          })
         }
       }
     }
@@ -98,13 +100,6 @@ const BRP = (props) => {
         }
       }
     }
-    console.log(
-      " bookId,word,chapterNumber,bookName ",
-      bookId,
-      words,
-      chapterNumber,
-      bookName
-    );
     if (bookNumber && bookName) {
       props.updateVersionBook({
         bookId: bookId,
@@ -115,13 +110,14 @@ const BRP = (props) => {
       props.navigation.navigate("Bible");
     } else {
       let language =
-        props.languageName &&
-        props.languageName.charAt(0).toUpperCase() +
-          props.languageName.slice(1);
+        languageName &&
+        languageName.charAt(0).toUpperCase() +
+        languageName.slice(1);
       Alert.alert("", "Book is unvailable in " + language);
     }
   };
   const renderItem = (item) => {
+    // console.log("NAME ", item.reading)
     return item.reading.map((val, i) => {
       return (
         <TouchableOpacity
@@ -234,7 +230,7 @@ const BRP = (props) => {
       <Icon
         name="keyboard-arrow-down"
         size={24}
-        color={props.colorFile.blueText}
+        color={colorFile.blueText}
       />
     );
   };
@@ -282,10 +278,10 @@ const BRP = (props) => {
   }, [selectedDate, currentMonth]);
   useEffect(() => {
     props.fetchVersionBooks({
-      language: props.languageName,
-      versionCode: props.versionCode,
-      downloaded: props.downloaded,
-      sourceId: props.sourceId,
+      language: languageName,
+      versionCode: versionCode,
+      downloaded: downloaded,
+      sourceId: sourceId,
     });
   }, [JSON.stringify(props.books)]);
   useEffect(() => {
@@ -317,8 +313,8 @@ const BRP = (props) => {
               style.agendaDate,
               {
                 color: calendarOpened
-                  ? props.colorFile.backgroundColor
-                  : props.colorFile.textColor,
+                  ? colorFile.backgroundColor
+                  : colorFile.textColor,
               },
             ]}
           >

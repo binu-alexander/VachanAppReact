@@ -27,10 +27,7 @@ const AnimatedVerseList = (props) => {
   },
   ] = useContext(BibleMainContext);
   const {
-    currentVisibleChapter,
-    selectedReferenceSet,
-    notesList,
-    highlightedVerseArray,
+
     showColorGrid,
     getSelectedReferences,
     bottomHighlightText,
@@ -114,7 +111,7 @@ const AnimatedVerseList = (props) => {
       [];
   };
   useEffect(() => {
-    ZoomTextSize;
+    ZoomTextSize();
   }, []);
   const renderFooter = () => {
     if (chapterContent.length === 0) {

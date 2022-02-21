@@ -10,7 +10,6 @@ const Audio = (props) => {
   const styles = style(props.colorFile, props.sizeFile);
   const [allAudioBooks, setAllAudioBooks] = useState([]);
   const navigateToBible = (bId, bookName, chapterNum) => {
-    console.log("hello");
     props.updateVersionBook({
       bookId: bId,
       bookName: bookName,
@@ -18,7 +17,7 @@ const Audio = (props) => {
     });
     props.ToggleAudio({ audio: true, status: true });
     props.navigation.navigate("Bible");
-  };
+  }
   const emptyMessageNavigation = () => {
     props.navigation.navigate("Bible");
   };

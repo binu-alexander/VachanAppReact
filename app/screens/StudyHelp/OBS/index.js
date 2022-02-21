@@ -17,7 +17,7 @@ const Github_URL =
 
 const OBS = (props) => {
   const [languagesList, setLanguagesList] = useState([]);
-  const [langCode, setLangCode] = useState(props.langCode);
+  const [langCode, setLangCode] = useState(props.languageCode);
   const [obsData, setObsData] = useState(null);
   const [obsLang, setObsLang] = useState([]);
   const [defaultLanguage, setDefaultLanguage] = useState(props.languageName);
@@ -179,7 +179,7 @@ const OBS = (props) => {
         <ScrollView
           // contentInsetAdjustmentBehavior="automatic"
           style={style.scrollView}
-          // contentContainerStyle={{paddingTop:20}}
+        // contentContainerStyle={{paddingTop:20}}
         >
           <Markdown style={style}>{obsData}</Markdown>
         </ScrollView>
