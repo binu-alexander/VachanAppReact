@@ -24,12 +24,8 @@ const CustomHeader = (props) => {
   const [{ clampedScroll, navigation, chapterContent }] =
     useContext(BibleMainContext);
 
-  const {
-    currentVisibleChapter,
-    isBookmark,
-    onBookmarkPress,
-    stackNavigation,
-  } = useContext(LoginData);
+  const { currentVisibleChapter, isBookmark, onBookmarkPress } =
+    useContext(LoginData);
   const { navigateToLanguage, navigateToSelectionTab, toggleAudio, audio } =
     useContext(BibleContext);
   let bookName = !isNaN(props.bookName.charAt(0))
@@ -41,21 +37,21 @@ const CustomHeader = (props) => {
     extrapolate: "clamp",
   });
   const navigateToVideo = () => {
-    stackNavigation.navigate("Video", {
+    props.navigation.navigate("Video", {
       bookId: props.bookId,
       bookName: props.bookName,
     });
   };
   const navigateToImage = () => {
     // setStatus(false);
-    stackNavigation.navigate("Infographics", {
+    props.navigation.navigate("Infographics", {
       bookId: props.bookId,
       bookName: props.bookName,
     });
   };
   const navigateToSettings = () => {
     // setStatus(false);
-    stackNavigation.navigate("Settings");
+    props.navigation.navigate("Settings");
   };
   const downloadPDF = async () => {
     // setIsLoading(true);
@@ -148,7 +144,7 @@ const CustomHeader = (props) => {
         <TouchableOpacity style={navStyles.touchableStyleRight}>
           <Icon
             onPress={() => {
-              stackNavigation.navigate("Search");
+              props.navigation.navigate("Search");
             }}
             name="search"
             color={Color.White}

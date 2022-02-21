@@ -4,24 +4,13 @@ import Bible from "./";
 import LoginDataProvider from "../../context/LoginDataProvider";
 import BibleContextProvider from "../../context/BibleContextProvider";
 const BibleWrapper = (props) => {
-<<<<<<< HEAD
-    return (
-        <LoginDataProvider navigation={props.navigation}>
-            <BibleContextProvider navigation={props.navigation}>
-                <Bible navigation={props.navigation} />
-            </BibleContextProvider>
-        </LoginDataProvider>
-    );
-
-=======
   return (
-    <LoginDataProvider>
-      <BibleContextProvider>
+    <LoginDataProvider navigation={props.navigation}>
+      <BibleContextProvider navigation={props.navigation}>
         <Bible navigation={props.navigation} />
       </BibleContextProvider>
     </LoginDataProvider>
   );
->>>>>>> 9f1ad2ed5a58ff99eeea3551d41fb16c9bd08154
 };
 
 const mapStateToProps = (state) => {

@@ -73,7 +73,7 @@ const Bible = (props) => {
     setShowBottomBar,
     setShowColorGrid,
     getHighlights,
-    highlightedVerseArray
+    highlightedVerseArray,
   } = useContext(LoginData);
   const {
     setStatus,
@@ -199,7 +199,6 @@ const Bible = (props) => {
       setUnAvailableContent(true);
     }
   };
-  console.log(stackNavigation, "jjj");
   const queryBookFromAPI = async (chapterInfo) => {
     try {
       const { fetchVersionBooks, updateVersionBook } = props;
@@ -299,7 +298,6 @@ const Bible = (props) => {
   };
 
   useEffect(() => {
-    setStackNavigation(props.navigation);
     setIsLoading(true);
     var time = new Date();
     if (initializing) {
@@ -351,9 +349,9 @@ const Bible = (props) => {
       setStatus(props.status);
       getChapter();
       audioComponentUpdate();
-      getHighlights()
-      getBookMarks()
-      getNotes()
+      getHighlights();
+      getBookMarks();
+      getNotes();
       if (books.length == 0) {
         props.fetchVersionBooks({
           language: language,

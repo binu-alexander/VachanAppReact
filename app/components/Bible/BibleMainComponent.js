@@ -21,13 +21,15 @@ const width = Dimensions.get("window").width;
 
 const BibleMainComponent = (props) => {
   const { contentType, bookName, visibleParallelView } = props;
-  const [{
-    styles,
-    chapterContent,
-    queryBookFromAPI,
-    unAvailableContent,
-    reloadMessage,
-    isLoading },
+  const [
+    {
+      styles,
+      chapterContent,
+      queryBookFromAPI,
+      unAvailableContent,
+      reloadMessage,
+      isLoading,
+    },
   ] = useContext(BibleMainContext);
   const {
     currentVisibleChapter,
@@ -35,8 +37,7 @@ const BibleMainComponent = (props) => {
     showColorGrid,
     bottomHighlightText,
   } = useContext(LoginData);
-
-  const { navigateToSelectionTab } = useContext(BibleContext)
+  const { navigateToSelectionTab } = useContext(BibleContext);
   return (
     <CustomStatusBar>
       <View style={styles.container}>

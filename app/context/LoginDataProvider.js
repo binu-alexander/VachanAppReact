@@ -1,6 +1,5 @@
 import React, { createContext, useState } from "react";
 import { connect } from "react-redux";
-import { Share } from 'react-native';
 import database from "@react-native-firebase/database";
 import Color from "../utils/colorConstants";
 import { Alert, Share } from "react-native";
@@ -18,12 +17,14 @@ const LoginDataProvider = (props) => {
   const [email, setEmail] = useState(props.email);
   const [uid, setUid] = useState(props.userId);
   const [highlightedVerseArray, setHighlightedVerseArray] = useState([]);
-  const [currentVisibleChapter, setCurrentVisibleChapter] = useState(props.chapterNumber);
+  const [currentVisibleChapter, setCurrentVisibleChapter] = useState(
+    props.chapterNumber
+  );
   const [selectedReferenceSet, setSelectedReferenceSet] = useState([]);
   const [showBottomBar, setShowBottomBar] = useState("");
   const [bottomHighlightText, setBottomHighlightText] = useState(false);
   const [showColorGrid, setShowColorGrid] = useState("");
-  const { bookName, bookId, sourceId, versionCode, language } = props
+  const { bookName, bookId, sourceId, versionCode, language } = props;
   // check internet connection to fetch api's accordingly
 
   const getNotes = () => {
@@ -32,13 +33,13 @@ const LoginDataProvider = (props) => {
         database()
           .ref(
             "users/" +
-            uid +
-            "/notes/" +
-            sourceId +
-            "/" +
-            bookId +
-            "/" +
-            currentVisibleChapter
+              uid +
+              "/notes/" +
+              sourceId +
+              "/" +
+              bookId +
+              "/" +
+              currentVisibleChapter
           )
           .on("value", (snapshot) => {
             if (snapshot.val() === null) {
@@ -83,20 +84,20 @@ const LoginDataProvider = (props) => {
       setIsBookmark(false);
     }
   };
-  const onbackNote = () => { };
+  const onbackNote = () => {};
   const getHighlights = () => {
     if (connection_Status) {
       if (email && uid) {
         database()
           .ref(
             "users/" +
-            uid +
-            "/highlights/" +
-            sourceId +
-            "/" +
-            bookId +
-            "/" +
-            currentVisibleChapter
+              uid +
+              "/highlights/" +
+              sourceId +
+              "/" +
+              bookId +
+              "/" +
+              currentVisibleChapter
           )
           .on("value", (snapshot) => {
             if (snapshot.val() != null) {
@@ -143,7 +144,7 @@ const LoginDataProvider = (props) => {
         });
       } else {
         setBookmarksList([]);
-        stackNavigation.navigate("Login");
+        props.navigation.navigate("Login");
       }
     } else {
       setBookmarksList([]);
@@ -172,7 +173,7 @@ const LoginDataProvider = (props) => {
             verses.push(verseNumber);
           }
         }
-        stackNavigation.navigate("EditNote", {
+        props.navigation.navigate("EditNote", {
           referenceList: refList,
           notesList: notesList,
           bcvRef: {
@@ -186,7 +187,7 @@ const LoginDataProvider = (props) => {
           noteIndex: -1,
         });
       } else {
-        stackNavigation.navigate("Login");
+        props.navigation.navigate("Login");
       }
     } else {
       Alert.alert("Please check internet connection");
@@ -216,89 +217,6 @@ const LoginDataProvider = (props) => {
                 }
               }
             }
-<<<<<<< HEAD
-          } else {
-            Alert.alert("Please check internet connection");
-          }
-          setSelectedReferenceSet([]);
-          setShowBottomBar(false);
-          setShowColorGrid(false);
-        };
-        const onbackNote = () => { }
-        const doHighlight = (color) => {
-          if (connection_Status) {
-            if (email && uid) {
-              let array = [...highlightedVerseArray]
-              if (Object.keys(selectedReferenceSet).length != 0) {
-                for (let item of selectedReferenceSet) {
-                  let tempVal = item.split("_");
-                  let selectedColor = setHighlightColor(color);
-                  let val = tempVal[2].trim() + ":" + selectedColor;
-
-                  for (var i = 0; i < array.length; i++) {
-                    let regexMatch = /(\d+):([a-zA-Z]+)/;
-                    if (array[i]) {
-                      let match = array[i].match(regexMatch);
-                      if (match) {
-                        if (parseInt(match[1]) == parseInt(tempVal[2])) {
-                          array.splice(i, 1)
-                          console.log("ARRAY 1...", array)
-                          setHighlightedVerseArray(array);
-                        }
-                      }
-                    }
-                  }
-                  let index = array.indexOf(val);
-                  console.log(" Index Highlight ", index)
-                  //solve the issue of 2 color on single verse
-                  if (bottomHighlightText) {
-                    if (index == -1) {
-                      array.push(val);
-                    }
-                    console.log("ARRAY 2...", array)
-                    setHighlightedVerseArray(array);
-                  }
-                }
-              }
-              console.log("ARRAY 3...", array)
-              database()
-                .ref(
-                  "users/" +
-                  uid +
-                  "/highlights/" +
-                  sourceId +
-                  "/" +
-                  bookId +
-                  "/" +
-                  currentVisibleChapter
-                )
-                .set(array);
-            } else {
-              props.navigation.navigate("Login");
-            }
-          } else {
-            Alert.alert("Please check internet connection ");
-          }
-          setSelectedReferenceSet([]);
-          setShowBottomBar(false);
-          setShowColorGrid(false);
-        };
-        console.log("Highlighted verse array ", highlightedVerseArray)
-        const addToShare = () => {
-          let shareText = "";
-          if (Object.keys(selectedReferenceSet).length != 0) {
-            for (let item of selectedReferenceSet) {
-              let tempVal = item.split("_");
-              let cNumber = parseInt(tempVal[0]);
-              // let vIndex = parseInt(tempVal[1]);
-              let verseNumber = tempVal[2];
-              shareText = shareText.concat(
-                bookName + " " + cNumber + ":" + verseNumber + " "
-              );
-              shareText = shareText.concat(tempVal[3]);
-              shareText = shareText.concat("\n");
-            }
-=======
             var index = array.indexOf(val);
             //solve the issue of 2 color on single verse
             if (bottomHighlightText) {
@@ -322,7 +240,7 @@ const LoginDataProvider = (props) => {
           )
           .set(array);
       } else {
-        stackNavigation.navigate("Login");
+        props.navigation.navigate("Login");
       }
     } else {
       Alert.alert("Please check internet connection");
@@ -360,111 +278,32 @@ const LoginDataProvider = (props) => {
         if (selectedReferences[i] == obj) {
           found = true;
           selectedReferences.splice(i, 1);
->>>>>>> 9f1ad2ed5a58ff99eeea3551d41fb16c9bd08154
-          }
         }
-        if (!found) {
-          selectedReferences.push(obj);
-        }
-        let selectedCount = selectedReferences.length,
-          highlightCount = 0;
-        for (let item of selectedReferences) {
-          let tempVal = item.split("_");
-          for (let i = 0; i <= highlightedVerseArray.length - 1; i++) {
-            let regexMatch = /(\d+):([a-zA-Z]+)/;
-            if (highlightedVerseArray[i]) {
-              let match = highlightedVerseArray[i].match(regexMatch);
-              if (match) {
-                if (parseInt(match[1]) == parseInt(tempVal[2])) {
-                  highlightCount++;
-                }
+      }
+      if (!found) {
+        selectedReferences.push(obj);
+      }
+      let selectedCount = selectedReferences.length,
+        highlightCount = 0;
+      for (let item of selectedReferences) {
+        let tempVal = item.split("_");
+        for (let i = 0; i <= highlightedVerseArray.length - 1; i++) {
+          let regexMatch = /(\d+):([a-zA-Z]+)/;
+          if (highlightedVerseArray[i]) {
+            let match = highlightedVerseArray[i].match(regexMatch);
+            if (match) {
+              if (parseInt(match[1]) == parseInt(tempVal[2])) {
+                highlightCount++;
               }
             }
           }
         }
-        setSelectedReferenceSet(selectedReferences);
-        setShowBottomBar(selectedReferences.length > 0 ? true : false);
-        setBottomHighlightText(selectedCount == highlightCount ? false : true);
-        setShowColorGrid(selectedCount == highlightCount ? false : true);
       }
-<<<<<<< HEAD
-
-      // const  getOffset = (index) => {
-      //     var offset = 0;
-      //     for (let i = 0; i < index; i++) {
-      //       const elementLayout = arrLayout[index];
-      //       if (elementLayout && elementLayout.height) {
-      //         if (arrLayout[i] != undefined) {
-      //           offset += arrLayout[i].height;
-      //         }
-      //       }
-      //     }
-      //     return offset;
-      //   }
-      // const scrollToVerse = (verseNumber) => {
-      //     if (arrLayout != undefined) {
-      //       let item = arrLayout.filter((i) => i.verseNumber == verseNumber);
-      //       if (item.length > 0) {
-      //         if (item[0].verseNumber == verseNumber) {
-      //           const offset = getOffset(item[0].index);
-      //           verseScroll.scrollToOffset({ offset, animated: true });
-      //         }
-      //       }
-      //     }
-      //   }
-      return (
-        <LoginData.Provider
-          value={{
-            notesList,
-            setNotesList,
-            getNotes,
-            connection_Status,
-            setConnection_Status,
-            currentVisibleChapter,
-            setCurrentVisibleChapter,
-            getBookMarks,
-            bookmarksList,
-            setBookmarksList,
-            isBookmark,
-            setIsBookmark,
-            setEmail,
-            email,
-            uid,
-            setUid,
-            getHighlights,
-            highlightedVerseArray,
-            setHighlightedVerseArray,
-            onBookmarkPress,
-            doHighlight,
-            addToShare,
-            addToNotes,
-            setShowBottomBar, setShowColorGrid,
-            showColorGrid, showBottomBar,
-            selectedReferenceSet, setSelectedReferenceSet,
-            getSelectedReferences,
-            bottomHighlightText, setBottomHighlightText
-          }} >
-          {props.children}
-        </LoginData.Provider>
-      );
-
-    };
-
-    const mapStateToProps = (state) => {
-      return {
-        sourceId: state.updateVersion.sourceId,
-        chapterNumber: state.updateVersion.chapterNumber,
-        email: state.userInfo.email,
-        userId: state.userInfo.uid,
-        bookName: state.updateVersion.bookName,
-        bookId: state.updateVersion.bookId,
-        language: state.updateVersion.language,
-        languageCode: state.updateVersion.languageCode,
-        versionCode: state.updateVersion.versionCode,
-        sourceId: state.updateVersion.sourceId,
-
-      };
-=======
+      setSelectedReferenceSet(selectedReferences);
+      setShowBottomBar(selectedReferences.length > 0 ? true : false);
+      setBottomHighlightText(selectedCount == highlightCount ? false : true);
+      setShowColorGrid(selectedCount == highlightCount ? false : true);
+    }
   };
   // const  getOffset = (index) => {
   //     var offset = 0;
@@ -524,8 +363,6 @@ const LoginDataProvider = (props) => {
         getSelectedReferences,
         bottomHighlightText,
         setBottomHighlightText,
-        stackNavigation,
-        setStackNavigation,
       }}
     >
       {props.children}
@@ -545,7 +382,6 @@ const mapStateToProps = (state) => {
     languageCode: state.updateVersion.languageCode,
     versionCode: state.updateVersion.versionCode,
   };
->>>>>>> 9f1ad2ed5a58ff99eeea3551d41fb16c9bd08154
-    };
+};
 
-    export default connect(mapStateToProps, null)(LoginDataProvider);
+export default connect(mapStateToProps, null)(LoginDataProvider);

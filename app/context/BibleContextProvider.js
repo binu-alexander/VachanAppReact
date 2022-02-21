@@ -27,23 +27,26 @@ const BibleContextProvider = (props) => {
   const [nextContent, setNextContent] = useState("");
   const [previousContent, setPreviousContent] = useState("");
   const [audio, setAudio] = useState(false);
-  const { sourceId,
-    language,
-    languageCode,
-    versionCode } = props
-  const { currentVisibleChapter,
-    setCurrentVisibleChapter, setSelectedReferenceSet, setShowBottomBar, setShowColorGrid } = useContext(LoginData)
+  const { sourceId, language, languageCode, versionCode, downloaded } = props;
+  const {
+    currentVisibleChapter,
+    setCurrentVisibleChapter,
+    setSelectedReferenceSet,
+    setShowBottomBar,
+    setShowColorGrid,
+  } = useContext(LoginData);
   const navigateToSelectionTab = () => {
     setStatus(false);
     props.navigation.navigate("ReferenceSelection", {
-      getReference: getReference, chapterNumber: currentVisibleChapter,
+      getReference: getReference,
+      chapterNumber: currentVisibleChapter,
       // parallelContent: visibleParallelView ? false : true,
-    })
+    });
   };
   const navigateToLanguage = () => {
     setStatus(false);
     props.navigation.navigate("LanguageList", { updateLangVer: updateLangVer });
-  }
+  };
   const getReference = async (item) => {
     setSelectedReferenceSet([]);
     setShowBottomBar(false);
@@ -148,10 +151,19 @@ const BibleContextProvider = (props) => {
         updateLangVer,
         getReference,
         navigateToSelectionTab,
-        setStatus, status,
-        setPreviousContent, previousContent,
-        setNextContent, nextContent, _handleAppStateChange, toggleAudio, audioComponentUpdate, audio, setAudio
-      }}>
+        setStatus,
+        status,
+        setPreviousContent,
+        previousContent,
+        setNextContent,
+        nextContent,
+        _handleAppStateChange,
+        toggleAudio,
+        audioComponentUpdate,
+        audio,
+        setAudio,
+      }}
+    >
       {props.children}
     </BibleContext.Provider>
   );
