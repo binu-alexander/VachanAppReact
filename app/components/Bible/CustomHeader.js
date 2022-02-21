@@ -25,6 +25,7 @@ const CustomHeader = (props) => {
     clampedScroll,
     navigation,
     chapterContent,
+    setStatus
   },
   ] = useContext(BibleMainContext);
 
@@ -44,24 +45,19 @@ const CustomHeader = (props) => {
     extrapolate: "clamp",
   });
   const navigateToVideo = () => {
-    navigation.navigate("Video", {
-      bookId: props.bookId,
-      bookName: props.bookName,
-    });
+    setStatus(false);
+    props.navigation.navigate("Video");
   };
   const navigateToImage = () => {
-    // setStatus(false);
-    navigation.navigate("Infographics", {
-      bookId: props.bookId,
-      bookName: props.bookName,
-    });
+    setStatus(false);
+    props.navigation.navigate("Infographics",);
   };
   const navigateToSettings = () => {
-    // setStatus(false);
-    navigation.navigate("Settings");
+    setStatus(false);
+    props.navigation.navigate("Settings");
   };
   const downloadPDF = async () => {
-    // setIsLoading(true);
+    setIsLoading(true);
     var texttohtml = "";
     chapterContent.forEach((val) => {
       if (val.verseNumber != undefined && val.verseText != undefined) {
@@ -84,7 +80,7 @@ const CustomHeader = (props) => {
     };
     await RNHTMLtoPDF.convert(options);
     Toast.show({ text: "Pdf downloaded.", type: "success", duration: 5000 });
-    // setIsLoading(false);
+    setIsLoading(false);
   };
   const createPDF = async () => {
     let permissionGranted = await AndroidPermission(
@@ -150,7 +146,7 @@ const CustomHeader = (props) => {
         <TouchableOpacity style={navStyles.touchableStyleRight}>
           <Icon
             onPress={() => {
-              navigation.navigate("Search");
+              props.navigation.navigate("Search");
             }}
             name="search"
             color={Color.White}

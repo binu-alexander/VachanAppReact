@@ -28,7 +28,6 @@ const OBS = (props) => {
   let _dropdown_2 = createRef();
   const style = styles(props.colorFile, props.sizeFile);
 
-  console.log(props.languageName, defaultLanguage);
   const fetchGitData = async (url) => {
     const data = await fetch(Github_URL + url);
     const res = await data.json();
@@ -42,10 +41,11 @@ const OBS = (props) => {
         if (lan) {
           let obslangList = [];
           let foundLangCode = false;
-          for (var key in lan) {
+          for (let key in lan) {
             obslangList.push(lan[key]);
             if (key === langCode) {
               foundLangCode = true;
+              console.log(lan[key], langCode, key, lan, "fetch lan");
               setLangCode(key);
               setDefaultLanguage(lan[key]);
               bibleStoryList();
@@ -67,7 +67,7 @@ const OBS = (props) => {
         console.log(error.message, "error");
       });
   };
-
+  console.log(props.languageName, "language");
   const mdFileFetch = async () => {
     fetch(Github_URL + langCode + "/content/" + bsIndex + ".md")
       .then((response) => response.text())

@@ -1,5 +1,5 @@
-import React, { useEffect, useContext, useRef } from "react";
-import { FlatList, Animated, View, Text } from "react-native";
+import React, { useEffect, useContext } from "react";
+import { FlatList, Animated, View, Text, Platform } from "react-native";
 import { createResponder } from "react-native-gesture-responder";
 import VerseView from "../../screens/Bible/VerseView";
 import { getHeading } from "../../utils/UtilFunctions";
@@ -12,13 +12,23 @@ const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
 const NAVBAR_HEIGHT = 64;
 const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
 const AnimatedVerseList = (props) => {
-  const arrLayout = []
+  const arrLayout = [];
 
   let _offsetValue = 0;
   let _scrollValue = 0;
   let gestureResponder, _scrollEndTimer;
 
-  const [{ chapterContent, styles, navigation, _clampedScrollValue, scrollAnim, offsetAnim, chapterHeader }] = useContext(BibleMainContext);
+  const [
+    {
+      chapterContent,
+      styles,
+      navigation,
+      _clampedScrollValue,
+      scrollAnim,
+      offsetAnim,
+      chapterHeader,
+    },
+  ] = useContext(BibleMainContext);
   const {
     currentVisibleChapter,
     selectedReferenceSet,
@@ -44,7 +54,7 @@ const AnimatedVerseList = (props) => {
   const _onMomentumScrollEnd = () => {
     const toValue =
       _scrollValue > NAVBAR_HEIGHT &&
-        _clampedScrollValue > (NAVBAR_HEIGHT - STATUS_BAR_HEIGHT) / 2
+      _clampedScrollValue > (NAVBAR_HEIGHT - STATUS_BAR_HEIGHT) / 2
         ? _offsetValue + NAVBAR_HEIGHT
         : _offsetValue - NAVBAR_HEIGHT;
 
@@ -63,7 +73,7 @@ const AnimatedVerseList = (props) => {
   };
   changeSizeByOne = (value) => {
     changeSizeOnPinch(value, props.updateFontSize, props.colorFile, styles);
-  }
+  };
   const ZoomTextSize = () => {
     (gestureResponder = React.useRef(
       createResponder({
@@ -71,7 +81,7 @@ const AnimatedVerseList = (props) => {
         onStartShouldSetResponderCapture: () => true,
         onMoveShouldSetResponder: () => true,
         onMoveShouldSetResponderCapture: () => true,
-        onResponderGrant: () => { },
+        onResponderGrant: () => {},
         onResponderMove: (evt, gestureState) => {
           let thumbSize = 10;
           if (gestureState.pinch && gestureState.previousPinch) {
@@ -98,9 +108,9 @@ const AnimatedVerseList = (props) => {
           position.setValue({ x: gestureState.dx, y: gestureState.dy });
         },
         onResponderTerminationRequest: () => true,
-        onResponderRelease: (gestureState) => { },
-        onResponderTerminate: (gestureState) => { },
-        onResponderSingleTapConfirmed: () => { },
+        onResponderRelease: (gestureState) => {},
+        onResponderTerminate: (gestureState) => {},
+        onResponderSingleTapConfirmed: () => {},
         moveThreshold: 2,
         debug: false,
       })
@@ -110,9 +120,7 @@ const AnimatedVerseList = (props) => {
   // useEffect(()=>{
   //   ZoomTextSize
   // },[])
-  useEffect(() => {
-
-  }, [])
+  useEffect(() => {}, []);
   const renderFooter = () => {
     if (chapterContent.length === 0) {
       return null;
@@ -159,7 +167,7 @@ const AnimatedVerseList = (props) => {
         </View>
       );
     }
-  }
+  };
   return (
     <AnimatedFlatlist
       // {...gestureResponder}
@@ -169,10 +177,10 @@ const AnimatedVerseList = (props) => {
         chapterContent.length === 0
           ? styles.centerEmptySet
           : {
-            paddingHorizontal: 16,
-            paddingTop: props.visibleParallelView ? 52 : 90,
-            paddingBottom: 90,
-          }
+              paddingHorizontal: 16,
+              paddingTop: props.visibleParallelView ? 52 : 90,
+              paddingBottom: 90,
+            }
       }
       scrollEventThrottle={1}
       onMomentumScrollBegin={_onMomentumScrollBegin}
@@ -190,7 +198,6 @@ const AnimatedVerseList = (props) => {
       )}
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
-
       renderItem={({ item, index }) => (
         <VerseView
           // ref={child => (this[`child_${item.chapterNumber}_${index}`] = child)}
@@ -201,12 +208,7 @@ const AnimatedVerseList = (props) => {
           onLayout={onLayout}
           styles={styles}
           selectedReferences={selectedReferenceSet}
-          getSelection={(
-            verseIndex,
-            chapterNumber,
-            verseNumber,
-            text
-          ) => {
+          getSelection={(verseIndex, chapterNumber, verseNumber, text) => {
             props.visibleParallelView == false &&
               getSelectedReferences(
                 verseIndex,
@@ -224,8 +226,8 @@ const AnimatedVerseList = (props) => {
       keyExtractor={_keyExtractor}
       ListFooterComponent={renderFooter}
     />
-  )
-}
+  );
+};
 const mapStateToProps = (state) => {
   return {
     revision: state.updateVersion.revision,

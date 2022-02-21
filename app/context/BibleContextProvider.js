@@ -35,14 +35,15 @@ const BibleContextProvider = (props) => {
   const navigateToSelectionTab = () => {
     setStatus(false);
     props.navigation.navigate("ReferenceSelection", {
-      getReference: getReference, chapterNumber: currentVisibleChapter,
+      getReference: getReference,
+      chapterNumber: currentVisibleChapter,
       // parallelContent: visibleParallelView ? false : true,
-    })
+    });
   };
   const navigateToLanguage = () => {
     setStatus(false);
     props.navigation.navigate("LanguageList", { updateLangVer: updateLangVer });
-  }
+  };
   const getReference = async (item) => {
     console.log("ITEM ", item)
     setSelectedReferenceSet([]);
@@ -148,10 +149,19 @@ const BibleContextProvider = (props) => {
         updateLangVer,
         getReference,
         navigateToSelectionTab,
-        setStatus, status,
-        setPreviousContent, previousContent,
-        setNextContent, nextContent, _handleAppStateChange, toggleAudio, audioComponentUpdate, audio, setAudio
-      }}>
+        setStatus,
+        status,
+        setPreviousContent,
+        previousContent,
+        setNextContent,
+        nextContent,
+        _handleAppStateChange,
+        toggleAudio,
+        audioComponentUpdate,
+        audio,
+        setAudio,
+      }}
+    >
       {props.children}
     </BibleContext.Provider>
   );

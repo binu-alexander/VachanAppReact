@@ -73,7 +73,6 @@ const Bible = (props) => {
     setShowBottomBar,
     setShowColorGrid,
     getHighlights,
-
   } = useContext(LoginData);
   const {
     setStatus, status,
@@ -183,7 +182,6 @@ const Bible = (props) => {
       setUnAvailableContent(true);
     }
   };
-
   const queryBookFromAPI = async (chapterInfo) => {
     try {
       const { fetchVersionBooks, updateVersionBook } = props;
@@ -323,11 +321,8 @@ const Bible = (props) => {
       // setCurrentVisibleChapter(chapterNumber);
       setAudio(props.audio);
       setStatus(props.status);
-      getChapter();
+      getChapter()
       audioComponentUpdate();
-      // getHighlights()
-      // getBookMarks()
-      // getNotes()
       if (books.length == 0) {
         props.fetchVersionBooks({
           language: language,
@@ -397,6 +392,7 @@ const Bible = (props) => {
         offsetAnim,
         unAvailableContent,
         isLoading,
+        setIsLoading,
         queryBookFromAPI,
       },
       ]}
