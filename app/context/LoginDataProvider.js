@@ -1,13 +1,14 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useState } from "react";
 import { connect } from "react-redux";
+import { Toast, Alert } from "native-base";
 import database from "@react-native-firebase/database";
 import Color from "../utils/colorConstants";
 import { setHighlightColor } from "../utils/BiblePageUtil";
+import { Share } from "react-native";
 export const LoginData = createContext();
 
 // try with add login data provider here
 const LoginDataProvider = (props) => {
-
   const [connection_Status, setConnection_Status] = useState(true);
   const [notesList, setNotesList] = useState([]);
   const [bookmarksList, setBookmarksList] = useState([]);
@@ -97,7 +98,7 @@ const LoginDataProvider = (props) => {
             currentVisibleChapter
           )
           .on("value", (snapshot) => {
-            console.log(" SNAP SHOT VALUE ", snapshot.val())
+            console.log(" SNAP SHOT VALUE ", snapshot.val());
             let VerseArray = [];
             if (snapshot.val() != null) {
               let value = snapshot.val();
@@ -110,7 +111,7 @@ const LoginDataProvider = (props) => {
                 }
               }
             }
-            setHighlightedVerseArray(VerseArray)
+            setHighlightedVerseArray(VerseArray);
           });
       } else {
         setHighlightedVerseArray([]);
@@ -192,11 +193,11 @@ const LoginDataProvider = (props) => {
     setShowBottomBar(false);
     setShowColorGrid(false);
   };
-  const onbackNote = () => { }
+  const onbackNote = () => { };
   const doHighlight = (color) => {
     if (connection_Status) {
       if (email && uid) {
-        let array = [...highlightedVerseArray]
+        let array = [...highlightedVerseArray];
         if (Object.keys(selectedReferenceSet).length != 0) {
           for (let item of selectedReferenceSet) {
             let tempVal = item.split("_");
@@ -208,14 +209,14 @@ const LoginDataProvider = (props) => {
                 let match = array[i].match(regexMatch);
                 if (match) {
                   if (parseInt(match[1]) == parseInt(tempVal[2])) {
-                    array.splice(i, 1)
+                    array.splice(i, 1);
                     setHighlightedVerseArray(array);
                   }
                 }
               }
             }
             let index = array.indexOf(val);
-            console.log(" Index Highlight ", index)
+            console.log(" Index Highlight ", index);
             //solve the issue of 2 color on single verse
             if (bottomHighlightText) {
               if (index == -1) {
@@ -225,8 +226,8 @@ const LoginDataProvider = (props) => {
               setHighlightedVerseArray(array);
             }
           }
-          console.log("ARRAY ...", array)
-          console.log(" Highlighted Array ", highlightedVerseArray)
+          console.log("ARRAY ...", array);
+          console.log(" Highlighted Array ", highlightedVerseArray);
         }
         database()
           .ref(
@@ -250,7 +251,7 @@ const LoginDataProvider = (props) => {
     setShowBottomBar(false);
     setShowColorGrid(false);
   };
-  console.log("Highlighted verse array ", highlightedVerseArray)
+  console.log("Highlighted verse array ", highlightedVerseArray);
   const addToShare = () => {
     let shareText = "";
     if (Object.keys(selectedReferenceSet).length != 0) {
@@ -289,8 +290,8 @@ const LoginDataProvider = (props) => {
         highlightCount = 0;
       for (let item of selectedReferences) {
         let tempVal = item.split("_");
-        for (var i = 0; i <= highlightedVerseArray.length - 1; i++) {
-          let regexMatch = /(\d+)\:([a-zA-Z]+)/;
+        for (let i = 0; i <= highlightedVerseArray.length - 1; i++) {
+          let regexMatch = /(\d+):([a-zA-Z]+)/;
           if (highlightedVerseArray[i]) {
             let match = highlightedVerseArray[i].match(regexMatch);
             if (match) {
@@ -310,29 +311,29 @@ const LoginDataProvider = (props) => {
   useEffect(() => {
     setCurrentVisibleChapter(chapterNumber)
   }, [chapterNumber])
-  const getOffset = (index) => {
-    var offset = 0;
-    for (let i = 0; i < index; i++) {
-      const elementLayout = arrLayout[index];
-      if (elementLayout && elementLayout.height) {
-        if (arrLayout[i] != undefined) {
-          offset += arrLayout[i].height;
-        }
-      }
-    }
-    return offset;
-  }
-  const scrollToVerse = (verseNumber) => {
-    if (arrLayout != undefined) {
-      let item = arrLayout.filter((i) => i.verseNumber == verseNumber);
-      if (item.length > 0) {
-        if (item[0].verseNumber == verseNumber) {
-          const offset = getOffset(item[0].index);
-          verseScroll.scrollToOffset({ offset, animated: true });
-        }
-      }
-    }
-  }
+  // const getOffset = (index) => {
+  //   var offset = 0;
+  //   for (let i = 0; i < index; i++) {
+  //     const elementLayout = arrLayout[index];
+  //     if (elementLayout && elementLayout.height) {
+  //       if (arrLayout[i] != undefined) {
+  //         offset += arrLayout[i].height;
+  //       }
+  //     }
+  //   }
+  //   return offset;
+  // }
+  // const scrollToVerse = (verseNumber) => {
+  //   if (arrLayout != undefined) {
+  //     let item = arrLayout.filter((i) => i.verseNumber == verseNumber);
+  //     if (item.length > 0) {
+  //       if (item[0].verseNumber == verseNumber) {
+  //         const offset = getOffset(item[0].index);
+  //         verseScroll.scrollToOffset({ offset, animated: true });
+  //       }
+  //     }
+  //   }
+  // }
   return (
     <LoginData.Provider
       value={{
@@ -359,16 +360,20 @@ const LoginDataProvider = (props) => {
         doHighlight,
         addToShare,
         addToNotes,
-        setShowBottomBar, setShowColorGrid,
-        showColorGrid, showBottomBar,
-        selectedReferenceSet, setSelectedReferenceSet,
+        setShowBottomBar,
+        setShowColorGrid,
+        showColorGrid,
+        showBottomBar,
+        selectedReferenceSet,
+        setSelectedReferenceSet,
         getSelectedReferences,
-        bottomHighlightText, setBottomHighlightText
-      }} >
+        bottomHighlightText,
+        setBottomHighlightText,
+      }}
+    >
       {props.children}
     </LoginData.Provider>
   );
-
 };
 
 const mapStateToProps = (state) => {
@@ -382,8 +387,6 @@ const mapStateToProps = (state) => {
     language: state.updateVersion.language,
     languageCode: state.updateVersion.languageCode,
     versionCode: state.updateVersion.versionCode,
-    sourceId: state.updateVersion.sourceId,
-
   };
 };
 
