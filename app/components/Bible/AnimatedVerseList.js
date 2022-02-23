@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { FlatList, Animated, View, Text, Platform } from "react-native";
 import { createResponder } from "react-native-gesture-responder";
 import VerseView from "../../screens/Bible/VerseView";
@@ -38,6 +38,12 @@ const AnimatedVerseList = (props) => {
     getSelectedReferences,
     bottomHighlightText,
   } = useContext(LoginData);
+  const [gestureState, setGestureState] = useState('')
+  const [left, setLeft] = useState('')
+  const [top, setTop] = useState('')
+  const [thumbSize, setThumbSize] = useState('')
+  let pinchDiff = null;
+  let pinchTime = new Date().getTime();
 
   const onLayout = (event, index, verseNumber) => {
     arrLayout[index] = {
@@ -54,7 +60,7 @@ const AnimatedVerseList = (props) => {
   const _onMomentumScrollEnd = () => {
     const toValue =
       _scrollValue > NAVBAR_HEIGHT &&
-      _clampedScrollValue > (NAVBAR_HEIGHT - STATUS_BAR_HEIGHT) / 2
+        _clampedScrollValue > (NAVBAR_HEIGHT - STATUS_BAR_HEIGHT) / 2
         ? _offsetValue + NAVBAR_HEIGHT
         : _offsetValue - NAVBAR_HEIGHT;
 
@@ -81,15 +87,15 @@ const AnimatedVerseList = (props) => {
         onStartShouldSetResponderCapture: () => true,
         onMoveShouldSetResponder: () => true,
         onMoveShouldSetResponderCapture: () => true,
-        onResponderGrant: () => {},
+        onResponderGrant: () => { },
         onResponderMove: (evt, gestureState) => {
-          let thumbSize = 10;
+          let thumbS = thumbSize
           if (gestureState.pinch && gestureState.previousPinch) {
-            thumbSize *= gestureState.pinch / gestureState.previousPinch;
+            thumbS *= gestureState.pinch / gestureState.previousPinch;
             let currentDate = new Date().getTime();
-            var pinchTime = new Date().getTime();
+            //  pinchTime = new Date().getTime();
             let diff = currentDate - pinchTime;
-            var pinchDiff = null;
+            pinchDiff = null;
             if (diff > pinchDiff) {
               if (gestureState.pinch - gestureState.previousPinch > 5) {
                 // large
@@ -102,25 +108,31 @@ const AnimatedVerseList = (props) => {
             pinchDiff = diff;
             pinchTime = currentDate;
           }
-          left += gestureState.moveX - gestureState.previousMoveX;
-          top += gestureState.moveY - gestureState.previousMoveY;
-
-          position.setValue({ x: gestureState.dx, y: gestureState.dy });
+          let lf = left
+          let tp = top
+          lf += gestureState.moveX - gestureState.previousMoveX;
+          tp += gestureState.moveY - gestureState.previousMoveY;
+          setGestureState(...gestureState)
+          setLeft(lf)
+          setTop(tp)
+          setThumbSize(thumbS)
         },
         onResponderTerminationRequest: () => true,
-        onResponderRelease: (gestureState) => {},
-        onResponderTerminate: (gestureState) => {},
-        onResponderSingleTapConfirmed: () => {},
+        onResponderRelease: (gestureState) => {
+          setGestureState(...gestureState)
+        },
+        onResponderTerminate: (gestureState) => { },
+        onResponderSingleTapConfirmed: () => { },
         moveThreshold: 2,
         debug: false,
       })
     ).current),
       [];
   };
-  // useEffect(()=>{
-  //   ZoomTextSize
-  // },[])
-  useEffect(() => {}, []);
+  useEffect(() => {
+    ZoomTextSize
+  }, [])
+  useEffect(() => { }, []);
   const renderFooter = () => {
     if (chapterContent.length === 0) {
       return null;
@@ -170,17 +182,17 @@ const AnimatedVerseList = (props) => {
   };
   return (
     <AnimatedFlatlist
-      // {...gestureResponder}
+      {...gestureResponder}
       data={chapterContent}
       // ref={(ref) => (this.verseScroll = ref)}
       contentContainerStyle={
         chapterContent.length === 0
           ? styles.centerEmptySet
           : {
-              paddingHorizontal: 16,
-              paddingTop: props.visibleParallelView ? 52 : 90,
-              paddingBottom: 90,
-            }
+            paddingHorizontal: 16,
+            paddingTop: props.visibleParallelView ? 52 : 90,
+            paddingBottom: 90,
+          }
       }
       scrollEventThrottle={1}
       onMomentumScrollBegin={_onMomentumScrollBegin}
