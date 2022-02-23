@@ -7,6 +7,7 @@ export const LoginData = createContext();
 
 // try with add login data provider here
 const LoginDataProvider = (props) => {
+
   const [connection_Status, setConnection_Status] = useState(true);
   const [notesList, setNotesList] = useState([]);
   const [bookmarksList, setBookmarksList] = useState([]);
@@ -19,7 +20,7 @@ const LoginDataProvider = (props) => {
   const [showBottomBar, setShowBottomBar] = useState("");
   const [bottomHighlightText, setBottomHighlightText] = useState(false);
   const [showColorGrid, setShowColorGrid] = useState("");
-  const { bookName, bookId, sourceId, versionCode, language } = props
+  const { bookName, bookId, sourceId, versionCode, language, chapterNumber } = props
   // check internet connection to fetch api's accordingly
 
   const getNotes = () => {
@@ -80,8 +81,10 @@ const LoginDataProvider = (props) => {
     }
   };
   const getHighlights = () => {
+    console.log("EMAIL UID ", email, uid)
     if (connection_Status) {
       if (email && uid) {
+
         database()
           .ref(
             "users/" +
@@ -304,32 +307,32 @@ const LoginDataProvider = (props) => {
       setShowColorGrid(selectedCount == highlightCount ? false : true);
     }
   }
-  // useEffect(() => {
-
-  // })
-  // const  getOffset = (index) => {
-  //     var offset = 0;
-  //     for (let i = 0; i < index; i++) {
-  //       const elementLayout = arrLayout[index];
-  //       if (elementLayout && elementLayout.height) {
-  //         if (arrLayout[i] != undefined) {
-  //           offset += arrLayout[i].height;
-  //         }
-  //       }
-  //     }
-  //     return offset;
-  //   }
-  // const scrollToVerse = (verseNumber) => {
-  //     if (arrLayout != undefined) {
-  //       let item = arrLayout.filter((i) => i.verseNumber == verseNumber);
-  //       if (item.length > 0) {
-  //         if (item[0].verseNumber == verseNumber) {
-  //           const offset = getOffset(item[0].index);
-  //           verseScroll.scrollToOffset({ offset, animated: true });
-  //         }
-  //       }
-  //     }
-  //   }
+  useEffect(() => {
+    setCurrentVisibleChapter(chapterNumber)
+  }, [chapterNumber])
+  const getOffset = (index) => {
+    var offset = 0;
+    for (let i = 0; i < index; i++) {
+      const elementLayout = arrLayout[index];
+      if (elementLayout && elementLayout.height) {
+        if (arrLayout[i] != undefined) {
+          offset += arrLayout[i].height;
+        }
+      }
+    }
+    return offset;
+  }
+  const scrollToVerse = (verseNumber) => {
+    if (arrLayout != undefined) {
+      let item = arrLayout.filter((i) => i.verseNumber == verseNumber);
+      if (item.length > 0) {
+        if (item[0].verseNumber == verseNumber) {
+          const offset = getOffset(item[0].index);
+          verseScroll.scrollToOffset({ offset, animated: true });
+        }
+      }
+    }
+  }
   return (
     <LoginData.Provider
       value={{

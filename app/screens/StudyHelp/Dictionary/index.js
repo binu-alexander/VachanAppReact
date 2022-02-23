@@ -8,9 +8,10 @@ import Colors from "../../../utils/colorConstants";
 import ListContainer from "../../../components/Common/FlatList.js";
 
 const Infographics = (props) => {
+  const { colorFile, sizeFile, languageName } = props
   const [dictionaries, setDictionaries] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const style = styles(props.colorFile, props.sizeFile);
+  const style = styles(colorFile, sizeFile);
   useEffect(async () => {
     setIsLoading(true);
     try {
@@ -19,7 +20,7 @@ const Infographics = (props) => {
         for (var i = 0; i < apiData.length; i++) {
           if (
             apiData[i].language.toLowerCase() ===
-            props.languageName.toLowerCase()
+            languageName.toLowerCase()
           ) {
             setDictionaries(apiData[i].dictionaries);
           }

@@ -175,6 +175,7 @@ const Bible = (props) => {
         }
       }
     } catch (error) {
+      console.log("ERROR")
       setIsLoading(false);
       setError(error);
       setChapterHeader("");
@@ -270,7 +271,6 @@ const Bible = (props) => {
   };
 
   useEffect(() => {
-    setIsLoading(true);
     var time = new Date();
     if (initializing) {
       setInitializing(false);
@@ -290,6 +290,7 @@ const Bible = (props) => {
     });
 
     const unsubscriber = auth().onAuthStateChanged((user) => {
+      console.log("EMAIL ", user)
       if (user) {
         setEmail(user._user.email);
         setUid(user._user.uid);
@@ -313,8 +314,8 @@ const Bible = (props) => {
       }
     });
     const subs = props.navigation.addListener("focus", () => {
-      console.log(" FOCUS ....",)
-      setIsLoading(true)
+      console.log(" FOCUS ....")
+      // setIsLoading(true)
       setSelectedReferenceSet([]);
       setShowBottomBar(false);
       setShowColorGrid(false);
@@ -332,7 +333,6 @@ const Bible = (props) => {
         });
       }
     });
-    setIsLoading(false);
     return () => {
       DbQueries.addHistory(
         sourceId,
@@ -354,7 +354,7 @@ const Bible = (props) => {
     };
   }, []);
   useEffect(() => {
-    setIsLoading(true)
+    // setIsLoading(true)
     getChapter();
     audioComponentUpdate();
     if (books.length == 0) {
@@ -365,7 +365,7 @@ const Bible = (props) => {
         sourceId: sourceId,
       });
     }
-    setIsLoading(true)
+    // setIsLoading(false)
   }, [
     language,
     sourceId,

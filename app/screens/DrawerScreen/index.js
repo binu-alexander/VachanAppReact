@@ -112,7 +112,7 @@ const DrawerScreen = (props) => {
           APP VERSION {currentVersion}
         </Text> */}
         {/*//for tesing */}
-        <Text style={styles.versionText}>APP VERSION 1.3.4-alpha.4</Text>
+        <Text style={style.versionText}>APP VERSION 1.3.4-alpha.5</Text>
       </ScrollView>
     </View>
   );

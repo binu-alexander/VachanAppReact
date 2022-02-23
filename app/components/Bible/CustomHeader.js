@@ -25,7 +25,6 @@ const CustomHeader = (props) => {
     clampedScroll,
     navigation,
     chapterContent,
-    setStatus
   },
   ] = useContext(BibleMainContext);
 
@@ -35,7 +34,7 @@ const CustomHeader = (props) => {
     onBookmarkPress,
   } = useContext(LoginData);
   const { navigateToLanguage,
-    navigateToSelectionTab, toggleAudio, audio } = useContext(BibleContext)
+    navigateToSelectionTab, toggleAudio, audio, setStatus } = useContext(BibleContext)
   let bookName = !isNaN(props.bookName.charAt(0))
     ? props.bookName.charAt(0).toUpperCase() + props.bookName.slice(1)
     : props.bookName;
@@ -46,15 +45,15 @@ const CustomHeader = (props) => {
   });
   const navigateToVideo = () => {
     setStatus(false);
-    props.navigation.navigate("Video");
+    navigation.navigate("Video");
   };
   const navigateToImage = () => {
     setStatus(false);
-    props.navigation.navigate("Infographics",);
+    navigation.navigate("Infographics",);
   };
   const navigateToSettings = () => {
     setStatus(false);
-    props.navigation.navigate("Settings");
+    navigation.navigate("Settings");
   };
   const downloadPDF = async () => {
     setIsLoading(true);
@@ -146,7 +145,7 @@ const CustomHeader = (props) => {
         <TouchableOpacity style={navStyles.touchableStyleRight}>
           <Icon
             onPress={() => {
-              props.navigation.navigate("Search");
+              navigation.navigate("Search");
             }}
             name="search"
             color={Color.White}

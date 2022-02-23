@@ -19,17 +19,19 @@ import ReloadButton from "../../../components/ReloadButton";
 import vApi from "../../../utils/APIFetch";
 
 const DictionaryWords = (props) => {
-  const dictionarySourceId = props.route.params
-    ? props.route.params.dictionarySourceId
+  const { dictionaryContent, route, colorFile, sizeFile } = props
+  console.log(" params ", route.params)
+  const dictionarySourceId = route.params
+    ? route.params.dictionarySourceId
     : null;
-  const dicMetaData = props.route.params
-    ? props.route.params.metadata[0].metadata
+  const dicMetaData = route.params
+    ? route.params.metadata[0].metadata
     : null;
   const [modalVisibleDictionary, setModalVisibleDictionary] = useState(false);
   const [wordDescription, setWordDescription] = useState([]);
   const [metadataVisible, setMetadataVisible] = useState(false);
   const isLoading = false;
-  const style = styles(props.colorFile, props.sizeFile);
+  const style = styles(colorFile, sizeFile);
   let alertPresent = false;
   const fetchWord = async (word) => {
     try {
@@ -129,7 +131,7 @@ const DictionaryWords = (props) => {
       ) : (
         <View>
           <Accordion
-            dataArray={props.dictionaryContent}
+            dataArray={dictionaryContent}
             animation={true}
             expanded={[0]}
             renderHeader={_renderHeader}
@@ -184,10 +186,10 @@ const DictionaryWords = (props) => {
                   <Text style={style.textString}>
                     {dicMetaData.hasOwnProperty("Description\u00a0")
                       ? (
-                          <Text style={{ fontWeight: "900" }}>
-                            Description :
-                          </Text>
-                        ) + dicMetaData["Description\u00a0"]
+                        <Text style={{ fontWeight: "900" }}>
+                          Description :
+                        </Text>
+                      ) + dicMetaData["Description\u00a0"]
                       : null}
                   </Text>
                   <Text style={style.textString}>
