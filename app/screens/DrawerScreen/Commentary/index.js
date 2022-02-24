@@ -301,7 +301,8 @@ const DrawerCommentary = (props) => {
     });
   }, []);
   useEffect(() => {
-    console.log(" SOURCE ID ", parallelLanguage.languageName)
+    // setParallelLanguage(parallelLanguage);
+    // setParallelMetaData(parallelMetaData);
     props.navigation.setOptions({
       headerRight: () => (
         <View style={style.headerView}>
@@ -344,8 +345,8 @@ const DrawerCommentary = (props) => {
     }
   }, [JSON.stringify(dropDownList), selectedBookIndex]);
   useEffect(() => {
-    updateBookName();
-  }, [JSON.stringify(bookResponse)])
+    fetchBookName();
+  }, [bookResponse])
   return (
     <View style={style.container}>
       {props.error ? (

@@ -97,7 +97,7 @@ const LoginDataProvider = (props) => {
     }
   };
 
-  const getBookMarks = async () => {
+  const getBookMarks = () => {
     if (connection_Status) {
       if (email) {
         database().ref("users/" + uid + "/bookmarks/" + sourceId + "/" + bookId)
@@ -121,7 +121,6 @@ const LoginDataProvider = (props) => {
     }
   }
   const bookmarkedChap = () => {
-    console.log("bookmark list ", bookmarksList)
     if (bookmarksList.length > 0) {
       for (var i = 0; i < bookmarksList.length; i++) {
         if (bookmarksList[i] == currentVisibleChapter) {
@@ -135,14 +134,14 @@ const LoginDataProvider = (props) => {
   };
 
   //add book mark from header icon
-  onBookmarkPress = (isbookmark) => {
+  const onBookmarkPress = (isbkmark) => {
     if (connection_Status) {
       if (email) {
-        var newBookmarks = isbookmark ? bookmarksList.filter((a) => a !== currentVisibleChapter) : bookmarksList.concat(currentVisibleChapter);
+        var newBookmarks = isbkmark ? bookmarksList.filter((a) => a !== currentVisibleChapter) : bookmarksList.concat(currentVisibleChapter);
         database().ref("users/" + uid + "/bookmarks/" + sourceId + "/" + bookId).set(newBookmarks);
         setBookmarksList(newBookmarks)
-        setIsBookmark(!isbookmark)
-        Toast.show({ text: isbookmark ? "Bookmarked chapter removed" : "Chapter bookmarked", type: isbookmark ? "default" : "success", duration: 5000, });
+        setIsBookmark(!isbkmark)
+        Toast.show({ text: isbkmark ? "Bookmarked chapter removed" : "Chapter bookmarked", type: isbkmark ? "default" : "success", duration: 5000, });
       } else {
         setBookmarksList([])
         props.navigation.navigate("Login");
@@ -320,7 +319,7 @@ const LoginDataProvider = (props) => {
   useEffect(() => {
     console.log("isBookmark ", isBookmark, bookmarksList)
     bookmarkedChap()
-  }, [JSON.stringify(bookmarksList)])
+  }, [bookmarksList])
   // const getOffset = (index) => {
   //   var offset = 0;
   //   for (let i = 0; i < index; i++) {
