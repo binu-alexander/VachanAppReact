@@ -323,7 +323,7 @@ const DrawerCommentary = (props) => {
   ]);
   useEffect(() => {
     commentaryUpdate();
-
+    updateBookName();
   }, [
     JSON.stringify(props.commentaryContent),
     parallelLanguage.sourceId,
@@ -345,7 +345,7 @@ const DrawerCommentary = (props) => {
   }, [JSON.stringify(dropDownList), selectedBookIndex]);
   useEffect(() => {
     updateBookName();
-  }, [bookResponse])
+  }, [JSON.stringify(bookResponse)])
   return (
     <View style={style.container}>
       {props.error ? (

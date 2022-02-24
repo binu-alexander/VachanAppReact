@@ -7,7 +7,6 @@ import { Alert, Share } from "react-native";
 import { Toast } from "native-base";
 export const LoginData = createContext();
 
-import { Toast } from "native-base";
 // try with add login data provider here
 const LoginDataProvider = (props) => {
   const { bookName, bookId, sourceId, versionCode, language, chapterNumber } = props
@@ -321,7 +320,7 @@ const LoginDataProvider = (props) => {
   useEffect(() => {
     console.log("isBookmark ", isBookmark, bookmarksList)
     bookmarkedChap()
-  }, [bookmarksList])
+  }, [JSON.stringify(bookmarksList)])
   // const getOffset = (index) => {
   //   var offset = 0;
   //   for (let i = 0; i < index; i++) {
