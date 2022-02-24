@@ -1,8 +1,12 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { Text, View, ScrollView, Alert } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import Spinner from "react-native-loading-spinner-overlay";
-import { fetchVersionBooks, selectContent, parallelVisibleView } from "../../store/action";
+import {
+  fetchVersionBooks,
+  selectContent,
+  parallelVisibleView,
+} from "../../store/action";
 import { styles } from "./styles";
 import { connect } from "react-redux";
 import { getResultText } from "../../utils/UtilFunctions";
@@ -15,14 +19,17 @@ import { BibleMainContext } from "../../screens/Bible";
 import { LoginData } from "../../context/LoginDataProvider";
 const BibleChapter = (props) => {
   const [{ navigation }] = useContext(BibleMainContext);
-  const {
-    currentVisibleChapter,
-  } = useContext(LoginData);
+  const { currentVisibleChapter } = useContext(LoginData);
 
-  console.log("current chapter in bible ", currentVisibleChapter)
-  const bShortName = props.bookName != null &&
-    (props.bookName.length > 10 ? props.bookName.slice(0, 9) + "..." : props.bookName);
-  const [currentParallelViewChapter, setCurrentParallelViewChapter] = useState(currentVisibleChapter);
+  console.log("current chapter in bible ", currentVisibleChapter);
+  const bShortName =
+    props.bookName != null &&
+    (props.bookName.length > 10
+      ? props.bookName.slice(0, 9) + "..."
+      : props.bookName);
+  const [currentParallelViewChapter, setCurrentParallelViewChapter] = useState(
+    currentVisibleChapter
+  );
   const [bookName, setBookName] = useState(props.bookName);
   const [bookNameList, setBookNameList] = useState([]);
   const [shortbookName, setShortbookName] = useState(bShortName);
@@ -38,7 +45,7 @@ const BibleChapter = (props) => {
   const [loading, setLoading] = useState(false);
   const style = styles(props.colorFile, props.sizeFile);
   let alertPresent = false;
-
+  const scrollViewRef = useRef();
   const updateBook = async () => {
     try {
       let response = await vApi.get("booknames");
@@ -102,10 +109,9 @@ const BibleChapter = (props) => {
   const queryParallelBible = async (val, bkId) => {
     try {
       if (props.parallelLanguage) {
-        let chapter =
-          val == null ? currentParallelViewChapter : val;
+        let chapter = val == null ? currentParallelViewChapter : val;
         let bookIds = bkId == null ? bookId : bkId;
-        console.log(" BIBLE Book id", bookIds)
+        console.log(" BIBLE Book id", bookIds);
         setLoading(true);
         setBookId(bookIds);
         setCurrentParallelViewChapter(chapter);
@@ -162,7 +168,7 @@ const BibleChapter = (props) => {
     try {
       setTotalChapters(item.totalChapters);
       queryParallelBible(item.chapterNumber, item.bookId);
-      updateBook()
+      updateBook();
     } catch (error) {
       setError(true);
       setMessage(null);
@@ -223,16 +229,16 @@ const BibleChapter = (props) => {
     };
   }, []);
   useEffect(() => {
-    updateBook()
+    updateBook();
     queryParallelBible(null, null);
-  }, [bookId])
+  }, [bookId]);
 
-  closeParallelView = (value) => {
+  const closeParallelView = (value) => {
     props.parallelVisibleView({
       modalVisible: false,
       visibleParallelView: value,
-    })
-  }
+    });
+  };
   return (
     <View style={style.container}>
       <Header
@@ -271,9 +277,7 @@ const BibleChapter = (props) => {
           <ScrollView
             contentContainerStyle={style.scrollVContainer}
             showsVerticalScrollIndicator={false}
-            ref={(ref) => {
-              scrollViewRef = ref;
-            }}
+            ref={scrollViewRef}
           >
             {parallelBible &&
               parallelBible.map((verse, index) => (
@@ -364,7 +368,7 @@ const BibleChapter = (props) => {
             style={{
               justifyContent:
                 currentParallelViewChapter != 1 &&
-                  (currentParallelViewChapter == currentParallelViewChapter) !=
+                (currentParallelViewChapter == currentParallelViewChapter) !=
                   totalChapters
                   ? "center"
                   : "space-around",
@@ -372,35 +376,37 @@ const BibleChapter = (props) => {
             }}
           >
             {PpeviousContent &&
-              Object.keys(PpeviousContent).length > 0 &&
-              PpeviousContent.constructor === Object ? (
+            Object.keys(PpeviousContent).length > 0 &&
+            PpeviousContent.constructor === Object ? (
               <View style={style.bottomBarParallelPrevView}>
                 <Icon
                   name={"chevron-left"}
                   color={Color.Blue_Color}
                   size={16}
                   style={style.bottomBarChevrontIcon}
-                  onPress={() => queryParallelBible(
-                    PpeviousContent.chapterId,
-                    PpeviousContent.bibleBookCode
-                  )
+                  onPress={() =>
+                    queryParallelBible(
+                      PpeviousContent.chapterId,
+                      PpeviousContent.bibleBookCode
+                    )
                   }
                 />
               </View>
             ) : null}
             {pNextContent &&
-              Object.keys(pNextContent).length > 0 &&
-              pNextContent.constructor === Object ? (
+            Object.keys(pNextContent).length > 0 &&
+            pNextContent.constructor === Object ? (
               <View style={style.bottomBarNextParallelView}>
                 <Icon
                   name={"chevron-right"}
                   color={Color.Blue_Color}
                   size={16}
                   style={style.bottomBarChevrontIcon}
-                  onPress={() => queryParallelBible(
-                    pNextContent.chapterId,
-                    pNextContent.bibleBookCode
-                  )
+                  onPress={() =>
+                    queryParallelBible(
+                      pNextContent.chapterId,
+                      pNextContent.bibleBookCode
+                    )
                   }
                 />
               </View>

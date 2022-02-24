@@ -3,7 +3,8 @@ import { connect } from "react-redux";
 import database from "@react-native-firebase/database";
 import Color from "../utils/colorConstants";
 import { setHighlightColor } from "../utils/BiblePageUtil";
-import { Alert } from "react-native";
+import { Alert, Share } from "react-native";
+import { Toast } from "native-base";
 export const LoginData = createContext();
 
 import { Toast } from "native-base";
@@ -59,10 +60,9 @@ const LoginDataProvider = (props) => {
   };
 
   const getHighlights = () => {
-    console.log("EMAIL UID ", email, uid)
+    console.log("EMAIL UID ", email, uid);
     if (connection_Status) {
       if (email && uid) {
-
         database()
           .ref(
             "users/" +
@@ -75,7 +75,7 @@ const LoginDataProvider = (props) => {
             currentVisibleChapter
           )
           .on("value", (snapshot) => {
-            console.log(" SNAP SHOT VALUE ", snapshot.val())
+            console.log(" SNAP SHOT VALUE ", snapshot.val());
             let VerseArray = [];
             if (snapshot.val() != null) {
               let value = snapshot.val();
@@ -88,7 +88,7 @@ const LoginDataProvider = (props) => {
                 }
               }
             }
-            setHighlightedVerseArray(VerseArray)
+            setHighlightedVerseArray(VerseArray);
           });
       } else {
         setHighlightedVerseArray([]);
@@ -200,11 +200,11 @@ const LoginDataProvider = (props) => {
     setShowBottomBar(false);
     setShowColorGrid(false);
   };
-  const onbackNote = () => { }
+  const onbackNote = () => { };
   const doHighlight = (color) => {
     if (connection_Status) {
       if (email && uid) {
-        let array = [...highlightedVerseArray]
+        let array = [...highlightedVerseArray];
         if (Object.keys(selectedReferenceSet).length != 0) {
           for (let item of selectedReferenceSet) {
             let tempVal = item.split("_");
@@ -216,14 +216,14 @@ const LoginDataProvider = (props) => {
                 let match = array[i].match(regexMatch);
                 if (match) {
                   if (parseInt(match[1]) == parseInt(tempVal[2])) {
-                    array.splice(i, 1)
+                    array.splice(i, 1);
                     setHighlightedVerseArray(array);
                   }
                 }
               }
             }
             let index = array.indexOf(val);
-            console.log(" Index Highlight ", index)
+            console.log(" Index Highlight ", index);
             //solve the issue of 2 color on single verse
             if (bottomHighlightText) {
               if (index == -1) {
@@ -233,8 +233,8 @@ const LoginDataProvider = (props) => {
               setHighlightedVerseArray(array);
             }
           }
-          console.log("ARRAY ...", array)
-          console.log(" Highlighted Array ", highlightedVerseArray)
+          console.log("ARRAY ...", array);
+          console.log(" Highlighted Array ", highlightedVerseArray);
         }
         database()
           .ref(
@@ -258,7 +258,7 @@ const LoginDataProvider = (props) => {
     setShowBottomBar(false);
     setShowColorGrid(false);
   };
-  console.log("Highlighted verse array ", highlightedVerseArray)
+  console.log("Highlighted verse array ", highlightedVerseArray);
   const addToShare = () => {
     let shareText = "";
     if (Object.keys(selectedReferenceSet).length != 0) {
@@ -297,8 +297,8 @@ const LoginDataProvider = (props) => {
         highlightCount = 0;
       for (let item of selectedReferences) {
         let tempVal = item.split("_");
-        for (var i = 0; i <= highlightedVerseArray.length - 1; i++) {
-          let regexMatch = /(\d+)\:([a-zA-Z]+)/;
+        for (let i = 0; i <= highlightedVerseArray.length - 1; i++) {
+          let regexMatch = /(\d+):([a-zA-Z]+)/;
           if (highlightedVerseArray[i]) {
             let match = highlightedVerseArray[i].match(regexMatch);
             if (match) {
@@ -314,7 +314,7 @@ const LoginDataProvider = (props) => {
       setBottomHighlightText(selectedCount == highlightCount ? false : true);
       setShowColorGrid(selectedCount == highlightCount ? false : true);
     }
-  }
+  };
   useEffect(() => {
     setCurrentVisibleChapter(chapterNumber)
   }, [chapterNumber])
@@ -371,16 +371,18 @@ const LoginDataProvider = (props) => {
         doHighlight,
         addToShare,
         addToNotes,
-        setShowBottomBar, setShowColorGrid,
-        showColorGrid, showBottomBar,
-        selectedReferenceSet, setSelectedReferenceSet,
+        setShowBottomBar,
+        setShowColorGrid,
+        showColorGrid,
+        showBottomBar,
+        selectedReferenceSet,
+        setSelectedReferenceSet,
         getSelectedReferences,
         bottomHighlightText, setBottomHighlightText, bookmarkedChap
       }} >
       {props.children}
     </LoginData.Provider>
   );
-
 };
 
 const mapStateToProps = (state) => {
@@ -395,7 +397,6 @@ const mapStateToProps = (state) => {
     languageCode: state.updateVersion.languageCode,
     versionCode: state.updateVersion.versionCode,
     sourceId: state.updateVersion.sourceId,
-
   };
 };
 
