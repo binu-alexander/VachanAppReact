@@ -172,10 +172,10 @@ const LanguageList = (props) => {
         lanVer.length == 0
           ? []
           : lanVer.sort(function (a, b) {
-              var textA = a.languageName.toUpperCase();
-              var textB = b.languageName.toUpperCase();
-              return textA.localeCompare(textB);
-            });
+            var textA = a.languageName.toUpperCase();
+            var textB = b.languageName.toUpperCase();
+            return textA.localeCompare(textB);
+          });
       setLanguages(res);
     } catch (error) {
       console.log(error.message);
@@ -395,15 +395,15 @@ const LanguageList = (props) => {
     );
   };
 
-  useEffect(async () => {
-    await recallFunc();
+  useEffect(() => {
+    recallFunc();
     props.navigation.setOptions({
       headerLeft: () => (
         <HeaderBackButton tintColor={Color.White} onPress={onBack} />
       ),
     });
     if (prevBible != props.bibleContent) {
-      await recallFunc();
+      recallFunc();
     }
   }, [prevBible]);
   return (

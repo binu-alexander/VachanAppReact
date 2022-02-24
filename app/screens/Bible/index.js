@@ -228,20 +228,20 @@ const Bible = (props) => {
             var content = await vApi.get(url);
             if (content) {
               let header = getHeading(content.chapterContent.contents);
-              setIsLoading(false);
               setChapterHeader(header);
               setChapterContent(content.chapterContent.contents);
               setPreviousContent(content.previous);
               setNextContent(content.next);
+              setIsLoading(false);
             }
           } catch (error) {
-            setIsLoading(false);
             setChapterContent([]);
             setError(error);
             setUnAvailableContent(true);
+            setIsLoading(false);
           }
         }
-        setIsLoading(false);
+
         updateVersionBook({
           bookId: bId,
           bookName: bName,
@@ -254,7 +254,7 @@ const Bible = (props) => {
         getHighlights();
         getNotes();
         bookmarkedChap()
-
+        setIsLoading(false);
       } else {
         fetchVersionBooks({
           language: language,
@@ -264,10 +264,10 @@ const Bible = (props) => {
         });
       }
     } catch (error) {
-      setIsLoading(false);
       setChapterContent([]);
       setError(error);
       setUnAvailableContent(true);
+      setIsLoading(false);
     }
   };
 
@@ -366,7 +366,6 @@ const Bible = (props) => {
     }
   }
   useEffect(() => {
-    // setIsLoading(true)
     getChapter();
     audioComponentUpdate();
     bookmarkedChap()
@@ -378,7 +377,6 @@ const Bible = (props) => {
         sourceId: sourceId,
       });
     }
-    // setIsLoading(false)
   }, [
     language,
     sourceId,

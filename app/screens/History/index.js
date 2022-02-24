@@ -111,7 +111,7 @@ const History = (props) => {
       </View>
     );
   };
-  useEffect(async () => {
+  const fetchHighlightedData = async () => {
     setIsLoading(true);
     let historyData = await DbQueries.queryHistory();
     console.log(historyData, "data");
@@ -149,6 +149,9 @@ const History = (props) => {
       setHistoryLists(historyList);
       setIsLoading(false);
     }
+  }
+  useEffect(() => {
+    fetchHighlightedData()
   }, []);
   return (
     <View style={style.container}>

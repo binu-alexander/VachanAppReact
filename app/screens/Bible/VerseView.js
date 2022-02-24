@@ -130,11 +130,7 @@ const VerseView = (props) => {
       verseNumber: verse_num,
     });
   };
-  // useEffect(() => {
-  //   // console.log(" highlightedVerseArray  ..",highlightedVerseArray)
-  //   isHighlight()
-  //   isSelect()
-  // })
+
   // console.log(" highlightedVerseArray.length ",highlightedVerseArray,isHighlight() ? verseNumber : null)
   if (verseNumber == 1 && typeof verseNumber != "undefined") {
     return (

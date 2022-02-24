@@ -47,7 +47,6 @@ const CustomHeader = (props) => {
   });
   useEffect(() => {
     bookmarkedChap()
-    console.log("isBookmark ", isBookmark, bookmarksList)
   }, [bookmarksList])
 
   const navigateToVideo = () => {

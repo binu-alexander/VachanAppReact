@@ -17,8 +17,8 @@ const DrawerScreen = (props) => {
   const [currentVersion, setCurrentVersion] = useState("1.0.0")
   // let unsubscriber = null;
   const style = styles(props.colorFile, props.sizeFile);
-  useEffect(async () => {
-    let currentVersion = await VersionCheck.getCurrentVersion();
+  const onCurrentVersion = async () => {
+    let currentVer = await VersionCheck.getCurrentVersion()
     if (props.books.length == 0) {
       props.fetchVersionBooks({
         language: props.language,
@@ -27,8 +27,11 @@ const DrawerScreen = (props) => {
         sourceId: props.sourceId,
       });
     }
-    setCurrentVersion(currentVersion);
-  }, []);
+    setCurrentVersion(currentVer);
+  }
+  useEffect(() => {
+    onCurrentVersion()
+  }, [])
   const iconName = [
     {
       icon: "account-circle",

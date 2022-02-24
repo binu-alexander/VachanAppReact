@@ -83,7 +83,7 @@ const InfographicsImage = (props) => {
     translateX.setOffset(0);
     translateY.setOffset(0);
   };
-  useEffect(async () => {
+  const infographicsData = () => {
     props.navigation.setOptions({
       headerTitle: () => <Text style={style.headerTitle}>Image</Text>,
       headerRight: () => (
@@ -93,6 +93,9 @@ const InfographicsImage = (props) => {
       ),
     });
     setImage(url + fileName);
+  }
+  useEffect(() => {
+    infographicsData()
   }, []);
   let panRef = useRef();
   let rotationRef = useRef();

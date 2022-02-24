@@ -23,8 +23,8 @@ const EditNote = (props) => {
   const style = styles(props.colorFile, props.sizeFile);
 
   const saveNote = () => {
-    console.log("CONTENT BODU ",contentBody)
-    console.log("EDITOR DAATA ",editorData)
+    console.log("CONTENT BODU ", contentBody)
+    console.log("EDITOR DAATA ", editorData)
 
     var time = Date.now()
     var firebaseRef = database().ref(
@@ -35,13 +35,13 @@ const EditNote = (props) => {
     } else {
       var edit = database().ref(
         "users/" +
-          props.uid +
-          "/notes/" +
-          props.sourceId +
-          "/" +
-          bcvRef.bookId +
-          "/" +
-          bcvRef.chapterNumber
+        props.uid +
+        "/notes/" +
+        props.sourceId +
+        "/" +
+        bcvRef.bookId +
+        "/" +
+        bcvRef.chapterNumber
       );
       if (noteIndex != -1) {
         let updates = {};
@@ -148,7 +148,7 @@ const EditNote = (props) => {
   };
 
   const onHtmlChange = (html) => {
-    console.log("on html change ",html.html)
+    console.log("on html change ", html.html)
     setContentBody(html.html)
     setEditorData("hello")
   }
@@ -167,27 +167,27 @@ const EditNote = (props) => {
           Note
         </Text>
       ),
-      headerLeft: () => <HeaderBackButton tintColor={Color.White} onPress={()=>onBack()} />,
-      headerRight: () => <TouchableOpacity style={{ margin: 8 }} onPress={()=>saveNote()}>
-          <Text
-            style={{
-              fontSize: 16,
-              color: Color.White,
-              fontWeight: "700",
-              marginRight: 12,
-            }}
-          >
-            Save
-          </Text>
-        </TouchableOpacity>
+      headerLeft: () => <HeaderBackButton tintColor={Color.White} onPress={() => onBack()} />,
+      headerRight: () => <TouchableOpacity style={{ margin: 8 }} onPress={() => saveNote()}>
+        <Text
+          style={{
+            fontSize: 16,
+            color: Color.White,
+            fontWeight: "700",
+            marginRight: 12,
+          }}
+        >
+          Save
+        </Text>
+      </TouchableOpacity>
       ,
     });
   }, [contentBody])
-useEffect(()=>{
-console.log(" content body ",contentBody)
-},[contentBody])
+  // useEffect(()=>{
+  // console.log(" content body ",contentBody)
+  // },[contentBody])
   handleTextChange = (data) => {
-    console.log("handleTextChange ....",data)
+    console.log("handleTextChange ....", data)
     // setContentBody(data)
     // setEditorData(data)
   }

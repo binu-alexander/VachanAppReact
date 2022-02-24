@@ -317,7 +317,6 @@ const LoginDataProvider = (props) => {
     setCurrentVisibleChapter(chapterNumber)
   }, [chapterNumber])
   useEffect(() => {
-    console.log("isBookmark ", isBookmark, bookmarksList)
     bookmarkedChap()
   }, [bookmarksList])
   // const getOffset = (index) => {

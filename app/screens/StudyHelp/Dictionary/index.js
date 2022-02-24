@@ -12,7 +12,7 @@ const Infographics = (props) => {
   const [dictionaries, setDictionaries] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const style = styles(colorFile, sizeFile);
-  useEffect(async () => {
+  const dictionaryData = async () => {
     setIsLoading(true);
     try {
       const apiData = await vApi.get("dictionaries");
@@ -30,6 +30,9 @@ const Infographics = (props) => {
       console.log(error.message);
     }
     setIsLoading(false);
+  }
+  useEffect(() => {
+    dictionaryData()
   }, []);
   const emptyMessageNavigation = () => {
     props.navigation.navigate("Bible");
