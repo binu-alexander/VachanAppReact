@@ -38,10 +38,10 @@ const AnimatedVerseList = (props) => {
     getSelectedReferences,
     bottomHighlightText,
   } = useContext(LoginData);
-  const [gestureState, setGestureState] = useState('')
-  const [left, setLeft] = useState('')
-  const [top, setTop] = useState('')
-  const [thumbSize, setThumbSize] = useState('')
+  const [gestureState, setGestureState] = useState("");
+  const [left, setLeft] = useState("");
+  const [top, setTop] = useState("");
+  const [thumbSize, setThumbSize] = useState("");
   let pinchDiff = null;
   let pinchTime = new Date().getTime();
 
@@ -60,7 +60,7 @@ const AnimatedVerseList = (props) => {
   const _onMomentumScrollEnd = () => {
     const toValue =
       _scrollValue > NAVBAR_HEIGHT &&
-        _clampedScrollValue > (NAVBAR_HEIGHT - STATUS_BAR_HEIGHT) / 2
+      _clampedScrollValue > (NAVBAR_HEIGHT - STATUS_BAR_HEIGHT) / 2
         ? _offsetValue + NAVBAR_HEIGHT
         : _offsetValue - NAVBAR_HEIGHT;
 
@@ -77,7 +77,7 @@ const AnimatedVerseList = (props) => {
   const _onMomentumScrollBegin = () => {
     clearTimeout(_scrollEndTimer);
   };
-  changeSizeByOne = (value) => {
+  const changeSizeByOne = (value) => {
     changeSizeOnPinch(value, props.updateFontSize, props.colorFile, styles);
   };
   const ZoomTextSize = () => {
@@ -87,9 +87,9 @@ const AnimatedVerseList = (props) => {
         onStartShouldSetResponderCapture: () => true,
         onMoveShouldSetResponder: () => true,
         onMoveShouldSetResponderCapture: () => true,
-        onResponderGrant: () => { },
+        onResponderGrant: () => {},
         onResponderMove: (evt, gestureState) => {
-          let thumbS = thumbSize
+          let thumbS = thumbSize;
           if (gestureState.pinch && gestureState.previousPinch) {
             thumbS *= gestureState.pinch / gestureState.previousPinch;
             let currentDate = new Date().getTime();
@@ -108,21 +108,21 @@ const AnimatedVerseList = (props) => {
             pinchDiff = diff;
             pinchTime = currentDate;
           }
-          let lf = left
-          let tp = top
+          let lf = left;
+          let tp = top;
           lf += gestureState.moveX - gestureState.previousMoveX;
           tp += gestureState.moveY - gestureState.previousMoveY;
-          setGestureState(...gestureState)
-          setLeft(lf)
-          setTop(tp)
-          setThumbSize(thumbS)
+          setGestureState(...gestureState);
+          setLeft(lf);
+          setTop(tp);
+          setThumbSize(thumbS);
         },
         onResponderTerminationRequest: () => true,
         onResponderRelease: (gestureState) => {
-          setGestureState(...gestureState)
+          setGestureState(...gestureState);
         },
-        onResponderTerminate: (gestureState) => { },
-        onResponderSingleTapConfirmed: () => { },
+        onResponderTerminate: (gestureState) => {},
+        onResponderSingleTapConfirmed: () => {},
         moveThreshold: 2,
         debug: false,
       })
@@ -130,9 +130,9 @@ const AnimatedVerseList = (props) => {
       [];
   };
   useEffect(() => {
-    ZoomTextSize
-  }, [])
-  useEffect(() => { }, []);
+    ZoomTextSize;
+  }, []);
+  useEffect(() => {}, []);
   const renderFooter = () => {
     if (chapterContent.length === 0) {
       return null;
@@ -189,10 +189,10 @@ const AnimatedVerseList = (props) => {
         chapterContent.length === 0
           ? styles.centerEmptySet
           : {
-            paddingHorizontal: 16,
-            paddingTop: props.visibleParallelView ? 52 : 90,
-            paddingBottom: 90,
-          }
+              paddingHorizontal: 16,
+              paddingTop: props.visibleParallelView ? 52 : 90,
+              paddingBottom: 90,
+            }
       }
       scrollEventThrottle={1}
       onMomentumScrollBegin={_onMomentumScrollBegin}
