@@ -67,29 +67,38 @@ const Bible = (props) => {
     getNotes,
     getBookMarks,
     setConnection_Status,
-    setEmail, email,
-    setUid, uid,
+    setEmail,
+    email,
+    setUid,
+    uid,
     setShowBottomBar,
     setShowColorGrid,
-    getHighlights, bookmarkedChap,
-    setIsBookmark, bookmarksList
+    getHighlights,
+    bookmarkedChap,
+    setIsBookmark,
+    bookmarksList,
   } = useContext(LoginData);
   const {
-    setStatus, status,
+    setStatus,
+    status,
     setPreviousContent,
-    _handleAppStateChange, audioComponentUpdate, setAudio,
-    setNextContent, } = useContext(BibleContext)
+    _handleAppStateChange,
+    audioComponentUpdate,
+    setAudio,
+    setNextContent,
+  } = useContext(BibleContext);
   const offsetAnim = useRef(new Animated.Value(0)).current;
   const scrollAnim = useRef(new Animated.Value(0)).current;
   let _clampedScrollValue = useRef(new Animated.Value(0)).current;
   let _offsetValue = 0;
   let _scrollValue = 0;
   const clampedScroll = Animated.diffClamp(
-    Animated.add(scrollAnim.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, 1],
-      extrapolateLeft: "clamp",
-    }),
+    Animated.add(
+      scrollAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+        extrapolateLeft: "clamp",
+      }),
       offsetAnim
     ),
     0,
@@ -156,7 +165,18 @@ const Bible = (props) => {
         getDownloadedContent;
       } else {
         if (baseAPI != null) {
-          let url = "bibles" + "/" + sourceId + "/" + "books" + "/" + bookId + "/" + "chapter" + "/" + currentVisibleChapter
+          let url =
+            "bibles" +
+            "/" +
+            sourceId +
+            "/" +
+            "books" +
+            "/" +
+            bookId +
+            "/" +
+            "chapter" +
+            "/" +
+            currentVisibleChapter;
           var content = await vApi.get(url);
           if (content) {
             setReloadMessage("Loading....");
@@ -175,7 +195,7 @@ const Bible = (props) => {
         }
       }
     } catch (error) {
-      console.log("ERROR")
+      console.log("ERROR");
       setIsLoading(false);
       setError(error);
       setChapterHeader("");
@@ -223,7 +243,18 @@ const Bible = (props) => {
             getDownloadedContent();
           }
         } else {
-          let url = "bibles" + "/" + sId + "/" + "books" + "/" + bId + "/" + "chapter" + "/" + cNum
+          let url =
+            "bibles" +
+            "/" +
+            sId +
+            "/" +
+            "books" +
+            "/" +
+            bId +
+            "/" +
+            "chapter" +
+            "/" +
+            cNum;
           try {
             var content = await vApi.get(url);
             if (content) {
@@ -314,7 +345,7 @@ const Bible = (props) => {
       }
     });
     const subs = props.navigation.addListener("focus", () => {
-      console.log(" FOCUS ....")
+      console.log(" FOCUS ....");
       // setIsLoading(true)
       setSelectedReferenceSet([]);
       setShowBottomBar(false);
@@ -322,7 +353,7 @@ const Bible = (props) => {
       // setCurrentVisibleChapter(chapterNumber);
       setAudio(props.audio);
       setStatus(props.status);
-      getChapter()
+      getChapter();
       audioComponentUpdate();
       if (books.length == 0) {
         props.fetchVersionBooks({
@@ -354,21 +385,21 @@ const Bible = (props) => {
     };
   }, []);
 
-  curChapBookMrkd = () => {
+  const curChapBookMrkd = () => {
     if (bookmarksList.length > 0) {
       for (var i = 0; i < bookmarksList.length; i++) {
         if (bookmarksList[i] == currentVisibleChapter) {
-          setIsBookmark(true)
-          return
+          setIsBookmark(true);
+          return;
         }
       }
-      setIsBookmark(false)
+      setIsBookmark(false);
     }
-  }
+  };
   useEffect(() => {
     getChapter();
     audioComponentUpdate();
-    bookmarkedChap()
+    bookmarkedChap();
     if (books.length == 0) {
       props.fetchVersionBooks({
         language: language,
@@ -383,33 +414,36 @@ const Bible = (props) => {
     baseAPI,
     visibleParallelView,
     currentVisibleChapter,
-    bookId, email, uid
+    bookId,
+    email,
+    uid,
   ]);
 
   return (
     <BibleMainContext.Provider
-      value={[{
-        clampedScroll,
-        _clampedScrollValue,
-        navigation: props.navigation,
-        currentVisibleChapter,
-        chapterContent,
-        IconFloatingStyle: styles.IconFloatingStyle,
-        reloadMessage,
-        styles,
-        status,
-        chapterHeader,
-        scrollAnim,
-        offsetAnim,
-        unAvailableContent,
-        isLoading,
-        setIsLoading,
-        queryBookFromAPI,
-      },
+      value={[
+        {
+          clampedScroll,
+          _clampedScrollValue,
+          navigation: props.navigation,
+          currentVisibleChapter,
+          chapterContent,
+          IconFloatingStyle: styles.IconFloatingStyle,
+          reloadMessage,
+          styles,
+          status,
+          chapterHeader,
+          scrollAnim,
+          offsetAnim,
+          unAvailableContent,
+          isLoading,
+          setIsLoading,
+          queryBookFromAPI,
+        },
       ]}
     >
       <BibleMainComponent />
-    </BibleMainContext.Provider >
+    </BibleMainContext.Provider>
   );
 };
 const mapStateToProps = (state) => {

@@ -20,7 +20,7 @@ const HighlightColorGrid = () => {
           data={["#fffe00", "#5dff79", "#56f3ff", "#ffcaf7", "#ffc66f"]}
           numColumns={5}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={(e) => doHighlight(item)}>
+            <TouchableOpacity onPress={() => doHighlight(item)}>
               <View
                 style={{
                   backgroundColor: item,
