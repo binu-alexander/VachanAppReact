@@ -11,7 +11,6 @@ const BibleWrapper = (props) => {
       </BibleContextProvider>
     </LoginDataProvider>
   );
-
 };
 
 const mapStateToProps = (state) => {

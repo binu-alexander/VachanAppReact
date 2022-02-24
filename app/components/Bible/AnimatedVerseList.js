@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, useMemo } from "react";
 import { FlatList, Animated, View, Text, Platform } from "react-native";
 import { createResponder } from "react-native-gesture-responder";
 import VerseView from "../../screens/Bible/VerseView";
@@ -14,9 +14,7 @@ const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
 const AnimatedVerseList = (props) => {
   const arrLayout = [];
 
-  let _offsetValue = 0;
-  let _scrollValue = 0;
-  let gestureResponder, _scrollEndTimer;
+  let _scrollEndTimer, _offsetValue = 0, _scrollValue = 0;
 
   const [
     {
@@ -80,59 +78,95 @@ const AnimatedVerseList = (props) => {
   changeSizeByOne = (value) => {
     changeSizeOnPinch(value, props.updateFontSize, props.colorFile, styles);
   };
-  const ZoomTextSize = () => {
-    (gestureResponder = React.useRef(
-      createResponder({
-        onStartShouldSetResponder: () => true,
-        onStartShouldSetResponderCapture: () => true,
-        onMoveShouldSetResponder: () => true,
-        onMoveShouldSetResponderCapture: () => true,
-        onResponderGrant: () => { },
-        onResponderMove: (evt, gestureState) => {
-          let thumbS = thumbSize
-          if (gestureState.pinch && gestureState.previousPinch) {
-            thumbS *= gestureState.pinch / gestureState.previousPinch;
-            let currentDate = new Date().getTime();
-            //  pinchTime = new Date().getTime();
-            let diff = currentDate - pinchTime;
-            pinchDiff = null;
-            if (diff > pinchDiff) {
-              if (gestureState.pinch - gestureState.previousPinch > 5) {
-                // large
-                changeSizeByOne(1);
-              } else if (gestureState.previousPinch - gestureState.pinch > 5) {
-                // small
-                changeSizeByOne(-1);
-              }
-            }
-            pinchDiff = diff;
-            pinchTime = currentDate;
-          }
-          let lf = left
-          let tp = top
-          lf += gestureState.moveX - gestureState.previousMoveX;
-          tp += gestureState.moveY - gestureState.previousMoveY;
-          setGestureState(...gestureState)
-          setLeft(lf)
-          setTop(tp)
-          setThumbSize(thumbS)
-        },
-        onResponderTerminationRequest: () => true,
-        onResponderRelease: (gestureState) => {
-          setGestureState(...gestureState)
-        },
-        onResponderTerminate: (gestureState) => { },
-        onResponderSingleTapConfirmed: () => { },
-        moveThreshold: 2,
-        debug: false,
-      })
-    ).current),
-      [];
-  };
-  useEffect(() => {
-    ZoomTextSize
-  }, [])
-  useEffect(() => { }, []);
+
+  // const ZoomTextSize = () => {
+  //   (gestureResponder = React.useRef(
+  //     createResponder({
+  //       onStartShouldSetResponder: () => true,
+  //       onStartShouldSetResponderCapture: () => true,
+  //       onMoveShouldSetResponder: () => true,
+  //       onMoveShouldSetResponderCapture: () => true,
+  //       onResponderGrant: () => { },
+  //       onResponderMove: (evt, gestureState) => {
+  //         let thumbS = thumbSize
+  //         if (gestureState.pinch && gestureState.previousPinch) {
+  //           thumbS *= gestureState.pinch / gestureState.previousPinch;
+  //           let currentDate = new Date().getTime();
+  //           //  pinchTime = new Date().getTime();
+  //           let diff = currentDate - pinchTime;
+  //           pinchDiff = null;
+  //           if (diff > pinchDiff) {
+  //             if (gestureState.pinch - gestureState.previousPinch > 5) {
+  //               // large
+  //               changeSizeByOne(1);
+  //             } else if (gestureState.previousPinch - gestureState.pinch > 5) {
+  //               // small
+  //               changeSizeByOne(-1);
+  //             }
+  //           }
+  //           pinchDiff = diff;
+  //           pinchTime = currentDate;
+  //         }
+  //         let lf = left
+  //         let tp = top
+  //         lf += gestureState.moveX - gestureState.previousMoveX;
+  //         tp += gestureState.moveY - gestureState.previousMoveY;
+  //         setGestureState(...gestureState)
+  //         setLeft(lf)
+  //         setTop(tp)
+  //         setThumbSize(thumbS)
+  //       },
+  //       onResponderTerminationRequest: () => true,
+  //       onResponderRelease: (gestureState) => {
+  //         setGestureState(...gestureState)
+  //       },
+  //       onResponderTerminate: (gestureState) => { },
+  //       onResponderSingleTapConfirmed: () => { },
+  //       moveThreshold: 2,
+  //       debug: false,
+  //     })
+  //   ).current),
+  //     [];
+  // };
+  // const position = useRef(new Animated.ValueXY()).current;
+  // const gestureResponder = useMemo(() => React.useRef(
+  //   createResponder({
+  //     onStartShouldSetResponderCapture: (evt, gestureState) => true,
+  //     onResponderMove: (evt, gestureState) => {
+  //       console.log(" Resture handler ")
+  //       let thumbS = thumbSize
+  //       if (gestureState.pinch && gestureState.previousPinch) {
+  //         thumbS *= gestureState.pinch / gestureState.previousPinch;
+  //         let currentDate = new Date().getTime();
+  //         //  pinchTime = new Date().getTime();
+  //         let diff = currentDate - pinchTime;
+  //         pinchDiff = null;
+  //         if (diff > pinchDiff) {
+  //           if (gestureState.pinch - gestureState.previousPinch > 5) {
+  //             // large
+  //             changeSizeByOne(1);
+  //           } else if (gestureState.previousPinch - gestureState.pinch > 5) {
+  //             // small
+  //             changeSizeByOne(-1);
+  //           }
+  //         }
+  //         pinchDiff = diff;
+  //         pinchTime = currentDate;
+  //       }
+  //       let lf = left
+  //       let tp = top
+  //       lf += gestureState.moveX - gestureState.previousMoveX;
+  //       tp += gestureState.moveY - gestureState.previousMoveY;
+  //       setGestureState(...gestureState)
+  //       setLeft(lf)
+  //       setTop(tp)
+  //       setThumbSize(thumbS)
+  //     },
+  //     onResponderTerminate: (gestureState) => { },
+  //   }), []))
+  // useEffect(() => {
+  //   ZoomTextSize
+  // }, [])
   const renderFooter = () => {
     if (chapterContent.length === 0) {
       return null;
@@ -182,7 +216,7 @@ const AnimatedVerseList = (props) => {
   };
   return (
     <AnimatedFlatlist
-      {...gestureResponder}
+      // {...gestureResponder}
       data={chapterContent}
       // ref={(ref) => (this.verseScroll = ref)}
       contentContainerStyle={

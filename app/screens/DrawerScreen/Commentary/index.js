@@ -301,8 +301,7 @@ const DrawerCommentary = (props) => {
     });
   }, []);
   useEffect(() => {
-    setParallelLanguage(props.parallelLanguage);
-    setParallelMetaData(props.parallelMetaData);
+    console.log(" SOURCE ID ", parallelLanguage.languageName)
     props.navigation.setOptions({
       headerRight: () => (
         <View style={style.headerView}>
@@ -310,7 +309,7 @@ const DrawerCommentary = (props) => {
             navigation={props.navigation}
             navStyles={navStyles}
             iconName={"arrow-drop-down"}
-            title={props.parallelLanguage.languageName}
+            title={parallelLanguage.languageName}
             displayContent="commentary"
           />
         </View>
@@ -324,7 +323,7 @@ const DrawerCommentary = (props) => {
   ]);
   useEffect(() => {
     commentaryUpdate();
-    updateBookName();
+
   }, [
     JSON.stringify(props.commentaryContent),
     parallelLanguage.sourceId,
@@ -344,7 +343,9 @@ const DrawerCommentary = (props) => {
       _dropdown_1.select(selectedBookIndex);
     }
   }, [JSON.stringify(dropDownList), selectedBookIndex]);
-
+  useEffect(() => {
+    updateBookName();
+  }, [bookResponse])
   return (
     <View style={style.container}>
       {props.error ? (

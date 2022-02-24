@@ -27,10 +27,7 @@ const BibleContextProvider = (props) => {
   const [nextContent, setNextContent] = useState("");
   const [previousContent, setPreviousContent] = useState("");
   const [audio, setAudio] = useState(false);
-  const { sourceId,
-    language,
-    languageCode,
-    versionCode, downloaded } = props
+  const { sourceId, language, languageCode, versionCode, downloaded } = props
   const { currentVisibleChapter, setCurrentVisibleChapter, setSelectedReferenceSet, setShowBottomBar, setShowColorGrid } = useContext(LoginData)
   const navigateToSelectionTab = () => {
     setStatus(false);
@@ -45,7 +42,6 @@ const BibleContextProvider = (props) => {
     props.navigation.navigate("LanguageList", { updateLangVer: updateLangVer });
   };
   const getReference = async (item) => {
-    console.log("ITEM ", item)
     setSelectedReferenceSet([]);
     setShowBottomBar(false);
     setShowColorGrid(false);

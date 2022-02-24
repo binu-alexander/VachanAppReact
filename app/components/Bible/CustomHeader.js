@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import {
   View,
   Animated,
@@ -27,10 +27,12 @@ const CustomHeader = (props) => {
     chapterContent,
   },
   ] = useContext(BibleMainContext);
-
   const {
     currentVisibleChapter,
     isBookmark,
+    setIsBookmark,
+    bookmarksList,
+    bookmarkedChap,
     onBookmarkPress,
   } = useContext(LoginData);
   const { navigateToLanguage,
@@ -43,6 +45,11 @@ const CustomHeader = (props) => {
     outputRange: [0, -NAVBAR_HEIGHT],
     extrapolate: "clamp",
   });
+  useEffect(() => {
+    bookmarkedChap()
+    console.log("isBookmark ", isBookmark, bookmarksList)
+  }, [bookmarksList])
+
   const navigateToVideo = () => {
     setStatus(false);
     navigation.navigate("Video");
@@ -154,9 +161,7 @@ const CustomHeader = (props) => {
         </TouchableOpacity>
         <TouchableOpacity style={navStyles.touchableStyleRight}>
           <Icon
-            onPress={() => {
-              onBookmarkPress(isBookmark);
-            }}
+            onPress={() => onBookmarkPress(isBookmark)}
             name="bookmark"
             color={isBookmark ? Color.Red : Color.White}
             size={24}

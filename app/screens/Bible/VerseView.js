@@ -23,14 +23,7 @@ const VerseView = (props) => {
   let sectionHeading = downloaded
     ? verseData.section
     : props.sectionHeading;
-  let obj =
-    currentVisibleChapter +
-    "_" +
-    index +
-    "_" +
-    verseNumber +
-    "_" +
-    verseText;
+  let obj = currentVisibleChapter + "_" + index + "_" + verseNumber + "_" + verseText;
   const onPress = () => {
     let verseNumber = downloaded
       ? verseData.number
@@ -66,10 +59,7 @@ const VerseView = (props) => {
   };
 
   const isHighlight = () => {
-    let verseNumber = downloaded
-      ? verseData.number
-      : verseData.verseNumber;
-
+    let verseNumber = downloaded ? verseData.number : verseData.verseNumber;
     for (var i = 0; i <= highlightedVerseArray.length; i++) {
       if (highlightedVerseArray[i]) {
         let regexMatch = /(\d+):([a-zA-Z]+)/;

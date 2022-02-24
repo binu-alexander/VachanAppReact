@@ -28,8 +28,8 @@ const SelectContent = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   let alertPresent = false;
   let style = styles(props.colorFile, props.sizeFile);
-  
-  const innerContent = (item,v,parallel)=>{
+
+  const innerContent = (item, v, parallel) => {
     setModalVisible(false)
     props.parallelVisibleView({
       modalVisible: false,
@@ -62,7 +62,7 @@ const SelectContent = (props) => {
                 {" "}
                 {item.contentType == props.displayContent &&
                   item.contentType.charAt(0).toUpperCase() +
-                    item.contentType.slice(1)}
+                  item.contentType.slice(1)}
               </Text>
               <Icon
                 style={style.iconStyleSelection}
@@ -126,7 +126,7 @@ const SelectContent = (props) => {
         contentType == props.displayContent && (
           <TouchableOpacity
             style={style.selectionInnerContent}
-            onPress={()=>innerContent(item,v,false)}
+            onPress={() => innerContent(item, v, false)}
           >
             <Text style={style.selectionHeaderModal}>{v.versionName}</Text>
             <Text style={style.selectionHeaderModal}>{v.versionCode}</Text>
@@ -135,7 +135,7 @@ const SelectContent = (props) => {
       ) : (
         <TouchableOpacity
           style={style.selectionInnerContent}
-          onPress={()=>innerContent(item,v,true)}
+          onPress={() => innerContent(item, v, true)}
         >
           <Text style={style.selectionHeaderModal}>{v.versionName}</Text>
           <Text style={style.selectionHeaderModal}>{v.versionCode}</Text>
@@ -204,7 +204,7 @@ const SelectContent = (props) => {
         <View>
           <TouchableWithoutFeedback
             style={style.modalContainer}
-            onPressOut={() =>  setModalVisible(false)}
+            onPressOut={() => setModalVisible(false)}
           >
             <View
               style={{ height: "80%", width: "70%", alignSelf: "flex-end" }}

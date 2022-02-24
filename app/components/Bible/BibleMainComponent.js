@@ -21,15 +21,14 @@ const width = Dimensions.get("window").width;
 
 const BibleMainComponent = (props) => {
   const { contentType, bookName, visibleParallelView } = props;
-  const [
-    {
-      styles,
-      chapterContent,
-      queryBookFromAPI,
-      unAvailableContent,
-      reloadMessage,
-      isLoading,
-    },
+  const [{
+    styles,
+    chapterContent,
+    queryBookFromAPI,
+    unAvailableContent,
+    reloadMessage,
+    isLoading,
+  },
   ] = useContext(BibleMainContext);
   const {
     currentVisibleChapter,

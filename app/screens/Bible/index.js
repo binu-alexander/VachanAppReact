@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import { AppState, Animated, Platform } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
-
 import DbQueries from "../../utils/dbQueries";
 import {
   APIAudioURL,
@@ -72,7 +71,8 @@ const Bible = (props) => {
     setUid, uid,
     setShowBottomBar,
     setShowColorGrid,
-    getHighlights,
+    getHighlights, bookmarkedChap,
+    setIsBookmark, bookmarksList
   } = useContext(LoginData);
   const {
     setStatus, status,
@@ -253,7 +253,8 @@ const Bible = (props) => {
         });
         getHighlights();
         getNotes();
-        getBookMarks();
+        bookmarkedChap()
+
       } else {
         fetchVersionBooks({
           language: language,
@@ -290,7 +291,6 @@ const Bible = (props) => {
     });
 
     const unsubscriber = auth().onAuthStateChanged((user) => {
-      console.log("EMAIL ", user)
       if (user) {
         setEmail(user._user.email);
         setUid(user._user.uid);
@@ -353,10 +353,23 @@ const Bible = (props) => {
       unsubscriber;
     };
   }, []);
+
+  curChapBookMrkd = () => {
+    if (bookmarksList.length > 0) {
+      for (var i = 0; i < bookmarksList.length; i++) {
+        if (bookmarksList[i] == currentVisibleChapter) {
+          setIsBookmark(true)
+          return
+        }
+      }
+      setIsBookmark(false)
+    }
+  }
   useEffect(() => {
     // setIsLoading(true)
     getChapter();
     audioComponentUpdate();
+    bookmarkedChap()
     if (books.length == 0) {
       props.fetchVersionBooks({
         language: language,
