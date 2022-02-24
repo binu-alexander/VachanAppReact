@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Modal,
   Text,
@@ -30,11 +30,11 @@ const SelectContent = (props) => {
   let style = styles(props.colorFile, props.sizeFile);
 
   const innerContent = (item, v, parallel) => {
-    setModalVisible(false)
+    setModalVisible(false);
     props.parallelVisibleView({
       modalVisible: false,
-      visibleParallelView: modalVisible == true && parallel
-    })
+      visibleParallelView: modalVisible == true && parallel,
+    });
     props.selectContent({
       parallelLanguage: {
         languageName: item.languageName,
@@ -42,11 +42,11 @@ const SelectContent = (props) => {
         sourceId: v.sourceId,
       },
       parallelMetaData: v.metaData[0],
-    })
+    });
     props.updateContentType({
       parallelContentType: contentType,
-    })
-  }
+    });
+  };
   const _renderHeader = (item, expanded) => {
     var value = expanded && item.contentType;
     if (value) {
@@ -62,7 +62,7 @@ const SelectContent = (props) => {
                 {" "}
                 {item.contentType == props.displayContent &&
                   item.contentType.charAt(0).toUpperCase() +
-                  item.contentType.slice(1)}
+                    item.contentType.slice(1)}
               </Text>
               <Icon
                 style={style.iconStyleSelection}
