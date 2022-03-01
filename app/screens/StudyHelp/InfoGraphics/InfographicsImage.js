@@ -93,7 +93,7 @@ const InfographicsImage = (props) => {
       ),
     });
     setImage(url + fileName);
-  }, []);
+  }, [_baseScale]);
   let panRef = useRef();
   let rotationRef = useRef();
   let pinchRef = useRef();

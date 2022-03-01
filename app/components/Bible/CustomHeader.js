@@ -21,22 +21,22 @@ import { BibleContext } from "../../context/BibleContextProvider";
 import { LoginData } from "../../context/LoginDataProvider";
 
 const CustomHeader = (props) => {
-  const [{
-    clampedScroll,
-    navigation,
-    chapterContent,
-  },
-  ] = useContext(BibleMainContext);
+  const [{ clampedScroll, navigation, chapterContent }] =
+    useContext(BibleMainContext);
   const {
     currentVisibleChapter,
     isBookmark,
-    setIsBookmark,
     bookmarksList,
     bookmarkedChap,
     onBookmarkPress,
   } = useContext(LoginData);
-  const { navigateToLanguage,
-    navigateToSelectionTab, toggleAudio, audio, setStatus } = useContext(BibleContext)
+  const {
+    navigateToLanguage,
+    navigateToSelectionTab,
+    toggleAudio,
+    audio,
+    setStatus,
+  } = useContext(BibleContext);
   let bookName = !isNaN(props.bookName.charAt(0))
     ? props.bookName.charAt(0).toUpperCase() + props.bookName.slice(1)
     : props.bookName;
@@ -46,9 +46,9 @@ const CustomHeader = (props) => {
     extrapolate: "clamp",
   });
   useEffect(() => {
-    bookmarkedChap()
-    console.log("isBookmark ", isBookmark, bookmarksList)
-  }, [bookmarksList])
+    bookmarkedChap();
+    console.log("isBookmark ", isBookmark, bookmarksList);
+  }, [bookmarksList]);
 
   const navigateToVideo = () => {
     setStatus(false);
@@ -56,14 +56,14 @@ const CustomHeader = (props) => {
   };
   const navigateToImage = () => {
     setStatus(false);
-    navigation.navigate("Infographics",);
+    navigation.navigate("Infographics");
   };
   const navigateToSettings = () => {
     setStatus(false);
     navigation.navigate("Settings");
   };
   const downloadPDF = async () => {
-    setIsLoading(true);
+    // setIsLoading(true);
     var texttohtml = "";
     chapterContent.forEach((val) => {
       if (val.verseNumber != undefined && val.verseText != undefined) {
@@ -74,19 +74,20 @@ const CustomHeader = (props) => {
     let header3 = `<h3>${props.bookName + " " + currentVisibleChapter}</h3>`;
     let options = {
       html: `${header1}${header3}<p>${texttohtml}</p>`,
-      fileName: `${"VachanGo_" +
+      fileName: `${
+        "VachanGo_" +
         props.language +
         "_" +
         props.bookId +
         "_" +
         currentVisibleChapter
-        }`,
+      }`,
       // eslint-disable-next-line no-constant-condition
       directory: "Download" ? "Download" : "Downloads",
     };
     await RNHTMLtoPDF.convert(options);
     Toast.show({ text: "Pdf downloaded.", type: "success", duration: 5000 });
-    setIsLoading(false);
+    // setIsLoading(false);
   };
   const createPDF = async () => {
     let permissionGranted = await AndroidPermission(
@@ -201,7 +202,7 @@ const CustomHeader = (props) => {
           <Text style={navStyles.langVer}>
             {props.language &&
               props.language.charAt(0).toUpperCase() +
-              props.language.slice(1)}{" "}
+                props.language.slice(1)}{" "}
             {props.versionCode && props.versionCode.toUpperCase()}
           </Text>
           <Icon name="arrow-drop-down" color={Color.White} size={20} />
