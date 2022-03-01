@@ -105,7 +105,7 @@ const BookMarks = (props) => {
           <Text style={style.bookmarksText}>
             {props.languageName &&
               props.languageName.charAt(0).toUpperCase() +
-                props.languageName.slice(1)}{" "}
+              props.languageName.slice(1)}{" "}
             {props.versionCode && props.versionCode.toUpperCase()} {bookName}{" "}
             {e}
           </Text>

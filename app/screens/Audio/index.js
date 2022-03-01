@@ -9,6 +9,7 @@ import ListContainer from "../../components/Common/FlatList";
 const Audio = (props) => {
   const styles = style(props.colorFile, props.sizeFile);
   const [allAudioBooks, setAllAudioBooks] = useState([]);
+  const [message, setMessage] = useState('')
   const navigateToBible = (bId, bookName, chapterNum) => {
     props.updateVersionBook({
       bookId: bId,
@@ -51,7 +52,12 @@ const Audio = (props) => {
         let temp = allBooks.find((item) => item.bookId === arrayBooks[i]);
         allAudioBook.push(temp);
       }
-      setAllAudioBooks(allAudioBook);
+      if (allAudioBook.length == 0) {
+        setMessage(`Audio for ${props.language} not available`)
+      } else {
+        setAllAudioBooks(allAudioBook)
+        setMessage('')
+      }
     }
   }, []);
 
@@ -65,7 +71,7 @@ const Audio = (props) => {
         iconStyle={styles.emptyMessageIcon}
         containerStyle={styles.emptyMessageContainer}
         textStyle={styles.messageEmpty}
-        message={`Audio for ${props.language} not available`}
+        message={message}
         onPress={emptyMessageNavigation}
       />
     </View>

@@ -16,10 +16,9 @@ import {
 } from "../store/action";
 import { LoginData } from "./LoginDataProvider";
 import DbQueries from "../utils/dbQueries";
-import { updateLangVersion } from "../utils/BiblePageUtil";
 import { Toast } from "native-base";
 import vApi from "../utils/APIFetch";
-
+import { updateLangVersion } from "../utils/BiblePageUtil";
 export const BibleContext = createContext();
 
 const BibleContextProvider = (props) => {

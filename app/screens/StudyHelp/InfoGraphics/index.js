@@ -6,6 +6,7 @@ import { styles } from "./styles.js";
 import { Toast } from "native-base";
 import vApi from "../../../utils/APIFetch";
 import ListContainer from "../../../components/Common/FlatList.js";
+import { set } from "lodash";
 
 const Infographics = (props) => {
   const bookId = props.route.params ? props.route.params.bookId : null;
@@ -13,6 +14,7 @@ const Infographics = (props) => {
   const [infographics, setInfographics] = useState([]);
   const [url, setUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('')
   const prevBooks = useRef(props.books).current;
   const style = styles(props.colorFile, props.sizeFile);
   const fetchInfographics = async () => {
@@ -30,6 +32,8 @@ const Infographics = (props) => {
       }
       if (found) {
         setInfographics(infographicsBook);
+        setMessage('')
+
         setUrl(apiData.url);
       } else {
         if (bookId) {
@@ -45,6 +49,8 @@ const Infographics = (props) => {
         setInfographics(apiData.books);
         setUrl(apiData.url);
       }
+    } else {
+      setMessage("No Infographics for" + props.languageName)
     }
   };
   const gotoImage = (item) => {
@@ -88,6 +94,7 @@ const Infographics = (props) => {
     if (prevBooks.length != props.books.length) {
       fetchInfographics();
     }
+
   }, [prevBooks, props.books, infographics]);
   return (
     <View style={style.container}>
@@ -106,7 +113,7 @@ const Infographics = (props) => {
           icon="image"
           iconStyle={style.emptyMessageIcon}
           textStyle={style.messageEmpty}
-          message={`No Infographics for ${props.languageName}`}
+          message={message}
           onPress={emptyMessageNavigation}
         />
       )}

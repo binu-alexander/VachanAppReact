@@ -10,16 +10,17 @@ import {
 } from "./dimens.js";
 import Color from "./colorConstants";
 import { getBookChaptersFromMapping } from "./UtilFunctions";
-
+import { style } from "../screens/Bible/style";
 export function updateLangVersion(
   setMetadata,
   setVersion,
   setVersionBook,
-  setVersionBooks,
+  fetchVersionBooks,
   currentVisibleChapter,
   item
 ) {
   if (item) {
+    console.log("HI updateLangVersion")
     let bookName = null;
     let bookId = null;
     let bookItem = item.books.filter((i) => i.bookId == bookId);
@@ -67,12 +68,12 @@ export function updateLangVersion(
       chapterNumber: chapterNum,
       totalChapters: getBookChaptersFromMapping(bookId),
     });
-    setVersionBooks({
+    fetchVersionBooks({
       language: item.languageName,
       versionCode: item.versionCode,
       downloaded: item.downloaded,
       sourceId: item.sourceId,
-    });
+    })
     var time = new Date();
     DbQueries.addHistory(
       item.sourceId,
@@ -89,47 +90,48 @@ export function updateLangVersion(
     return;
   }
 }
-export function changeSizeOnPinch(value, updateFontSize, colorFile, styles) {
-  switch (props.sizeMode) {
+export function changeSizeOnPinch(value, updateFontSize, colorFile, sizeMode) {
+  console.log("VALUE ", value)
+  switch (sizeMode) {
     case 0: {
       if (value == -1) {
         return;
       } else {
         updateFontSize(1);
-        return styles(colorFile, smallFont);
+        return style(colorFile, smallFont);
       }
     }
     case 1: {
       if (value == -1) {
         updateFontSize(0);
-        return styles(colorFile, extraSmallFont);
+        return style(colorFile, extraSmallFont);
       } else {
         updateFontSize(2);
-        return styles(colorFile, mediumFont);
+        return style(colorFile, mediumFont);
       }
     }
     case 2: {
       if (value == -1) {
         updateFontSize(1);
-        return styles(colorFile, smallFont);
+        return style(colorFile, smallFont);
       } else {
         updateFontSize(3);
-        return styles(colorFile, largeFont);
+        return style(colorFile, largeFont);
       }
     }
     case 3: {
       if (value == -1) {
         updateFontSize(2);
-        return styles(colorFile, mediumFont);
+        return style(colorFile, mediumFont);
       } else {
         updateFontSize(4);
-        return styles(colorFile, extraLargeFont);
+        return style(colorFile, extraLargeFont);
       }
     }
     case 4: {
       if (value == -1) {
         updateFontSize(3);
-        return styles(colorFile, largeFont);
+        return style(colorFile, largeFont);
       } else {
         return;
       }

@@ -15,6 +15,7 @@ const Video = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const style = styles(props.colorFile, props.sizeFile);
   const prevBooks = useRef(props.books).current;
+  const [message, setMessage] = useState('')
   const fetchVideo = async () => {
     setIsLoading(true);
     const videosRes = await vApi.get("videos?language=" + props.languageCode);
@@ -48,6 +49,7 @@ const Video = (props) => {
       }
       if (found) {
         setVideos(videoBook);
+        setMessage("")
         setIsLoading(false);
       } else {
         if (bookId) {
@@ -77,8 +79,11 @@ const Video = (props) => {
           return previous;
         }, []);
         setVideos(elements);
+        setMessage("")
         setIsLoading(false);
       }
+    } else {
+      setMessage("No Video for ", props.languageName)
     }
   };
   const playVideo = (val) => {
@@ -125,7 +130,7 @@ const Video = (props) => {
         icon="video-library"
         iconStyle={style.emptyMessageIcon}
         textStyle={style.messageEmpty}
-        message={`No Video for ${props.languageName}`}
+        message={message}
         onPress={emptyMessageNavigation}
       />
     </View>

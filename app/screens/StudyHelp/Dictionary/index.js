@@ -12,6 +12,7 @@ const Infographics = (props) => {
   const [dictionaries, setDictionaries] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const style = styles(colorFile, sizeFile);
+  const [message, setMessage] = useState('')
   const dictionaryData = async () => {
     setIsLoading(true);
     try {
@@ -23,8 +24,11 @@ const Infographics = (props) => {
             languageName.toLowerCase()
           ) {
             setDictionaries(apiData[i].dictionaries);
+            setMessage('')
           }
         }
+      } else {
+        setMessage(`No Dictionary for ${props.languageName}`)
       }
     } catch (error) {
       console.log(error.message);
@@ -77,7 +81,7 @@ const Infographics = (props) => {
           iconStyle={style.emptyMessageIcon}
           containerStyle={style.emptyMessageContainer}
           textStyle={style.messageEmpty}
-          message={`No Dictionary for ${props.languageName}`}
+          message={message}
           onPress={emptyMessageNavigation}
         />
       )}

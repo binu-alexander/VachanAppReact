@@ -51,6 +51,7 @@ function* fetchVersionBooks(params) {
     const state = store.getState();
     const payload = params.payload;
     let bookListData = [];
+    console.log(" FETCH VERSION BOOKS ")
     if (payload.downloaded) {
       var response = yield DbQueries.getDownloadedBook(payload.language);
       for (var i = 0; i <= response.length - 1; i++) {
@@ -106,8 +107,8 @@ function* fetchVersionBooks(params) {
       bookListData.length == 0
         ? []
         : bookListData.sort(function (a, b) {
-            return a.bookNumber - b.bookNumber;
-          });
+          return a.bookNumber - b.bookNumber;
+        });
     yield put(versionBooksSuccess(res));
     yield put(versionBooksFailure(null));
   } catch (e) {

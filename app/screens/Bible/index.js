@@ -385,17 +385,6 @@ const Bible = (props) => {
     };
   }, []);
 
-  const curChapBookMrkd = () => {
-    if (bookmarksList.length > 0) {
-      for (var i = 0; i < bookmarksList.length; i++) {
-        if (bookmarksList[i] == currentVisibleChapter) {
-          setIsBookmark(true);
-          return;
-        }
-      }
-      setIsBookmark(false);
-    }
-  };
   useEffect(() => {
     getChapter();
     audioComponentUpdate();
@@ -416,9 +405,19 @@ const Bible = (props) => {
     currentVisibleChapter,
     bookId,
     email,
-    uid,
+    uid
   ]);
-
+  useEffect(() => {
+    props.fetchVersionBooks({
+      language: language,
+      versionCode: versionCode,
+      downloaded: downloaded,
+      sourceId: sourceId,
+    });
+  }, [language,
+    sourceId,
+    baseAPI,])
+  // console.log("BOOKS ", books)
   return (
     <BibleMainContext.Provider
       value={[
