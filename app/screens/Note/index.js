@@ -48,10 +48,12 @@ const Note = (props) => {
   const fetchNotes = () => {
     setIsLoading(true);
     if (email) {
+      setIsLoading(true);
       var firebaseRef = database().ref(
         "users/" + props.uid + "/notes/" + props.sourceId
       );
       firebaseRef.once("value", (snapshot) => {
+        setIsLoading(true);
         if (snapshot.val() === null) {
           setNotesData([]);
           setMessage("No Note for " + props.languageName);
@@ -118,7 +120,7 @@ const Note = (props) => {
 
   useEffect(() => {
     fetchNotes();
-  }, [email, message]);
+  }, [email]);
   const renderItem = ({ item, index }) => {
     var bookName = null;
     if (props.books) {
@@ -182,10 +184,10 @@ const Note = (props) => {
       ));
     return <View>{bookName && value}</View>;
   };
-
+  console.log(isLoading);
   return (
     <View style={style.container}>
-      {isLoading ? (
+      {isLoading && message.length != 0 ? (
         <ActivityIndicator
           size="small"
           color={Colors.Blue_Color}
@@ -199,7 +201,7 @@ const Note = (props) => {
                 ? this.styles.centerEmptySet
                 : this.styles.noteFlatlistCustom
             }
-            data={this.state.notesData}
+            data={this.state.notesData}listData
             renderItem={this.renderItem}
             ListEmptyComponent={
               <View style={this.styles.emptyMessageContainer}>

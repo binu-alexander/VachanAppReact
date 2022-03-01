@@ -75,8 +75,6 @@ const Bible = (props) => {
     setShowColorGrid,
     getHighlights,
     bookmarkedChap,
-    setIsBookmark,
-    bookmarksList,
   } = useContext(LoginData);
   const {
     setStatus,
@@ -177,6 +175,7 @@ const Bible = (props) => {
             "chapter" +
             "/" +
             currentVisibleChapter;
+          console.log(" get chapter ", sourceId, bookId, currentVisibleChapter)
           var content = await vApi.get(url);
           if (content) {
             setReloadMessage("Loading....");
@@ -187,15 +186,12 @@ const Bible = (props) => {
             setError(null);
             setNextContent(content.next);
             setPreviousContent(content.previous);
-            getHighlights();
-            getNotes();
-            getBookMarks();
             setIsLoading(false);
           }
         }
       }
     } catch (error) {
-      console.log("ERROR");
+      console.log("ERROR ", error);
       setIsLoading(false);
       setError(error);
       setChapterHeader("");
@@ -282,9 +278,6 @@ const Bible = (props) => {
               : parseInt(cNum),
           totalChapters: getBookChaptersFromMapping(bId),
         });
-        getHighlights();
-        getNotes();
-        bookmarkedChap()
         setIsLoading(false);
       } else {
         fetchVersionBooks({
@@ -346,11 +339,9 @@ const Bible = (props) => {
     });
     const subs = props.navigation.addListener("focus", () => {
       console.log(" FOCUS ....");
-      // setIsLoading(true)
       setSelectedReferenceSet([]);
       setShowBottomBar(false);
       setShowColorGrid(false);
-      // setCurrentVisibleChapter(chapterNumber);
       setAudio(props.audio);
       setStatus(props.status);
       getChapter();
@@ -388,7 +379,6 @@ const Bible = (props) => {
   useEffect(() => {
     getChapter();
     audioComponentUpdate();
-    bookmarkedChap();
     if (books.length == 0) {
       props.fetchVersionBooks({
         language: language,
@@ -402,10 +392,7 @@ const Bible = (props) => {
     sourceId,
     baseAPI,
     visibleParallelView,
-    currentVisibleChapter,
     bookId,
-    email,
-    uid
   ]);
   useEffect(() => {
     props.fetchVersionBooks({
@@ -417,7 +404,6 @@ const Bible = (props) => {
   }, [language,
     sourceId,
     baseAPI,])
-  // console.log("BOOKS ", books)
   return (
     <BibleMainContext.Provider
       value={[

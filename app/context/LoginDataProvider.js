@@ -9,7 +9,8 @@ export const LoginData = createContext();
 
 // try with add login data provider here
 const LoginDataProvider = (props) => {
-  const { bookName, bookId, sourceId, versionCode, language, chapterNumber } = props
+  const { bookName, bookId, sourceId, versionCode, language, chapterNumber } =
+    props;
 
   const [connection_Status, setConnection_Status] = useState(true);
   const [notesList, setNotesList] = useState([]);
@@ -18,11 +19,13 @@ const LoginDataProvider = (props) => {
   const [email, setEmail] = useState(props.email);
   const [uid, setUid] = useState(props.userId);
   const [highlightedVerseArray, setHighlightedVerseArray] = useState([]);
-  const [currentVisibleChapter, setCurrentVisibleChapter] = useState(chapterNumber);
+  const [currentVisibleChapter, setCurrentVisibleChapter] =
+    useState(chapterNumber);
   const [selectedReferenceSet, setSelectedReferenceSet] = useState([]);
   const [showBottomBar, setShowBottomBar] = useState("");
   const [bottomHighlightText, setBottomHighlightText] = useState(false);
   const [showColorGrid, setShowColorGrid] = useState("");
+  // const [isLoading, setIsLoading] = useState(false);
   // check internet connection to fetch api's accordingly
 
   const getNotes = () => {
@@ -59,7 +62,7 @@ const LoginDataProvider = (props) => {
   };
 
   const getHighlights = () => {
-    console.log("EMAIL UID ", email, uid);
+
     if (connection_Status) {
       if (email && uid) {
         database()
@@ -75,6 +78,8 @@ const LoginDataProvider = (props) => {
           )
           .on("value", (snapshot) => {
             console.log(" SNAP SHOT VALUE ", snapshot.val());
+
+
             let VerseArray = [];
             if (snapshot.val() != null) {
               let value = snapshot.val();
@@ -87,6 +92,7 @@ const LoginDataProvider = (props) => {
                 }
               }
             }
+            console.log(" verseArray ", VerseArray);
             setHighlightedVerseArray(VerseArray);
           });
       } else {
@@ -100,58 +106,64 @@ const LoginDataProvider = (props) => {
   const getBookMarks = () => {
     if (connection_Status) {
       if (email) {
-        database().ref("users/" + uid + "/bookmarks/" + sourceId + "/" + bookId)
+        database()
+          .ref("users/" + uid + "/bookmarks/" + sourceId + "/" + bookId)
           .on("value", (snapshot) => {
-            console.log("BOOK MARKS ", snapshot.val())
             if (snapshot.val() === null) {
-              setBookmarksList([])
-              setIsBookmark(false)
+              setBookmarksList([]);
+              setIsBookmark(false);
             } else {
-              setBookmarksList(snapshot.val())
-              // bookmarkedChap()
+              setBookmarksList(snapshot.val());
             }
           });
       } else {
-        setBookmarksList([])
-        setIsBookmark(false)
+        setBookmarksList([]);
+        setIsBookmark(false);
       }
     } else {
-      setBookmarksList([])
-      setIsBookmark(false)
+      setBookmarksList([]);
+      setIsBookmark(false);
     }
-  }
+  };
   const bookmarkedChap = () => {
     if (bookmarksList.length > 0) {
       for (var i = 0; i < bookmarksList.length; i++) {
         if (bookmarksList[i] == currentVisibleChapter) {
-          setIsBookmark(true)
+          setIsBookmark(true);
           return;
         }
       }
-      setIsBookmark(false)
+      setIsBookmark(false);
     }
-    setIsBookmark(false)
+    setIsBookmark(false);
   };
 
   //add book mark from header icon
   const onBookmarkPress = (isbkmark) => {
     if (connection_Status) {
       if (email) {
-        var newBookmarks = isbkmark ? bookmarksList.filter((a) => a !== currentVisibleChapter) : bookmarksList.concat(currentVisibleChapter);
-        database().ref("users/" + uid + "/bookmarks/" + sourceId + "/" + bookId).set(newBookmarks);
-        setBookmarksList(newBookmarks)
-        setIsBookmark(!isbkmark)
-        Toast.show({ text: isbkmark ? "Bookmarked chapter removed" : "Chapter bookmarked", type: isbkmark ? "default" : "success", duration: 5000, });
+        var newBookmarks = isbkmark
+          ? bookmarksList.filter((a) => a !== currentVisibleChapter)
+          : bookmarksList.concat(currentVisibleChapter);
+        database()
+          .ref("users/" + uid + "/bookmarks/" + sourceId + "/" + bookId)
+          .set(newBookmarks);
+        setBookmarksList(newBookmarks);
+        setIsBookmark(!isbkmark);
+        Toast.show({
+          text: isbkmark ? "Bookmarked chapter removed" : "Chapter bookmarked",
+          type: isbkmark ? "default" : "success",
+          duration: 5000,
+        });
       } else {
-        setBookmarksList([])
+        setBookmarksList([]);
         props.navigation.navigate("Login");
       }
     } else {
-      setBookmarksList([])
+      setBookmarksList([]);
       Alert.alert("Please check your internet connecion");
     }
   };
-
 
   const addToNotes = () => {
     if (connection_Status) {
@@ -314,11 +326,16 @@ const LoginDataProvider = (props) => {
     }
   };
   useEffect(() => {
-    setCurrentVisibleChapter(chapterNumber)
-  }, [chapterNumber])
+    setCurrentVisibleChapter(chapterNumber);
+  }, [chapterNumber]);
+  useEffect(() => {
+    getHighlights()
+    getNotes()
+    getBookMarks()
+  }, [currentVisibleChapter, bookId, email, uid]);
   useEffect(() => {
     bookmarkedChap()
-  }, [bookmarksList])
+  }, [bookmarksList, currentVisibleChapter])
   // const getOffset = (index) => {
   //   var offset = 0;
   //   for (let i = 0; i < index; i++) {
@@ -375,8 +392,11 @@ const LoginDataProvider = (props) => {
         selectedReferenceSet,
         setSelectedReferenceSet,
         getSelectedReferences,
-        bottomHighlightText, setBottomHighlightText, bookmarkedChap
-      }} >
+        bottomHighlightText,
+        setBottomHighlightText,
+        bookmarkedChap,
+      }}
+    >
       {props.children}
     </LoginData.Provider>
   );
