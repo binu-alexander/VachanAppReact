@@ -90,54 +90,6 @@ export function updateLangVersion(
     return;
   }
 }
-export function changeSizeOnPinch(value, updateFontSize, colorFile, sizeMode) {
-  console.log("VALUE ", value)
-  switch (sizeMode) {
-    case 0: {
-      if (value == -1) {
-        return;
-      } else {
-        updateFontSize(1);
-        return style(colorFile, smallFont);
-      }
-    }
-    case 1: {
-      if (value == -1) {
-        updateFontSize(0);
-        return style(colorFile, extraSmallFont);
-      } else {
-        updateFontSize(2);
-        return style(colorFile, mediumFont);
-      }
-    }
-    case 2: {
-      if (value == -1) {
-        updateFontSize(1);
-        return style(colorFile, smallFont);
-      } else {
-        updateFontSize(3);
-        return style(colorFile, largeFont);
-      }
-    }
-    case 3: {
-      if (value == -1) {
-        updateFontSize(2);
-        return style(colorFile, mediumFont);
-      } else {
-        updateFontSize(4);
-        return style(colorFile, extraLargeFont);
-      }
-    }
-    case 4: {
-      if (value == -1) {
-        updateFontSize(3);
-        return style(colorFile, largeFont);
-      } else {
-        return;
-      }
-    }
-  }
-}
 export function setHighlightColor(color) {
   let value = Color.highlightColorA.const;
   console.log(value, "setHi");

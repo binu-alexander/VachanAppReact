@@ -6,7 +6,6 @@ import { styles } from "./styles.js";
 import { Toast } from "native-base";
 import vApi from "../../../utils/APIFetch";
 import ListContainer from "../../../components/Common/FlatList.js";
-import { set } from "lodash";
 
 const Infographics = (props) => {
   const bookId = props.route.params ? props.route.params.bookId : null;
@@ -94,7 +93,6 @@ const Infographics = (props) => {
     if (prevBooks.length != props.books.length) {
       fetchInfographics();
     }
-
   }, [prevBooks, props.books, infographics]);
   return (
     <View style={style.container}>

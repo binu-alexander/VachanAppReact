@@ -94,9 +94,13 @@ const InfographicsImage = (props) => {
     });
     setImage(url + fileName);
   }
+
   useEffect(() => {
     infographicsData()
-  }, [_baseScale]);
+  }, []);
+  useEffect(() => {
+    infographicsData()
+  }, [_baseScale])
   let panRef = useRef();
   let rotationRef = useRef();
   let pinchRef = useRef();

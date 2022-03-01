@@ -5,23 +5,29 @@ import { updateFontSize } from '../../store/action/'
 import VerseView from "../../screens/Bible/VerseView";
 import { getHeading } from "../../utils/UtilFunctions";
 import { connect } from "react-redux";
-import { changeSizeOnPinch } from "../../utils/BiblePageUtil";
 import { LoginData } from "../../context/LoginDataProvider";
 import { BibleMainContext } from "../../screens/Bible/index";
-
+import {
+  extraSmallFont,
+  smallFont,
+  mediumFont,
+  largeFont,
+  extraLargeFont,
+} from "../../utils/dimens.js";
+import { style } from "../../screens/Bible/style";
 const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
 const NAVBAR_HEIGHT = 64;
 const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
 const AnimatedVerseList = (props) => {
+  const { sizeMode, colorFile, sizeFile, visibleParallelView, revision, license, technologyPartner } = props
   const arrLayout = [];
   let _offsetValue = 0
   let _scrollValue = 0;
   let _scrollEndTimer
-
+  let styles = style(colorFile, sizeFile);
   const [
     {
       chapterContent,
-      styles,
       navigation,
       _clampedScrollValue,
       scrollAnim,
@@ -38,7 +44,7 @@ const AnimatedVerseList = (props) => {
     getSelectedReferences,
     bottomHighlightText,
   } = useContext(LoginData);
-  // const [gestureState, setGestureState] = useState("");
+  const [gestureVa, setGestureState] = useState("");
   const [left, setLeft] = useState("");
   const [top, setTop] = useState("");
   const [thumbSize, setThumbSize] = useState("");
@@ -77,10 +83,59 @@ const AnimatedVerseList = (props) => {
   const _onMomentumScrollBegin = () => {
     clearTimeout(_scrollEndTimer);
   };
-  const changeSizeByOne = (value) => {
-    changeSizeOnPinch(value, props.updateFontSize, props.colorFile, props.sizeMode);
-  };
 
+  changeSizeByOne = (value) => {
+    switch (sizeMode) {
+      case 0: {
+        if (value == -1) {
+          return;
+        } else {
+          styles = style(colorFile, smallFont);
+          props.updateFontSize(1);
+        }
+        break;
+      }
+      case 1: {
+        if (value == -1) {
+          styles = style(colorFile, extraSmallFont);
+          props.updateFontSize(0);
+        } else {
+          styles = style(colorFile, mediumFont);
+          props.updateFontSize(2);
+        }
+        break;
+      }
+      case 2: {
+        if (value == -1) {
+          styles = style(colorFile, smallFont);
+          props.updateFontSize(1);
+        } else {
+          styles = style(colorFile, largeFont);
+          props.updateFontSize(3);
+        }
+        break;
+      }
+      case 3: {
+        if (value == -1) {
+          styles = style(colorFile, mediumFont);
+          props.updateFontSize(2);
+        } else {
+          styles = style(colorFile, extraLargeFont);
+          props.updateFontSize(4);
+        }
+        break;
+      }
+      case 4: {
+        if (value == -1) {
+          styles = style(colorFile, largeFont);
+          props.updateFontSize(3);
+        } else {
+          return;
+        }
+        break;
+      }
+    }
+  };
   const gestureResponder = useRef(createResponder({
     onStartShouldSetResponder: () => true,
     onStartShouldSetResponderCapture: () => true,
@@ -112,14 +167,14 @@ const AnimatedVerseList = (props) => {
       let tp = top;
       lf += gestureState.moveX - gestureState.previousMoveX;
       tp += gestureState.moveY - gestureState.previousMoveY;
-      // setGestureState(...gestureState);
+      setGestureState({ ...gestureState });
       setLeft(lf);
       setTop(tp);
       setThumbSize(thumbS);
     },
     onResponderTerminationRequest: () => true,
     onResponderRelease: (gestureState) => {
-      // setGestureState(...gestureState);
+      setGestureState({ ...gestureState });
     },
     onResponderTerminate: (gestureState) => { },
     onResponderSingleTapConfirmed: () => { },
@@ -144,32 +199,32 @@ const AnimatedVerseList = (props) => {
         >
           {
             <View style={styles.footerView}>
-              {props.revision !== null && props.revision !== "" && (
+              {revision !== null && revision !== "" && (
                 <Text
                   textBreakStrategy={"simple"}
                   style={styles.textListFooter}
                 >
                   <Text style={styles.footerText}>Copyright:</Text>{" "}
-                  {props.revision}
+                  {revision}
                 </Text>
               )}
-              {props.license !== null && props.license !== "" && (
+              {license !== null && license !== "" && (
                 <Text
                   textBreakStrategy={"simple"}
                   style={styles.textListFooter}
                 >
                   <Text style={styles.footerText}>License:</Text>{" "}
-                  {props.license}
+                  {license}
                 </Text>
               )}
-              {props.technologyPartner !== null &&
-                props.technologyPartner !== "" && (
+              {technologyPartner !== null &&
+                technologyPartner !== "" && (
                   <Text
                     textBreakStrategy={"simple"}
                     style={styles.textListFooter}
                   >
                     <Text style={styles.footerText}>Technology partner:</Text>{" "}
-                    {props.technologyPartner}
+                    {technologyPartner}
                   </Text>
                 )}
             </View>
@@ -187,7 +242,7 @@ const AnimatedVerseList = (props) => {
           ? styles.centerEmptySet
           : {
             paddingHorizontal: 16,
-            paddingTop: props.visibleParallelView ? 52 : 90,
+            paddingTop: visibleParallelView ? 52 : 90,
             paddingBottom: 90,
           }
       }
@@ -221,7 +276,7 @@ const AnimatedVerseList = (props) => {
           styles={styles}
           selectedReferences={selectedReferenceSet}
           getSelection={(verseIndex, chapterNumber, verseNumber, text) => {
-            props.visibleParallelView == false &&
+            visibleParallelView == false &&
               getSelectedReferences(
                 verseIndex,
                 chapterNumber,
