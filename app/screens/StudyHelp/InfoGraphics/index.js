@@ -13,13 +13,13 @@ const Infographics = (props) => {
   const [infographics, setInfographics] = useState([]);
   const [url, setUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState("");
   const prevBooks = useRef(props.books).current;
   const style = styles(props.colorFile, props.sizeFile);
   const fetchInfographics = async () => {
     const apiData = await vApi.get("infographics/" + props.languageCode);
     let infographicsBook = [];
-    if (apiData) {
+    if (apiData.books) {
       let found = false;
       for (var i = 0; i < apiData.books.length; i++) {
         if (bookId) {
@@ -29,9 +29,10 @@ const Infographics = (props) => {
           }
         }
       }
+
       if (found) {
         setInfographics(infographicsBook);
-        setMessage('')
+        setMessage("");
 
         setUrl(apiData.url);
       } else {
@@ -49,7 +50,7 @@ const Infographics = (props) => {
         setUrl(apiData.url);
       }
     } else {
-      setMessage("No Infographics for" + props.languageName)
+      setMessage("No Infographics for" + props.languageName);
     }
   };
   const gotoImage = (item) => {
@@ -94,6 +95,7 @@ const Infographics = (props) => {
       fetchInfographics();
     }
   }, [prevBooks, props.books, infographics]);
+  console.log(isLoading);
   return (
     <View style={style.container}>
       {isLoading ? (

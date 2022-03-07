@@ -72,7 +72,7 @@ const BibleContextProvider = (props) => {
     } else {
       return;
     }
-  }
+  };
   // update language and version  onback from language list page (callback function) also this function is usefull to update only few required values of redux
   const updateLangVer = async (item) => {
     setSelectedReferenceSet([]);
