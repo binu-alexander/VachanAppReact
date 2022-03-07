@@ -9,7 +9,7 @@ import ListContainer from "../../components/Common/FlatList";
 const Audio = (props) => {
   const styles = style(props.colorFile, props.sizeFile);
   const [allAudioBooks, setAllAudioBooks] = useState([]);
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState("");
   const navigateToBible = (bId, bookName, chapterNum) => {
     props.updateVersionBook({
       bookId: bId,
@@ -18,14 +18,14 @@ const Audio = (props) => {
     });
     props.ToggleAudio({ audio: true, status: true });
     props.navigation.navigate("Bible");
-  }
+  };
   const emptyMessageNavigation = () => {
     props.navigation.navigate("Bible");
   };
   const renderItem = ({ item }) => {
     console.log(item);
     return (
-      <Card key={item.numOfChapters}>
+      <Card>
         <CardItem style={styles.cardItemStyle}>
           <TouchableOpacity
             style={styles.audioView}
@@ -52,11 +52,12 @@ const Audio = (props) => {
         let temp = allBooks.find((item) => item.bookId === arrayBooks[i]);
         allAudioBook.push(temp);
       }
-      if (allAudioBook.length == 0) {
-        setMessage(`Audio for ${props.language} not available`)
+      console.log(allAudioBooks);
+      if (allAudioBook.length === 0) {
+        setMessage(`Audio for ${props.language} not available`);
       } else {
-        setAllAudioBooks(allAudioBook)
-        setMessage('')
+        setAllAudioBooks(allAudioBook);
+        setMessage("");
       }
     }
   }, []);

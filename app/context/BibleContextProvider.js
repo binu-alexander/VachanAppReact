@@ -26,8 +26,21 @@ const BibleContextProvider = (props) => {
   const [nextContent, setNextContent] = useState("");
   const [previousContent, setPreviousContent] = useState("");
   const [audio, setAudio] = useState(false);
-  const { sourceId, language, languageCode, versionCode, downloaded } = props
-  const { currentVisibleChapter, setCurrentVisibleChapter, setSelectedReferenceSet, setShowBottomBar, setShowColorGrid } = useContext(LoginData)
+  const {
+    sourceId,
+    language,
+    languageCode,
+    versionCode,
+    downloaded,
+    bookName,
+  } = props;
+  const {
+    currentVisibleChapter,
+    setCurrentVisibleChapter,
+    setSelectedReferenceSet,
+    setShowBottomBar,
+    setShowColorGrid,
+  } = useContext(LoginData);
   const navigateToSelectionTab = () => {
     setStatus(false);
     props.navigation.navigate("ReferenceSelection", {
@@ -71,7 +84,7 @@ const BibleContextProvider = (props) => {
     } else {
       return;
     }
-  }
+  };
   // update language and version  onback from language list page (callback function) also this function is usefull to update only few required values of redux
   const updateLangVer = async (item) => {
     setSelectedReferenceSet([]);
