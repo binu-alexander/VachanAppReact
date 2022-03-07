@@ -27,7 +27,7 @@ const BibleContextProvider = (props) => {
   const [nextContent, setNextContent] = useState("");
   const [previousContent, setPreviousContent] = useState("");
   const [audio, setAudio] = useState(false);
-  const { sourceId, language, languageCode, versionCode, downloaded, bookId } = props
+  const { sourceId, language, languageCode, versionCode, downloaded, bookId, bookName } = props
   const { currentVisibleChapter, setCurrentVisibleChapter, setSelectedReferenceSet, setShowBottomBar, setShowColorGrid, } = useContext(LoginData)
   const navigateToSelectionTab = () => {
     setStatus(false);
@@ -153,9 +153,7 @@ const BibleContextProvider = (props) => {
       setAudio(false);
     }
   };
-  // useEffect(() => {
 
-  // })
   return (
     <BibleContext.Provider
       value={{

@@ -7,7 +7,7 @@ import React, {
   useMemo
 } from "react";
 import { AppState, Animated, Platform } from "react-native";
-import NetInfo from "@react-native-community/netinfo";
+import NetInfo, { NetInfoCellularGeneration } from "@react-native-community/netinfo";
 import DbQueries from "../../utils/dbQueries";
 import {
   APIAudioURL,
@@ -60,7 +60,10 @@ const Bible = (props) => {
 
   const [initializing, setInitializing] = useState(true);
   const [unAvailableContent, setUnAvailableContent] = useState("");
-  const prevSourceId = useRef(sourceId).current;
+  const prevSourceId = useRef(sourceId).current
+  const prevBookId = useRef(bookId).current
+  const prevChapter = useRef(chapterNumber).current
+
   const {
     currentVisibleChapter,
     setCurrentVisibleChapter,
@@ -132,9 +135,6 @@ const Bible = (props) => {
       });
     }
   };
-  // const chapterData = useMemo(async () => {
-  //   getChapter()
-  // }, [sourceId, currentVisibleChapter, bookId])
 
   // if book downloaded or user want to read downloaded book fetch chapter from local db
   const getDownloadedContent = async () => {
@@ -163,9 +163,13 @@ const Bible = (props) => {
   };
 
   // fetch chapter on didmount call
-  const getChapter = async (cNum) => {
+  const getChapter = async (cNum, sId) => {
     try {
       let curChap = cNum == null ? currentVisibleChapter : cNum
+      let srcId = sId == null ? sourceId : sId
+      setIsLoading(true);
+      setChapterHeader([]);
+      setChapterContent([]);
       if (downloaded) {
         if (downloadedBook.length > 0) {
           setChapterHeader(downloadedBook[curChap - 1].chapterHeading);
@@ -180,7 +184,7 @@ const Bible = (props) => {
           let url =
             "bibles" +
             "/" +
-            sourceId +
+            srcId +
             "/" +
             "books" +
             "/" +
@@ -191,7 +195,6 @@ const Bible = (props) => {
             curChap;
           var content = await vApi.get(url);
           if (content) {
-            setIsLoading(true);
             setReloadMessage("Loading....");
             let header = getHeading(content.chapterContent.contents);
             setChapterHeader(header);
@@ -199,11 +202,12 @@ const Bible = (props) => {
             setError(null);
             setNextContent(content.next);
             setPreviousContent(content.previous);
-            setIsLoading(false);
           }
         }
       }
+      setIsLoading(false);
     } catch (error) {
+      console.log("ERRoR ", error)
       setIsLoading(false);
       setError(error);
       setChapterHeader("");
@@ -242,7 +246,7 @@ const Bible = (props) => {
         setShowBottomBar(false);
         setCurrentVisibleChapter(cNum);
         setError(null);
-        getChapter(cNum)
+        getChapter(cNum, sId)
         updateVersionBook({
           bookId: bId,
           bookName: bName,
@@ -310,13 +314,12 @@ const Bible = (props) => {
     });
     const subs = props.navigation.addListener("focus", () => {
       setSelectedReferenceSet([]);
-      setChapterContent([])
       setShowBottomBar(false);
       setShowColorGrid(false);
       setAudio(props.audio);
       setStatus(props.status);
-      if (prevSourceId != sourceId) {
-        getChapter(null)
+      if (prevSourceId != sourceId || prevBookId != bookId || prevChapter != currentVisibleChapter) {
+        getChapter(null, null)
       }
       audioComponentUpdate();
       if (books.length == 0) {
@@ -350,7 +353,7 @@ const Bible = (props) => {
   }, []);
 
   useEffect(() => {
-    getChapter(null);
+    getChapter(null, null);
     audioComponentUpdate();
     if (books.length == 0) {
       props.fetchVersionBooks({

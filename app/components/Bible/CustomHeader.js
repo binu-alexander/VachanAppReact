@@ -37,6 +37,10 @@ const CustomHeader = (props) => {
     audio,
     setStatus,
   } = useContext(BibleContext);
+  let lgname = props.language && (props.language.length > 8 ? props.language.charAt(0).toUpperCase() +
+    props.language.slice(1, 3) :
+    props.language.charAt(0).toUpperCase() +
+    props.language.slice(1))
   let bookName = !isNaN(props.bookName.charAt(0))
     ? props.bookName.charAt(0).toUpperCase() + props.bookName.slice(1)
     : props.bookName;
@@ -184,7 +188,7 @@ const CustomHeader = (props) => {
         >
           {bookName && currentVisibleChapter ? (
             <Text style={{ fontSize: 18, color: "#fff" }}>
-              {bookName.length > 16 ? bookName.slice(0, 15) + "..." : bookName}{" "}
+              {bookName.length > 12 ? bookName.slice(0, 8) + "..." : bookName}{" "}
               {currentVisibleChapter}
             </Text>
           ) : null}
@@ -195,9 +199,7 @@ const CustomHeader = (props) => {
           onPress={navigateToLanguage}
         >
           <Text style={navStyles.langVer}>
-            {props.language &&
-              props.language.charAt(0).toUpperCase() +
-              props.language.slice(1)}{" "}
+            {lgname}{" "}
             {props.versionCode && props.versionCode.toUpperCase()}
           </Text>
           <Icon name="arrow-drop-down" color={Color.White} size={20} />
