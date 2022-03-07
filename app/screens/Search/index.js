@@ -84,7 +84,6 @@ const Search = (props) => {
     setIsLoading(true);
     setSearchedResult([]);
     setTabsData([]);
-    console.log(searchText, "text");
     if (downloaded) {
       let searchResultByBookName = await DbQueries.querySearchBookWithName(
         versionCode,
@@ -119,7 +118,6 @@ const Search = (props) => {
       let res = await vApi.get(
         "search/" + JSON.parse(sourceId) + "?keyword=" + searchText
       );
-      console.log(res.result, "res");
       let data = [];
       if (res && res.result.length > 0 && books) {
         for (let i = 0; i < res.result.length; i++) {
@@ -137,11 +135,9 @@ const Search = (props) => {
             }
           }
         }
-        console.log(data, res.result, "ress");
         setSearchedResult(data);
         addRefListToTab(data);
       }
-      console.log(data, "data");
     }
     setIsLoading(false);
   };

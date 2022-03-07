@@ -45,7 +45,6 @@ const OBS = (props) => {
             obslangList.push(lan[key]);
             if (key === langCode) {
               foundLangCode = true;
-              console.log(lan[key], langCode, key, lan, "fetch lan");
               setLangCode(key);
               setDefaultLanguage(lan[key]);
               bibleStoryList();
@@ -58,16 +57,13 @@ const OBS = (props) => {
             bibleStoryList();
             mdFileFetch();
           }
-          console.log("LAGUAGE DID MOUNT ", lan);
           setObsLang(obslangList);
           setLanguagesList([...languagesList, lan]);
         }
       })
       .catch((error) => {
-        console.log(error.message, "error");
       });
   };
-  console.log(props.languageName, "language");
   const mdFileFetch = async () => {
     fetch(Github_URL + langCode + "/content/" + bsIndex + ".md")
       .then((response) => response.text())
@@ -75,7 +71,6 @@ const OBS = (props) => {
         setObsData(json);
       })
       .catch((error) => {
-        console.log(error.message);
         setObsData(null);
       });
   };

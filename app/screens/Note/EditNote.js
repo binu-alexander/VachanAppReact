@@ -23,8 +23,6 @@ const EditNote = (props) => {
   const style = styles(props.colorFile, props.sizeFile);
 
   const saveNote = () => {
-    console.log("CONTENT BODU ", contentBody)
-    console.log("EDITOR DAATA ", editorData)
 
     var time = Date.now()
     var firebaseRef = database().ref(
@@ -142,13 +140,11 @@ const EditNote = (props) => {
 
   const handleGetHtml = () => {
     _editor.current?.getHtml().then((res) => {
-      console.log("Html :", res);
 
     });
   };
 
   const onHtmlChange = (html) => {
-    console.log("on html change ", html.html)
     setContentBody(html.html)
     setEditorData("hello")
   }
@@ -183,18 +179,14 @@ const EditNote = (props) => {
       ,
     });
   }, [contentBody])
-  // useEffect(()=>{
-  // console.log(" content body ",contentBody)
-  // },[contentBody])
+
   handleTextChange = (data) => {
-    console.log("handleTextChange ....", data)
     // setContentBody(data)
     // setEditorData(data)
   }
   // handleSelectionChange = async (data) => {
 
   // }
-  // console.log("DATA ....",contentBody)
 
   return (
     <View style={style.containerEditNote}>

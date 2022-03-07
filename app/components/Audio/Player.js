@@ -45,7 +45,6 @@ const Player = (props) => {
     "." +
     props.audioFormat;
 
-  console.log(audiourl, props.audioURL, "hhh");
   return (
     <View style={{ flex: 1 }}>
       {props.audioURL && (

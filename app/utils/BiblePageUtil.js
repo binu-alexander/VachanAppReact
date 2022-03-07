@@ -1,29 +1,17 @@
 import store from "../store";
 const state = store.getState();
 import DbQueries from "./dbQueries";
-import {
-  extraSmallFont,
-  smallFont,
-  mediumFont,
-  largeFont,
-  extraLargeFont,
-} from "./dimens.js";
 import Color from "./colorConstants";
 import { getBookChaptersFromMapping } from "./UtilFunctions";
 import { style } from "../screens/Bible/style";
 export function updateLangVersion(
-  setMetadata,
-  setVersion,
-  setVersionBook,
-  fetchVersionBooks,
   currentVisibleChapter,
-  item
+  item, bId
 ) {
   if (item) {
-    console.log("HI updateLangVersion")
     let bookName = null;
     let bookId = null;
-    let bookItem = item.books.filter((i) => i.bookId == bookId);
+    let bookItem = item.books.filter((i) => i.bookId == bId);
     if (bookItem.length > 0) {
       bookName = bookItem[0].bookName;
       bookId = bookItem[0].bookId;
@@ -42,38 +30,8 @@ export function updateLangVersion(
         }
       }
     }
-    let chapterNum =
-      parseInt(currentVisibleChapter) > getBookChaptersFromMapping(bookId)
-        ? 1
-        : parseInt(currentVisibleChapter);
-    setMetadata({
-      copyrightHolder: item.metadata[0].copyrightHolder,
-      description: item.metadata[0].description,
-      license: item.metadata[0].license,
-      source: item.metadata[0].source,
-      technologyPartner: item.metadata[0].technologyPartner,
-      revision: item.metadata[0].revision,
-      versionNameGL: item.metadata[0].versionNameGL,
-    });
-    setVersion({
-      language: item.languageName,
-      languageCode: item.languageCode,
-      versionCode: item.versionCode,
-      sourceId: item.sourceId,
-      downloaded: item.downloaded,
-    });
-    setVersionBook({
-      bookId: bookId,
-      bookName: bookName,
-      chapterNumber: chapterNum,
-      totalChapters: getBookChaptersFromMapping(bookId),
-    });
-    fetchVersionBooks({
-      language: item.languageName,
-      versionCode: item.versionCode,
-      downloaded: item.downloaded,
-      sourceId: item.sourceId,
-    })
+    let chapterNum = parseInt(currentVisibleChapter) > getBookChaptersFromMapping(bookId) ? 1 : parseInt(currentVisibleChapter);
+
     var time = new Date();
     DbQueries.addHistory(
       item.sourceId,
@@ -86,13 +44,13 @@ export function updateLangVersion(
       item.downloaded,
       time
     );
+    return { bookId, bookName }
   } else {
     return;
   }
 }
 export function setHighlightColor(color) {
   let value = Color.highlightColorA.const;
-  console.log(value, "setHi");
   switch (color) {
     case Color.highlightColorA.code:
       value = Color.highlightColorA.const;

@@ -131,7 +131,6 @@ const VerseView = (props) => {
     });
   };
 
-  // console.log(" highlightedVerseArray.length ",highlightedVerseArray,isHighlight() ? verseNumber : null)
   if (verseNumber == 1 && typeof verseNumber != "undefined") {
     return (
       <Text

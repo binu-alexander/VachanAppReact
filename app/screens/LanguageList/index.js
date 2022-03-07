@@ -49,7 +49,6 @@ const LanguageList = (props) => {
       }
       await fetchLanguages();
     } catch (error) {
-      console.log(error.message);
     }
   };
   const onBack = () => {
@@ -178,7 +177,6 @@ const LanguageList = (props) => {
           });
       setLanguages(res);
     } catch (error) {
-      console.log(error.message);
     }
   };
   const downloadBible = async (langName, verCode, books, sourceId) => {
@@ -255,7 +253,6 @@ const LanguageList = (props) => {
         }
       }
     } catch (error) {
-      console.log(error.message);
     }
   };
   // this is useful for reusing code as this page is calling at other places

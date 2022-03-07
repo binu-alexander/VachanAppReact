@@ -4,6 +4,7 @@ import React, {
   useState,
   createContext,
   useContext,
+  useMemo
 } from "react";
 import { AppState, Animated, Platform } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
@@ -59,7 +60,7 @@ const Bible = (props) => {
 
   const [initializing, setInitializing] = useState(true);
   const [unAvailableContent, setUnAvailableContent] = useState("");
-
+  const prevSourceId = useRef(sourceId).current;
   const {
     currentVisibleChapter,
     setCurrentVisibleChapter,
@@ -131,6 +132,10 @@ const Bible = (props) => {
       });
     }
   };
+  // const chapterData = useMemo(async () => {
+  //   getChapter()
+  // }, [sourceId, currentVisibleChapter, bookId])
+
   // if book downloaded or user want to read downloaded book fetch chapter from local db
   const getDownloadedContent = async () => {
     setIsLoading(true);
@@ -156,11 +161,20 @@ const Bible = (props) => {
       setUnAvailableContent(true);
     }
   };
+
   // fetch chapter on didmount call
-  const getChapter = async () => {
+  const getChapter = async (cNum) => {
     try {
+      let curChap = cNum == null ? currentVisibleChapter : cNum
       if (downloaded) {
-        getDownloadedContent;
+        if (downloadedBook.length > 0) {
+          setChapterHeader(downloadedBook[curChap - 1].chapterHeading);
+          setChapterContent(downloadedBook[curChap - 1].verses);
+          setPreviousContent(null);
+          setNextContent(null);
+        } else {
+          getDownloadedContent();
+        }
       } else {
         if (baseAPI != null) {
           let url =
@@ -174,12 +188,11 @@ const Bible = (props) => {
             "/" +
             "chapter" +
             "/" +
-            currentVisibleChapter;
-          console.log(" get chapter ", sourceId, bookId, currentVisibleChapter)
+            curChap;
           var content = await vApi.get(url);
           if (content) {
-            setReloadMessage("Loading....");
             setIsLoading(true);
+            setReloadMessage("Loading....");
             let header = getHeading(content.chapterContent.contents);
             setChapterHeader(header);
             setChapterContent(content.chapterContent.contents);
@@ -191,14 +204,14 @@ const Bible = (props) => {
         }
       }
     } catch (error) {
-      console.log("ERROR ", error);
       setIsLoading(false);
       setError(error);
       setChapterHeader("");
       setChapterContent([]);
       setUnAvailableContent(true);
     }
-  };
+  }
+
   const queryBookFromAPI = async (chapterInfo) => {
     try {
       const { fetchVersionBooks, updateVersionBook } = props;
@@ -229,53 +242,11 @@ const Bible = (props) => {
         setShowBottomBar(false);
         setCurrentVisibleChapter(cNum);
         setError(null);
-        if (downloaded) {
-          if (downloadedBook.length > 0) {
-            setChapterHeader(downloadedBook[cNum - 1].chapterHeading);
-            setChapterContent(downloadedBook[cNum - 1].verses);
-            setPreviousContent(null);
-            setNextContent(null);
-          } else {
-            getDownloadedContent();
-          }
-        } else {
-          let url =
-            "bibles" +
-            "/" +
-            sId +
-            "/" +
-            "books" +
-            "/" +
-            bId +
-            "/" +
-            "chapter" +
-            "/" +
-            cNum;
-          try {
-            var content = await vApi.get(url);
-            if (content) {
-              let header = getHeading(content.chapterContent.contents);
-              setChapterHeader(header);
-              setChapterContent(content.chapterContent.contents);
-              setPreviousContent(content.previous);
-              setNextContent(content.next);
-              setIsLoading(false);
-            }
-          } catch (error) {
-            setChapterContent([]);
-            setError(error);
-            setUnAvailableContent(true);
-            setIsLoading(false);
-          }
-        }
-
+        getChapter(cNum)
         updateVersionBook({
           bookId: bId,
           bookName: bName,
-          chapterNumber:
-            parseInt(cNum) > getBookChaptersFromMapping(bId)
-              ? 1
-              : parseInt(cNum),
+          chapterNumber: parseInt(cNum) > getBookChaptersFromMapping(bId) ? 1 : parseInt(cNum),
           totalChapters: getBookChaptersFromMapping(bId),
         });
         setIsLoading(false);
@@ -338,13 +309,15 @@ const Bible = (props) => {
       }
     });
     const subs = props.navigation.addListener("focus", () => {
-      console.log(" FOCUS ....");
       setSelectedReferenceSet([]);
+      setChapterContent([])
       setShowBottomBar(false);
       setShowColorGrid(false);
       setAudio(props.audio);
       setStatus(props.status);
-      getChapter();
+      if (prevSourceId != sourceId) {
+        getChapter(null)
+      }
       audioComponentUpdate();
       if (books.length == 0) {
         props.fetchVersionBooks({
@@ -377,7 +350,7 @@ const Bible = (props) => {
   }, []);
 
   useEffect(() => {
-    getChapter();
+    getChapter(null);
     audioComponentUpdate();
     if (books.length == 0) {
       props.fetchVersionBooks({
@@ -403,7 +376,7 @@ const Bible = (props) => {
     });
   }, [language,
     sourceId,
-    baseAPI,])
+    baseAPI])
   return (
     <BibleMainContext.Provider
       value={[

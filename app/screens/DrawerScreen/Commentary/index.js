@@ -97,7 +97,6 @@ const DrawerCommentary = (props) => {
             }
           }
         }
-        console.log(bookNameLists, dropDownLists, "update");
         setBookNameList(bookNameLists);
         setDropDownList(dropDownLists);
       } else {
@@ -106,7 +105,6 @@ const DrawerCommentary = (props) => {
     }
   };
 
-  // console.log(dropDownList, "drop");
   const onSelectBook = (index, val) => {
     let bookId = null;
     bookNameList.forEach((item) => {
@@ -335,7 +333,6 @@ const DrawerCommentary = (props) => {
     if (selectedBookIndex == -1) {
       dropDownList.forEach((b, index) => {
         if (bookName == b) {
-          console.log("BOOK NAME ", b);
           onSelectBook(index, b);
           // this._dropdown_1.select(index)
         }

@@ -119,7 +119,6 @@ const Video = (props) => {
       fetchVideo();
     }
   }, [prevBooks, props.books, videos]);
-  console.log(videos, "videos");
   return (
     <View style={style.container}>
       <ListContainer

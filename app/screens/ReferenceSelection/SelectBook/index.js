@@ -21,7 +21,6 @@ const SelectBook = (props) => {
   const [NTSize, setNTSize] = useState(0);
   const [OTSize, setOTSize] = useState(0);
   const prevBooks = useRef(props.books).current;
-  // console.log("PREV BOOKS ",prevBooks)
   let viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 100,
     waitForInteraction: true,
@@ -29,7 +28,6 @@ const SelectBook = (props) => {
   const flatlistRef = useRef();
   const style = styles(props.colorFile, props.sizeFile);
   const toggleButton = (value) => {
-    console.log("button toggle ", value);
     setActiveTab(value);
     if (value === false) {
       flatlistRef.current.scrollToIndex({
@@ -53,8 +51,6 @@ const SelectBook = (props) => {
     index,
   });
   const navigateTo = (items) => {
-    // console.log("ITEM ",item)
-    console.log(items.bookId, items.bookName, items.numOfChapters, "gg");
     props.navigation.navigate("Chapters", {
       selectedBookId: items.bookId,
       selectedBookName: items.bookName,
@@ -96,11 +92,11 @@ const SelectBook = (props) => {
     }
     setNTSize(count);
   };
-  useEffect(()=>{
+  useEffect(() => {
     getOTSize();
     getNTSize();
     selectTab();
-  },[])
+  }, [])
   useEffect(() => {
     getOTSize();
     getNTSize();
@@ -183,7 +179,6 @@ const SelectBook = (props) => {
       }
     }
   });
-  console.log(activeTab, "books data");
   return (
     <View style={style.container}>
       {props.isLoading ? (

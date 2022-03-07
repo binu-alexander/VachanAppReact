@@ -29,9 +29,7 @@ export async function AndroidPermission(permissionName) {
   if (Platform.OS === "android") {
     // Calling the permission function
     const alertPermission = permissionName.replace(/_/g, " ").toLowerCase();
-    console.log("alert permission ", alertPermission);
     // PermissionsAndroid.requestMultiple([PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE, PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE]).then((result) => {
-    //   console.log('result', result);
     // })
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS[permissionName],
@@ -40,7 +38,6 @@ export async function AndroidPermission(permissionName) {
         message: "VachanGo needs access to your " + alertPermission,
       }
     );
-    console.log("GRANTED ", granted, PermissionsAndroid.RESULTS.GRANTED);
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
       // Permission Granted
       return true;

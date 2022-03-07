@@ -29,7 +29,6 @@ const ProfilePage = (props) => {
       });
       props.navigation.navigate("Bible");
     } catch (error) {
-      console.log(error.message);
     }
   };
   return (

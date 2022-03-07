@@ -161,7 +161,7 @@ const Note = (props) => {
                 <Text style={style.noteText}>
                   {props.languageName &&
                     props.languageName.charAt(0).toUpperCase() +
-                      props.languageName.slice(1)}{" "}
+                    props.languageName.slice(1)}{" "}
                   {props.versionCode && props.versionCode.toUpperCase()}{" "}
                   {bookName} {item.chapterNumber} {":"} {val.verses.join()}
                 </Text>
@@ -184,7 +184,6 @@ const Note = (props) => {
       ));
     return <View>{bookName && value}</View>;
   };
-  console.log(isLoading);
   return (
     <View style={style.container}>
       {isLoading && message.length != 0 ? (

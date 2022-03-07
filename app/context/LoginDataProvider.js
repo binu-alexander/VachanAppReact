@@ -77,9 +77,6 @@ const LoginDataProvider = (props) => {
             currentVisibleChapter
           )
           .on("value", (snapshot) => {
-            console.log(" SNAP SHOT VALUE ", snapshot.val());
-
-
             let VerseArray = [];
             if (snapshot.val() != null) {
               let value = snapshot.val();
@@ -92,7 +89,6 @@ const LoginDataProvider = (props) => {
                 }
               }
             }
-            console.log(" verseArray ", VerseArray);
             setHighlightedVerseArray(VerseArray);
           });
       } else {
@@ -233,18 +229,14 @@ const LoginDataProvider = (props) => {
               }
             }
             let index = array.indexOf(val);
-            console.log(" Index Highlight ", index);
             //solve the issue of 2 color on single verse
             if (bottomHighlightText) {
               if (index == -1) {
                 array.push(val);
               }
-              // console.log("ARRAY 2...", array)
               setHighlightedVerseArray(array);
             }
           }
-          console.log("ARRAY ...", array);
-          console.log(" Highlighted Array ", highlightedVerseArray);
         }
         database()
           .ref(
@@ -268,7 +260,6 @@ const LoginDataProvider = (props) => {
     setShowBottomBar(false);
     setShowColorGrid(false);
   };
-  console.log("Highlighted verse array ", highlightedVerseArray);
   const addToShare = () => {
     let shareText = "";
     if (Object.keys(selectedReferenceSet).length != 0) {

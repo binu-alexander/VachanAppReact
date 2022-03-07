@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { connect } from "react-redux";
 import {
   APIAudioURL,
@@ -19,6 +19,7 @@ import DbQueries from "../utils/dbQueries";
 import { Toast } from "native-base";
 import vApi from "../utils/APIFetch";
 import { updateLangVersion } from "../utils/BiblePageUtil";
+import { getBookChaptersFromMapping } from "../utils/UtilFunctions";
 export const BibleContext = createContext();
 
 const BibleContextProvider = (props) => {
@@ -26,8 +27,8 @@ const BibleContextProvider = (props) => {
   const [nextContent, setNextContent] = useState("");
   const [previousContent, setPreviousContent] = useState("");
   const [audio, setAudio] = useState(false);
-  const { sourceId, language, languageCode, versionCode, downloaded } = props
-  const { currentVisibleChapter, setCurrentVisibleChapter, setSelectedReferenceSet, setShowBottomBar, setShowColorGrid } = useContext(LoginData)
+  const { sourceId, language, languageCode, versionCode, downloaded, bookId } = props
+  const { currentVisibleChapter, setCurrentVisibleChapter, setSelectedReferenceSet, setShowBottomBar, setShowColorGrid, } = useContext(LoginData)
   const navigateToSelectionTab = () => {
     setStatus(false);
     props.navigation.navigate("ReferenceSelection", {
@@ -77,20 +78,35 @@ const BibleContextProvider = (props) => {
     setSelectedReferenceSet([]);
     setShowBottomBar(false);
     setShowColorGrid(false);
-    const {
-      updateMetadata,
-      updateVersion,
-      updateVersionBook,
-      fetchVersionBooks,
-    } = props;
-    updateLangVersion(
-      updateMetadata,
-      updateVersion,
-      updateVersionBook,
-      fetchVersionBooks,
-      currentVisibleChapter,
-      item
-    );
+    let bookInfo = updateLangVersion(currentVisibleChapter, item, bookId);
+    props.updateMetadata({
+      copyrightHolder: item.metadata[0].copyrightHolder,
+      description: item.metadata[0].description,
+      license: item.metadata[0].license,
+      source: item.metadata[0].source,
+      technologyPartner: item.metadata[0].technologyPartner,
+      revision: item.metadata[0].revision,
+      versionNameGL: item.metadata[0].versionNameGL,
+    });
+    props.updateVersion({
+      language: item.languageName,
+      languageCode: item.languageCode,
+      versionCode: item.versionCode,
+      sourceId: item.sourceId,
+      downloaded: item.downloaded,
+    })
+    props.updateVersionBook({
+      bookId: bookInfo ? bookInfo.bookId : bookId,
+      bookName: bookInfo ? bookInfo.bookName : bookName,
+      chapterNumber: currentVisibleChapter,
+      totalChapters: getBookChaptersFromMapping(bookInfo ? bookInfo.bookId : bookId),
+    });
+    props.fetchVersionBooks({
+      language: item.languageName,
+      versionCode: item.versionCode,
+      downloaded: item.downloaded,
+      sourceId: item.sourceId,
+    })
     setPreviousContent(null);
     setNextContent(null);
   };
@@ -137,6 +153,9 @@ const BibleContextProvider = (props) => {
       setAudio(false);
     }
   };
+  // useEffect(() => {
+
+  // })
   return (
     <BibleContext.Provider
       value={{

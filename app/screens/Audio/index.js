@@ -23,7 +23,6 @@ const Audio = (props) => {
     props.navigation.navigate("Bible");
   };
   const renderItem = ({ item }) => {
-    console.log(item);
     return (
       <Card key={item.numOfChapters}>
         <CardItem style={styles.cardItemStyle}>

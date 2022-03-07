@@ -40,13 +40,11 @@ const Login = (props) => {
         .signInWithEmailAndPassword(email, password)
         .then(() => {
           //removed res from this then
-          console.log("HI")
           props.userLogedIn({ pasLogedIn: true, googleLogIn: false });
           setIsLoading(false);
           props.navigation.navigate("Bible");
         })
         .catch((error) => {
-          // console.log("ERROR")
           if (error.code === "auth/user-not-found") {
             Alert.alert("User not found");
           }
@@ -71,18 +69,17 @@ const Login = (props) => {
       const data = await GoogleSignin.signIn();
       if (data) {
         setIsLoading(true);
-          const credential = auth.GoogleAuthProvider.credential(
-            data.idToken,
-            data.accessToken
-          );
-          // Login with the credential
-          await auth().signInWithCredential(credential);
-          props.userLogedIn({ pasLogedIn: false, googleLogIn: true });
-          setIsLoading(false);
-          props.navigation.navigate("Bible");
+        const credential = auth.GoogleAuthProvider.credential(
+          data.idToken,
+          data.accessToken
+        );
+        // Login with the credential
+        await auth().signInWithCredential(credential);
+        props.userLogedIn({ pasLogedIn: false, googleLogIn: true });
+        setIsLoading(false);
+        props.navigation.navigate("Bible");
       }
     } catch (error) {
-      console.log("error",error)
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
         Alert.alert("Signin Cancelled");
@@ -123,7 +120,6 @@ const Login = (props) => {
   //       });
   //     })
   //     .catch((error) => {
-  //       console.log(error.message);
   //     });
   // };
   useEffect(() => {
@@ -139,7 +135,6 @@ const Login = (props) => {
         // iosClientId: '<FROM DEVELOPER CONSOLE>', // [iOS] optional, if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
       });
     } catch (error) {
-      console.log(error.message);
     }
   }, []);
   if (isLoading) {

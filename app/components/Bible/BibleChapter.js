@@ -21,7 +21,6 @@ const BibleChapter = (props) => {
   const [{ navigation }] = useContext(BibleMainContext);
   const { currentVisibleChapter } = useContext(LoginData);
 
-  console.log("current chapter in bible ", currentVisibleChapter);
   const bShortName =
     props.bookName != null &&
     (props.bookName.length > 10
@@ -111,7 +110,6 @@ const BibleChapter = (props) => {
       if (props.parallelLanguage) {
         let chapter = val == null ? currentParallelViewChapter : val;
         let bookIds = bkId == null ? bookId : bkId;
-        console.log(" BIBLE Book id", bookIds);
         setLoading(true);
         setBookId(bookIds);
         setCurrentParallelViewChapter(chapter);
@@ -368,7 +366,7 @@ const BibleChapter = (props) => {
             style={{
               justifyContent:
                 currentParallelViewChapter != 1 &&
-                (currentParallelViewChapter == currentParallelViewChapter) !=
+                  (currentParallelViewChapter == currentParallelViewChapter) !=
                   totalChapters
                   ? "center"
                   : "space-around",
@@ -376,8 +374,8 @@ const BibleChapter = (props) => {
             }}
           >
             {PpeviousContent &&
-            Object.keys(PpeviousContent).length > 0 &&
-            PpeviousContent.constructor === Object ? (
+              Object.keys(PpeviousContent).length > 0 &&
+              PpeviousContent.constructor === Object ? (
               <View style={style.bottomBarParallelPrevView}>
                 <Icon
                   name={"chevron-left"}
@@ -394,8 +392,8 @@ const BibleChapter = (props) => {
               </View>
             ) : null}
             {pNextContent &&
-            Object.keys(pNextContent).length > 0 &&
-            pNextContent.constructor === Object ? (
+              Object.keys(pNextContent).length > 0 &&
+              pNextContent.constructor === Object ? (
               <View style={style.bottomBarNextParallelView}>
                 <Icon
                   name={"chevron-right"}

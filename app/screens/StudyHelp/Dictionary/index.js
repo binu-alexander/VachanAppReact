@@ -31,7 +31,6 @@ const Infographics = (props) => {
         setMessage(`No Dictionary for ${props.languageName}`)
       }
     } catch (error) {
-      console.log(error.message);
     }
     setIsLoading(false);
   }

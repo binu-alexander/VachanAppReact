@@ -58,12 +58,10 @@ const BRP = (props) => {
           // readingPlan[i].reading.forEach((val) => {
           //   var words = val.ref.split(" ")
           //   var regmatch = val.text.split(" ")
-          //   console.log("WORDS ", words)
           //   if (props.books) {
           //     var book = props.books.find((book) => words[0] == book.bookId)
           //     if (book) {
           //       if (regmatch) {
-          //         console.log("BOOK NAME ", book.bookName)
           //         val['native_name'] = book.bookName + " " + regmatch[regmatch.length - 1]
           //       }
           //     }

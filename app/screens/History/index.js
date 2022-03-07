@@ -114,9 +114,7 @@ const History = (props) => {
   const fetchHighlightedData = async () => {
     setIsLoading(true);
     let historyData = await DbQueries.queryHistory();
-    console.log(historyData, "data");
     if (historyData) {
-      console.log(historyLists, "list");
       let historyList = [...historyLists];
       var date = new Date();
       var cur = moment(date).format("D");

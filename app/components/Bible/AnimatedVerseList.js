@@ -143,7 +143,6 @@ const AnimatedVerseList = (props) => {
     onMoveShouldSetResponderCapture: () => true,
     onResponderGrant: () => { },
     onResponderMove: (evt, gestureState) => {
-      console.log("GESTURE MOVE ")
       let thumbS = thumbSize;
       if (gestureState.pinch && gestureState.previousPinch) {
         thumbS *= gestureState.pinch / gestureState.previousPinch;

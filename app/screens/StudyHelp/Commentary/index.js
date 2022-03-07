@@ -98,7 +98,7 @@ const Commentary = (props) => {
     return (
       <View>
         {props.commentaryContent &&
-        props.commentaryContent.bookIntro == "" ? null : (
+          props.commentaryContent.bookIntro == "" ? null : (
           <View style={style.cardItemBackground}>
             <Text style={style.commentaryHeading}>Book Intro</Text>
             <HTML
@@ -153,7 +153,6 @@ const Commentary = (props) => {
         "/" +
         currentVisibleChapter +
         commentaryKey;
-      console.log("URL UPDATE ", url);
       props.vachanAPIFetch(url);
       fetchBookName();
       updateBookName();
@@ -224,7 +223,7 @@ const Commentary = (props) => {
       ) : (
         <View style={{ flex: 1 }}>
           <Text style={[style.commentaryHeading, { margin: 10 }]}>
-            {bookName != null && bookName} {}{" "}
+            {bookName != null && bookName} { }{" "}
             {props.commentaryContent && props.commentaryContent.chapter}
           </Text>
           <FlatList

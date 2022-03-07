@@ -20,7 +20,6 @@ import vApi from "../../../utils/APIFetch";
 
 const DictionaryWords = (props) => {
   const { dictionaryContent, route, colorFile, sizeFile } = props
-  console.log(" params ", route.params)
   const dictionarySourceId = route.params
     ? route.params.dictionarySourceId
     : null;
