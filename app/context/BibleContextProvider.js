@@ -19,7 +19,7 @@ import DbQueries from "../utils/dbQueries";
 import { Toast } from "native-base";
 import vApi from "../utils/APIFetch";
 import { updateLangVersion } from "../utils/BiblePageUtil";
-import { getBookChaptersFromMapping } from "../utils/UtilFunctions";
+import { getBookChaptersFromMapping, getBookSectionFromMapping } from "../utils/UtilFunctions";
 export const BibleContext = createContext();
 
 const BibleContextProvider = (props) => {
@@ -27,8 +27,9 @@ const BibleContextProvider = (props) => {
   const [nextContent, setNextContent] = useState("");
   const [previousContent, setPreviousContent] = useState("");
   const [audio, setAudio] = useState(false);
-  const { sourceId, language, languageCode, versionCode, downloaded, bookId, bookName } = props
+  const { sourceId, language, languageCode, versionCode, downloaded, bookId, bookName, baseAPI } = props
   const { currentVisibleChapter, setCurrentVisibleChapter, setSelectedReferenceSet, setShowBottomBar, setShowColorGrid, } = useContext(LoginData)
+  const [bookList, setBookList] = useState([])
   const navigateToSelectionTab = () => {
     setStatus(false);
     props.navigation.navigate("ReferenceSelection", {
@@ -153,7 +154,82 @@ const BibleContextProvider = (props) => {
       setAudio(false);
     }
   };
+  const getBookList = async () => {
+    try {
+      let bookListData = [];
+      if (downloaded) {
+        let response = await DbQueries.getDownloadedBook(language);
+        if (response != null) {
+          for (var i = 0; i <= response.length - 1; i++) {
+            let books = {
+              bookId: response[i].bookId,
+              bookName: response[i].bookName,
+              section: getBookSectionFromMapping(response[i].bookId),
+              bookNumber: response[i].bookNumber,
+              numOfChapters: getBookChaptersFromMapping(response[i].bookId),
+            };
+            bookListData.push(books);
+          }
+        }
 
+      } else {
+        let found = false;
+        let response = await vApi.get("booknames")
+        console.log("RESPONSE ", response)
+        for (var k = 0; k < response.length; k++) {
+          if (language.toLowerCase() == response[k].language.name) {
+            for (var j = 0; j <= response[k].bookNames.length - 1; j++) {
+              let books = {
+                bookId: response[k].bookNames[j].book_code,
+                bookName: response[k].bookNames[j].short,
+                section: getBookSectionFromMapping(
+                  response[k].bookNames[j].book_code
+                ),
+                bookNumber: response[k].bookNames[j].book_id,
+                numOfChapters: getBookChaptersFromMapping(
+                  response[k].bookNames[j].book_code
+                ),
+              };
+              bookListData.push(books);
+            }
+            found = true;
+          }
+        }
+        // if (!found) {
+        //   //can exit app to refresh the data or give alert
+        //   Alert.alert(
+        //     "Check for update in languageList screen",
+        //     [
+        //       {
+        //         text: "OK",
+        //         onPress: () => {
+        //           return;
+        //         },
+        //       },
+        //     ],
+        //     { cancelable: false }
+        //   );
+        //   // BackHandler.exitApp();
+        // }
+      }
+      var res =
+        bookListData.length == 0
+          ? []
+          : bookListData.sort(function (a, b) {
+            return a.bookNumber - b.bookNumber;
+          });
+      console.log("RES ", res)
+      setBookList(res)
+    } catch (error) {
+      console.log("ERROR ", error)
+    }
+  }
+  useEffect(() => {
+    getBookList()
+  }, [])
+  useEffect(() => {
+    getBookList()
+  }, [language, sourceId, baseAPI])
   return (
     <BibleContext.Provider
       value={{
@@ -172,6 +248,7 @@ const BibleContextProvider = (props) => {
         audioComponentUpdate,
         audio,
         setAudio,
+        bookList
       }}
     >
       {props.children}

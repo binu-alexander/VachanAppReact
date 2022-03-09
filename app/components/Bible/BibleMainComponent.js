@@ -11,7 +11,7 @@ import Color from "../../utils/colorConstants";
 import { Header, Button, Title, Toast } from "native-base";
 import HighlightColorGrid from "./HighlightColorGrid";
 import CustomStatusBar from "../CustomStatusBar";
-import Commentary from "../../screens/DrawerScreen/Commentary/index";
+import Commentary from "../../screens/StudyHelp/Commentary/";
 import { BibleContext } from "../../context/BibleContextProvider";
 import { BibleMainContext } from "../../screens/Bible";
 import AnimatedVerseList from "./AnimatedVerseList";
@@ -28,6 +28,7 @@ const BibleMainComponent = (props) => {
     unAvailableContent,
     reloadMessage,
     isLoading,
+    navigation
   },
   ] = useContext(BibleMainContext);
   const {
@@ -93,8 +94,8 @@ const BibleMainComponent = (props) => {
           {/** 2nd view as  parallelView**/}
           {visibleParallelView == true && (
             <View style={styles.parallelView}>
-              {contentType == "bible" && <BibleChapter />}
-              {contentType == "commentary" && <Commentary />}
+              {contentType == "bible" && <BibleChapter navigation={navigation} />}
+              {contentType == "commentary" && <Commentary navigation={navigation} />}
             </View>
           )}
         </View>

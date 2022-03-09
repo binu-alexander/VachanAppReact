@@ -32,7 +32,7 @@ const History = (props) => {
         <View style={style.historyHeader}>
           <Text style={style.accordionHeaderText}>{data.time}</Text>
           <Icon
-            name={isActive ? "keyboard-arrow-up" : "keyboard-arrow-down"}
+            name={"keyboard-arrow-down"}
             style={style.iconCustom}
           />
         </View>

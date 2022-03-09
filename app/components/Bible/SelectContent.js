@@ -52,7 +52,6 @@ const SelectContent = (props) => {
     if (value) {
       contentType = value;
     }
-
     return (
       <View>
         {props.displayContent == "commentary" ? (
@@ -62,7 +61,7 @@ const SelectContent = (props) => {
                 {" "}
                 {item.contentType == props.displayContent &&
                   item.contentType.charAt(0).toUpperCase() +
-                    item.contentType.slice(1)}
+                  item.contentType.slice(1)}
               </Text>
               <Icon
                 style={style.iconStyleSelection}
@@ -121,6 +120,7 @@ const SelectContent = (props) => {
   };
 
   const _renderContentInner = (item) => {
+    // console.log(" item.languageName ",)
     return item.versionModels.map((v) =>
       props.displayContent == "commentary" ? (
         contentType == props.displayContent && (
@@ -214,7 +214,7 @@ const SelectContent = (props) => {
                   <Accordion
                     dataArray={props.availableContents}
                     animation={true}
-                    expanded={[0]}
+                    expanded={[]}
                     renderHeader={_renderHeader}
                     renderContent={_renderContent}
                   />

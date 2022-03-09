@@ -233,7 +233,7 @@ const Commentary = (props) => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ flexGrow: 1, margin: 16 }}
             renderItem={renderItem}
-            ListFooterComponent={<View style={style.listFooter}></View>}
+            // ListFooterComponent={<View style={style.listFooter}></View>}
             ListHeaderComponent={ListHeaderComponent}
             // eslint-disable-next-line react/jsx-no-duplicate-props
             ListFooterComponent={renderFooter}

@@ -88,6 +88,7 @@ const Bible = (props) => {
     audioComponentUpdate,
     setAudio,
     setNextContent,
+    bookList
   } = useContext(BibleContext);
   const offsetAnim = useRef(new Animated.Value(0)).current;
   const scrollAnim = useRef(new Animated.Value(0)).current;
@@ -218,50 +219,42 @@ const Bible = (props) => {
 
   const queryBookFromAPI = async (chapterInfo) => {
     try {
-      const { fetchVersionBooks, updateVersionBook } = props;
-      if (books.length > 0) {
-        setChapterHeader([]);
-        setChapterContent([]);
-        setIsLoading(true);
-        setReloadMessage("Loading ......");
-        let cNum =
-          chapterInfo && chapterInfo.chapterId
-            ? chapterInfo.chapterId
-            : chapterNumber;
-        let bId =
-          chapterInfo && chapterInfo.bibleBookCode
-            ? chapterInfo.bibleBookCode
-            : bookId;
+      const { updateVersionBook } = props;
+      setChapterHeader([]);
+      setChapterContent([]);
+      setIsLoading(true);
+      setReloadMessage("Loading ......");
+      let cNum =
+        (chapterInfo && chapterInfo.chapterId)
+          ? chapterInfo.chapterId
+          : chapterNumber;
+      let bId =
+        (chapterInfo && chapterInfo.bibleBookCode)
+          ? chapterInfo.bibleBookCode
+          : bookId;
 
-        let bkName = null;
-        let bookItem = books.filter((val) => val.bookId == bId);
-        if (bookItem.length > 0) {
-          bkName = bookItem[0].bookName;
-        }
-        let bName = bkName != null ? bkName : bookName;
-        let sId =
-          chapterInfo && chapterInfo.sourceId ? chapterInfo.sourceId : sourceId;
-        setSelectedReferenceSet([]);
-        setShowColorGrid(false);
-        setShowBottomBar(false);
-        setCurrentVisibleChapter(cNum);
-        setError(null);
-        getChapter(cNum, sId)
-        updateVersionBook({
-          bookId: bId,
-          bookName: bName,
-          chapterNumber: parseInt(cNum) > getBookChaptersFromMapping(bId) ? 1 : parseInt(cNum),
-          totalChapters: getBookChaptersFromMapping(bId),
-        });
-        setIsLoading(false);
-      } else {
-        fetchVersionBooks({
-          language: language,
-          versionCode: versionCode,
-          downloaded: downloaded,
-          sourceId: sourceId,
-        });
+      let bkName = null;
+
+      let bookItem = bookList.filter((val) => val.bookId == bId);
+      if (bookItem.length > 0) {
+        bkName = bookItem[0].bookName;
       }
+      let bName = bkName != null ? bkName : bookName;
+
+      let sId = chapterInfo && chapterInfo.sourceId ? chapterInfo.sourceId : sourceId;
+      setSelectedReferenceSet([]);
+      setShowColorGrid(false);
+      setShowBottomBar(false);
+      setCurrentVisibleChapter(cNum);
+      setError(null);
+      getChapter(cNum, sId)
+      updateVersionBook({
+        bookId: bId,
+        bookName: bName,
+        chapterNumber: parseInt(cNum) > getBookChaptersFromMapping(bId) ? 1 : parseInt(cNum),
+        totalChapters: getBookChaptersFromMapping(bId),
+      });
+      setIsLoading(false);
     } catch (error) {
       setChapterContent([]);
       setError(error);
@@ -318,10 +311,6 @@ const Bible = (props) => {
       setShowColorGrid(false);
       setAudio(props.audio);
       setStatus(props.status);
-      if (prevSourceId != sourceId || prevBookId != bookId || prevChapter != currentVisibleChapter) {
-        getChapter(null, null)
-      }
-      audioComponentUpdate();
       if (books.length == 0) {
         props.fetchVersionBooks({
           language: language,
@@ -330,6 +319,11 @@ const Bible = (props) => {
           sourceId: sourceId,
         });
       }
+      if (prevSourceId != sourceId || prevBookId != bookId || prevChapter != currentVisibleChapter) {
+        getChapter(null, null)
+      }
+      audioComponentUpdate();
+
     });
     return () => {
       DbQueries.addHistory(
@@ -370,16 +364,6 @@ const Bible = (props) => {
     visibleParallelView,
     bookId,
   ]);
-  useEffect(() => {
-    props.fetchVersionBooks({
-      language: language,
-      versionCode: versionCode,
-      downloaded: downloaded,
-      sourceId: sourceId,
-    });
-  }, [language,
-    sourceId,
-    baseAPI])
   return (
     <BibleMainContext.Provider
       value={[

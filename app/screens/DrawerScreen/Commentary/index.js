@@ -76,6 +76,7 @@ const DrawerCommentary = (props) => {
       if (res) {
         for (let i = 0; i <= res.length - 1; i++) {
           let parallelLanguages = parallelLanguage.languageName.toLowerCase();
+          console.log()
           if (res[i].language.name === parallelLanguages) {
             let bookLists = res[i].bookNames.sort(function (a, b) {
               return a.book_id - b.book_id;
@@ -140,7 +141,7 @@ const DrawerCommentary = (props) => {
       "/" +
       chapterNumber +
       commentaryKey;
-    props.vachanAPIFetch(url);
+    props.vachanAPIFetch(url)
   };
 
   const fetchCommentary = () => {
@@ -250,7 +251,7 @@ const DrawerCommentary = (props) => {
       <View style={{ paddingVertical: 20 }}>
         {props.commentaryContent &&
           props.commentaryContent.commentaries &&
-          props.parallelMetaData && (
+          metadata && (
             <View style={style.centerContainer}>
               {metadata?.revision !== null && metadata?.revision !== "" && (
                 <Text textBreakStrategy={"simple"} style={style.metaDataText}>
@@ -277,7 +278,6 @@ const DrawerCommentary = (props) => {
     fetchBookName();
     fetchCommentary();
     props.navigation.setOptions({
-      // headerTitle: () => <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff' }}>Commentary</Text>,
       headerRight: () => (
         <View
           style={{
@@ -291,7 +291,7 @@ const DrawerCommentary = (props) => {
             navigation={props.navigation}
             navStyles={navStyles}
             iconName={"arrow-drop-down"}
-            title={parallelLanguage.languageName}
+            title={props.parallelLanguage.languageName}
             displayContent="commentary"
           />
         </View>
@@ -299,8 +299,6 @@ const DrawerCommentary = (props) => {
     });
   }, []);
   useEffect(() => {
-    // setParallelLanguage(parallelLanguage);
-    // setParallelMetaData(parallelMetaData);
     props.navigation.setOptions({
       headerRight: () => (
         <View style={style.headerView}>
@@ -308,18 +306,24 @@ const DrawerCommentary = (props) => {
             navigation={props.navigation}
             navStyles={navStyles}
             iconName={"arrow-drop-down"}
-            title={parallelLanguage.languageName}
+            title={props.parallelLanguage.languageName}
             displayContent="commentary"
           />
         </View>
       ),
     });
   }, [
+    props.parallelLanguage.sourceId,
+    props.parallelLanguage.languageName,
     parallelLanguage.sourceId,
     parallelLanguage.languageName,
-    props.parallelLanguage.languageName,
-    props.parallelLanguage.sourceId,
-  ]);
+  ])
+  useEffect(() => {
+    setParallelLanguage(props.parallelLanguage);
+    setParallelMetaData(props.parallelMetaData);
+    commentaryUpdate()
+  }, [props.parallelLanguage.sourceId,
+  props.parallelLanguage.languageName,])
   useEffect(() => {
     commentaryUpdate();
     updateBookName();
@@ -342,7 +346,7 @@ const DrawerCommentary = (props) => {
     }
   }, [JSON.stringify(dropDownList), selectedBookIndex]);
   useEffect(() => {
-    fetchBookName();
+    fetchBookName()
   }, [bookResponse])
   return (
     <View style={style.container}>
@@ -406,13 +410,11 @@ const DrawerCommentary = (props) => {
             </TouchableOpacity>
           </View>
           <FlatList
-            data={
-              props.commentaryContent && props.commentaryContent.commentaries
+            data={props.commentaryContent && props.commentaryContent.commentaries
             }
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ flexGrow: 1, margin: 16 }}
             renderItem={renderItem}
-            // ListFooterComponent={<View style={this.styles.listFooter}></View>}
             ListHeaderComponent={ListHeaderComponent}
             ListFooterComponent={renderFooter}
           />

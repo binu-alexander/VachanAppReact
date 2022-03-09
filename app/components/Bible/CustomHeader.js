@@ -37,13 +37,15 @@ const CustomHeader = (props) => {
     audio,
     setStatus,
   } = useContext(BibleContext);
-  let lgname = props.language && (props.language.length > 8 ? props.language.charAt(0).toUpperCase() +
-    props.language.slice(1, 3) :
-    props.language.charAt(0).toUpperCase() +
-    props.language.slice(1))
-  let bookName = !isNaN(props.bookName.charAt(0))
-    ? props.bookName.charAt(0).toUpperCase() + props.bookName.slice(1)
-    : props.bookName;
+  const { language, versionCode, bookName, bookId } = props
+  let lgname = language && (language.length > 8 ? language.charAt(0).toUpperCase() +
+    language.slice(1, 3) :
+    language.charAt(0).toUpperCase() +
+    language.slice(1))
+  let bkName = !isNaN(bookName.charAt(0))
+    ? bookName.charAt(0).toUpperCase() + bookName.slice(1)
+    : bookName;
+  console.log("BOOKNAME ----> ", bookName)
   const navbarTranslate = clampedScroll.interpolate({
     inputRange: [0, NAVBAR_HEIGHT],
     outputRange: [0, -NAVBAR_HEIGHT],
@@ -52,11 +54,11 @@ const CustomHeader = (props) => {
 
   const navigateToVideo = () => {
     setStatus(false);
-    navigation.navigate("Video");
+    navigation.navigate("Video", { bookId, bookName });
   };
   const navigateToImage = () => {
     setStatus(false);
-    navigation.navigate("Infographics");
+    navigation.navigate("Infographics", { bookId, bookName });
   };
   const navigateToSettings = () => {
     setStatus(false);
@@ -70,14 +72,14 @@ const CustomHeader = (props) => {
         texttohtml += `<p>${val.verseNumber} : ${val.verseText}</p>`;
       }
     });
-    let header1 = `<h1>${props.language + " " + props.versionCode}</h1>`;
-    let header3 = `<h3>${props.bookName + " " + currentVisibleChapter}</h3>`;
+    let header1 = `<h1>${language + " " + versionCode}</h1>`;
+    let header3 = `<h3>${bookName + " " + currentVisibleChapter}</h3>`;
     let options = {
       html: `${header1}${header3}<p>${texttohtml}</p>`,
       fileName: `${"VachanGo_" +
-        props.language +
+        language +
         "_" +
-        props.bookId +
+        bookId +
         "_" +
         currentVisibleChapter
         }`,
@@ -186,9 +188,9 @@ const CustomHeader = (props) => {
           style={navStyles.titleTouchable}
           onPress={navigateToSelectionTab}
         >
-          {bookName && currentVisibleChapter ? (
+          {bkName && currentVisibleChapter ? (
             <Text style={{ fontSize: 18, color: "#fff" }}>
-              {bookName.length > 12 ? bookName.slice(0, 8) + "..." : bookName}{" "}
+              {bkName.length > 12 ? bkName.slice(0, 8) + "..." : bkName}{" "}
               {currentVisibleChapter}
             </Text>
           ) : null}
@@ -200,7 +202,7 @@ const CustomHeader = (props) => {
         >
           <Text style={navStyles.langVer}>
             {lgname}{" "}
-            {props.versionCode && props.versionCode.toUpperCase()}
+            {versionCode && versionCode.toUpperCase()}
           </Text>
           <Icon name="arrow-drop-down" color={Color.White} size={20} />
         </TouchableOpacity>
