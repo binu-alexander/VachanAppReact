@@ -4,10 +4,12 @@ import React, {
   useState,
   createContext,
   useContext,
-  useMemo
+  useMemo,
 } from "react";
 import { AppState, Animated, Platform } from "react-native";
-import NetInfo, { NetInfoCellularGeneration } from "@react-native-community/netinfo";
+import NetInfo, {
+  NetInfoCellularGeneration,
+} from "@react-native-community/netinfo";
 import DbQueries from "../../utils/dbQueries";
 import {
   APIAudioURL,
@@ -60,25 +62,19 @@ const Bible = (props) => {
 
   const [initializing, setInitializing] = useState(true);
   const [unAvailableContent, setUnAvailableContent] = useState("");
-  const prevSourceId = useRef(sourceId).current
-  const prevBookId = useRef(bookId).current
-  const prevChapter = useRef(chapterNumber).current
+  const prevSourceId = useRef(sourceId).current;
+  const prevBookId = useRef(bookId).current;
+  const prevChapter = useRef(chapterNumber).current;
 
   const {
     currentVisibleChapter,
     setCurrentVisibleChapter,
     setSelectedReferenceSet,
-    getNotes,
-    getBookMarks,
     setConnection_Status,
     setEmail,
-    email,
     setUid,
-    uid,
     setShowBottomBar,
     setShowColorGrid,
-    getHighlights,
-    bookmarkedChap,
   } = useContext(LoginData);
   const {
     setStatus,
@@ -88,7 +84,7 @@ const Bible = (props) => {
     audioComponentUpdate,
     setAudio,
     setNextContent,
-    bookList
+    bookList,
   } = useContext(BibleContext);
   const offsetAnim = useRef(new Animated.Value(0)).current;
   const scrollAnim = useRef(new Animated.Value(0)).current;
@@ -166,8 +162,8 @@ const Bible = (props) => {
   // fetch chapter on didmount call
   const getChapter = async (cNum, sId) => {
     try {
-      let curChap = cNum == null ? currentVisibleChapter : cNum
-      let srcId = sId == null ? sourceId : sId
+      let curChap = cNum == null ? currentVisibleChapter : cNum;
+      let srcId = sId == null ? sourceId : sId;
       setIsLoading(true);
       setChapterHeader([]);
       setChapterContent([]);
@@ -208,14 +204,14 @@ const Bible = (props) => {
       }
       setIsLoading(false);
     } catch (error) {
-      console.log("ERRoR ", error)
+      console.log("ERRoR ", error);
       setIsLoading(false);
       setError(error);
       setChapterHeader("");
       setChapterContent([]);
       setUnAvailableContent(true);
     }
-  }
+  };
 
   const queryBookFromAPI = async (chapterInfo) => {
     try {
@@ -225,11 +221,11 @@ const Bible = (props) => {
       setIsLoading(true);
       setReloadMessage("Loading ......");
       let cNum =
-        (chapterInfo && chapterInfo.chapterId)
+        chapterInfo && chapterInfo.chapterId
           ? chapterInfo.chapterId
           : chapterNumber;
       let bId =
-        (chapterInfo && chapterInfo.bibleBookCode)
+        chapterInfo && chapterInfo.bibleBookCode
           ? chapterInfo.bibleBookCode
           : bookId;
 
@@ -241,17 +237,19 @@ const Bible = (props) => {
       }
       let bName = bkName != null ? bkName : bookName;
 
-      let sId = chapterInfo && chapterInfo.sourceId ? chapterInfo.sourceId : sourceId;
+      let sId =
+        chapterInfo && chapterInfo.sourceId ? chapterInfo.sourceId : sourceId;
       setSelectedReferenceSet([]);
       setShowColorGrid(false);
       setShowBottomBar(false);
       setCurrentVisibleChapter(cNum);
       setError(null);
-      getChapter(cNum, sId)
+      getChapter(cNum, sId);
       updateVersionBook({
         bookId: bId,
         bookName: bName,
-        chapterNumber: parseInt(cNum) > getBookChaptersFromMapping(bId) ? 1 : parseInt(cNum),
+        chapterNumber:
+          parseInt(cNum) > getBookChaptersFromMapping(bId) ? 1 : parseInt(cNum),
         totalChapters: getBookChaptersFromMapping(bId),
       });
       setIsLoading(false);
@@ -319,11 +317,14 @@ const Bible = (props) => {
           sourceId: sourceId,
         });
       }
-      if (prevSourceId != sourceId || prevBookId != bookId || prevChapter != currentVisibleChapter) {
-        getChapter(null, null)
+      if (
+        prevSourceId != sourceId ||
+        prevBookId != bookId ||
+        prevChapter != currentVisibleChapter
+      ) {
+        getChapter(null, null);
       }
       audioComponentUpdate();
-
     });
     return () => {
       DbQueries.addHistory(
@@ -357,13 +358,15 @@ const Bible = (props) => {
         sourceId: sourceId,
       });
     }
-  }, [
-    language,
-    sourceId,
-    baseAPI,
-    visibleParallelView,
-    bookId,
-  ]);
+  }, [language, sourceId, baseAPI, visibleParallelView, bookId]);
+  useEffect(() => {
+    props.fetchVersionBooks({
+      language: language,
+      versionCode: versionCode,
+      downloaded: downloaded,
+      sourceId: sourceId,
+    });
+  }, [language, sourceId, baseAPI]);
   return (
     <BibleMainContext.Provider
       value={[

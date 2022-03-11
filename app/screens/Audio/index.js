@@ -10,6 +10,9 @@ const Audio = (props) => {
   const styles = style(props.colorFile, props.sizeFile);
   const [allAudioBooks, setAllAudioBooks] = useState([]);
   const [message, setMessage] = useState("");
+  let audioBooks = props.audioList;
+  let books = props.books;
+
   const navigateToBible = (bId, bookName, chapterNum) => {
     props.updateVersionBook({
       bookId: bId,
@@ -40,8 +43,7 @@ const Audio = (props) => {
       </Card>
     );
   };
-  useEffect(() => {
-    const books = props.books;
+  const setAllAudioBooksFunc = () => {
     const audioBooks = props.audioList && props.audioList[0].books;
     const arrayBooks = audioBooks && Object.keys(audioBooks);
     const allBooks = books.map((code) => code);
@@ -51,7 +53,6 @@ const Audio = (props) => {
         let temp = allBooks.find((item) => item.bookId === arrayBooks[i]);
         allAudioBook.push(temp);
       }
-      console.log(allAudioBooks);
       if (allAudioBook.length === 0) {
         setMessage(`Audio for ${props.language} not available`);
       } else {
@@ -59,8 +60,10 @@ const Audio = (props) => {
         setMessage("");
       }
     }
-  }, []);
-
+  };
+  useEffect(() => {
+    setAllAudioBooksFunc();
+  }, [audioBooks]);
   return (
     <View style={styles.container}>
       <ListContainer

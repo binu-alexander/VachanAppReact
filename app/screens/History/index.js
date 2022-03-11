@@ -26,15 +26,12 @@ const History = (props) => {
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const style = styles(props.colorFile, props.sizeFile);
-  const _renderHeader = (data, index, isActive) => {
+  const _renderHeader = (data) => {
     return (
       <View>
         <View style={style.historyHeader}>
           <Text style={style.accordionHeaderText}>{data.time}</Text>
-          <Icon
-            name={"keyboard-arrow-down"}
-            style={style.iconCustom}
-          />
+          <Icon name={"keyboard-arrow-down"} style={style.iconCustom} />
         </View>
       </View>
     );
@@ -147,9 +144,9 @@ const History = (props) => {
       setHistoryLists(historyList);
       setIsLoading(false);
     }
-  }
+  };
   useEffect(() => {
-    fetchHighlightedData()
+    fetchHighlightedData();
   }, []);
   return (
     <View style={style.container}>

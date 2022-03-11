@@ -20,6 +20,7 @@ const ListContainer = ({
         data={listData}
         contentContainerStyle={listData.length === 0 && listStyle}
         renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
         extraStateData={extraData}
         ListEmptyComponent={
           <View style={containerStyle}>
