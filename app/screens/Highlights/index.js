@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { Text, View, ActivityIndicator, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { getBookChaptersFromMapping } from "../../utils/UtilFunctions";
@@ -8,14 +8,16 @@ import { updateVersionBook } from "../../store/action/";
 import database from "@react-native-firebase/database";
 import Colors from "../../utils/colorConstants";
 import ListContainer from "../../components/Common/FlatList";
-
+import { MainContext } from "../../context/MainProvider";
 const HighLights = (props) => {
   const [HightlightedVerseArray, setHightlightedVerseArray] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const email = props.email;
   const style = styles(props.colorFile, props.sizeFile);
-  const prevBooks = useRef(props.books).current;
+
+  const { bookList } = useContext(MainContext);
+
   const removeHighlight = (id, chapterNum, verseNum) => {
     var data = HightlightedVerseArray;
     data.forEach((a, i) => {
@@ -28,13 +30,13 @@ const HighLights = (props) => {
               database()
                 .ref(
                   "users/" +
-                    props.uid +
-                    "/highlights/" +
-                    props.sourceId +
-                    "/" +
-                    id +
-                    "/" +
-                    chapterNum
+                  props.uid +
+                  "/highlights/" +
+                  props.sourceId +
+                  "/" +
+                  id +
+                  "/" +
+                  chapterNum
                 )
                 .remove();
               data.splice(i, 1);
@@ -45,11 +47,11 @@ const HighLights = (props) => {
               database()
                 .ref(
                   "users/" +
-                    props.uid +
-                    "/highlights/" +
-                    props.sourceId +
-                    "/" +
-                    id
+                  props.uid +
+                  "/highlights/" +
+                  props.sourceId +
+                  "/" +
+                  id
                 )
                 .update(updates);
             }
@@ -121,11 +123,11 @@ const HighLights = (props) => {
   };
   const renderItem = ({ item }) => {
     var bookName = null;
-    if (props.books) {
-      for (var i = 0; i <= props.books.length - 1; i++) {
-        var bId = props.books[i].bookId;
+    if (bookList) {
+      for (var i = 0; i <= bookList.length - 1; i++) {
+        var bId = bookList[i].bookId;
         if (bId == item.bookId) {
-          bookName = props.books[i].bookName;
+          bookName = bookList[i].bookName;
         }
       }
     } else {
@@ -148,7 +150,7 @@ const HighLights = (props) => {
             <Text style={style.bookmarksText}>
               {props.languageName &&
                 props.languageName.charAt(0).toUpperCase() +
-                  props.languageName.slice(1)}{" "}
+                props.languageName.slice(1)}{" "}
               {props.versionCode && props.versionCode.toUpperCase()} {bookName}{" "}
               {item.chapterNumber} {":"} {verse}
             </Text>
@@ -167,10 +169,7 @@ const HighLights = (props) => {
 
   useEffect(() => {
     fetchHighlights();
-    if (prevBooks.length != props.books.length) {
-      fetchHighlights();
-    }
-  }, [prevBooks, props.books, HightlightedVerseArray]);
+  }, [bookList, HightlightedVerseArray]);
   return (
     <View style={style.container}>
       {isLoading ? (
@@ -208,7 +207,6 @@ const mapStateToProps = (state) => {
     uid: state.userInfo.uid,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-    books: state.versionFetch.versionBooks,
   };
 };
 const mapDispatchToProps = (dispatch) => {

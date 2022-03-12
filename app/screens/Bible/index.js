@@ -29,6 +29,7 @@ import { getHeading } from "../../utils/UtilFunctions";
 import BibleMainComponent from "../../components/Bible/BibleMainComponent";
 import { LoginData } from "../../context/LoginDataProvider";
 import { BibleContext } from "../../context/BibleContextProvider";
+import { MainContext } from "../../context/MainProvider";
 const NAVBAR_HEIGHT = 64;
 // eslint-disable-next-line no-undef
 const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
@@ -88,8 +89,8 @@ const Bible = (props) => {
     audioComponentUpdate,
     setAudio,
     setNextContent,
-    bookList
   } = useContext(BibleContext);
+  const { bookList } = useContext(MainContext)
   const offsetAnim = useRef(new Animated.Value(0)).current;
   const scrollAnim = useRef(new Animated.Value(0)).current;
   let _clampedScrollValue = useRef(new Animated.Value(0)).current;
@@ -306,6 +307,7 @@ const Bible = (props) => {
       }
     });
     const subs = props.navigation.addListener("focus", () => {
+      console.log(" FOCUS ---> ", props.audio, props.status)
       setSelectedReferenceSet([]);
       setShowBottomBar(false);
       setShowColorGrid(false);
@@ -323,7 +325,6 @@ const Bible = (props) => {
         getChapter(null, null)
       }
       audioComponentUpdate();
-
     });
     return () => {
       DbQueries.addHistory(
@@ -363,6 +364,22 @@ const Bible = (props) => {
     baseAPI,
     visibleParallelView,
     bookId,
+  ]);
+  useEffect(() => {
+    setAudio(props.audio);
+    setStatus(props.status);
+  }, [props.audio, props.status])
+  useEffect(() => {
+    props.fetchVersionBooks({
+      language: language,
+      versionCode: versionCode,
+      downloaded: downloaded,
+      sourceId: sourceId,
+    });
+  }, [
+    language,
+    sourceId,
+    baseAPI,
   ]);
   return (
     <BibleMainContext.Provider

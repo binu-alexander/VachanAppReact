@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 import { styles } from "./styles.js";
@@ -6,15 +6,15 @@ import { Card, CardItem } from "native-base";
 import { Toast } from "native-base";
 import vApi from "../../utils/APIFetch";
 import ListContainer from "../../components/Common/FlatList.js";
-
+import { MainContext } from "../../context/MainProvider.js";
 const Video = (props) => {
   const bookId = props.route.params ? props.route.params.bookId : null;
   const bookName = props.route.params ? props.route.params.bookName : null;
-
+  const { bookList } = useContext(MainContext);
   const [videos, setVideos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const style = styles(props.colorFile, props.sizeFile);
-  const prevBooks = useRef(props.books).current;
+
   const [message, setMessage] = useState('')
   const fetchVideo = async () => {
     setIsLoading(true);
@@ -115,10 +115,7 @@ const Video = (props) => {
 
   useEffect(() => {
     fetchVideo();
-    if (prevBooks.length != props.books.length) {
-      fetchVideo();
-    }
-  }, [prevBooks, props.books, videos]);
+  }, [bookList, videos]);
   return (
     <View style={style.container}>
       <ListContainer
@@ -140,7 +137,6 @@ const mapStateToProps = (state) => {
   return {
     languageCode: state.updateVersion.languageCode,
     languageName: state.updateVersion.language,
-    books: state.versionFetch.versionBooks,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
   };

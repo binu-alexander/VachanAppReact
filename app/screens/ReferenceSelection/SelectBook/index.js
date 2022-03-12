@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import {
   Text,
   View,
@@ -12,6 +12,7 @@ import { styles } from "./styles.js";
 import { connect } from "react-redux";
 import Spinner from "react-native-loading-spinner-overlay";
 import Color from "../../../utils/colorConstants";
+import { MainContext } from "../../../context/MainProvider.js";
 const width = Dimensions.get("window").width;
 
 //OT- old-testment
@@ -20,12 +21,12 @@ const SelectBook = (props) => {
   const [activeTab, setActiveTab] = useState(true);
   const [NTSize, setNTSize] = useState(0);
   const [OTSize, setOTSize] = useState(0);
-  const prevBooks = useRef(props.books).current;
   let viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 100,
     waitForInteraction: true,
   }).current;
   const flatlistRef = useRef();
+  const { bookList } = useContext(MainContext);
   const style = styles(props.colorFile, props.sizeFile);
   const toggleButton = (value) => {
     setActiveTab(value);
@@ -59,12 +60,12 @@ const SelectBook = (props) => {
   };
   const getOTSize = () => {
     let count = 0;
-    if (props.books) {
-      if (props.books.length == 0) {
+    if (bookList) {
+      if (bookList.length == 0) {
         setOTSize(0);
       } else {
-        for (let i = 0; i < props.books.length; i++) {
-          if (props.books[i].bookNumber <= 39) {
+        for (let i = 0; i < bookList.length; i++) {
+          if (bookList[i].bookNumber <= 39) {
             count++;
           } else {
             break;
@@ -77,12 +78,12 @@ const SelectBook = (props) => {
 
   const getNTSize = () => {
     let count = 0;
-    if (props.books) {
-      if (props.books.length == 0) {
+    if (bookList) {
+      if (bookList.length == 0) {
         setNTSize(0);
       } else {
-        for (let i = props.books.length - 1; i >= 0; i--) {
-          if (props.books[i].bookNumber >= 40) {
+        for (let i = bookList.length - 1; i >= 0; i--) {
+          if (bookList[i].bookNumber >= 40) {
             count++;
           } else {
             break;
@@ -101,19 +102,14 @@ const SelectBook = (props) => {
     getOTSize();
     getNTSize();
     selectTab();
-    if (prevBooks !== props.books) {
-      getOTSize();
-      getNTSize();
-      selectTab();
-    }
-  }, [prevBooks, setActiveTab]);
+  }, [setActiveTab]);
   const selectTab = () => {
     let bookData = null;
     let bookIndex = -1;
-    if (props.books.length > 0) {
-      for (let i = 0; i < props.books.length; i++) {
-        if (props.books[i].bookId == props.route.params.selectedBookId) {
-          bookData = props.books[i];
+    if (bookList.length > 0) {
+      for (let i = 0; i < bookList.length; i++) {
+        if (bookList[i].bookId == props.route.params.selectedBookId) {
+          bookData = bookList[i];
           bookIndex = i;
         }
       }
@@ -233,7 +229,7 @@ const SelectBook = (props) => {
           </Segment>
           <FlatList
             ref={flatlistRef}
-            data={props.books}
+            data={bookList}
             getItemLayout={(data, index) => getItemLayout(data, index)}
             renderItem={renderItem}
             extraData={style}
@@ -251,7 +247,6 @@ const SelectBook = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    books: state.versionFetch.versionBooks,
     isLoading: state.versionFetch.isLoading,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,

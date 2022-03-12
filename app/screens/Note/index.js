@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Text, View, TouchableOpacity, ActivityIndicator } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Card, CardItem } from "native-base";
@@ -7,7 +7,7 @@ import database from "@react-native-firebase/database";
 import { styles } from "./styles.js";
 import Colors from "../../utils/colorConstants";
 import ListContainer from "../../components/Common/FlatList.js";
-
+import { MainContext } from "../../context/MainProvider.js";
 const Note = (props) => {
   const chapterNumber = props.route.params
     ? props.route.params.chapterNumber
@@ -16,6 +16,7 @@ const Note = (props) => {
   const [notesData, setNotesData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const { bookList } = useContext(MainContext);
   const email = props.email;
   const style = styles(props.colorFile, props.sizeFile);
 
@@ -123,11 +124,11 @@ const Note = (props) => {
   }, [email]);
   const renderItem = ({ item, index }) => {
     var bookName = null;
-    if (props.books) {
-      for (var i = 0; i <= props.books.length - 1; i++) {
-        var bId = props.books[i].bookId;
+    if (bookList) {
+      for (var i = 0; i <= bookList.length - 1; i++) {
+        var bId = bookList[i].bookId;
         if (bId == item.bookId) {
-          bookName = props.books[i].bookName;
+          bookName = bookList[i].bookName;
         }
       }
     } else {
@@ -242,7 +243,6 @@ const mapStateToProps = (state) => {
     versionCode: state.updateVersion.versionCode,
     email: state.userInfo.email,
     uid: state.userInfo.uid,
-    books: state.versionFetch.versionBooks,
   };
 };
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import { Agenda } from "../../../lib/react-native-calendars";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { styles } from "./styles.js";
 import Colors from "../../../utils/colorConstants";
+import { MainContext } from "../../../context/MainProvider";
 var moment = require("moment");
 
 const BRP = (props) => {
@@ -33,6 +34,7 @@ const BRP = (props) => {
   var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
   var currentMonths;
   const { languageName, versionCode, downloaded, colorFile, sizeFile, sourceId } = props
+  const { bookList } = useContext(MainContext);
   const style = styles(colorFile, sizeFile);
   let agenda = useRef().current;
   const laodMonthItem = (day) => {
@@ -58,8 +60,8 @@ const BRP = (props) => {
           // readingPlan[i].reading.forEach((val) => {
           //   var words = val.ref.split(" ")
           //   var regmatch = val.text.split(" ")
-          //   if (props.books) {
-          //     var book = props.books.find((book) => words[0] == book.bookId)
+          //   if (bookList) {
+          //     var book = bookList.find((book) => words[0] == book.bookId)
           //     if (book) {
           //       if (regmatch) {
           //         val['native_name'] = book.bookName + " " + regmatch[regmatch.length - 1]
@@ -88,12 +90,12 @@ const BRP = (props) => {
     let chapterNumber = words[1].match(/\d+/g);
     let bookName = null;
     let bookNumber = null;
-    if (props.books) {
-      if (props.books.length > 0) {
-        for (var i = 0; i < props.books.length; i++) {
-          if (props.books[i].bookId == bookId) {
-            bookName = props.books[i].bookName;
-            bookNumber = props.books[i].bookNumber;
+    if (bookList) {
+      if (bookList.length > 0) {
+        for (var i = 0; i < bookList.length; i++) {
+          if (bookList[i].bookId == bookId) {
+            bookName = bookList[i].bookName;
+            bookNumber = bookList[i].bookNumber;
           }
         }
       }
@@ -281,7 +283,7 @@ const BRP = (props) => {
       downloaded: downloaded,
       sourceId: sourceId,
     });
-  }, [JSON.stringify(props.books)]);
+  }, [bookList]);
   useEffect(() => {
     loadItems();
   }, [JSON.stringify(readingPlan), planSelected]);
@@ -352,7 +354,6 @@ const BRP = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    books: state.versionFetch.versionBooks,
     languageCode: state.updateVersion.languageCode,
     languageName: state.updateVersion.language,
     versionCode: state.updateVersion.versionCode,

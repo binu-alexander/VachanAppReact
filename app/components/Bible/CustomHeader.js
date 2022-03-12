@@ -26,8 +26,6 @@ const CustomHeader = (props) => {
   const {
     currentVisibleChapter,
     isBookmark,
-    bookmarksList,
-    bookmarkedChap,
     onBookmarkPress,
   } = useContext(LoginData);
   const {
