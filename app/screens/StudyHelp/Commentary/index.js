@@ -16,8 +16,6 @@ import vApi from "../../../utils/APIFetch";
 import securityVaraibles from "../../../../securityVaraibles";
 import { LoginData } from "../../../context/LoginDataProvider";
 import { MainContext } from "../../../context/MainProvider";
-// import fetchCommentaryReducer from "../../../store/reducer/apiFetchReducer/vachanAPIFetch";
-// import { cos } from "react-native-reanimated";
 
 const commentaryKey = securityVaraibles.COMMENTARY_KEY
   ? "?key=" + securityVaraibles.COMMENTARY_KEY

@@ -86,7 +86,6 @@ const Bible = (props) => {
     status,
     setPreviousContent,
     _handleAppStateChange,
-    audioComponentUpdate,
     setAudio,
     setNextContent,
   } = useContext(BibleContext);
@@ -311,8 +310,6 @@ const Bible = (props) => {
       setSelectedReferenceSet([]);
       setShowBottomBar(false);
       setShowColorGrid(false);
-      setAudio(props.audio);
-      setStatus(props.status);
       if (books.length == 0) {
         props.fetchVersionBooks({
           language: language,
@@ -324,7 +321,6 @@ const Bible = (props) => {
       if (prevSourceId != sourceId || prevBookId != bookId || prevChapter != currentVisibleChapter) {
         getChapter(null, null)
       }
-      audioComponentUpdate();
     });
     return () => {
       DbQueries.addHistory(
@@ -349,7 +345,6 @@ const Bible = (props) => {
 
   useEffect(() => {
     getChapter(null, null);
-    audioComponentUpdate();
     if (books.length == 0) {
       props.fetchVersionBooks({
         language: language,

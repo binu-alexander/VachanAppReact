@@ -246,16 +246,16 @@ function NavStackScreen() {
         name="Audio"
         component={Audio}
         options={{
-          headerBackTitle: "Audio",
-          headerTitle: Platform.OS === "android" ? "Audio" : null,
+          headerBackTitle: "Audios",
+          headerTitle: Platform.OS === "android" ? "Audios" : null,
         }}
       />
       <NavStack.Screen
         name="Video"
         component={Video}
         options={{
-          headerBackTitle: "Video",
-          headerTitle: Platform.OS === "android" ? "Video" : null,
+          headerBackTitle: "Videos",
+          headerTitle: Platform.OS === "android" ? "Videos" : null,
         }}
       />
       <DrawerStack.Screen

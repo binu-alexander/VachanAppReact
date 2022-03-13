@@ -20,6 +20,7 @@ import { Toast } from "native-base";
 import vApi from "../utils/APIFetch";
 import { updateLangVersion } from "../utils/BiblePageUtil";
 import { getBookChaptersFromMapping, getBookSectionFromMapping } from "../utils/UtilFunctions";
+import { lang } from "moment";
 export const BibleContext = createContext();
 
 const BibleContextProvider = (props) => {
@@ -138,6 +139,7 @@ const BibleContextProvider = (props) => {
     try {
       if (res.length !== 0) {
         let data = res.filter((item) => {
+          console.log("AUDIO LIST ", language)
           if (item.language.name == language.toLowerCase()) {
             return item;
           }
@@ -231,6 +233,7 @@ const BibleContextProvider = (props) => {
     getBookList()
   }, [])
   useEffect(() => {
+    console.log("LANGUAGE ", language)
     getBookList()
     audioComponentUpdate()
   }, [language, sourceId, baseAPI])
