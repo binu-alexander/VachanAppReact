@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useState } from "react";
+import React, { createRef, useEffect, useState, useContext } from "react";
 import {
   Text,
   View,
@@ -27,6 +27,7 @@ import { styles } from "./styles";
 import { connect } from "react-redux";
 import Color from "../../utils/colorConstants";
 import vApi from "../../utils/APIFetch";
+import { MainContext } from "../../context/MainProvider.js";
 const width = Dimensions.get("window").width;
 
 const SearchResultTypes = {
@@ -36,6 +37,7 @@ const SearchResultTypes = {
 };
 
 const Search = (props) => {
+  const { bookList } = useContext(MainContext);
   const [searchedResult, setSearchedResult] = useState([]);
   const [activeTab, setActiveTab] = useState(SearchResultTypes.ALL);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,7 +48,7 @@ const Search = (props) => {
   const [versionCode, setVersionCode] = useState(props.versionCode);
   const [downloaded, setDownloaded] = useState(props.downloaded);
   const [languageCode, setLanguageCode] = useState(props.languageCode);
-  const [books, setBooks] = useState(props.books);
+  const [books, setBooks] = useState(bookList);
   const [metadata, setMetaData] = useState(null);
   const style = styles(props.colorFile, props.sizeFile);
   let elementIndex = createRef();

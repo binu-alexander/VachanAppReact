@@ -1,17 +1,16 @@
 import { Card, CardItem, View } from "native-base";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Text, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 import { updateVersionBook, ToggleAudio } from "../../store/action/";
 import { style } from "./style";
 import ListContainer from "../../components/Common/FlatList";
+import { MainContext } from "../../context/MainProvider";
 
 const Audio = (props) => {
   const styles = style(props.colorFile, props.sizeFile);
   const [allAudioBooks, setAllAudioBooks] = useState([]);
   const [message, setMessage] = useState("");
-  let audioBooks = props.audioList;
-  let books = props.books;
 
   const navigateToBible = (bId, bookName, chapterNum) => {
     props.updateVersionBook({
@@ -22,6 +21,7 @@ const Audio = (props) => {
     props.ToggleAudio({ audio: true, status: true });
     props.navigation.navigate("Bible");
   };
+  const { bookList } = useContext(MainContext);
   const emptyMessageNavigation = () => {
     props.navigation.navigate("Bible");
   };
@@ -43,27 +43,38 @@ const Audio = (props) => {
       </Card>
     );
   };
-  const setAllAudioBooksFunc = () => {
-    const audioBooks = props.audioList && props.audioList[0].books;
-    const arrayBooks = audioBooks && Object.keys(audioBooks);
-    const allBooks = books.map((code) => code);
-    let allAudioBook = [];
-    if (arrayBooks != undefined) {
-      for (var i = 0; i < arrayBooks.length; i++) {
-        let temp = allBooks.find((item) => item.bookId === arrayBooks[i]);
-        allAudioBook.push(temp);
+  const audioData = async () => {
+    try {
+      if (bookList) {
+        const audioBooks = props.audioList && props.audioList[0].books;
+        const arrayBooks = audioBooks && Object.keys(audioBooks);
+        console.log("ARRAY BOOKS ", arrayBooks);
+        console.log("AUDIO BOOKS ", audioBooks);
+        const allBooks = bookList.map((code) => code);
+        let allAudioBook = [];
+        if (arrayBooks != undefined) {
+          for (var i = 0; i < arrayBooks.length; i++) {
+            let temp = allBooks.find((item) => item.bookId === arrayBooks[i]);
+            allAudioBook.push(temp);
+          }
+          console.log(allAudioBooks);
+          if (allAudioBook.length === 0) {
+            setMessage(`Audio for ${props.language} not available`);
+          } else {
+            setAllAudioBooks(allAudioBook);
+            setMessage("");
+          }
+        }
       }
-      if (allAudioBook.length === 0) {
-        setMessage(`Audio for ${props.language} not available`);
-      } else {
-        setAllAudioBooks(allAudioBook);
-        setMessage("");
-      }
+    } catch (error) {
+      console.log("ERROR ------> ", error);
     }
   };
+
   useEffect(() => {
-    setAllAudioBooksFunc();
-  }, [audioBooks]);
+    audioData();
+  }, []);
+  const keyExtractor = (item, index) => item.bookId;
   return (
     <View style={styles.container}>
       <ListContainer
@@ -71,6 +82,7 @@ const Audio = (props) => {
         listStyle={styles.centerEmptySet}
         renderItem={renderItem}
         icon="volume-up"
+        keyExtractor={keyExtractor}
         iconStyle={styles.emptyMessageIcon}
         containerStyle={styles.emptyMessageContainer}
         textStyle={styles.messageEmpty}
@@ -85,7 +97,6 @@ const mapStateToProps = (state) => {
     language: state.updateVersion.language,
     languageCode: state.updateVersion.languageCode,
     audioList: state.updateVersion.audioList,
-    books: state.versionFetch.versionBooks,
     audio: state.audio.audio,
     status: state.audio.status,
     sizeFile: state.updateStyling.sizeFile,

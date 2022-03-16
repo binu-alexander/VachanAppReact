@@ -41,8 +41,8 @@ const DrawerScreen = (props) => {
     { icon: "bookmark", pressIcon: "Bookmarks", text: "Bookmarks" },
     { icon: "border-color", pressIcon: "Highlights", text: "Highlights" },
     { icon: "note", pressIcon: "Notes", text: "Notes" },
-    { icon: "videocam", pressIcon: "Video", text: "Video" },
-    { icon: "volume-up", pressIcon: "Audio", text: "Audio" },
+    { icon: "videocam", pressIcon: "Video", text: "Videos" },
+    { icon: "volume-up", pressIcon: "Audio", text: "Audios" },
     { icon: "book", pressIcon: "Dictionary", text: "Dictionary" },
     { icon: "image", pressIcon: "Infographics", text: "Infographics" },
     { icon: "receipt", pressIcon: "OBS", text: "Bible Stories" },
@@ -115,7 +115,7 @@ const DrawerScreen = (props) => {
           APP VERSION {currentVersion}
         </Text> */}
         {/*//for tesing */}
-        <Text style={style.versionText}>APP VERSION 1.3.4-alpha.7</Text>
+        <Text style={style.versionText}>APP VERSION 1.3.4-alpha.8</Text>
       </ScrollView>
     </View>
   );

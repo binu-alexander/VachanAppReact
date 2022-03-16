@@ -170,7 +170,6 @@ const InfographicsImage = (props) => {
 const mapStateToProps = (state) => {
   return {
     languageCode: state.updateVersion.languageCode,
-    books: state.versionFetch.versionBooks,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
     colorMode: state.updateStyling.colorMode,

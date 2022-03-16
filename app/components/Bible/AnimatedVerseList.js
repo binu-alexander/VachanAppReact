@@ -181,10 +181,6 @@ const AnimatedVerseList = (props) => {
     debug: false,
   })).current;
 
-
-  // useEffect(() => {
-  //   ZoomTextSize;
-  // }, []);
   const renderFooter = () => {
     if (chapterContent.length === 0) {
       return null;

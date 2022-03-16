@@ -13,13 +13,13 @@ const ReferenceSelection = (props) => {
 
   const getBooks = () => {
     // if (props.route.params) {
-      // let params = props.route.params;
-      props.fetchVersionBooks({
-        language: props.language,
-        versionCode: props.versionCode,
-        downloaded: props.downloaded,
-        sourceId: props.sourceId,
-      });
+    // let params = props.route.params;
+    props.fetchVersionBooks({
+      language: props.language,
+      versionCode: props.versionCode,
+      downloaded: props.downloaded,
+      sourceId: props.sourceId,
+    });
     // }
   };
 
@@ -76,7 +76,6 @@ const mapStateToProps = (state) => {
     sourceId: state.updateVersion.sourceId,
     downloaded: state.updateVersion.downloaded,
 
-    books: state.versionFetch.versionBooks,
     error: state.versionFetch.error,
     isLoading: state.versionFetch.loading,
 

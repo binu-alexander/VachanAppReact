@@ -20,6 +20,7 @@ import { Toast } from "native-base";
 import vApi from "../utils/APIFetch";
 import { updateLangVersion } from "../utils/BiblePageUtil";
 import { getBookChaptersFromMapping, getBookSectionFromMapping } from "../utils/UtilFunctions";
+import { lang } from "moment";
 export const BibleContext = createContext();
 
 const BibleContextProvider = (props) => {
@@ -30,6 +31,7 @@ const BibleContextProvider = (props) => {
   const { sourceId, language, languageCode, versionCode, downloaded, bookId, bookName, baseAPI } = props
   const { currentVisibleChapter, setCurrentVisibleChapter, setSelectedReferenceSet, setShowBottomBar, setShowColorGrid, } = useContext(LoginData)
   const [bookList, setBookList] = useState([])
+  const [audioList, setAudioList] = useState([])
   const navigateToSelectionTab = () => {
     setStatus(false);
     props.navigation.navigate("ReferenceSelection", {
@@ -99,9 +101,10 @@ const BibleContextProvider = (props) => {
     props.updateVersionBook({
       bookId: bookInfo ? bookInfo.bookId : bookId,
       bookName: bookInfo ? bookInfo.bookName : bookName,
-      chapterNumber: currentVisibleChapter,
+      chapterNumber: bookInfo ? bookInfo.chapterNum : currentVisibleChapter,
       totalChapters: getBookChaptersFromMapping(bookInfo ? bookInfo.bookId : bookId),
     });
+    setCurrentVisibleChapter(bookInfo ? bookInfo.chapterNum : currentVisibleChapter)
     props.fetchVersionBooks({
       language: item.languageName,
       versionCode: item.versionCode,
@@ -122,18 +125,21 @@ const BibleContextProvider = (props) => {
   const toggleAudio = () => {
     if (audio) {
       setStatus(!status);
+      props.ToggleAudio({ audio: audio, status: !status });
     } else {
       Toast.show({
         text: "No audio for " + language + " " + bookName,
         duration: 5000,
       });
+      props.ToggleAudio({ audio: false, status: false });
     }
   };
   const audioComponentUpdate = async () => {
-    let res = await vApi.get("audiobibles");
+    let res = await vApi.get("audiobibles")
     try {
       if (res.length !== 0) {
         let data = res.filter((item) => {
+          console.log("AUDIO LIST ", language)
           if (item.language.name == language.toLowerCase()) {
             return item;
           }
@@ -143,7 +149,8 @@ const BibleContextProvider = (props) => {
             audioURL: data[0].audioBibles[0].url,
             audioFormat: data[0].audioBibles[0].format,
             audioList: data[0].audioBibles,
-          });
+          })
+          setAudioList(audioList)
           setAudio(true);
         } else {
           props.APIAudioURL({ audioURL: null, audioFormat: null });
@@ -153,7 +160,7 @@ const BibleContextProvider = (props) => {
     } catch (error) {
       setAudio(false);
     }
-  };
+  }
   const getBookList = async () => {
     try {
       let bookListData = [];
@@ -175,7 +182,6 @@ const BibleContextProvider = (props) => {
       } else {
         let found = false;
         let response = await vApi.get("booknames")
-        console.log("RESPONSE ", response)
         for (var k = 0; k < response.length; k++) {
           if (language.toLowerCase() == response[k].language.name) {
             for (var j = 0; j <= response[k].bookNames.length - 1; j++) {
@@ -218,7 +224,6 @@ const BibleContextProvider = (props) => {
           : bookListData.sort(function (a, b) {
             return a.bookNumber - b.bookNumber;
           });
-      console.log("RES ", res)
       setBookList(res)
     } catch (error) {
       console.log("ERROR ", error)
@@ -228,7 +233,9 @@ const BibleContextProvider = (props) => {
     getBookList()
   }, [])
   useEffect(() => {
+    console.log("LANGUAGE ", language)
     getBookList()
+    audioComponentUpdate()
   }, [language, sourceId, baseAPI])
   return (
     <BibleContext.Provider

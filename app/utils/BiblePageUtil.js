@@ -44,7 +44,7 @@ export function updateLangVersion(
       item.downloaded,
       time
     );
-    return { bookId, bookName }
+    return { bookId, bookName, chapterNum }
   } else {
     return;
   }

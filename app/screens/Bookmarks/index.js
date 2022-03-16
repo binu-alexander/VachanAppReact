@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { Text, View, TouchableOpacity, ActivityIndicator } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { styles } from "./styles.js";
@@ -8,14 +8,15 @@ import { connect } from "react-redux";
 import database from "@react-native-firebase/database";
 import Colors from "../../utils/colorConstants";
 import ListContainer from "../../components/Common/FlatList.js";
-
+import { MainContext } from "../../context/MainProvider.js";
 const BookMarks = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [bookmarksList, setBookmarksList] = useState([]);
   const [message, setMessage] = useState("");
   const email = props.email;
   const style = styles(props.colorFile, props.sizeFile);
-  const prevBooks = useRef(props.books).current;
+  const { bookList } = useContext(MainContext);
+
   const fecthBookmarks = () => {
     setIsLoading(true);
     if (email) {
@@ -81,11 +82,11 @@ const BookMarks = (props) => {
   };
   const renderItem = ({ item }) => {
     var bookName = null;
-    if (props.books) {
-      for (var i = 0; i <= props.books.length - 1; i++) {
-        var bId = props.books[i].bookId;
+    if (bookList) {
+      for (var i = 0; i <= bookList.length - 1; i++) {
+        var bId = bookList[i].bookId;
         if (bId == item.bookId) {
-          bookName = props.books[i].bookName;
+          bookName = bookList[i].bookName;
         }
       }
     } else {
@@ -130,10 +131,7 @@ const BookMarks = (props) => {
 
   useEffect(() => {
     fecthBookmarks();
-    if (prevBooks.length !== props.books.length) {
-      fecthBookmarks();
-    }
-  }, [email, bookmarksList, setBookmarksList]);
+  }, [email, bookmarksList])
   return (
     <View style={style.container}>
       {isLoading ? (
@@ -173,7 +171,6 @@ const mapStateToProps = (state) => {
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
 
-    books: state.versionFetch.versionBooks,
   };
 };
 const mapDispatchToProps = (dispatch) => {

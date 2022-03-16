@@ -15,8 +15,7 @@ import HTML from "react-native-render-html";
 import vApi from "../../../utils/APIFetch";
 import securityVaraibles from "../../../../securityVaraibles";
 import { LoginData } from "../../../context/LoginDataProvider";
-// import fetchCommentaryReducer from "../../../store/reducer/apiFetchReducer/vachanAPIFetch";
-// import { cos } from "react-native-reanimated";
+import { MainContext } from "../../../context/MainProvider";
 
 const commentaryKey = securityVaraibles.COMMENTARY_KEY
   ? "?key=" + securityVaraibles.COMMENTARY_KEY
@@ -27,7 +26,7 @@ const Commentary = (props) => {
   const [error, setError] = useState(null);
   const [bookNameList, setBookNameList] = useState([]);
   const [bookName, setBookName] = useState(props.bookName);
-
+  const { bookList } = useContext(MainContext);
   const style = styles(props.colorFile, props.sizeFile);
   let alertPresent = false;
   const fetchBookName = async () => {
@@ -143,6 +142,26 @@ const Commentary = (props) => {
       </View>
     );
   };
+  const updateBookName = () => {
+    console.log("bookNameList ", bookNameList)
+    if (bookNameList) {
+      for (var i = 0; i <= bookNameList.length - 1; i++) {
+        let parallelLanguage = props.parallelLanguage &&
+          props.parallelLanguage.languageName.toLowerCase();
+        if (bookNameList[i].language.name === parallelLanguage) {
+          for (var j = 0; j <= bookNameList[i].bookNames.length - 1; j++) {
+            var bId = bookNameList[i].bookNames[j].book_code;
+            if (bId == props.bookId) {
+              let bookName = bookNameList[i].bookNames[j].short;
+              setBookName(bookName)
+            }
+          }
+        }
+      }
+    } else {
+      return;
+    }
+  };
   const fetchCommentary = () => {
     if (props.parallelLanguage) {
       let url =
@@ -154,42 +173,27 @@ const Commentary = (props) => {
         currentVisibleChapter +
         commentaryKey;
       props.vachanAPIFetch(url);
-      fetchBookName();
       updateBookName();
     }
   };
-  useEffect(() => {
-    fetchCommentary();
-  }, []);
-  useEffect(() => {
-    fetchCommentary();
-  }, [props.bookId, props.books, currentVisibleChapter]);
-  const updateBookName = () => {
-    if (bookNameList) {
-      for (var i = 0; i <= bookNameList.length - 1; i++) {
-        let parallelLanguage =
-          props.parallelLanguage &&
-          props.parallelLanguage.languageName.toLowerCase();
-        if (bookNameList[i].language.name === parallelLanguage) {
-          for (var j = 0; j <= bookNameList[i].bookNames.length - 1; j++) {
-            var bId = bookNameList[i].bookNames[j].book_code;
-            if (bId == props.bookId) {
-              let bookName = bookNameList[i].bookNames[j].short;
-              setBookName(bookName);
-            }
-          }
-        }
-      }
-    } else {
-      return;
-    }
-  };
+
   const closeParallelView = (value) => {
     props.parallelVisibleView({
       modalVisible: false,
       visibleParallelView: value,
     });
   };
+  useEffect(() => {
+    fetchCommentary();
+    fetchBookName();
+  }, []);
+  useEffect(() => {
+    fetchCommentary()
+  }, [props.bookId, bookList, currentVisibleChapter, props.parallelLanguage.sourceId, props.commentaryContent]);
+  useEffect(() => {
+    fetchBookName()
+    updateBookName()
+  }, [bookNameList])
   return (
     <View style={style.container}>
       <Header
@@ -252,7 +256,6 @@ const mapStateToProps = (state) => {
     bookName: state.updateVersion.bookName,
     sizeFile: state.updateStyling.sizeFile,
     colorFile: state.updateStyling.colorFile,
-    books: state.versionFetch.versionBooks,
     commentaryContent: state.vachanAPIFetch.apiData,
     error: state.vachanAPIFetch.error,
     parallelLanguage: state.selectContent.parallelLanguage,

@@ -31,6 +31,7 @@ import { getHeading } from "../../utils/UtilFunctions";
 import BibleMainComponent from "../../components/Bible/BibleMainComponent";
 import { LoginData } from "../../context/LoginDataProvider";
 import { BibleContext } from "../../context/BibleContextProvider";
+import { MainContext } from "../../context/MainProvider";
 const NAVBAR_HEIGHT = 64;
 // eslint-disable-next-line no-undef
 const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
@@ -70,22 +71,27 @@ const Bible = (props) => {
     currentVisibleChapter,
     setCurrentVisibleChapter,
     setSelectedReferenceSet,
+    getNotes,
+    getBookMarks,
     setConnection_Status,
     setEmail,
+    email,
     setUid,
+    uid,
     setShowBottomBar,
     setShowColorGrid,
+    getHighlights,
+    bookmarkedChap,
   } = useContext(LoginData);
   const {
     setStatus,
     status,
     setPreviousContent,
     _handleAppStateChange,
-    audioComponentUpdate,
     setAudio,
     setNextContent,
-    bookList,
   } = useContext(BibleContext);
+  const { bookList } = useContext(MainContext);
   const offsetAnim = useRef(new Animated.Value(0)).current;
   const scrollAnim = useRef(new Animated.Value(0)).current;
   let _clampedScrollValue = useRef(new Animated.Value(0)).current;
@@ -304,11 +310,10 @@ const Bible = (props) => {
       }
     });
     const subs = props.navigation.addListener("focus", () => {
+      console.log(" FOCUS ---> ", props.audio, props.status);
       setSelectedReferenceSet([]);
       setShowBottomBar(false);
       setShowColorGrid(false);
-      setAudio(props.audio);
-      setStatus(props.status);
       if (books.length == 0) {
         props.fetchVersionBooks({
           language: language,
@@ -324,7 +329,6 @@ const Bible = (props) => {
       ) {
         getChapter(null, null);
       }
-      audioComponentUpdate();
     });
     return () => {
       DbQueries.addHistory(
@@ -349,7 +353,6 @@ const Bible = (props) => {
 
   useEffect(() => {
     getChapter(null, null);
-    audioComponentUpdate();
     if (books.length == 0) {
       props.fetchVersionBooks({
         language: language,
@@ -359,6 +362,10 @@ const Bible = (props) => {
       });
     }
   }, [language, sourceId, baseAPI, visibleParallelView, bookId]);
+  useEffect(() => {
+    setAudio(props.audio);
+    setStatus(props.status);
+  }, [props.audio, props.status]);
   useEffect(() => {
     props.fetchVersionBooks({
       language: language,
