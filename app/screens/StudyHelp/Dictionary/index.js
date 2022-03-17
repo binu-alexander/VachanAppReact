@@ -8,34 +8,38 @@ import Colors from "../../../utils/colorConstants";
 import ListContainer from "../../../components/Common/FlatList.js";
 
 const Infographics = (props) => {
-  const { colorFile, sizeFile, languageName } = props
+  const { colorFile, sizeFile, languageName } = props;
   const [dictionaries, setDictionaries] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const style = styles(colorFile, sizeFile);
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState("");
   const dictionaryData = async () => {
     setIsLoading(true);
+
     try {
       const apiData = await vApi.get("dictionaries");
       if (apiData) {
         for (var i = 0; i < apiData.length; i++) {
           if (
-            apiData[i].language.toLowerCase() ===
-            languageName.toLowerCase()
+            apiData[i].language.toLowerCase() === languageName.toLowerCase()
           ) {
             setDictionaries(apiData[i].dictionaries);
-            setMessage('')
+            setMessage("");
+          } else {
+            setMessage(`No Dictionary for ${props.languageName}`);
           }
         }
       } else {
-        setMessage(`No Dictionary for ${props.languageName}`)
+        setMessage(`No Dictionary for ${props.languageName}`);
       }
     } catch (error) {
+      console.log(error.message);
     }
     setIsLoading(false);
-  }
+  };
+  console.log(props.languageName, "langua");
   useEffect(() => {
-    dictionaryData()
+    dictionaryData();
   }, []);
   const emptyMessageNavigation = () => {
     props.navigation.navigate("Bible");

@@ -14,11 +14,11 @@ import { fetchVersionBooks } from "../../store/action/";
 import VersionCheck from "react-native-version-check";
 
 const DrawerScreen = (props) => {
-  const [currentVersion, setCurrentVersion] = useState("1.0.0")
+  const [currentVersion, setCurrentVersion] = useState("1.0.0");
   // let unsubscriber = null;
   const style = styles(props.colorFile, props.sizeFile);
   const onCurrentVersion = async () => {
-    let currentVer = await VersionCheck.getCurrentVersion()
+    let currentVer = await VersionCheck.getCurrentVersion();
     if (props.books.length == 0) {
       props.fetchVersionBooks({
         language: props.language,
@@ -28,10 +28,10 @@ const DrawerScreen = (props) => {
       });
     }
     setCurrentVersion(currentVer);
-  }
+  };
   useEffect(() => {
-    onCurrentVersion()
-  }, [])
+    onCurrentVersion();
+  }, []);
   const iconName = [
     {
       icon: "account-circle",

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   Alert,
@@ -32,12 +32,9 @@ const commentaryKey = securityVaraibles.COMMENTARY_KEY
 const DrawerCommentary = (props) => {
   // const [commentary, setCommentary] = useState([]);
   const [totalChapters, setTotalChapters] = useState(
-    Array.from(
-      new Array(
-        getBookChaptersFromMapping(props.bookId)
-      ),
-      (x, i) => (i + 1).toString()
-    ),
+    Array.from(new Array(getBookChaptersFromMapping(props.bookId)), (x, i) =>
+      (i + 1).toString()
+    )
   );
   const [chapterNumber, setChapterNumber] = useState(props.chapterNumber);
   const [error, setError] = useState(null);
@@ -81,7 +78,7 @@ const DrawerCommentary = (props) => {
       if (res) {
         for (let i = 0; i <= res.length - 1; i++) {
           let languages = commentaryLanguage.languageName.toLowerCase();
-          console.log()
+          console.log();
           if (res[i].language.name === languages) {
             let bookLists = res[i].bookNames.sort(function (a, b) {
               return a.book_id - b.book_id;
@@ -121,7 +118,10 @@ const DrawerCommentary = (props) => {
       });
       setBookId(bookId);
       setTotalChapters(
-        Array.from(new Array(getBookChaptersFromMapping(bookId)), (x, i) => (i + 1).toString()));
+        Array.from(new Array(getBookChaptersFromMapping(bookId)), (x, i) =>
+          (i + 1).toString()
+        )
+      );
       let selectedNumber =
         totalChapters.length < chapterNumber ? "1" : chapterNumber;
       _dropdown_2.select(parseInt(selectedNumber) - 1);
@@ -146,7 +146,7 @@ const DrawerCommentary = (props) => {
       "/" +
       chapterNumber +
       commentaryKey;
-    props.vachanAPIFetch(url)
+    props.vachanAPIFetch(url);
   };
 
   const fetchCommentary = () => {
@@ -154,14 +154,14 @@ const DrawerCommentary = (props) => {
     props.availableContents.forEach((element) => {
       if (element.contentType == "commentary") {
         element.content.forEach((lang) => {
-          console.log(" LANG ", props.language, lang.languageName)
+          console.log(" LANG ", props.language, lang.languageName);
           if (lang.languageName == props.language) {
-            console.log(" LANG ", lang.languageName)
+            console.log(" LANG ", lang.languageName);
             commentary = lang;
           }
         });
       }
-    })
+    });
     if (Object.keys(commentary).length > 0) {
       setParallelMetaData(commentary.versionModels[0].metaData[0]);
       setParallelLanguage({
@@ -313,7 +313,7 @@ const DrawerCommentary = (props) => {
   useEffect(() => {
     setParallelLanguage(props.parallelLanguage);
     setParallelMetaData(props.parallelMetaData);
-    commentaryUpdate()
+    commentaryUpdate();
     props.navigation.setOptions({
       headerRight: () => (
         <View style={style.headerView}>
@@ -332,7 +332,7 @@ const DrawerCommentary = (props) => {
     props.parallelLanguage.languageName,
     commentaryLanguage.sourceId,
     commentaryLanguage.languageName,
-  ])
+  ]);
   useEffect(() => {
     commentaryUpdate();
     updateBookName();
@@ -346,15 +346,15 @@ const DrawerCommentary = (props) => {
     if (selectedBookIndex == -1) {
       dropDownList.forEach((b, index) => {
         if (bookName == b) {
-          onSelectBook(index, b)
+          onSelectBook(index, b);
         }
-      })
+      });
     }
-  }, [dropDownList])
+  }, [dropDownList]);
   useEffect(() => {
-    onSelectBook(selectedBookIndex, bookName)
-    commentaryUpdate()
-  }, [chapterNumber, bookId])
+    onSelectBook(selectedBookIndex, bookName);
+    commentaryUpdate();
+  }, [chapterNumber, bookId]);
 
   return (
     <View style={style.container}>
@@ -381,7 +381,7 @@ const DrawerCommentary = (props) => {
                 ref={(el) => (_dropdown_1 = el)}
                 options={dropDownList}
                 onSelect={onSelectBook}
-                style={{ paddingRight: 20 }}
+                style={{ paddingRight: 30 }}
                 defaultValue={bookName}
                 isFullWidth={true}
                 dropdownStyle={style.dropdownSize}
@@ -418,7 +418,9 @@ const DrawerCommentary = (props) => {
             </TouchableOpacity>
           </View>
           <FlatList
-            data={props.commentaryContent && props.commentaryContent.commentaries}
+            data={
+              props.commentaryContent && props.commentaryContent.commentaries
+            }
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ flexGrow: 1, margin: 16 }}
             renderItem={renderItem}

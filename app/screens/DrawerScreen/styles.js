@@ -17,7 +17,7 @@ export const styles = (colorFile) => {
       alignItems: "center",
       paddingHorizontal: 8,
       paddingVertical: 12,
-      borderWidth: 0.3,
+      borderWidth: 0.8,
       borderColor: Color.Gray,
       backgroundColor: colorFile.backgroundColor,
     },
@@ -50,7 +50,7 @@ export const styles = (colorFile) => {
       color: colorFile.iconColor,
     },
     imageStyle: { width: 64, height: 64, alignSelf: "center", padding: 8 },
-    drawerImage:{ padding: 4, width: 136, height: 30 },
-    drwrImgContainer:{ position: "absolute", bottom: 0, margin: 8 }
+    drawerImage: { padding: 4, width: 136, height: 30 },
+    drwrImgContainer: { position: "absolute", bottom: 0, margin: 8 },
   });
 };
