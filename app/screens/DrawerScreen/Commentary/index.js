@@ -72,7 +72,6 @@ const DrawerCommentary = (props) => {
       setBookResponse([]);
     }
   };
-  // console.log("  props.parallelLanguage ", props.parallelLanguage)
   const updateBookName = (bookRes) => {
     let res = bookRes == null ? bookResponse : bookRes;
     if (res.length > 0) {
@@ -81,7 +80,6 @@ const DrawerCommentary = (props) => {
       if (res) {
         for (let i = 0; i <= res.length - 1; i++) {
           let languages = commentaryLanguage.languageName.toLowerCase();
-          console.log()
           if (res[i].language.name === languages) {
             let bookLists = res[i].bookNames.sort(function (a, b) {
               return a.book_id - b.book_id;
@@ -136,7 +134,6 @@ const DrawerCommentary = (props) => {
     setChapterNumber(parseInt(value));
     commentaryUpdate();
   };
-  // console.log("SELECTED CHAPTER 2 ", totalChapters)
   const commentaryUpdate = () => {
     let url =
       "commentaries/" +
@@ -154,9 +151,7 @@ const DrawerCommentary = (props) => {
     props.availableContents.forEach((element) => {
       if (element.contentType == "commentary") {
         element.content.forEach((lang) => {
-          console.log(" LANG ", props.language, lang.languageName)
           if (lang.languageName == props.language) {
-            console.log(" LANG ", lang.languageName)
             commentary = lang;
           }
         });

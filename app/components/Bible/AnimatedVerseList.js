@@ -7,6 +7,7 @@ import { getHeading } from "../../utils/UtilFunctions";
 import { connect } from "react-redux";
 import { LoginData } from "../../context/LoginDataProvider";
 import { BibleMainContext } from "../../screens/Bible/index";
+import { BibleContext } from "../../context/BibleContextProvider";
 import {
   extraSmallFont,
   smallFont,
@@ -15,12 +16,12 @@ import {
   extraLargeFont,
 } from "../../utils/dimens.js";
 import { style } from "../../screens/Bible/style";
+
 const AnimatedFlatlist = Animated.createAnimatedComponent(FlatList);
 const NAVBAR_HEIGHT = 64;
 const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
 const AnimatedVerseList = (props) => {
   const { sizeMode, colorFile, sizeFile, visibleParallelView, revision, license, technologyPartner } = props
-  const arrLayout = [];
   let _offsetValue = 0
   let _scrollValue = 0;
   let _scrollEndTimer
@@ -44,6 +45,7 @@ const AnimatedVerseList = (props) => {
     getSelectedReferences,
     bottomHighlightText,
   } = useContext(LoginData);
+  const { onScrollLayout, verseScroll } = useContext(BibleContext)
   const [gestureVa, setGestureState] = useState("");
   const [left, setLeft] = useState("");
   const [top, setTop] = useState("");
@@ -52,17 +54,12 @@ const AnimatedVerseList = (props) => {
   let pinchTime = new Date().getTime();
 
   const onLayout = (event, index, verseNumber) => {
-    arrLayout[index] = {
-      height: event.nativeEvent.layout.height,
-      verseNumber,
-      index,
-    };
+    onScrollLayout(event, index, verseNumber)
   };
 
   const _keyExtractor = (item, index) => {
     return index.toString();
   };
-
   const _onMomentumScrollEnd = () => {
     const toValue =
       _scrollValue > NAVBAR_HEIGHT &&
@@ -231,7 +228,7 @@ const AnimatedVerseList = (props) => {
   return (
     <AnimatedFlatlist
       data={chapterContent}
-      // ref={(ref) => (this.verseScroll = ref)}
+      ref={verseScroll}
       contentContainerStyle={
         chapterContent.length === 0
           ? styles.centerEmptySet

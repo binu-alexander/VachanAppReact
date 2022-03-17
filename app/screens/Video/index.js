@@ -22,20 +22,19 @@ const Video = (props) => {
     let videoBook = [];
     let videoAll = [];
     let found = false;
-    if (videosRes) {
+    if (videosRes.length > 0) {
       for (var key in videosRes[0].books) {
-        if (bookId != null) {
-          if (key == bookId) {
-            for (var i = 0; i < videosRes[0].books[key].length; i++) {
-              videoBook.push({
-                title: videosRes[0].books[key][i].title,
-                url: videosRes[0].books[key][i].url,
-                description: videosRes[0].books[key][i].description,
-                theme: videosRes[0].books[key][i].theme,
-              });
-              found = true;
-            }
+        if (key == bookId) {
+          for (var i = 0; i < videosRes[0].books[key].length; i++) {
+            videoBook.push({
+              title: videosRes[0].books[key][i].title,
+              url: videosRes[0].books[key][i].url,
+              description: videosRes[0].books[key][i].description,
+              theme: videosRes[0].books[key][i].theme,
+            });
+            found = true;
           }
+          // }
         } else {
           for (var j = 0; j < videosRes[0].books[key].length; j++) {
             videoAll.push({
@@ -83,7 +82,7 @@ const Video = (props) => {
         setIsLoading(false);
       }
     } else {
-      setMessage("No Video for ", props.languageName)
+      setMessage("No Video for " + props.languageName)
     }
   };
   const playVideo = (val) => {

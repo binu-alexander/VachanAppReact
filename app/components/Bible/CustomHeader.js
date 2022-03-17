@@ -43,7 +43,6 @@ const CustomHeader = (props) => {
   let bkName = !isNaN(bookName.charAt(0))
     ? bookName.charAt(0).toUpperCase() + bookName.slice(1)
     : bookName;
-  console.log("BOOKNAME ----> ", bookName)
   const navbarTranslate = clampedScroll.interpolate({
     inputRange: [0, NAVBAR_HEIGHT],
     outputRange: [0, -NAVBAR_HEIGHT],
