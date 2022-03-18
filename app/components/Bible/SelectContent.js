@@ -120,7 +120,6 @@ const SelectContent = (props) => {
   };
 
   const _renderContentInner = (item) => {
-    // console.log(" item.languageName ",)
     return item.versionModels.map((v) =>
       props.displayContent == "commentary" ? (
         contentType == props.displayContent && (

@@ -143,7 +143,6 @@ const Commentary = (props) => {
     );
   };
   const updateBookName = () => {
-    console.log("bookNameList ", bookNameList)
     if (bookNameList) {
       for (var i = 0; i <= bookNameList.length - 1; i++) {
         let parallelLanguage = props.parallelLanguage &&

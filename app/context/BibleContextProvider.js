@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+  createRef,
+} from "react";
 import { connect } from "react-redux";
 import {
   APIAudioURL,
@@ -19,8 +26,10 @@ import DbQueries from "../utils/dbQueries";
 import { Toast } from "native-base";
 import vApi from "../utils/APIFetch";
 import { updateLangVersion } from "../utils/BiblePageUtil";
-import { getBookChaptersFromMapping, getBookSectionFromMapping } from "../utils/UtilFunctions";
-import { lang } from "moment";
+import {
+  getBookChaptersFromMapping,
+  getBookSectionFromMapping,
+} from "../utils/UtilFunctions";
 export const BibleContext = createContext();
 
 const BibleContextProvider = (props) => {
@@ -28,10 +37,30 @@ const BibleContextProvider = (props) => {
   const [nextContent, setNextContent] = useState("");
   const [previousContent, setPreviousContent] = useState("");
   const [audio, setAudio] = useState(false);
-  const { sourceId, language, languageCode, versionCode, downloaded, bookId, bookName, baseAPI } = props
-  const { currentVisibleChapter, setCurrentVisibleChapter, setSelectedReferenceSet, setShowBottomBar, setShowColorGrid, } = useContext(LoginData)
-  const [bookList, setBookList] = useState([])
-  const [audioList, setAudioList] = useState([])
+  const {
+    sourceId,
+    language,
+    languageCode,
+    versionCode,
+    downloaded,
+    bookId,
+    bookName,
+    baseAPI,
+  } = props;
+  const {
+    currentVisibleChapter,
+    setCurrentVisibleChapter,
+    setSelectedReferenceSet,
+    setShowBottomBar,
+    setShowColorGrid,
+  } = useContext(LoginData);
+  const [bookList, setBookList] = useState([]);
+  const [audioList, setAudioList] = useState([]);
+  const [verseNum, setVerseNum] = useState([]);
+  // const verseScroll = useRef()
+  // var arrLayout = []
+  // const [arrl, setArrL] = useState([])
+
   const navigateToSelectionTab = () => {
     setStatus(false);
     props.navigation.navigate("ReferenceSelection", {
@@ -71,12 +100,60 @@ const BibleContextProvider = (props) => {
         chapterNumber: parseInt(item.chapterNumber),
         totalChapters: item.totalChapters,
       });
-      // this.scrollToVerse(item.selectedVerse)
+      // setVerseNum(item.selectedVerse)
+      // scrollToVerse()
     } else {
       return;
     }
   };
-  // update language and version  onback from language list page (callback function) also this function is usefull to update only few required values of redux
+  // const getOffset = (index) => {
+  //   var offset = 0;
+  //   // console.log("GET OFF SET")
+  //   for (let i = 0; i < index; i++) {
+  //     const elementLayout = arrl[index];
+  //     if (elementLayout && elementLayout.height) {
+  //       if (arrl[i] != undefined) {
+  //         offset += arrl[i].height;
+  //         // console.log("GET OFF SET -----> ", offset)
+  //       }
+  //     }
+  //   }
+  //   return offset;
+  // }
+
+  // const scrollToVerse = () => {
+  //   if (arrl.length != 0) {
+  //     setArrL([arrl, ...arrLayout])
+  //   } else {
+  //     setArrL(arrLayout)
+  //   }
+  // }
+  // const updateLayout = () => {
+  //   if (arrl != undefined) {
+  //     let item = arrl.filter((i) => i.verseNumber == verseNum);
+  //     console.log(" item ", item)
+  //     if (item.length > 0) {
+  //       if (item[0].verseNumber == verseNum) {
+  //         const offset = getOffset(item[0].index);
+  //         verseScroll.current.scrollToOffset({ offset, animated: true });
+  //       }
+  //     }
+  //   }
+  // }
+  // useEffect(() => {
+  //   scrollToVerse()
+  //   updateLayout()
+  // }, [verseNum])
+  // useEffect(() => {
+  //   updateLayout()
+  // }, [arrl])
+  // const onScrollLayout = (event, index, verseNumber) => {
+  //   arrLayout[index] = {
+  //     height: event.nativeEvent.layout.height,
+  //     verseNumber,
+  //     index,
+  //   }
+  // }
   const updateLangVer = async (item) => {
     setSelectedReferenceSet([]);
     setShowBottomBar(false);
@@ -97,20 +174,24 @@ const BibleContextProvider = (props) => {
       versionCode: item.versionCode,
       sourceId: item.sourceId,
       downloaded: item.downloaded,
-    })
+    });
     props.updateVersionBook({
       bookId: bookInfo ? bookInfo.bookId : bookId,
       bookName: bookInfo ? bookInfo.bookName : bookName,
       chapterNumber: bookInfo ? bookInfo.chapterNum : currentVisibleChapter,
-      totalChapters: getBookChaptersFromMapping(bookInfo ? bookInfo.bookId : bookId),
+      totalChapters: getBookChaptersFromMapping(
+        bookInfo ? bookInfo.bookId : bookId
+      ),
     });
-    setCurrentVisibleChapter(bookInfo ? bookInfo.chapterNum : currentVisibleChapter)
+    setCurrentVisibleChapter(
+      bookInfo ? bookInfo.chapterNum : currentVisibleChapter
+    );
     props.fetchVersionBooks({
       language: item.languageName,
       versionCode: item.versionCode,
       downloaded: item.downloaded,
       sourceId: item.sourceId,
-    })
+    });
     setPreviousContent(null);
     setNextContent(null);
   };
@@ -135,11 +216,10 @@ const BibleContextProvider = (props) => {
     }
   };
   const audioComponentUpdate = async () => {
-    let res = await vApi.get("audiobibles")
+    let res = await vApi.get("audiobibles");
     try {
       if (res.length !== 0) {
         let data = res.filter((item) => {
-          console.log("AUDIO LIST ", language)
           if (item.language.name == language.toLowerCase()) {
             return item;
           }
@@ -149,8 +229,8 @@ const BibleContextProvider = (props) => {
             audioURL: data[0].audioBibles[0].url,
             audioFormat: data[0].audioBibles[0].format,
             audioList: data[0].audioBibles,
-          })
-          setAudioList(audioList)
+          });
+          setAudioList(audioList);
           setAudio(true);
         } else {
           props.APIAudioURL({ audioURL: null, audioFormat: null });
@@ -160,7 +240,7 @@ const BibleContextProvider = (props) => {
     } catch (error) {
       setAudio(false);
     }
-  }
+  };
   const getBookList = async () => {
     try {
       let bookListData = [];
@@ -178,10 +258,9 @@ const BibleContextProvider = (props) => {
             bookListData.push(books);
           }
         }
-
       } else {
         let found = false;
-        let response = await vApi.get("booknames")
+        let response = await vApi.get("booknames");
         for (var k = 0; k < response.length; k++) {
           if (language.toLowerCase() == response[k].language.name) {
             for (var j = 0; j <= response[k].bookNames.length - 1; j++) {
@@ -222,21 +301,22 @@ const BibleContextProvider = (props) => {
         bookListData.length == 0
           ? []
           : bookListData.sort(function (a, b) {
-            return a.bookNumber - b.bookNumber;
-          });
-      setBookList(res)
+              return a.bookNumber - b.bookNumber;
+            });
+      setBookList(res);
     } catch (error) {
-      console.log("ERROR ", error)
+      console.log("ERROR ", error);
     }
-  }
+  };
+
   useEffect(() => {
-    getBookList()
-  }, [])
+    getBookList();
+  }, []);
   useEffect(() => {
-    console.log("LANGUAGE ", language)
-    getBookList()
-    audioComponentUpdate()
-  }, [language, sourceId, baseAPI])
+    getBookList();
+    audioComponentUpdate();
+  }, [language, sourceId, baseAPI]);
+
   return (
     <BibleContext.Provider
       value={{
@@ -255,7 +335,10 @@ const BibleContextProvider = (props) => {
         audioComponentUpdate,
         audio,
         setAudio,
-        bookList
+        bookList,
+        // onScrollLayout,
+        // scrollToVerse,
+        // verseScroll
       }}
     >
       {props.children}

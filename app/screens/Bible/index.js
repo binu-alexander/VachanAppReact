@@ -52,6 +52,7 @@ const Bible = (props) => {
     colorFile,
     books,
     visibleParallelView,
+    selectedVerse,
   } = props;
   const [downloadedBook, setDownloadedBook] = useState([]);
 
@@ -65,23 +66,16 @@ const Bible = (props) => {
   const [unAvailableContent, setUnAvailableContent] = useState("");
   const prevSourceId = useRef(sourceId).current;
   const prevBookId = useRef(bookId).current;
-  const prevChapter = useRef(chapterNumber).current;
 
   const {
     currentVisibleChapter,
     setCurrentVisibleChapter,
     setSelectedReferenceSet,
-    getNotes,
-    getBookMarks,
     setConnection_Status,
     setEmail,
-    email,
     setUid,
-    uid,
     setShowBottomBar,
     setShowColorGrid,
-    getHighlights,
-    bookmarkedChap,
   } = useContext(LoginData);
   const {
     setStatus,
@@ -90,10 +84,12 @@ const Bible = (props) => {
     _handleAppStateChange,
     setAudio,
     setNextContent,
+    // scrollToVerse,
   } = useContext(BibleContext);
+  const prevChapter = useRef(currentVisibleChapter).current;
   const { bookList } = useContext(MainContext);
-  const offsetAnim = useRef(new Animated.Value(0)).current;
-  const scrollAnim = useRef(new Animated.Value(0)).current;
+  let offsetAnim = useRef(new Animated.Value(0)).current;
+  let scrollAnim = useRef(new Animated.Value(0)).current;
   let _clampedScrollValue = useRef(new Animated.Value(0)).current;
   let _offsetValue = 0;
   let _scrollValue = 0;
@@ -170,6 +166,7 @@ const Bible = (props) => {
     try {
       let curChap = cNum == null ? currentVisibleChapter : cNum;
       let srcId = sId == null ? sourceId : sId;
+      console.log("GET CHAPTER ");
       setIsLoading(true);
       setChapterHeader([]);
       setChapterContent([]);
@@ -310,7 +307,7 @@ const Bible = (props) => {
       }
     });
     const subs = props.navigation.addListener("focus", () => {
-      console.log(" FOCUS ---> ", props.audio, props.status);
+      console.log(" FOCUS ");
       setSelectedReferenceSet([]);
       setShowBottomBar(false);
       setShowColorGrid(false);
@@ -322,6 +319,11 @@ const Bible = (props) => {
           sourceId: sourceId,
         });
       }
+      // console.log(
+      //   " prevChapter != currentVisibleChapter ",
+      //   prevChapter,
+      //   currentVisibleChapter
+      // );
       if (
         prevSourceId != sourceId ||
         prevBookId != bookId ||
@@ -329,6 +331,7 @@ const Bible = (props) => {
       ) {
         getChapter(null, null);
       }
+      // scrollToVerse();
     });
     return () => {
       DbQueries.addHistory(
@@ -353,6 +356,8 @@ const Bible = (props) => {
 
   useEffect(() => {
     getChapter(null, null);
+    // scrollToVerse();
+    // console.log(" USEFFECT GET REF CHECk");
     if (books.length == 0) {
       props.fetchVersionBooks({
         language: language,
@@ -361,7 +366,15 @@ const Bible = (props) => {
         sourceId: sourceId,
       });
     }
-  }, [language, sourceId, baseAPI, visibleParallelView, bookId]);
+  }, [
+    language,
+    sourceId,
+    baseAPI,
+    visibleParallelView,
+    bookId,
+    chapterNumber,
+    // selectedVerse
+  ]);
   useEffect(() => {
     setAudio(props.audio);
     setStatus(props.status);
@@ -374,6 +387,11 @@ const Bible = (props) => {
       sourceId: sourceId,
     });
   }, [language, sourceId, baseAPI]);
+  // useEffect(() => {
+  //   getChapter(null, null)
+  //   console.log("selectedVerse ------> ", selectedVerse)
+  //   scrollToVerse(selectedVerse)
+  // }, [selectedVerse])
   return (
     <BibleMainContext.Provider
       value={[

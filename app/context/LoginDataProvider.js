@@ -327,29 +327,7 @@ const LoginDataProvider = (props) => {
   useEffect(() => {
     bookmarkedChap()
   }, [bookmarksList, currentVisibleChapter])
-  // const getOffset = (index) => {
-  //   var offset = 0;
-  //   for (let i = 0; i < index; i++) {
-  //     const elementLayout = arrLayout[index];
-  //     if (elementLayout && elementLayout.height) {
-  //       if (arrLayout[i] != undefined) {
-  //         offset += arrLayout[i].height;
-  //       }
-  //     }
-  //   }
-  //   return offset;
-  // }
-  // const scrollToVerse = (verseNumber) => {
-  //   if (arrLayout != undefined) {
-  //     let item = arrLayout.filter((i) => i.verseNumber == verseNumber);
-  //     if (item.length > 0) {
-  //       if (item[0].verseNumber == verseNumber) {
-  //         const offset = getOffset(item[0].index);
-  //         verseScroll.scrollToOffset({ offset, animated: true });
-  //       }
-  //     }
-  //   }
-  // }
+
   return (
     <LoginData.Provider
       value={{

@@ -23,11 +23,8 @@ const Video = (props) => {
     let videoAll = [];
     let found = false;
     if (videosRes.length > 0) {
-      console.log(videosRes, "res");
-      for (let key in videosRes[0].books) {
-        if (key === bookId) {
-          console.log(videosRes[0].books, key, "video");
-
+      for (var key in videosRes[0].books) {
+        if (key == bookId) {
           for (var i = 0; i < videosRes[0].books[key].length; i++) {
             videoBook.push({
               title: videosRes[0].books[key][i].title,
@@ -37,6 +34,7 @@ const Video = (props) => {
             });
             found = true;
           }
+          // }
         } else {
           for (var j = 0; j < videosRes[0].books[key].length; j++) {
             videoAll.push({

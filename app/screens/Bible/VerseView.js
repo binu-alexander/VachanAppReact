@@ -13,30 +13,24 @@ const VerseView = (props) => {
     notesList,
     highlightedVerseArray,
   } = useContext(LoginData);
-  const { downloaded, verseData, index, visibleParallelView, bookId, styles, chapterHeader } = props
-  let verseNumber = downloaded
-    ? verseData.number
-    : verseData.verseNumber;
-  let verseText = downloaded
-    ? verseData.text
-    : verseData.verseText;
-  let sectionHeading = downloaded
-    ? verseData.section
-    : props.sectionHeading;
-  let obj = currentVisibleChapter + "_" + index + "_" + verseNumber + "_" + verseText;
+  const {
+    downloaded,
+    verseData,
+    index,
+    visibleParallelView,
+    bookId,
+    styles,
+    chapterHeader,
+  } = props;
+  let verseNumber = downloaded ? verseData.number : verseData.verseNumber;
+  let verseText = downloaded ? verseData.text : verseData.verseText;
+  let sectionHeading = downloaded ? verseData.section : props.sectionHeading;
+  let obj =
+    currentVisibleChapter + "_" + index + "_" + verseNumber + "_" + verseText;
   const onPress = () => {
-    let verseNumber = downloaded
-      ? verseData.number
-      : verseData.verseNumber;
-    let verseText = downloaded
-      ? verseData.text
-      : verseData.verseText;
-    props.getSelection(
-      index,
-      currentVisibleChapter,
-      verseNumber,
-      verseText
-    );
+    let verseNumber = downloaded ? verseData.number : verseData.verseNumber;
+    let verseText = downloaded ? verseData.text : verseData.verseText;
+    props.getSelection(index, currentVisibleChapter, verseNumber, verseText);
   };
 
   const isSelect = () => {
@@ -112,9 +106,7 @@ const VerseView = (props) => {
         }
       }
     }
-    let verseNumber = downloaded
-      ? verseData.number
-      : verseData.verseNumber;
+    let verseNumber = downloaded ? verseData.number : verseData.verseNumber;
     var value = arr.filter((v) => v == verseNumber);
     if (value[0]) {
       return true;
@@ -135,8 +127,8 @@ const VerseView = (props) => {
     return (
       <Text
         style={styles.textStyle}
-        onLayout={(event) => props.onLayout(event, index, verseNumber)}
-      // onLayout={(event) => console.log(event, "event verse")}
+        // onLayout={(event) => props.onLayout(event, index, verseNumber)}
+        // onLayout={(event) => console.log(event, "event verse")}
       >
         {chapterHeader ? (
           <Text style={styles.sectionHeading}>
@@ -144,9 +136,7 @@ const VerseView = (props) => {
           </Text>
         ) : null}
 
-        <Text
-          onPress={onPress}
-        >
+        <Text onPress={onPress}>
           <Text style={styles.verseChapterNumber}>
             {currentVisibleChapter}{" "}
           </Text>
@@ -155,14 +145,14 @@ const VerseView = (props) => {
               styles.textHighlight,
               isSelect() && isHighlight()
                 ? {
-                  backgroundColor: isHighlight(),
-                  textDecorationLine: "underline",
-                }
+                    backgroundColor: isHighlight(),
+                    textDecorationLine: "underline",
+                  }
                 : !isSelect() && !isHighlight()
-                  ? styles.textHighlight
-                  : !isSelect() && isHighlight()
-                    ? { backgroundColor: isHighlight() }
-                    : { textDecorationLine: "underline" },
+                ? styles.textHighlight
+                : !isSelect() && isHighlight()
+                ? { backgroundColor: isHighlight() }
+                : { textDecorationLine: "underline" },
             ]}
           >
             {getResultText(verseText)}
@@ -189,7 +179,7 @@ const VerseView = (props) => {
         textBreakStrategy={"simple"}
         style={styles.textStyle}
         onPress={onPress}
-        onLayout={(event) => props.onLayout(event, index, verseNumber)}
+        // onLayout={(event) => props.onLayout(event, index, verseNumber)}
       >
         <Text textBreakStrategy={"simple"}>
           <Text textBreakStrategy={"simple"} style={styles.verseNumber}>
@@ -201,14 +191,14 @@ const VerseView = (props) => {
               styles.textHighlight,
               isSelect() && isHighlight()
                 ? {
-                  backgroundColor: isHighlight(),
-                  textDecorationLine: "underline",
-                }
+                    backgroundColor: isHighlight(),
+                    textDecorationLine: "underline",
+                  }
                 : !isSelect() && !isHighlight()
-                  ? styles.textHighlight
-                  : !isSelect() && isHighlight()
-                    ? { backgroundColor: isHighlight() }
-                    : { textDecorationLine: "underline" },
+                ? styles.textHighlight
+                : !isSelect() && isHighlight()
+                ? { backgroundColor: isHighlight() }
+                : { textDecorationLine: "underline" },
             ]}
           >
             {getResultText(verseText)}
@@ -223,10 +213,7 @@ const VerseView = (props) => {
           ) : null}
         </Text>
         {sectionHeading ? (
-          <Text
-            textBreakStrategy={"simple"}
-            style={styles.sectionHeading}
-          >
+          <Text textBreakStrategy={"simple"} style={styles.sectionHeading}>
             {"\n"} {sectionHeading}
           </Text>
         ) : null}

@@ -18,7 +18,6 @@ const SelectVerse = (props) => {
     let versesArray = [];
     const url = "bibles/" + props.sourceId + "/books/" + selectedBookId + "/chapters/" + selectedChapterNumber + "/verses";
     let verses = await vApi.get(url);
-    // console.log("VERSE DATA ",verses)
     if (verses) {
       verses.map((item) => versesArray.push(item.verse.number));
     }

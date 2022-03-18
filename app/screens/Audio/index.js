@@ -48,8 +48,6 @@ const Audio = (props) => {
       if (bookList) {
         const audioBooks = props.audioList && props.audioList[0].books;
         const arrayBooks = audioBooks && Object.keys(audioBooks);
-        console.log("ARRAY BOOKS ", arrayBooks);
-        console.log("AUDIO BOOKS ", audioBooks);
         const allBooks = bookList.map((code) => code);
         let allAudioBook = [];
         if (arrayBooks != undefined) {
@@ -57,7 +55,6 @@ const Audio = (props) => {
             let temp = allBooks.find((item) => item.bookId === arrayBooks[i]);
             allAudioBook.push(temp);
           }
-          console.log(allAudioBooks);
           if (allAudioBook.length === 0) {
             setMessage(`Audio for ${props.language} not available`);
           } else {

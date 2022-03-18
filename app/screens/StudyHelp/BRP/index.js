@@ -117,7 +117,6 @@ const BRP = (props) => {
     }
   };
   const renderItem = (item) => {
-    // console.log("NAME ", item.reading)
     return item.reading.map((val, i) => {
       return (
         <TouchableOpacity

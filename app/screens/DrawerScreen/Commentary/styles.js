@@ -97,6 +97,11 @@ export const styles = (colorFile, sizeFile) => {
       borderColor: colorFile.iconColor,
       borderWidth: 0.3,
     },
+    dropdownTextStyle: {
+      fontSize: 18,
+      borderBottomColor: colorFile.iconColor,
+      borderBottomWidth: 0.3,
+    },
     dropdownText: {
       paddingHorizontal: 8,
       fontSize: 18,
