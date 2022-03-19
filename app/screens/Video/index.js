@@ -64,7 +64,7 @@ const Video = (props) => {
               "Video for " +
               bookName +
               " is unavailable. You can check other books",
-            duration: 8000,
+            duration: 4000,
             position: "top",
           });
         }
