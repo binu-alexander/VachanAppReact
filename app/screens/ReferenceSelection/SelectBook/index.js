@@ -25,7 +25,7 @@ const SelectBook = (props) => {
     itemVisiblePercentThreshold: 100,
     waitForInteraction: true,
   }).current;
-  const flatlistRef = useRef();
+  const flatlistRef = useRef().current;
   const { bookList } = useContext(MainContext);
   const style = styles(props.colorFile, props.sizeFile);
   const toggleButton = (value) => {
@@ -97,7 +97,7 @@ const SelectBook = (props) => {
     getOTSize();
     getNTSize();
     selectTab();
-  }, [])
+  }, []);
   useEffect(() => {
     getOTSize();
     getNTSize();

@@ -84,7 +84,7 @@ const Bible = (props) => {
     _handleAppStateChange,
     setAudio,
     setNextContent,
-    // scrollToVerse,
+    scrollToVerse,
   } = useContext(BibleContext);
   const prevChapter = useRef(currentVisibleChapter).current;
   const { bookList } = useContext(MainContext);
@@ -248,6 +248,7 @@ const Bible = (props) => {
       setCurrentVisibleChapter(cNum);
       setError(null);
       getChapter(cNum, sId);
+
       updateVersionBook({
         bookId: bId,
         bookName: bName,
@@ -330,8 +331,8 @@ const Bible = (props) => {
         prevChapter != currentVisibleChapter
       ) {
         getChapter(null, null);
+        scrollToVerse();
       }
-      // scrollToVerse();
     });
     return () => {
       DbQueries.addHistory(
@@ -356,8 +357,7 @@ const Bible = (props) => {
 
   useEffect(() => {
     getChapter(null, null);
-    // scrollToVerse();
-    // console.log(" USEFFECT GET REF CHECk");
+    console.log(" USEFFECT GET REF CHECk");
     if (books.length == 0) {
       props.fetchVersionBooks({
         language: language,
@@ -366,15 +366,8 @@ const Bible = (props) => {
         sourceId: sourceId,
       });
     }
-  }, [
-    language,
-    sourceId,
-    baseAPI,
-    visibleParallelView,
-    bookId,
-    chapterNumber,
-    // selectedVerse
-  ]);
+    scrollToVerse(selectedVerse);
+  }, [language, sourceId, baseAPI, visibleParallelView, bookId, chapterNumber]);
   useEffect(() => {
     setAudio(props.audio);
     setStatus(props.status);
@@ -386,12 +379,13 @@ const Bible = (props) => {
       downloaded: downloaded,
       sourceId: sourceId,
     });
+    scrollToVerse(selectedVerse);
   }, [language, sourceId, baseAPI]);
-  // useEffect(() => {
-  //   getChapter(null, null)
-  //   console.log("selectedVerse ------> ", selectedVerse)
-  //   scrollToVerse(selectedVerse)
-  // }, [selectedVerse])
+  useEffect(() => {
+    getChapter(null, null);
+    console.log("selectedVerse ------> ", selectedVerse);
+    scrollToVerse(selectedVerse);
+  }, [selectedVerse]);
   return (
     <BibleMainContext.Provider
       value={[

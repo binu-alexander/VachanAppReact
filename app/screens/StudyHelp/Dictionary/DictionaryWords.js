@@ -19,13 +19,11 @@ import ReloadButton from "../../../components/ReloadButton";
 import vApi from "../../../utils/APIFetch";
 
 const DictionaryWords = (props) => {
-  const { dictionaryContent, route, colorFile, sizeFile } = props
+  const { dictionaryContent, route, colorFile, sizeFile } = props;
   const dictionarySourceId = route.params
     ? route.params.dictionarySourceId
     : null;
-  const dicMetaData = route.params
-    ? route.params.metadata[0].metadata
-    : null;
+  const dicMetaData = route.params ? route.params.metadata[0].metadata : null;
   const [modalVisibleDictionary, setModalVisibleDictionary] = useState(false);
   const [wordDescription, setWordDescription] = useState([]);
   const [metadataVisible, setMetadataVisible] = useState(false);
@@ -182,13 +180,14 @@ const DictionaryWords = (props) => {
                   style={style.cancelIcon}
                 />
                 <ScrollView style={style.dictionScrollModal}>
+                  {console.log(dicMetaData, "dicmeta")}
                   <Text style={style.textString}>
                     {dicMetaData.hasOwnProperty("Description\u00a0")
                       ? (
-                        <Text style={{ fontWeight: "900" }}>
-                          Description :
-                        </Text>
-                      ) + dicMetaData["Description\u00a0"]
+                          <Text style={{ fontWeight: "900" }}>
+                            Description :
+                          </Text>
+                        ) + dicMetaData["Description\u00a0"]
                       : null}
                   </Text>
                   <Text style={style.textString}>

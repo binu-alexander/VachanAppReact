@@ -25,7 +25,7 @@ const Help = (props) => {
           style={[{ flexDirection: "row" }]}
           onPress={() => props.navigation.navigate("Feedback")}
         >
-          <CardItem style={styles.Card}>
+          <CardItem style={style.Card}>
             <Icon name="feedback" style={style.cardItemIconCustom} />
             <Text style={style.textStyle}>Feedback</Text>
           </CardItem>

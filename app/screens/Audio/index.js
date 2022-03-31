@@ -55,12 +55,14 @@ const Audio = (props) => {
             let temp = allBooks.find((item) => item.bookId === arrayBooks[i]);
             allAudioBook.push(temp);
           }
-          if (allAudioBook.length === 0) {
+          if (allAudioBook.length == 0) {
             setMessage(`Audio for ${props.language} not available`);
           } else {
             setAllAudioBooks(allAudioBook);
             setMessage("");
           }
+        } else {
+          setMessage(`Audio for ${props.language} not available`);
         }
       }
     } catch (error) {

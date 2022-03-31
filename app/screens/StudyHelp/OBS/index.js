@@ -61,8 +61,7 @@ const OBS = (props) => {
           setLanguagesList([...languagesList, lan]);
         }
       })
-      .catch((error) => {
-      });
+      .catch((error) => {});
   };
   const mdFileFetch = async () => {
     fetch(Github_URL + langCode + "/content/" + bsIndex + ".md")
@@ -137,7 +136,7 @@ const OBS = (props) => {
             defaultValue={defaultLanguage}
             isFullWidth={true}
             dropdownStyle={style.dropdownSize}
-            dropdownTextStyle={{ fontSize: 18 }}
+            dropdownTextStyle={style.dropdownTextStyleModal}
             textStyle={style.dropdownText}
           />
           <Icon
@@ -160,7 +159,7 @@ const OBS = (props) => {
             defaultValue={defaultStory}
             isFullWidth={true}
             dropdownStyle={style.dropdownSize}
-            dropdownTextStyle={{ fontSize: 18 }}
+            dropdownTextStyle={style.dropdownTextStyleModal}
             textStyle={style.dropdownText}
           />
           <Icon
@@ -174,7 +173,7 @@ const OBS = (props) => {
         <ScrollView
           // contentInsetAdjustmentBehavior="automatic"
           style={style.scrollView}
-        // contentContainerStyle={{paddingTop:20}}
+          // contentContainerStyle={{paddingTop:20}}
         >
           <Markdown style={style}>{obsData}</Markdown>
         </ScrollView>

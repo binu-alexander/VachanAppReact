@@ -57,9 +57,9 @@ const BibleContextProvider = (props) => {
   const [bookList, setBookList] = useState([]);
   const [audioList, setAudioList] = useState([]);
   const [verseNum, setVerseNum] = useState([]);
-  // const verseScroll = useRef()
-  // var arrLayout = []
-  // const [arrl, setArrL] = useState([])
+  const verseScroll = useRef();
+  var arrLayout = [];
+  const [arrl, setArrL] = useState([]);
 
   const navigateToSelectionTab = () => {
     setStatus(false);
@@ -100,60 +100,59 @@ const BibleContextProvider = (props) => {
         chapterNumber: parseInt(item.chapterNumber),
         totalChapters: item.totalChapters,
       });
-      // setVerseNum(item.selectedVerse)
-      // scrollToVerse()
+      setVerseNum(item.selectedVerse);
+      scrollToVerse();
     } else {
       return;
     }
   };
-  // const getOffset = (index) => {
-  //   var offset = 0;
-  //   // console.log("GET OFF SET")
-  //   for (let i = 0; i < index; i++) {
-  //     const elementLayout = arrl[index];
-  //     if (elementLayout && elementLayout.height) {
-  //       if (arrl[i] != undefined) {
-  //         offset += arrl[i].height;
-  //         // console.log("GET OFF SET -----> ", offset)
-  //       }
-  //     }
-  //   }
-  //   return offset;
-  // }
+  const getOffset = (index) => {
+    var offset = 0;
+    // console.log("GET OFF SET")
+    for (let i = 0; i < index; i++) {
+      const elementLayout = arrl[index];
+      if (elementLayout && elementLayout.height) {
+        if (arrl[i] != undefined) {
+          offset += arrl[i].height;
+          // console.log("GET OFF SET -----> ", offset)
+        }
+      }
+    }
+    return offset;
+  };
 
-  // const scrollToVerse = () => {
-  //   if (arrl.length != 0) {
-  //     setArrL([arrl, ...arrLayout])
-  //   } else {
-  //     setArrL(arrLayout)
-  //   }
-  // }
-  // const updateLayout = () => {
-  //   if (arrl != undefined) {
-  //     let item = arrl.filter((i) => i.verseNumber == verseNum);
-  //     console.log(" item ", item)
-  //     if (item.length > 0) {
-  //       if (item[0].verseNumber == verseNum) {
-  //         const offset = getOffset(item[0].index);
-  //         verseScroll.current.scrollToOffset({ offset, animated: true });
-  //       }
-  //     }
-  //   }
-  // }
-  // useEffect(() => {
-  //   scrollToVerse()
-  //   updateLayout()
-  // }, [verseNum])
-  // useEffect(() => {
-  //   updateLayout()
-  // }, [arrl])
-  // const onScrollLayout = (event, index, verseNumber) => {
-  //   arrLayout[index] = {
-  //     height: event.nativeEvent.layout.height,
-  //     verseNumber,
-  //     index,
-  //   }
-  // }
+  const scrollToVerse = () => {
+    if (arrl.length != 0) {
+      setArrL([arrl, ...arrLayout]);
+    } else {
+      setArrL(arrLayout);
+    }
+  };
+  const updateLayout = () => {
+    if (arrl != undefined) {
+      let item = arrl.filter((i) => i.verseNumber == verseNum);
+      if (item.length > 0) {
+        if (item[0].verseNumber == verseNum) {
+          const offset = getOffset(item[0].index);
+          verseScroll.current.scrollToOffset({ offset, animated: true });
+        }
+      }
+    }
+  };
+  useEffect(() => {
+    scrollToVerse();
+    updateLayout();
+  }, [verseNum]);
+  useEffect(() => {
+    updateLayout();
+  }, [arrl]);
+  const onScrollLayout = (event, index, verseNumber) => {
+    arrLayout[index] = {
+      height: event.nativeEvent.layout.height,
+      verseNumber,
+      index,
+    };
+  };
   const updateLangVer = async (item) => {
     setSelectedReferenceSet([]);
     setShowBottomBar(false);
@@ -336,9 +335,9 @@ const BibleContextProvider = (props) => {
         audio,
         setAudio,
         bookList,
-        // onScrollLayout,
-        // scrollToVerse,
-        // verseScroll
+        onScrollLayout,
+        scrollToVerse,
+        verseScroll,
       }}
     >
       {props.children}

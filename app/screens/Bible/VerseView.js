@@ -127,7 +127,7 @@ const VerseView = (props) => {
     return (
       <Text
         style={styles.textStyle}
-        // onLayout={(event) => props.onLayout(event, index, verseNumber)}
+        onLayout={(event) => props.onLayout(event, index, verseNumber)}
         // onLayout={(event) => console.log(event, "event verse")}
       >
         {chapterHeader ? (
@@ -179,7 +179,7 @@ const VerseView = (props) => {
         textBreakStrategy={"simple"}
         style={styles.textStyle}
         onPress={onPress}
-        // onLayout={(event) => props.onLayout(event, index, verseNumber)}
+        onLayout={(event) => props.onLayout(event, index, verseNumber)}
       >
         <Text textBreakStrategy={"simple"}>
           <Text textBreakStrategy={"simple"} style={styles.verseNumber}>

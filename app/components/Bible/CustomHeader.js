@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import {
   View,
   Animated,
@@ -23,11 +23,8 @@ import { LoginData } from "../../context/LoginDataProvider";
 const CustomHeader = (props) => {
   const [{ clampedScroll, navigation, chapterContent }] =
     useContext(BibleMainContext);
-  const {
-    currentVisibleChapter,
-    isBookmark,
-    onBookmarkPress,
-  } = useContext(LoginData);
+  const { currentVisibleChapter, isBookmark, onBookmarkPress } =
+    useContext(LoginData);
   const {
     navigateToLanguage,
     navigateToSelectionTab,
@@ -35,11 +32,12 @@ const CustomHeader = (props) => {
     audio,
     setStatus,
   } = useContext(BibleContext);
-  const { language, versionCode, bookName, bookId } = props
-  let lgname = language && (language.length > 8 ? language.charAt(0).toUpperCase() +
-    language.slice(1, 3) :
-    language.charAt(0).toUpperCase() +
-    language.slice(1))
+  const { language, versionCode, bookName, bookId } = props;
+  let lgname =
+    language &&
+    (language.length > 8
+      ? language.charAt(0).toUpperCase() + language.slice(1, 3)
+      : language.charAt(0).toUpperCase() + language.slice(1));
   let bkName = !isNaN(bookName.charAt(0))
     ? bookName.charAt(0).toUpperCase() + bookName.slice(1)
     : bookName;
@@ -73,13 +71,9 @@ const CustomHeader = (props) => {
     let header3 = `<h3>${bookName + " " + currentVisibleChapter}</h3>`;
     let options = {
       html: `${header1}${header3}<p>${texttohtml}</p>`,
-      fileName: `${"VachanGo_" +
-        language +
-        "_" +
-        bookId +
-        "_" +
-        currentVisibleChapter
-        }`,
+      fileName: `${
+        "VachanGo_" + language + "_" + bookId + "_" + currentVisibleChapter
+      }`,
       // eslint-disable-next-line no-constant-condition
       directory: "Download" ? "Download" : "Downloads",
     };
@@ -101,6 +95,11 @@ const CustomHeader = (props) => {
         },
         { text: "Yes", onPress: () => downloadPDF() },
       ]);
+      console.log(
+        Permission.PermissionTypes.WRITE_EXTERNAL_STORAGE,
+        "-----gree----",
+        permissionGranted
+      );
     } else {
       return;
     }
@@ -198,8 +197,7 @@ const CustomHeader = (props) => {
           onPress={navigateToLanguage}
         >
           <Text style={navStyles.langVer}>
-            {lgname}{" "}
-            {versionCode && versionCode.toUpperCase()}
+            {lgname} {versionCode && versionCode.toUpperCase()}
           </Text>
           <Icon name="arrow-drop-down" color={Color.White} size={20} />
         </TouchableOpacity>

@@ -21,15 +21,16 @@ const width = Dimensions.get("window").width;
 
 const BibleMainComponent = (props) => {
   const { contentType, bookName, visibleParallelView } = props;
-  const [{
-    styles,
-    chapterContent,
-    queryBookFromAPI,
-    unAvailableContent,
-    reloadMessage,
-    isLoading,
-    navigation
-  },
+  const [
+    {
+      styles,
+      chapterContent,
+      queryBookFromAPI,
+      unAvailableContent,
+      reloadMessage,
+      isLoading,
+      navigation,
+    },
   ] = useContext(BibleMainContext);
   const {
     currentVisibleChapter,
@@ -94,8 +95,12 @@ const BibleMainComponent = (props) => {
           {/** 2nd view as  parallelView**/}
           {visibleParallelView == true && (
             <View style={styles.parallelView}>
-              {contentType == "bible" && <BibleChapter navigation={navigation} />}
-              {contentType == "commentary" && <Commentary navigation={navigation} />}
+              {contentType == "bible" && (
+                <BibleChapter navigation={navigation} />
+              )}
+              {contentType == "commentary" && (
+                <Commentary navigation={navigation} />
+              )}
             </View>
           )}
         </View>

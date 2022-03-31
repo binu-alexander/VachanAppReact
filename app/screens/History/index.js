@@ -118,10 +118,10 @@ const History = (props) => {
       for (var i = 0; i < historyData.length; i++) {
         var end = moment(historyData[i].time).format("D");
         var timeDiff = Math.floor(cur - end);
-        if (timeDiff == 0) {
+        if (timeDiff === 0) {
           historyList[0].list.push(historyData[i]);
         }
-        if (timeDiff == 1) {
+        if (timeDiff === 1) {
           historyList[1].list.push(historyData[i]);
         }
         if (timeDiff >= 2 && timeDiff <= 7) {
@@ -134,11 +134,10 @@ const History = (props) => {
           historyList[4].list.push(historyData[i]);
         }
       }
-
       for (var j = 0; j < historyList.length; j++) {
-        if (historyList[j].list.length == 0) {
+        if (historyList[j].list.length === 0) {
           historyList.splice(j, 1);
-          j--;
+          // j--;
         }
       }
       setHistoryLists(historyList);
