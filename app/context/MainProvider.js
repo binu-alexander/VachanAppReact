@@ -79,7 +79,6 @@ const MainProvider = (props) => {
       console.log("ERROR ", error);
     }
   };
-  console.log(bookList);
   useEffect(() => {
     getBookList();
   });

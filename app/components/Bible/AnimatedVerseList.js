@@ -61,11 +61,6 @@ const AnimatedVerseList = (props) => {
   let pinchDiff = null;
   let pinchTime = new Date().getTime();
 
-  const onLayout = (event, index, verseNumber) => {
-    console.log("onLayout", index, verseNumber);
-    onScrollLayout(event, index, verseNumber);
-  };
-
   const _keyExtractor = (item, index) => {
     return index.toString();
   };
@@ -270,7 +265,7 @@ const AnimatedVerseList = (props) => {
           sectionHeading={getHeading(item.contents)}
           chapterHeader={chapterHeader}
           index={index}
-          onLayout={onLayout}
+          onLayout={onScrollLayout}
           styles={styles}
           selectedReferences={selectedReferenceSet}
           getSelection={(verseIndex, chapterNumber, verseNumber, text) => {

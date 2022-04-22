@@ -77,6 +77,7 @@ const BibleContextProvider = (props) => {
     setSelectedReferenceSet([]);
     setShowBottomBar(false);
     setShowColorGrid(false);
+
     if (item) {
       setCurrentVisibleChapter(item.chapterNumber);
       // updateBookChapterRef()
@@ -102,38 +103,33 @@ const BibleContextProvider = (props) => {
       });
       setVerseNum(item.selectedVerse);
       scrollToVerse();
+
     } else {
       return;
     }
   };
   const getOffset = (index) => {
-    var offset = 0;
-    // console.log("GET OFF SET")
-    for (let i = 0; i < index; i++) {
-      const elementLayout = arrl[index];
-      if (elementLayout && elementLayout.height) {
-        if (arrl[i] != undefined) {
-          offset += arrl[i].height;
-          // console.log("GET OFF SET -----> ", offset)
-        }
-      }
-    }
-    return offset;
+    return arrl.reduce(
+      (prev, currentValue, i) =>
+        index >= i ? prev + currentValue.height : prev,
+      0
+    );
   };
 
   const scrollToVerse = () => {
     if (arrl.length != 0) {
-      setArrL([arrl, ...arrLayout]);
+      setArrL([...arrl, ...arrLayout]);
     } else {
-      setArrL(arrLayout);
+      setArrL(arrLayout);//arrLayout
     }
+    updateLayout();
   };
   const updateLayout = () => {
     if (arrl != undefined) {
       let item = arrl.filter((i) => i.verseNumber == verseNum);
       if (item.length > 0) {
         if (item[0].verseNumber == verseNum) {
-          const offset = getOffset(item[0].index);
+          const offset = getOffset(verseNum - 1);
           verseScroll.current.scrollToOffset({ offset, animated: true });
         }
       }
@@ -145,14 +141,19 @@ const BibleContextProvider = (props) => {
   }, [verseNum]);
   useEffect(() => {
     updateLayout();
-  }, [arrl]);
+    setArrL([])
+  }, [previousContent.chapterId, nextContent.chapterId]);
   const onScrollLayout = (event, index, verseNumber) => {
-    arrLayout[index] = {
-      height: event.nativeEvent.layout.height,
-      verseNumber,
-      index,
-    };
+    if (verseNumber != undefined) {
+      arrLayout[verseNumber - 1] = {
+        height: event.nativeEvent.layout.height,
+        verseNumber,
+        index,
+      };
+    }
+    updateLayout();
   };
+  console.log(arrl, 'arrl')
   const updateLangVer = async (item) => {
     setSelectedReferenceSet([]);
     setShowBottomBar(false);
@@ -300,8 +301,8 @@ const BibleContextProvider = (props) => {
         bookListData.length == 0
           ? []
           : bookListData.sort(function (a, b) {
-              return a.bookNumber - b.bookNumber;
-            });
+            return a.bookNumber - b.bookNumber;
+          });
       setBookList(res);
     } catch (error) {
       console.log("ERROR ", error);

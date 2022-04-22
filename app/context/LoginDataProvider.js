@@ -11,7 +11,6 @@ export const LoginData = createContext();
 const LoginDataProvider = (props) => {
   const { bookName, bookId, sourceId, versionCode, language, chapterNumber } =
     props;
-
   const [connection_Status, setConnection_Status] = useState(true);
   const [notesList, setNotesList] = useState([]);
   const [bookmarksList, setBookmarksList] = useState([]);
@@ -62,7 +61,6 @@ const LoginDataProvider = (props) => {
   };
 
   const getHighlights = () => {
-
     if (connection_Status) {
       if (email && uid) {
         database()
@@ -320,13 +318,13 @@ const LoginDataProvider = (props) => {
     setCurrentVisibleChapter(chapterNumber);
   }, [chapterNumber]);
   useEffect(() => {
-    getHighlights()
-    getNotes()
-    getBookMarks()
-  }, [currentVisibleChapter, bookId, email, uid]);
+    getHighlights();
+    getNotes();
+    getBookMarks();
+  }, [currentVisibleChapter, bookId, email, uid, language, sourceId]);
   useEffect(() => {
-    bookmarkedChap()
-  }, [bookmarksList, currentVisibleChapter])
+    bookmarkedChap();
+  }, [bookmarksList, currentVisibleChapter]);
 
   return (
     <LoginData.Provider
@@ -346,6 +344,8 @@ const LoginDataProvider = (props) => {
         setEmail,
         email,
         uid,
+        bookId,
+        bookName,
         setUid,
         getHighlights,
         highlightedVerseArray,
@@ -382,7 +382,6 @@ const mapStateToProps = (state) => {
     language: state.updateVersion.language,
     languageCode: state.updateVersion.languageCode,
     versionCode: state.updateVersion.versionCode,
-    sourceId: state.updateVersion.sourceId,
   };
 };
 

@@ -73,7 +73,7 @@ const BibleMainComponent = (props) => {
               <View style={styles.reloadButtonCenter}>
                 <ReloadButton
                   styles={styles}
-                  reloadFunction={() => queryBookFromAPI(null)}
+                  reloadFunction={() => queryBookFromAPI(null, null)}
                   message={reloadMessage}
                 />
               </View>
@@ -93,12 +93,12 @@ const BibleMainComponent = (props) => {
             )}
           </View>
           {/** 2nd view as  parallelView**/}
-          {visibleParallelView == true && (
+          {visibleParallelView === true && (
             <View style={styles.parallelView}>
-              {contentType == "bible" && (
+              {contentType === "bible" && (
                 <BibleChapter navigation={navigation} />
               )}
-              {contentType == "commentary" && (
+              {contentType === "commentary" && (
                 <Commentary navigation={navigation} />
               )}
             </View>

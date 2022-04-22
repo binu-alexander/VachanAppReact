@@ -25,7 +25,7 @@ const SelectBook = (props) => {
     itemVisiblePercentThreshold: 100,
     waitForInteraction: true,
   }).current;
-  const flatlistRef = useRef().current;
+  const flatlistRef = useRef();
   const { bookList } = useContext(MainContext);
   const style = styles(props.colorFile, props.sizeFile);
   const toggleButton = (value) => {

@@ -137,7 +137,7 @@ const History = (props) => {
       for (var j = 0; j < historyList.length; j++) {
         if (historyList[j].list.length === 0) {
           historyList.splice(j, 1);
-          // j--;
+          j--;
         }
       }
       setHistoryLists(historyList);

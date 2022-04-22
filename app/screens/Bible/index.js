@@ -55,7 +55,6 @@ const Bible = (props) => {
     selectedVerse,
   } = props;
   const [downloadedBook, setDownloadedBook] = useState([]);
-
   const [chapterContent, setChapterContent] = useState([]);
   const [chapterHeader, setChapterHeader] = useState("");
   const [error, setError] = useState("");
@@ -366,7 +365,7 @@ const Bible = (props) => {
         sourceId: sourceId,
       });
     }
-    scrollToVerse(selectedVerse);
+    scrollToVerse();
   }, [language, sourceId, baseAPI, visibleParallelView, bookId, chapterNumber]);
   useEffect(() => {
     setAudio(props.audio);
@@ -379,13 +378,13 @@ const Bible = (props) => {
       downloaded: downloaded,
       sourceId: sourceId,
     });
-    scrollToVerse(selectedVerse);
+    // scrollToVerse();
   }, [language, sourceId, baseAPI]);
   useEffect(() => {
     getChapter(null, null);
     console.log("selectedVerse ------> ", selectedVerse);
-    scrollToVerse(selectedVerse);
-  }, [selectedVerse]);
+    // scrollToVerse();
+  }, []);
   return (
     <BibleMainContext.Provider
       value={[
