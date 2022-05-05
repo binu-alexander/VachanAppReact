@@ -233,7 +233,7 @@ const SelectBook = (props) => {
             getItemLayout={(data, index) => getItemLayout(data, index)}
             renderItem={renderItem}
             extraData={style}
-            keyExtractor={(item) => item.bookNumber}
+            keyExtractor={(item) => item.bookId}
             onViewableItemsChanged={onViewableItemsChanged.current}
             viewabilityConfig={viewabilityConfig}
             contentContainerStyle={{ paddingBottom: 60 }}
@@ -244,7 +244,6 @@ const SelectBook = (props) => {
     </View>
   );
 };
-
 const mapStateToProps = (state) => {
   return {
     isLoading: state.versionFetch.isLoading,

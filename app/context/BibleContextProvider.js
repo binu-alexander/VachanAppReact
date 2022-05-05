@@ -66,7 +66,7 @@ const BibleContextProvider = (props) => {
     props.navigation.navigate("ReferenceSelection", {
       getReference: getReference,
       chapterNumber: currentVisibleChapter,
-      // parallelContent: visibleParallelView ? false : true,
+      // parallelContent: props.visibleParallelView ? false : true,
     });
   };
   const navigateToLanguage = () => {
@@ -111,7 +111,7 @@ const BibleContextProvider = (props) => {
   const getOffset = (index) => {
     return arrl.reduce(
       (prev, currentValue, i) =>
-        index >= i ? prev + currentValue.height : prev,
+        index >= i ? prev + currentValue?.height : prev,
       0
     );
   };
@@ -126,7 +126,7 @@ const BibleContextProvider = (props) => {
   };
   const updateLayout = () => {
     if (arrl != undefined) {
-      let item = arrl.filter((i) => i.verseNumber == verseNum);
+      let item = arrl.filter((i) => i?.verseNumber == verseNum);
       if (item.length > 0) {
         if (item[0].verseNumber == verseNum) {
           const offset = getOffset(verseNum - 1);
@@ -142,7 +142,7 @@ const BibleContextProvider = (props) => {
   useEffect(() => {
     updateLayout();
     setArrL([])
-  }, [previousContent.chapterId, nextContent.chapterId]);
+  }, [previousContent, nextContent]);//previousContent.chapterId, nextContent.chapterId
   const onScrollLayout = (event, index, verseNumber) => {
     if (verseNumber != undefined) {
       arrLayout[verseNumber - 1] = {
@@ -153,7 +153,6 @@ const BibleContextProvider = (props) => {
     }
     updateLayout();
   };
-  console.log(arrl, 'arrl')
   const updateLangVer = async (item) => {
     setSelectedReferenceSet([]);
     setShowBottomBar(false);

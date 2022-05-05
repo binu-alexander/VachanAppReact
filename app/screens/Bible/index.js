@@ -195,9 +195,9 @@ const Bible = (props) => {
           var content = await vApi.get(url);
           if (content) {
             setReloadMessage("Loading....");
-            let header = getHeading(content.chapterContent.contents);
+            let header = getHeading(content?.chapterContent?.contents);
             setChapterHeader(header);
-            setChapterContent(content.chapterContent.contents);
+            setChapterContent(content?.chapterContent?.contents);
             setError(null);
             setNextContent(content.next);
             setPreviousContent(content.previous);
@@ -206,7 +206,7 @@ const Bible = (props) => {
       }
       setIsLoading(false);
     } catch (error) {
-      console.log("ERRoR ", error);
+      console.log("ERRoR message ", error);
       setIsLoading(false);
       setError(error);
       setChapterHeader("");
@@ -365,8 +365,8 @@ const Bible = (props) => {
         sourceId: sourceId,
       });
     }
-    scrollToVerse();
-  }, [language, sourceId, baseAPI, visibleParallelView, bookId, chapterNumber]);
+    // scrollToVerse();
+  }, [language, sourceId, baseAPI, bookId, visibleParallelView, chapterNumber, bookName, currentVisibleChapter]);
   useEffect(() => {
     setAudio(props.audio);
     setStatus(props.status);
@@ -432,6 +432,7 @@ const mapStateToProps = (state) => {
     userId: state.userInfo.uid,
     books: state.versionFetch.versionBooks,
     visibleParallelView: state.selectContent.visibleParallelView,
+    parallelLanguage: state.selectContent.parallelLanguage,
     audio: state.audio.audio,
     status: state.audio.status,
   };

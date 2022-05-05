@@ -67,7 +67,7 @@ const AnimatedVerseList = (props) => {
   const _onMomentumScrollEnd = () => {
     const toValue =
       _scrollValue > NAVBAR_HEIGHT &&
-      _clampedScrollValue > (NAVBAR_HEIGHT - STATUS_BAR_HEIGHT) / 2
+        _clampedScrollValue > (NAVBAR_HEIGHT - STATUS_BAR_HEIGHT) / 2
         ? _offsetValue + NAVBAR_HEIGHT
         : _offsetValue - NAVBAR_HEIGHT;
 
@@ -143,7 +143,7 @@ const AnimatedVerseList = (props) => {
       onStartShouldSetResponderCapture: () => true,
       onMoveShouldSetResponder: () => true,
       onMoveShouldSetResponderCapture: () => true,
-      onResponderGrant: () => {},
+      onResponderGrant: () => { },
       onResponderMove: (evt, gestureState) => {
         let thumbS = thumbSize;
         if (gestureState.pinch && gestureState.previousPinch) {
@@ -177,15 +177,15 @@ const AnimatedVerseList = (props) => {
       onResponderRelease: (gestureState) => {
         setGestureState({ ...gestureState });
       },
-      onResponderTerminate: (gestureState) => {},
-      onResponderSingleTapConfirmed: () => {},
+      onResponderTerminate: (gestureState) => { },
+      onResponderSingleTapConfirmed: () => { },
       moveThreshold: 2,
       debug: false,
     })
   ).current;
 
   const renderFooter = () => {
-    if (chapterContent.length === 0) {
+    if (chapterContent?.length === 0) {
       return null;
     } else {
       return (
@@ -233,13 +233,13 @@ const AnimatedVerseList = (props) => {
       data={chapterContent}
       ref={verseScroll}
       contentContainerStyle={
-        chapterContent.length === 0
+        chapterContent?.length === 0
           ? styles.centerEmptySet
           : {
-              paddingHorizontal: 16,
-              paddingTop: visibleParallelView ? 52 : 90,
-              paddingBottom: 90,
-            }
+            paddingHorizontal: 16,
+            paddingTop: visibleParallelView ? 52 : 90,
+            paddingBottom: 90,
+          }
       }
       scrollEventThrottle={1}
       onMomentumScrollBegin={_onMomentumScrollBegin}

@@ -56,7 +56,7 @@ function NavStackScreen() {
           backgroundColor: Color.Blue_Color,
           elevation: 0,
           shadowOpacity: 0,
-          fontWeight: "bold",
+          // fontWeight: "bold",
         },
         headerTintColor: Color.White,
         headerTitleStyle: {

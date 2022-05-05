@@ -35,9 +35,9 @@ const SelectVerse = (props) => {
       props.navigation.navigate("Bible");
     }
   };
-  useEffect(() => {
-    fectchVerses()
-  }, [])
+  // useEffect(() => {
+  //   fectchVerses()
+  // }, [])
   useEffect(() => {
     fectchVerses()
   }, [versesData])
